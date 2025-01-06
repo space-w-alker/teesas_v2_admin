@@ -201,7 +201,7 @@ const StudentList = () => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="red" radius={5} />
         </div>
       )}
       <div className={`flex justify-end items-center relative mt-3`}>

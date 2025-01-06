@@ -240,6 +240,29 @@ const SignInList = ({ isOpen }) => {
                   width="w-[298px]"
               />
             </div>
+
+            <div>
+              <UserCard
+                label="Total Subscribers"
+                height="h-[105px]"
+                backgroundcolor="bg-[#F2F2F2]"
+                value={adminData?.total_subscribers}
+               img2={Snotes}
+                width="w-[298px]"
+              />
+            </div>
+
+            <div>
+              <UserCard
+               label="Total Orders Received"
+                height="h-[105px]"
+                backgroundcolor="bg-[#F2F2F2]"
+               value={adminData?.total_orders}
+               img2={Pnotes}
+               width="w-[298px]"
+              />
+            </div>
+            
           </div>
         </div>
 
@@ -375,7 +398,7 @@ const SignInList = ({ isOpen }) => {
             </div>
           </div>
         </div>
-        <div className="rounded-xl w-full p-[12px] bg-[#FFFFFF] dash  lg:mt-0 mt-3 hidden">
+        <div className="rounded-xl w-full p-[12px] bg-[#FFFFFF] dash lg:mt-0 mt-3 ">
           <h3 className="font-meduim text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px] ">
             Assigned tasks
           </h3>

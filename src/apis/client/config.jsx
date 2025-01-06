@@ -45,6 +45,8 @@ export const config = {
   GET_LIVE_CLASS_TEACHERS:"admin/teachers/get-live-class-teachers",
   RESERVE_LIVE_CLASS:"live-classes/reserve-live-class",
   GET_STUDENTS_LIVE_CLASS:"admin/live-classes/get-students-live-class",
-  DELETE_USER:"admin/users/delete-user"
+  DELETE_USER:"admin/users/delete-user",
+
+  GET_TOTAL_SUBSCRIBERS: "admin/users/get-total-subscribers",
 
 };

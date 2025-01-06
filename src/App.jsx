@@ -46,11 +46,59 @@ import ViewAnalytics from './pages/user/DataAnalytics/ViewAnalytics';
 import ConversionRates from './pages/user/DataAnalytics/CoversionRates';
 import Parent from './pages/user/Parent';
 import Customadduser from './components/common/Customadduser';
-import ProtectedRoute from './components/common/ProtectedRoute'; // Import the ProtectedRoute component
+import ProtectedRoute from './components/common/ProtectedRoute';
+import SubscribedUser from "./components/Core/SubscribedUser"; 
+import AddSingleSubscription from './pages/subscriptions/AddSingleSubscription';
+import UploadBulkSubscription from './pages/subscriptions/UploadBulkSubscription';
+import AddSubscriptionForm from './pages/subscriptions/AddSubscriptionForm';
+import Lesson from './components/Lesson/Lession';
+import Classes from './components/Lesson/Classes';
+import Subjects from './components/Lesson/Subjects';
+import Chapters from './components/Lesson/Chapters';
+import Payments from './components/Payments/Payments';
+import PaymentDetails from './components/Payments/PaymentDetails';
+import BankDetails from './components/Payments/BankDetails';
+import AddBank from './components/Payments/AddBank';
+import ViewBankDetails from './components/Payments/ViewBankDetails';
+import EditBankDetails from './components/Payments/EditBankDetails';
+import Categories from './components/Categories/Categories';
+import AddCategory from './components/Categories/AddCategory';
+import UploadBulkCategory from './components/Categories/UploadBulkCategory';
+import CategoryDetails from './components/Categories/CategoryDetails';
+import SubjectDetails from './components/Categories/SubjectDetails';
+import AddSubject from './components/Categories/AddSubject';
+import SubjectChapterDetails from './components/Categories/SubjectChapterDetails';
+import AddUnitChapter from './components/Categories/AddUnitChapter';
+import BulkUploadChapter from './components/Categories/BulkUploadChapter';
+import AddUnitTopic from './components/Categories/AddUnitTopic';
+import BulkUploadTopic from './components/Categories/BulkUploadTopic';
+import UTME from './components/UTME/UTME';
+import UTMELesson from './components/UTME/UTMELesson';
+import AddSubjectUtme from './components/UTME/AddSubjectUtme';
+import CreateSubject from './components/UTME/CreateSubject';
+import CreateChapter from './components/UTME/CreateChapterUtme';
+import AddTopicUtme from './components/UTME/AddTopicUtme';
+import AddMedia from './components/UTME/AddMedia';
+import Practice from './components/Practice/Practice';
+import PracticeClasses from './components/Practice/PracticeClasses';
+import PracticeSubject from './components/Practice/PracticeSubject';
+import PracticeChapters from './components/Practice/PracticeChapters';
+import PracticeTopic from './components/Practice/PracticeTopic';
+// Import the ProtectedRoute component
 
 import { ToastContainer } from 'react-toastify';
+import PracticeUnitMediaUpload from './components/Practice/PracticeUnitMediaUpload';
+import PracticeBulkMediaUpload from './components/Practice/PracticeBulkMediaUpload';
+import PracticeTopicList from './components/Practice/PracticeTopicList';
+import Test from './components/Test/Test'
+
+
 
 function App() {
+  // Add this to bypass the login page
+  localStorage.setItem('authToken', 'dev-token-123');
+  // End of bypass
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => {
     setIsSidebarOpen(prevState => !prevState);
@@ -384,10 +432,407 @@ function App() {
             </ProtectedRoute>
           }
         />
+         
+
+<Route
+  path="/subscribed-users"
+  element={
+    <ProtectedRoute>
+      <SubscribedUser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/addSingleSubscription"
+  element={
+    <ProtectedRoute>
+      <AddSingleSubscription isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/UploadBulkSubscription"
+  element={
+    <ProtectedRoute>
+      <UploadBulkSubscription isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/UploadBulkSubscription"
+  element={
+    <ProtectedRoute>
+      <UploadBulkSubscription isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/add-subscription-form"
+  element={
+    <ProtectedRoute>
+      <AddSubscriptionForm isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+    </ProtectedRoute>
+  }
+/>
+<Route 
+        path="/lesson" 
+        element={
+          <ProtectedRoute>
+            <Lesson isOpen={isSidebarOpen} />
+          </ProtectedRoute>
+        } 
+
+      />
+
+<Route 
+  path="/classes" 
+  element={
+    <ProtectedRoute>
+      <Classes isOpen={isSidebarOpen} /> 
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/subjects" 
+  element={
+    <ProtectedRoute>
+      <Subjects isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/chapters" 
+  element={
+    <ProtectedRoute>
+      <Chapters isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/payments" 
+  element={
+    <ProtectedRoute>
+      <Payments isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/payments/details" 
+  element={
+    <ProtectedRoute>
+      <PaymentDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/payments/bank-details" 
+  element={
+    <ProtectedRoute>
+      <BankDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/payments/view-bank" 
+  element={
+    <ProtectedRoute>
+      <ViewBankDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+<Route 
+  path="/payments/add-bank" 
+  element={
+    <ProtectedRoute>
+      <AddBank isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/payments/edit-bank" 
+  element={
+    <ProtectedRoute>
+      <EditBankDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/categories" 
+  element={
+    <ProtectedRoute>
+      <Categories isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/categories/add-category" 
+  element={
+    <ProtectedRoute>
+      <AddCategory isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/categories/upload-bulk" 
+  element={
+    <ProtectedRoute>
+      <UploadBulkCategory isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/categories/details/:name" 
+  element={
+    <ProtectedRoute>
+      <CategoryDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+
+<Route 
+  path="/subjectsdetails" 
+  element={
+    <ProtectedRoute>
+      <SubjectDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+
+<Route 
+  path="/add-subject" 
+  element={
+    <ProtectedRoute>
+      <AddSubject isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+
+<Route 
+  path="/subjects/:subjectName" 
+  element={
+    <ProtectedRoute>
+      <SubjectChapterDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+
+      
+<Route 
+  path="/add-unit-chapter" 
+  element={
+    <ProtectedRoute>
+      <AddUnitChapter isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+
+
+      
+<Route 
+  path="/bulk-upload-chapter" 
+  element={
+    <ProtectedRoute>
+      <BulkUploadChapter isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+
+
+<Route 
+  path="/add-unit-topic" 
+  element={
+    <ProtectedRoute>
+      <AddUnitTopic isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route path="/bulk-upload-topic" element={<BulkUploadTopic />} />
+
+<Route 
+  path="/bulk-upload-topic" 
+  element={
+    <ProtectedRoute>
+      <BulkUploadTopic isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/utme" 
+  element={
+    <ProtectedRoute>
+      <UTME isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+<Route 
+  path="/utme-lesson" 
+  element={
+    <ProtectedRoute>
+      <UTMELesson isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/add-subject-utme" 
+  element={
+    <ProtectedRoute>
+      <AddSubjectUtme isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/create-new-subject" 
+  element={
+    <ProtectedRoute>
+      <CreateSubject isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/create-chapter" 
+  element={
+    <ProtectedRoute>
+      <CreateChapter isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+<Route 
+  path="/add-topic-utme" 
+  element={
+    <ProtectedRoute>
+      <AddTopicUtme isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/add-media" 
+  element={
+    <ProtectedRoute>
+      <AddMedia isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/practice" 
+  element={
+    <ProtectedRoute>
+      <Practice isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/practice-classes" 
+  element={
+    <ProtectedRoute>
+      <PracticeClasses isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/practice-subject" 
+  element={
+    <ProtectedRoute>
+      <PracticeSubject isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/practice-chapters" 
+  element={
+    <ProtectedRoute>
+      <PracticeChapters isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/practice-topic" 
+  element={
+    <ProtectedRoute>
+      <PracticeTopic isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/practice-media-upload" 
+  element={
+    <ProtectedRoute>
+      <PracticeUnitMediaUpload isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/bulk-upload-media" 
+  element={
+    <ProtectedRoute>
+      <PracticeBulkMediaUpload isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/practice-topic-list" 
+  element={
+    <ProtectedRoute>
+      <PracticeTopicList isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/test" 
+  element={
+    <ProtectedRoute>
+      <Test isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+
+
+
+
         <Route path='/UploadBulkUser' element={ <ProtectedRoute>
           <Customadduser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         </ProtectedRoute> } />
       </Routes>
+      
+      
       <ToastContainer position="top-right"
     autoClose={2000}
     ProgressBar={true}
