@@ -30,6 +30,13 @@ export const adminSlice = createSlice({
     getDashBoardResponse: {
       response: {},
     },
+
+    getTotalSubscribersResponse: {
+      response: {},
+    },
+    getTotalOrdersResponse: {
+      response: {},
+    },
   },
   reducers: {
     getAdminRoles: (state, action) => {
@@ -56,6 +63,13 @@ export const adminSlice = createSlice({
     getDashBoard: (state, action) => {
       state.getDashBoardResponse = action.payload;
     },
+    getTotalSubscribers: (state, action) => {
+      state.getTotalSubscribersResponse = action.payload;
+    },
+    getTotalOrders: (state, action) => {
+      state.getTotalOrdersResponse = action.payload;
+    },
+
 
     reset: (state, action) => {
       state.getAdminRolesResponse = {
@@ -183,8 +197,45 @@ export const getAdminUserAsync = async ({
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
+
+export const getTotalSubscribersAsync = async ({ dispatch, callbackFn, data, token }) => {
+  try {
+    const URL = `${BASEURL}${GET_TOTAL_SUBSCRIBERS}`;
+    await getAPICall(URL, data, token).then((res) => {
+      if (res?.data?.status === 200) {
+        const data = res?.data;
+        callbackFn && callbackFn(data);
+        dispatch(getTotalSubscribers(data));
+      } else {
+        toast.error(res?.data?.message);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getTotalOrdersAsync = async ({ dispatch, callbackFn, data, token }) => {
+  try {
+    const URL = `${BASEURL}${GET_TOTAL_ORDERS}`;
+    await getAPICall(URL, data, token).then((res) => {
+      if (res?.data?.status === 200) {
+        const data = res?.data;
+        callbackFn && callbackFn(data);
+        dispatch(getTotalOrders(data));
+      } else {
+        toast.error(res?.data?.message);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    dispatch(getTotalOrders({ isLoading: false }));
+  }
+};
+
+
 export const { getAdminRoles, getAdminRolePermission,updateRolePermission, getAdminUsers,
-    addAdminUser,
+    addAdminUser,getTotalSubscribers,getTotalOrders,
   getAdminUser, getDashBoard} =
   adminSlice.actions;
 export const getAdminRolesResponse = (state) => state.admin.getAdminRolesResponse;

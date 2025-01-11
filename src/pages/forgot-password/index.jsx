@@ -194,7 +194,7 @@ function ForgetPassword() {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="#27AE60" radius={5} />
         </div>
       )}
       <div
@@ -317,7 +317,7 @@ function ForgetPassword() {
             }
             className={` ${
               page == 1 ? "mt-[100px]" : "mt-[80px]"
-            } bg-[#F2994A] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg ${
+            } bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg ${
               isLoading || !email
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer"
@@ -331,13 +331,33 @@ function ForgetPassword() {
           Remember Password ?
           <Link
             to="/login"
-            className="text-[16px] leading-6 ml-1  text-[#F2994A]"
+            className="text-[16px] leading-6 ml-1  text-[#27AE60]"
           >
             Sign In
           </Link>
         </div>
       </div>
       {showModal && <Mymodal />}
+      <div className="absolute top-8 left-8 flex items-center cursor-pointer" onClick={() => navigate('/')}>
+  <svg 
+    width="24" 
+    height="24" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path 
+      d="M19 12H5M5 12L12 19M5 12L12 5" 
+      stroke="#000000" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    />
+  </svg>
+  <span className="ml-2 text-black font-bold">Forgot Password</span>
+</div>
+
+
     </div>
   );
 }

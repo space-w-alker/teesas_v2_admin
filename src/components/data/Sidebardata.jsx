@@ -12,6 +12,12 @@ import feedback from '../../assets/images/Feedback.png';
         icon: home,
         path:"/users"
         },
+        {
+          name: "Subscribed Users",
+          icon: hashtag,
+          path: "/subscribed-users"
+        },
+        
         // {
         //   name: "Active Users",
         //   icon: hashtag,
@@ -24,17 +30,46 @@ import feedback from '../../assets/images/Feedback.png';
         }
       ]
     },
+   
+
     {
       id: 2,
       heading: "Product/App Management",
       items: [
         {
-          name: "Leaderboard",
+          name: "Categories",
           icon: hashtag,
-          path:"/Leaderboard"
+          path:"/Categories"
         
           
-        }
+        },
+        {
+          name: 'Lesson',
+          icon: hashtag,
+          path: "/lesson"
+
+        },
+
+        {
+          name: 'UTME',
+          icon: hashtag,
+          path: "/utme"             
+
+        },
+
+        {
+          name: 'Practice',
+          icon: hashtag,
+          path: "/practice"             
+
+        },
+        {
+          name: 'Text',
+          icon: hashtag,
+          path: "/test"             
+
+        },
+        
       ]
     },
     {
@@ -120,7 +155,25 @@ import feedback from '../../assets/images/Feedback.png';
         }
       ]
     },
+      {
+        id: 7,
+        heading: "Payments Management",
+        items: [
+          {
+            name: "Payment History",
+            icon: hashtag,
+            path: "/payments"
+          },
+        {
+          name: "Bank Details",
+          icon: hashtag,
+          path: "/payments/bank-details"
+        }
+        
 
+
+        ]
+      },
  
    
   ];
