@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Popup from 'reactjs-popup';
-import success from '../../assets/images/success.png';
+import Headers from '../common/Headers';
+import Headcomponent from '../common/Headcomponent';
+import SuccessModal from '../common/SuccessModal';
 
 const AddBank = ({ isOpen }) => {
   const navigate = useNavigate();
@@ -33,21 +34,14 @@ const AddBank = ({ isOpen }) => {
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-400">Home</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-400">Payments</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-medium">Add Bank Details</span>
-        </div>
-      </div>
+      <Headers value1="Home" value2="Payments" value3="Add Bank Details" />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl p-8 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-8">Add Bank Details</h2>
-            <div className="grid grid-cols-2 gap-6">
+          <div className="bg-white rounded-xl p-8  mt-4 shadow-sm">
+            <Headcomponent value="Add Bank Details" border="Border" showSearch={false} />
+            
+            <div className="grid grid-cols-2 gap-6 mt-8">
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-3">Select Type</label>
                 <select 
@@ -126,9 +120,10 @@ const AddBank = ({ isOpen }) => {
         </div>
 
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl p-8 shadow-sm h-full">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Summary</h2>
-            <div className="bg-[#E9FDEE] rounded-lg p-6">
+          <div className="bg-white rounded-xl p-8 mt-4 shadow-sm h-full">
+            <Headcomponent value="Summary" border="Border" showSearch={false} />
+            
+            <div className="bg-[#E9FDEE] rounded-lg p-6 mt-6">
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Type:</span>
@@ -166,20 +161,13 @@ const AddBank = ({ isOpen }) => {
         </div>
       </div>
 
-      <Popup open={showSuccess} closeOnDocumentClick={false} modal>
-        <div className="bg-white rounded-xl p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <img src={success} alt="success" className="w-16 h-16" />
-          </div>
-          <h2 className="text-xl font-bold mb-6">Your action was successful</h2>
-          <button 
-            onClick={handleClose}
-            className="px-8 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </Popup>
+      <SuccessModal 
+        isOpen={showSuccess}
+        onClose={handleClose}
+        type="success"
+        title="Your action was successful"
+        buttonText="Close"
+      />
     </div>
   );
 };

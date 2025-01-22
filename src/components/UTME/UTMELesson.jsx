@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Headers from '../common/Headers';
+import Headcomponent from '../common/Headcomponent';
+import SuccessModal from '../common/SuccessModal';
 import book from '../../assets/images/book.png';
 import bookopen from '../../assets/images/bookopen.png';
 
@@ -17,63 +20,82 @@ const StatCard = ({ title, count }) => (
   </div>
 );
 
-const ClassItem = ({ name }) => {
-    const navigate = useNavigate();
-  
-    return (
-      <div className="bg-white rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <img src={bookopen} alt="book" className="w-6 h-6" />
-          </div>
-          <span className="font-medium text-gray-800">{name}</span>
-        </div>
-        <div className="flex gap-4 items-center">
-          <button 
-            onClick={() => navigate('/add-subject-utme')}
-            className=" text-gray-600 hover:text-gray-800 font-medium"
-          >
-            Add Subject
-          </button>
-          <button className="text-gray-600 hover:text-gray-800">
-            Edit
-          </button>
-          <button className="text-red-500 hover:text-red-600">
-            Delete
-          </button>
-        </div>
-      </div>
-    );
+const ClassItem = ({ name, onDelete }) => {
+  const navigate = useNavigate();
+
+  const handleEdit = () => {
+    navigate('/create-new-subject', { 
+      state: { 
+        mode: 'edit',
+        subjectData: {
+          subjectTitle: name,
+          university: 'unilag'
+        }
+      }
+    });
   };
-  
+
+  return (
+    <div className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-4">
+        <div className="p-3 bg-white rounded-lg">
+          <img src={bookopen} alt="book" className="w-6 h-6" />
+        </div>
+        <span className="font-medium text-gray-800">{name}</span>
+      </div>
+      <div className="flex gap-4 items-center">
+        <button 
+          onClick={() => navigate('/add-subject-utme')}
+          className="text-[#27AE60] hover:text-[#219652] font-medium"
+        >
+          Add Subject
+        </button>
+        <button 
+          onClick={handleEdit}
+          className="text-[#27AE60] hover:text-[#219652]"
+        >
+          Edit
+        </button>
+        <button 
+          onClick={() => onDelete(name)}
+          className="text-red-500 hover:text-red-600"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const UTMELesson = ({ isOpen }) => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { category } = location.state || {};
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedClass, setSelectedClass] = useState(null);
   
   const classes = [
     'Post UTME',
-    ' SSCE',
-    'UTME ',
+    'SSCE',
+    'UTME',
   ];
+
+  const handleDelete = (className) => {
+    setSelectedClass(className);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowDeleteModal(false);
+    setSelectedClass(null);
+  };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-400">Home</span>
-          <span className="text-gray-400">/</span>
-          <span>Lesson</span>
-         
-        </div>
+      <Headers value1="Home" value2="Classes" />
+
+      <div className="mb-8 mt-6">
+        <Headcomponent value="Classes Management" showSearch={false} />
       </div>
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Classes</h1>
-      </div>
-
-      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
         <StatCard title="Total Classes" count="6" />
         <StatCard title="Active Classes" count="4" />
@@ -81,10 +103,9 @@ const UTMELesson = ({ isOpen }) => {
         <StatCard title="Teachers" count="8" />
       </div>
 
-    
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">Classes</h2>
+          <Headcomponent value="Classes List" showSearch={false} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
@@ -92,11 +113,21 @@ const UTMELesson = ({ isOpen }) => {
               <ClassItem 
                 key={index} 
                 name={className}
+                onDelete={handleDelete} 
               />
             ))}
           </div>
         </div>
       </div>
+
+      <SuccessModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        type="caution"
+        title="Confirm Delete"
+        message={`Are you sure you want to delete ${selectedClass}?`}
+        buttonText="Delete"
+      />
     </div>
   );
 };

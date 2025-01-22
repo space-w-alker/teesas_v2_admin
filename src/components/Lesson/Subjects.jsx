@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Headers from '../common/Headers';
+import Headcomponent from '../common/Headcomponent';
 import book from '../../assets/images/book.png';
 import bookopen from '../../assets/images/bookopen.png';
+
 
 const StatCard = ({ title, count }) => (
   <div className="bg-white rounded-xl shadow-sm p-4">
@@ -17,30 +20,33 @@ const StatCard = ({ title, count }) => (
   </div>
 );
 
-const SubjectItem = ({ name }) => {
+const SubjectItem = ({ name, onEdit }) => {
   const navigate = useNavigate();
-  return (
-    <div className="bg-white rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-4">
-        <div className="p-3 bg-gray-50 rounded-lg">
-          <img src={bookopen} alt="book" className="w-6 h-6" />
-        </div>
-        <span className="font-medium text-gray-800">{name}</span>
+  return(
+  <div className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+    <div className="flex items-center gap-4">
+      <div className="p-3 bg-white rounded-lg">
+        <img src={bookopen} alt="book" className="w-6 h-6" />
       </div>
-      <button 
-        onClick={() => navigate('/chapters', { state: { subjectName: name } })}
-        className="px-4 py-2 text-[#27AE60] hover:text-[#219652] transition-colors font-medium"
-      >
-        Edit
-      </button>
+      <span className="font-medium text-gray-800">{name}</span>
     </div>
-  );
+    <button 
+       onClick={() => navigate('/chapters')}
+      className="px-4 py-2 text-[#27AE60] hover:text-[#219652] transition-colors font-medium"
+    >
+      Edit
+    </button>
+  </div>
+  )
 };
 
 const Subjects = ({ isOpen }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { className } = location.state || {};
-  
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState(null);
+
   const subjects = [
     'Mathematics',
     'English',
@@ -50,21 +56,27 @@ const Subjects = ({ isOpen }) => {
     'Arts'
   ];
 
+  const handleEdit = (subject) => {
+    setSelectedSubject(subject);
+    setShowModal(true);
+  };
+
+  const handleAddUnitMedia = () => {
+    navigate('/add-unit-media', { state: { subjectName: selectedSubject } });
+    setShowModal(false);
+  };
+
+  const handleBulkUpload = () => {
+    navigate('/upload-bulk-media', { state: { subjectName: selectedSubject } });
+    setShowModal(false);
+  };
+
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-     
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-400">Home</span>
-          <span className="text-gray-400">/</span>
-          <span>Lesson</span>
-         
-        </div>
-      </div>
+      <Headers value1="Home" value2="Subjects" />
 
-     
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Subjects</h1>
+      <div className="mb-8 mt-6">
+        <Headcomponent value="Subjects Management" showSearch={false} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
@@ -74,10 +86,9 @@ const Subjects = ({ isOpen }) => {
         <StatCard title="Total Chapters" count="120" />
       </div>
 
-   
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">Subjects List</h2>
+          <Headcomponent value="Subjects List" showSearch={false} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
@@ -85,6 +96,7 @@ const Subjects = ({ isOpen }) => {
               <SubjectItem 
                 key={index} 
                 name={subject}
+                onEdit={() => handleEdit(subject)}
               />
             ))}
           </div>

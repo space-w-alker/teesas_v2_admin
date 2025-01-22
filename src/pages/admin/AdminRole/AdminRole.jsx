@@ -46,13 +46,13 @@ const AdminRole = ({isOpen}) => {
         value={adminData?.total_roles} 
       />
     </div>
-    {/*<div className=" flex  justify-end mt-4 ">
+    <div className=" flex  justify-end mt-4 ">
       <button className="text-[14px] leading-[20px] text-center font-bold  w-[160px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#F2994A] text-white" 
-      // onClick={()=>Navigate('/Addadminrole')}
+      onClick={()=>Navigate('/Addadminrole')}
       >
      + Add Role 
       </button>
-    </div>*/}
+    </div>
     <AdminRoleList adminData={adminData?.admin_roles}/>
   </div>
   )

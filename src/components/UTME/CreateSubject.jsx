@@ -1,46 +1,52 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Headers from '../common/Headers';
+import Headcomponent from '../common/Headcomponent';
+import SuccessModal from '../common/SuccessModal';
+import Custombutton from '../common/Custombutton';
 import book from '../../assets/images/book.png';
-import success from '../../assets/images/success.png'; // Make sure to add success icon
 
 const CreateSubject = ({ isOpen }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { mode, subjectData } = location.state || {};
+  const isEditMode = mode === 'edit';
+  
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState({
-    subjectTitle: '',
-    university: ''
+    subjectTitle: isEditMode ? subjectData.subjectTitle : '',
+    university: isEditMode ? subjectData.university : ''
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setShowSuccessModal(true);
-    
-    // Navigate after modal is shown for 1.5 seconds
-    setTimeout(() => {
-      navigate('/add-subject-utme');
-    }, 1500);
+  };
+
+  const handleCloseModal = () => {
+    setShowSuccessModal(false);
+    navigate('/add-subject-utme');
   };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-400">Home</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-400">UTME Subjects</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-medium">Create Subject</span>
-        </div>
+      <Headers value1="Home" value2={isEditMode ? "Edit Subject" : "Create Subject"} />
+
+      <div className="mb-8 mt-6">
+        <Headcomponent 
+          value={isEditMode ? "Edit Subject" : "Create New Subject"} 
+          showSearch={false} 
+        />
       </div>
 
       <div className="flex gap-6">
-        {/* Left Section - Main Form */}
+        {/* Left Section - Form */}
         <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <img src={book} alt="book" className="w-8 h-8" />
-            </div>
-            <h2 className="text-xl font-bold text-gray-900">Add Subject</h2>
+            
+            <h2 className="text-xl font-bold text-gray-900">
+              {isEditMode ? 'Edit Subject Details' : 'Subject Details'}
+            </h2>
           </div>
           
           <form onSubmit={handleSubmit}>
@@ -93,32 +99,29 @@ const CreateSubject = ({ isOpen }) => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={handleSubmit}
-              className="w-full mt-8 px-6 py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
-            >
-              Create Subject
-            </button>
+            <div className="flex justify-center mt-8">
+            
+            <Custombutton
+  value={isEditMode ? "Update Subject" : "Create Subject"}
+  onClick={handleSubmit}
+  backgroundcolor="bg-[#27AE60]"
+  textcolor="text-white"
+  width="w-[130px] mt-4 "
+  extraStyle="mt-8 py-3"
+/>
+</div>
           </div>
         </div>
       </div>
 
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 text-center">
-            <img src={success} alt="success" className="w-24 h-24 mx-auto mb-6" />
-            <h3 className="text-2xl font-bold mb-4">Success!</h3>
-            <p className="text-gray-600 mb-8">Subject created successfully</p>
-            <button
-              onClick={() => setShowSuccessModal(false)}
-              className="w-full py-3 bg-[#27AE60] text-white rounded-lg hover:bg-[#219652]"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseModal}
+        type="success"
+        title={isEditMode ? "Subject Updated!" : "Subject Created!"}
+        message={isEditMode ? "Subject has been updated successfully" : "Subject has been created successfully"}
+        buttonText="Continue"
+      />
     </div>
   );
 };

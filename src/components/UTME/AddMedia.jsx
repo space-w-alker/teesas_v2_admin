@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import Popup from 'reactjs-popup';
-import 'reactjs-popup/dist/index.css';
-import success from '../../assets/images/success.png';
+import Headers from '../common/Headers';
+import Headcomponent from '../common/Headcomponent';
+import Custombutton from '../common/Custombutton';
+import SuccessModal from '../common/SuccessModal';
 import book from '../../assets/images/book.png';
 
 const AddMedia = ({ isOpen }) => {
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState({
     topicTitle: '',
     description: '',
@@ -18,36 +19,21 @@ const AddMedia = ({ isOpen }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Media added:', formData);
-    setShowSuccess(true);
-  };
-
-  const handleClose = () => {
-    setShowSuccess(false);
-    
-    setFormData({
-      topicTitle: '',
-      description: '',
-      video: null
-    });
+    setShowSuccessModal(true);
   };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-400">Home</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-medium">Add Media</span>
-        </div>
+      <Headers value1="Home" value2="Add Media" />
+
+      <div className="mb-8 mt-6">
+        <Headcomponent value="Add Unit Media" showSearch={false} />
       </div>
 
       <div className="flex gap-6">
+        {/* Left Section - Form */}
         <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <img src={book} alt="book" className="w-8 h-8" />
-            </div>
             <h2 className="text-xl font-bold text-gray-900">Add Media</h2>
           </div>
           
@@ -80,18 +66,42 @@ const AddMedia = ({ isOpen }) => {
                 <label className="block text-gray-700 text-sm font-medium mb-2">
                   Upload Lesson Video
                 </label>
-                <input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoUpload}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
-                  required
-                />
+                <div className="border-2  bg-green-50 border-dashed border-gray-300 rounded-lg p-8">
+                  <div className="text-center">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoUpload}
+                      className="hidden"
+                      id="video-upload"
+                      required
+                    />
+                    <label
+                      htmlFor="video-upload"
+                      className="cursor-pointer inline-flex items-center px-4 py-2 bg-[#E9FDEE] text-[#27AE60] rounded-lg"
+                    >
+                      Choose Video
+                    </label>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Supported formats: MP4, WebM, MKV
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Maximum file size: 500MB
+                    </p>
+                    {formData.video && (
+                      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <p className="font-medium">Selected file:</p>
+                        <p className="text-sm text-gray-600">{formData.video.name}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </form>
         </div>
 
+        {/* Right Section - Summary */}
         <div className="flex-1">
           <div className="bg-white rounded-xl p-8 shadow-sm h-full">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Summary</h2>
@@ -111,30 +121,28 @@ const AddMedia = ({ isOpen }) => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={handleSubmit}
-              className="w-full mt-8 px-6 py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
-            >
-              Create Media
-            </button>
+            <div className="flex justify-center mt-8">
+              <Custombutton
+                value="Create Media"
+                onClick={handleSubmit}
+                backgroundcolor="bg-[#27AE60]"
+                textcolor="text-white"
+                width="w-[120px]"
+                extraStyle="py-3"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <Popup open={showSuccess} closeOnDocumentClick={false} modal>
-        <div className="bg-white rounded-xl p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <img src={success} alt="success" className="w-16 h-16" />
-          </div>
-          <h2 className="text-xl font-bold mb-6">Your action was successful</h2>
-          <button
-            onClick={handleClose}
-            className="px-8 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </Popup>
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        type="success"
+        title="Media Added Successfully!"
+        message="The media has been uploaded and added to the topic."
+        buttonText="Continue"
+      />
     </div>
   );
 };

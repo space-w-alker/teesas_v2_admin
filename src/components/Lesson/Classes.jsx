@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Headers from '../common/Headers';
+import Headcomponent from '../common/Headcomponent';
 import book from '../../assets/images/book.png';
 import bookopen from '../../assets/images/bookopen.png';
 
@@ -20,9 +22,9 @@ const StatCard = ({ title, count }) => (
 const ClassItem = ({ name }) => {
   const navigate = useNavigate();
   return (
-    <div className="bg-white rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+    <div className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
       <div className="flex items-center gap-4">
-        <div className="p-3 bg-gray-50 rounded-lg">
+        <div className="p-3 bg-white rounded-lg">
           <img src={bookopen} alt="book" className="w-6 h-6" />
         </div>
         <span className="font-medium text-gray-800">{name}</span>
@@ -39,7 +41,6 @@ const ClassItem = ({ name }) => {
 
 const Classes = ({ isOpen }) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const { category } = location.state || {};
   
   const classes = [
@@ -48,36 +49,30 @@ const Classes = ({ isOpen }) => {
     'Primary 3',
     'Primary 4',
     'Primary 5',
-    'Primary 6'
+    'Primary 6',
+    'JSS 1',
+    'JSS 2',
+    'JSS 3'
   ];
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-400">Home</span>
-          <span className="text-gray-400">/</span>
-          <span>Lesson</span>
-         
-        </div>
+      <Headers value1="Home" value2="Classes" />
+
+      <div className="mb-8 mt-6">
+        <Headcomponent value="Classes Management" showSearch={false} />
       </div>
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Classes</h1>
-      </div>
-
-      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-        <StatCard title="Total Classes" count="6" />
-        <StatCard title="Active Classes" count="4" />
-        <StatCard title="Students" count="120" />
-        <StatCard title="Teachers" count="8" />
+        <StatCard title="Total Classes" count="9" />
+        <StatCard title="Active Classes" count="9" />
+        <StatCard title="Total Students" count="450" />
+        <StatCard title="Total Teachers" count="18" />
       </div>
 
-    
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">Classes List</h2>
+          <Headcomponent value="Classes List" showSearch={false} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
