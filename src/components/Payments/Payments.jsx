@@ -1,12 +1,11 @@
 import React from 'react';
-import UserCard from '../common/UserCard';
 import Custombutton from '../common/Custombutton';
 import Headcomponent from '../common/Headcomponent';
 import Headers from '../common/Headers';
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
-import Group10000001600 from '../../assets/images/Group1000001600.png';
-import arrowupward from '../../assets/images/arrow_upward.png';
+import StatCard from '../common/StatCard';
+
 
 const PaymentCard = ({ name, subscription, date }) => {
   const navigate = useNavigate();
@@ -62,26 +61,18 @@ const Payments = ({ isOpen }) => {
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <Headers value1="Home" value2="Payments" />
 
-      <div className="mt-3">
-        <UserCard
-          label="Total Amount Received"
-          height="h-[140px]"
-          backgroundcolor="bg-[#FFFFFF]"
-          value={'₦ 210,000'}
-          imgbg={Group10000001600}
-          subContent={
-            <div className="flex items-center gap-2">
-              <div className="p-1 bg-[#E9FDEE] rounded">
-                <img src={arrowupward} alt="trend" className="w-4 h-4" />
-              </div>
-              <span className="text-sm text-[#27AE60]">+15% from yesterday</span>
-            </div>
-          }
-        />
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center">
+          <Headcomponent value="Payments" showSearch={false} />
+        </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm mt-6">
-        <Headcomponent value="Recent Payments" border="Border" />
+      <div className="mt-3">
+      <StatCard title="Total Categories" count="10" />
+      </div>
+
+      <div className="bg-white rounded-xl p-6 mt-6">
+      <Headcomponent value="Payments History" border="Border" />
         
         <div className="p-6">
           <div className="space-y-2">
@@ -99,9 +90,14 @@ const Payments = ({ isOpen }) => {
               textcolor="text-[#000000]"
               imagePosition="left"
             />
-            <div className="text-[#667085] text-[12px]">
-              Page 1 of 5
-            </div>
+        
+            <Custombutton
+              value="View All"
+              hidden="hidden"
+              backgroundcolor="bg-[#F2F2F2]"
+              textcolor="text-[#000000]"
+            
+            />
             <Custombutton
               value="Next"
               hidden="hidden"

@@ -200,6 +200,36 @@ case "Add Job Opening":
       </div>
     </div>
   );
+  // Add this case in the renderModalContent() switch statement
+case "Add Category":
+  return (
+    <div className="px-[20px]">
+      <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
+        Select one of the options below
+      </p>
+      <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
+        <div className="flex items-center gap-[20px] mt-2 px-[10px]">
+          <div
+            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+            onClick={addSingleButton}
+          ></div>
+          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+            {value1}
+          </label>
+        </div>
+        <div className="flex items-center gap-[20px] px-[10px]">
+          <div
+            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+            onClick={addMutipleButton}
+          />
+          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+            {value2}
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+
 
       case "Export":
         return (
@@ -322,6 +352,50 @@ case "Add Job Opening":
             </div>
           </div>
         );
+        case "Filter7":
+  return (
+    <div className="px-[20px]">
+      <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px]">
+        <div 
+          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+          onClick={() => handleOptionClick('status')}
+        >
+          Filter By Status
+        </div>
+        <div 
+          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+          onClick={() => handleOptionClick('course')}
+        >
+          Filter By Course
+        </div>
+        <div 
+          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+          onClick={() => handleOptionClick('primary')}
+        >
+          Filter By Primary School Lesson
+        </div>
+        <div 
+          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+          onClick={() => handleOptionClick('secondary')}
+        >
+          Filter By Secondary School Lesson
+        </div>
+        <div 
+          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+          onClick={() => handleOptionClick('habit')}
+        >
+          Filter By 7 Habit Coaching
+        </div>
+        <div 
+          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+          onClick={() => handleOptionClick('animation')}
+        >
+          Filter By Animation
+        </div>
+      </div>
+    </div>
+  );
+
       case "Sort By":
         return (
           <div className="px-[20px]">

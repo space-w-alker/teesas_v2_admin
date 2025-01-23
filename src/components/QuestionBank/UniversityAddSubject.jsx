@@ -35,8 +35,8 @@ const UniversityAddSubject = ({ isOpen }) => {
         value2={location.state?.isEdit ? "Edit Subject" : "Add Subject"} 
       />
 
-      <div className="flex gap-6">
-        <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
+      <div className="mt-6  flex gap-6">
+        <div className="flex-[2] bg-white rounded-xl shadow-sm p-6 mb-6">
           <Headcomponent 
             value={location.state?.isEdit ? "Edit Subject" : "Add Subject"} 
             showSearch={false} 

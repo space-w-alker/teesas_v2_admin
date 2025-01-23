@@ -64,9 +64,11 @@ const UniversityList = ({ isOpen }) => {
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="University List" />
-
-      <div className="mb-8 mt-6">
-        <h1 className="text-2xl font-bold text-gray-900">University List</h1>
+      
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center">
+          <Headcomponent value="University List" showSearch={false} />
+        </div>
       </div>
 
       <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">

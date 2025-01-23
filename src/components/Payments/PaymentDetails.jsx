@@ -34,14 +34,14 @@ const PaymentDetails = ({ isOpen }) => {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900">{paymentData.name}</h2>
-            <p className="text-sm text-gray-500">{paymentData.paymentType}</p>
             <Custombutton
               value="Active"
               hidden="hidden"
-              backgroundcolor="bg-[#27AE60] rounded-lg"
+              backgroundcolor="bg-[#27AE60] "
               textcolor="text-white"
               imagePosition="center"
               width="w-[80px]"
+             
             />
           </div>
         </div>

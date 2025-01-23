@@ -123,6 +123,12 @@ const EBook = ({ isOpen }) => {
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="E-Book" />
 
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center">
+          <Headcomponent value="E-Books" showSearch={false} />
+        </div>
+      </div>
+
       <div className=" mt-6 grid grid-cols-1 gap-8 mb-8">
         <StatCard title="Total E-Books" count="150" />
       </div>

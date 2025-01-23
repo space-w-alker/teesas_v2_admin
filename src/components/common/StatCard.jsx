@@ -1,16 +1,30 @@
 import React from 'react';
 import book from '../../assets/images/book.png';
+import statelayer from '../../assets/images/state-layer.png';
 
-const StatCard = ({ title, count }) => (
-  <div className="bg-white rounded-xl shadow-sm p-4">
-    <div className="flex items-start gap-4">
-      <div className="p-3 bg-gray-50 rounded-lg">
-        <img src={book} alt="book" className="w-8 h-8" />
+const StatCard = ({ 
+  title, 
+  count,
+  backgroundColor = "bg-white",
+  width,
+  height,
+  imglogo = book,
+  imgbg = statelayer
+}) => (
+  <div className={`py-[15px] px-[15px] rounded-xl flex gap-[12px] flex-col w-full lg:${width} ${height} ${backgroundColor}`}>
+    <div className="w-[32px] h-[32px] rounded-lg mb-2">
+      <div className="relative">
+        <img src={imglogo} className="absolute left-[7px] top-[8px]" />
+        <img src={imgbg} />
       </div>
-      <div className="flex flex-col">
-        <p className="text-gray-600 text-sm font-medium">{title}</p>
-        <p className="font-bold text-2xl mt-2 text-gray-900">{count}</p>
-      </div>
+    </div>
+    
+    <div>
+      <p className="text-[14px] leading-[16px] font-medium text-[#001D4A]">{title}</p>
+    </div>
+    
+    <div>
+      <p className="text-[20px] leading-[20px] font-medium">{count}</p>
     </div>
   </div>
 );

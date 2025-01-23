@@ -36,11 +36,9 @@ const AddUnitMedia = ({ isOpen }) => {
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="Add Media" />
 
-      <div className="mb-8 mt-6">
-        <Headcomponent value="Add Unit Media" showSearch={false} />
-      </div>
+    
 
-      <div className="flex gap-6">
+      <div className=" mt-6 flex gap-6">
         <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-4 mb-6">
             <h2 className="text-xl font-bold text-gray-900">Add Media</h2>

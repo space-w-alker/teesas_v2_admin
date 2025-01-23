@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import book from '../../assets/images/book.png';
-import Popup from 'reactjs-popup';
-import success from '../../assets/images/success.png';
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { useLocation, useNavigate } from 'react-router-dom';
+import Headers from '../common/Headers';
+import Custombutton from '../common/Custombutton';
+import SuccessModal from '../common/SuccessModal';
+
 
 const AddSingleEbook = ({ isOpen }) => {
   const location = useLocation();
@@ -18,11 +19,6 @@ const AddSingleEbook = ({ isOpen }) => {
     pdf: location.state?.ebookData?.pdf || null
   });
 
-  // Update header and button text based on edit mode
-  const isEdit = location.state?.isEdit;
-  const headerText = isEdit ? "Edit E-Book" : "Add E-Book";
-  const buttonText = isEdit ? "Update E-Book" : "Create E-Book";
-
   const [dragActive, setDragActive] = useState(false);
 
   const handlePdfUpload = (e) => {
@@ -32,18 +28,14 @@ const AddSingleEbook = ({ isOpen }) => {
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files?.[0]) {
       setFormData({...formData, pdf: e.dataTransfer.files[0]});
     }
   };
@@ -63,19 +55,17 @@ const AddSingleEbook = ({ isOpen }) => {
       description: '',
       pdf: null
     });
+    navigate('/ebook-list');
   };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-400">Home</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-medium">Add E-Book</span>
-        </div>
-      </div>
+      <Headers 
+        value1="Home"
+        value2="Add E-Book"
+      />
 
-      <div className="flex gap-6">
+      <div className=" mt-6 flex gap-6">
         <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-4 mb-6">
             <h2 className="text-xl font-bold text-gray-900">Add E-Book</h2>
@@ -222,30 +212,29 @@ const AddSingleEbook = ({ isOpen }) => {
                 </div>
               </div>
             </div>
-            <button
+            <Custombutton
+              value="Add E-Book"
               onClick={handleSubmit}
-              className="w-full mt-8 px-6 py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
-            >
-              Create E-Book
-            </button>
+              backgroundcolor="bg-[#27AE60]"
+              textcolor="text-white"
+              width="w-full"
+              extraClasses="mt-8"
+            />
           </div>
         </div>
       </div>
 
-      <Popup open={showSuccess} closeOnDocumentClick={false} modal>
-        <div className="bg-white rounded-xl p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <img src={success} alt="success" className="w-16 h-16" />
-          </div>
-          <h2 className="text-xl font-bold mb-6">Subject Created Successfully</h2>
-          <button
-            onClick={handleClose}
-            className="px-8 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </Popup>
+      {showSuccess && (
+  <SuccessModal
+    isOpen={showSuccess}
+    onClose={handleClose}
+    type="success"
+    title="SUCCESS!"
+    message="E-Book Created Successfully"
+    buttonText="Close"
+  />
+)}
+
     </div>
   );
 };

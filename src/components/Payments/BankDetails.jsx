@@ -42,6 +42,12 @@ const BankDetails = ({isOpen}) => {
     <div className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <Headers value1="Home" value2="Bank Details" />
 
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center">
+          <Headcomponent value="Payments" showSearch={false} />
+        </div>
+      </div>
+
       <div className="mt-3">
         <UserCard
           label="Total Bank Accounts"

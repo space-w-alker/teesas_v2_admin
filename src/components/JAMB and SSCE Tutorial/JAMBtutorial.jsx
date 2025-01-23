@@ -43,15 +43,22 @@ const JAMBtutorial = ({ isOpen }) => {
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="JAMB and SSCE Tutorials" />
+      
 
-      <div className="mt-6 grid grid-cols-2 gap-6 mb-8">
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center">
+          <Headcomponent value="JAMB and SSCE Tutorial" showSearch={false} />
+        </div>
+      </div>
+
+      <div className=" grid grid-cols-2 gap-6 mb-8">
         <StatCard title="Total JAMB Tutorials" count="150" color="bg-blue-50" />
         <StatCard title="Total SSCE Tutorials" count="180" color="bg-green-50" />
       </div>
 
       <div className="flex justify-end gap-4 mb-6">
         <Custombutton
-          value="Export"
+          value="Export Excel"
           textcolor="text-[#27AE60]"
           backgroundcolor="bg-white"
           extraStyle="border border-[#27AE60]"
@@ -109,7 +116,7 @@ const JAMBtutorial = ({ isOpen }) => {
                       <span>Paid</span>
                     </div>
                   }
-          textcolor="text-blue-600"
+          textcolor="text-blue-600" 
           backgroundcolor="bg-[#E9FDEE]"
           extraStyle="px-4 py-2 rounded-lg"
         />

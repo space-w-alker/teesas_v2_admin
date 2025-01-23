@@ -73,7 +73,13 @@ const UniList = ({ isOpen }) => {
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="University List" />
-
+      
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center">
+          <Headcomponent value="University List" showSearch={false} />
+        </div>
+      </div>
+      
       <div className=" mt-6 bg-white rounded-xl shadow-sm mb-8">
         <StatCard title="Total Universities" count="25" />
       </div>

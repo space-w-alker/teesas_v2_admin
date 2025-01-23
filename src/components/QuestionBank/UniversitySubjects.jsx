@@ -99,9 +99,11 @@ const UniversitySubjects = ({ isOpen }) => {
         value2="Universities" 
         value3={universityName} 
       />
-
-      <div className="mb-8 mt-6">
-        <h1 className="text-2xl font-bold text-gray-900">{universityName}</h1>
+      
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center">
+          <Headcomponent value={universityName} showSearch={false} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">

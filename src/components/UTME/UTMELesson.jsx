@@ -5,20 +5,7 @@ import Headcomponent from '../common/Headcomponent';
 import SuccessModal from '../common/SuccessModal';
 import book from '../../assets/images/book.png';
 import bookopen from '../../assets/images/bookopen.png';
-
-const StatCard = ({ title, count }) => (
-  <div className="bg-white rounded-xl shadow-sm p-4">
-    <div className="flex items-start gap-4">
-      <div className="p-3 bg-gray-50 rounded-lg">
-        <img src={book} alt="book" className="w-8 h-8" />
-      </div>
-      <div className="flex flex-col">
-        <p className="text-gray-600 text-sm font-medium">{title}</p>
-        <p className="font-bold text-2xl mt-2 text-gray-900">{count}</p>
-      </div>
-    </div>
-  </div>
-);
+import StatCard from '../common/StatCard';
 
 const ClassItem = ({ name, onDelete }) => {
   const navigate = useNavigate();
@@ -92,8 +79,10 @@ const UTMELesson = ({ isOpen }) => {
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="Classes" />
 
-      <div className="mb-8 mt-6">
-        <Headcomponent value="Classes Management" showSearch={false} />
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center">
+          <Headcomponent value="Classes Management" showSearch={false} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
