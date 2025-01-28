@@ -179,9 +179,6 @@ import AddBulk7HabitBootcamp from './components/7HabitsBootcamp/AddBulk7HabitBoo
 
 
 function App() {
-  // Add this to bypass the login page
-  localStorage.setItem('authToken', 'dev-token-123');
-  // End of bypass
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => {
