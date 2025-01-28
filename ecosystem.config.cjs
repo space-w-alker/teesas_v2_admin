@@ -3,11 +3,10 @@ module.exports = {
     {
       name: 'teesas_admin',
       script: 'serve',
-      args: '-s dist -l 3020', // Serve the `dist` directory on port 3020
+      args: ['-s', 'dist', '-l', '3020'], // Correctly pass arguments as an array
       env: {
         NODE_ENV: 'production',
       },
     },
   ],
 };
-
