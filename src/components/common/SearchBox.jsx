@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const SearchBox = ({ isOpen }) => {
   const Navigate=useNavigate()
   return (
-    <div className="mb-2">
+    <div className=" top-[60px] w-full z-30 bg-white">
       <div className={`search flex justify-between items-center px-[24px] md:px-[78px] ${isOpen ? 'xl:ml-[260px]' : ''}`}>
         <div className="flex items-center relative lg:w-[594px]">
           <img src={search} className="absolute w-[20px] h-[20px] top-[56%]  -translate-y-1/2 left-[8px] z-50" alt="Search icon" />

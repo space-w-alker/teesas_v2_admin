@@ -53,41 +53,22 @@ export const deleteAPICall = async (
 };
 
 
-export const postAPICall = async (
-  url,
-  params,
-  isArrayType,
-  access_token
-) => {
-  const accessToken = localStorage.getItem('authToken')
-    ? localStorage.getItem('authToken')
-    : access_token;
+export const postAPICall = async (url, params) => {
   const myHeaders = new Headers();
-  myHeaders.append('mode', '*');
-  myHeaders.append('Access-Control-Allow-Origin','*');
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('api-key', 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR');
 
-  isArrayType
-    ? myHeaders.append('Content-Type', 'application/json ')
-    : myHeaders.append('Content-Type', 'application/x-www-form-urlencoded ');
-  access_token?.length &&
-    myHeaders.append('Authorization', 'Bearer ' + access_token);
-  let urlencoded = new URLSearchParams();
-  if (params) {
-    isArrayType
-      ? (urlencoded = JSON.stringify(params))
-      : Object.keys(params).forEach((key) =>
-          urlencoded.append(key, params[key])
-        );
-  }
   const requestOptions = {
     method: 'POST',
     headers: myHeaders,
-    body: urlencoded,
-    redirect: 'follow',
+    body: JSON.stringify(params)
   };
+
+  console.log('Request:', { url, body: params });
   const response = await fetch(url, requestOptions);
   const data = await response.json();
-  return { data: data };
+  console.log('Response:', data);
+  return { data };
 };
 
 export const postFileAPICall = async (
@@ -121,3 +102,26 @@ export const postFileAPICall = async (
   // }
   return { data: data };
 };
+
+export const putAPICall = async (url, body, auth = false, token = null) => {
+  const headers = {
+    'Content-Type': 'application/json',
+  'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR'
+
+  };
+
+  if (auth && token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: headers,
+    body: JSON.stringify(body),
+  });
+
+  return {
+    data: await response.json(),
+  };
+};
+

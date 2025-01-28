@@ -91,13 +91,94 @@ import PracticeUnitMediaUpload from './components/Practice/PracticeUnitMediaUplo
 import PracticeBulkMediaUpload from './components/Practice/PracticeBulkMediaUpload';
 import PracticeTopicList from './components/Practice/PracticeTopicList';
 import Test from './components/Test/Test'
+import TestClass from './components/Test/TestClass';
+import TestSubject from './components/Test/TestSubject';
+import TestChapter from './components/Test/TestChapter';
+import TestTopics from './components/Test/TestTopics';
+import TestUnitMediaUpload from './components/Test/TestUnitMediaUpload';
+import TestBulkMediaUpload from './components/Test/TestBulkMediaUpload';
+import TestTopicList from './components/Test/TestTopicList';
+import AddTest from './components/Test/AddTest';
+import TestDetail from './components/Test/TestDetails';
+import UniversityList from './components/QuestionBank/UniversityList';
+import UniversitySubjects from './components/QuestionBank/UniversitySubjects';
+import UniversityAddSubject from './components/QuestionBank/UniversityAddSubject';
+import UniversityAddPdf from './components/QuestionBank/UniversityAddPdf';
+import UniversitySubjectDetail from './components/QuestionBank/UniversitySubjectDetail';
+import UniList from './components/UniversityList/UniList';
+import UniAdd from './components/UniversityList/UniAdd';
+import EBook from './components/E-Book/EBook';
+import AddSingleEbook from './components/E-Book/AddSingleEbook';
+import AddBulkEbook from './components/E-Book/AddBulkEbook';
+import  EBookDetails from './components/E-Book/EbookDetails';
+import EbookList from './components/E-Book/EbookList';
+import EbookOrderList from './components/E-Book/EbookOrderList';
+import ResellerForm from './components/ResellerForm/ResellerForm';
+import ResellerFormDetails from './components/ResellerForm/ResellerFormDetails';
+import SevenHabitsBootcamp from './components/7HabitsBootcamp/7HabitsBootcamp';
+import RegistrationDetails from './components/7HabitsBootcamp/RegistrationDetails';
+import AddParticipant from './components/7HabitsBootcamp/AddParticipant';
+import JAMBtutorial from './components/JAMB and SSCE Tutorial/JAMBtutorial';
+import TutorialDetails from './components/JAMB and SSCE Tutorial/TutorialDetails';
+import AddSingleParticipant from './components/JAMB and SSCE Tutorial/AddSingleParticipant';
+import SummerCamp from './components/SummerCamp/SummerCamp';
+import AddSingleCampParticipant from './components/SummerCamp/AddSIngleSummerCampParticipant';
+import SummerCampDetails from './components/SummerCamp/SummerCampDetails';
+import JobOpenings from './components/HumanResource/JobOpening';
+import AddJobForm from './components/HumanResource/AddJobForm';
+import JobDetails from './components/HumanResource/JobDetails';
+import SubscriptionTypes from './components/SubscriptionTypes/SubscriptionTypes';
+import SubscriptionPlanDetails from './components/SubscriptionTypes/SubscriptionPlanDetails';
+import AddSubscriptionPlan from './components/SubscriptionTypes/AddSubscriptionPlan';
+import PromoCodes from './components/PromoCodes/PromoCodes';
+import AddPromoCode from './components/PromoCodes/AddPromoCode';
+import PromoCodeDetails from './components/PromoCodes/PromoCodeDetails';
+import AboutUs from './components/TeesasCorner/AboutUs';
+import AddAboutUs from './components/TeesasCorner/AddAboutUs';
+import PrivacyPolicy from './components/TeesasCorner/PrivacyPolicy';
+import AddPrivacyPolicy from './components/TeesasCorner/AddPrivacyPolicy';
+import Testimonials from './components/TeesasCorner/Testimonials';
+import AddTestimonial from './components/TeesasCorner/AddTestimonial';
+import ContactUs from './components/TeesasCorner/ContactUs';
+import AddContactUs from './components/TeesasCorner/AddContactUs';
+import Banner from './components/Banner/Banner';
+import AddBanner from './components/Banner/AddBanner';
+import BannerDetails from './components/Banner/BannerDetails';
+import SalesTeam from './components/SalesTeam/SalesTeam';
+import SalesTeamDetails from './components/SalesTeam/SalesTeamDetails';
+import AddSalesTeam from './components/SalesTeam/AddSalesTeam';
+import PushNotification from './components/PushNotification/PushNotification';
+import AddNotification from './components/PushNotification/AddNotification';
+import NotificationDetails from './components/PushNotification/NotificationDetails';
+import CountryList from './components/Country/CountryList';
+import AddCountry from './components/Country/AddCountry';
+import CountryDetails from './components/Country/CountryDetails';
+import Badges from './components/Badges/Badges';
+import AddBadge from './components/Badges/AddBadge';
+import BadgeDetails from './components/Badges/BadgeDetails';
+import UserReport from './components/UserReport/UserReport';
+import UserReportDetails from './components/UserReport/UserReportDetails';
+import ProductList from './components/Store/ProductList';
+import AddStoreItem from './components/Store/AddStoreItem';
+import StoreItemDetails from './components/Store/StoreItemDetails';
+import OrderItemDetails from './components/Store/OrderItemDetails';
+import DonationEnquiry from './components/DonationEnquiry/DonationEnquiry';
+import DonationDetails from './components/DonationEnquiry/DonationDetails';
+import Topics from './components/Lesson/Topics';
+import AddUnitMedia from './components/Lesson/AddUnitMedia';
+import TopicDetails from './components/Lesson/TopicDetail';
+import AddPracticeUtme from './components/UTME/AddPracticeUtme';
+import AddPractice from './components/Practice/AddPractice';
+import AddTestUtme from './components/UTME/AddTestUtme';
+import PracticeDetails from './components/Practice/PracticeDetails';
+import UniversityViewPdf from './components/QuestionBank/UniversityViewPdf';
+import AddBulkSummerCampParticipant from './components/SummerCamp/AddBulkSummerCampParticipant';
+import AddBulkJambParticipant from './components/JAMB and SSCE Tutorial/AddBulkJambParticipant';
+import AddBulk7HabitBootcamp from './components/7HabitsBootcamp/AddBulk7HabitBootcamp';
 
 
 
 function App() {
-  // Add this to bypass the login page
-  localStorage.setItem('authToken', 'dev-token-123');
-  // End of bypass
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => {
@@ -511,6 +592,30 @@ function App() {
     </ProtectedRoute>
   } 
 />
+<Route 
+  path="/topics" 
+  element={
+    <ProtectedRoute>
+      <Topics isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/add-unit-media" 
+  element={
+    <ProtectedRoute>
+      <AddUnitMedia isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/topic-details"
+  element={
+    <ProtectedRoute>
+      <TopicDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
 
 <Route 
   path="/payments" 
@@ -735,6 +840,14 @@ function App() {
     </ProtectedRoute>
   } 
 />
+<Route 
+  path="/topic/:topicId" 
+  element={
+    <ProtectedRoute>
+      <TopicDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
 
 <Route 
   path="/add-media" 
@@ -744,6 +857,24 @@ function App() {
     </ProtectedRoute>
   } 
 />
+<Route 
+  path="/add-practice-utme" 
+  element={
+    <ProtectedRoute>
+      <AddPracticeUtme isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/add-test-utme" 
+  element={
+    <ProtectedRoute>
+      <AddTestUtme isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+add-practice
+
 <Route 
   path="/practice" 
   element={
@@ -814,6 +945,22 @@ function App() {
   } 
 />
 <Route 
+  path="/add-practice" 
+  element={
+    <ProtectedRoute>
+      <AddPractice isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/practice-details" 
+  element={
+    <ProtectedRoute>
+      <PracticeDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
   path="/test" 
   element={
     <ProtectedRoute>
@@ -821,11 +968,652 @@ function App() {
     </ProtectedRoute>
   } 
 />
+<Route 
+  path="/test-class" 
+  element={
+    <ProtectedRoute>
+      <TestClass isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/test-subject" 
+  element={
+    <ProtectedRoute>
+      <TestSubject isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/test-chapter" 
+  element={
+    <ProtectedRoute>
+      <TestChapter isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/test-topic" 
+  element={
+    <ProtectedRoute>
+      <TestTopics isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/Testbulk-media-upload" 
+  element={
+    <ProtectedRoute>
+      <TestBulkMediaUpload isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/testUnit-media-upload" 
+  element={
+    <ProtectedRoute>
+      <TestUnitMediaUpload isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/test-topic-list" 
+  element={
+    <ProtectedRoute>
+      <TestTopicList isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/add-test" 
+  element={
+    <ProtectedRoute>
+      <AddTest isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/test-detail" 
+  element={
+    <ProtectedRoute>
+      <TestDetail isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/question-bank" 
+  element={
+    <ProtectedRoute>
+      <UniversityList isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/university-subjects" 
+  element={
+    <ProtectedRoute>
+      <UniversitySubjects isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/university-add-subject" 
+  element={
+    <ProtectedRoute>
+      <UniversityAddSubject isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/university-add-pdf" 
+  element={
+    <ProtectedRoute>
+      <UniversityAddPdf isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/university-view-pdf"
+  element={
+    <ProtectedRoute>
+      <UniversityViewPdf isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/university-subject-detail" 
+  element={
+    <ProtectedRoute>
+      <UniversitySubjectDetail isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+<Route 
+  path="/uni-list" 
+  element={
+    <ProtectedRoute>
+      <UniList isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/uni-add" 
+  element={
+    <ProtectedRoute>
+      <UniAdd isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/e-book" 
+  element={
+    <ProtectedRoute>
+      <EBook isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/add-single-ebook" 
+  element={
+    <ProtectedRoute>
+      <AddSingleEbook isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/add-bulk-ebook" 
+  element={
+    <ProtectedRoute>
+      <AddBulkEbook isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/ebook-details" 
+  element={
+    <ProtectedRoute>
+      <EBookDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/ebook-list" 
+  element={
+    <ProtectedRoute>
+      <EbookList isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/ebook-orders" 
+  element={
+    <ProtectedRoute>
+      <EbookOrderList isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/resellerform" 
+  element={
+    <ProtectedRoute>
+      <ResellerForm isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/reseller-form-details" 
+  element={
+    <ProtectedRoute>
+      <ResellerFormDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/7habitsbootcamp" 
+  element={
+    <ProtectedRoute>
+      <SevenHabitsBootcamp isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/registration-details" 
+  element={
+    <ProtectedRoute>
+      <RegistrationDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+/bulk-upload
+<Route 
+  path="/bulk-upload" 
+  element={
+    <ProtectedRoute>
+      <AddBulk7HabitBootcamp isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/add-participant" 
+  element={
+    <ProtectedRoute>
+      <AddParticipant isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/jamb-ssce" 
+  element={
+    <ProtectedRoute>
+      <JAMBtutorial isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/tutorial-details" 
+  element={
+    <ProtectedRoute>
+      <TutorialDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/add-single-participant" 
+  element={
+    <ProtectedRoute>
+      <AddSingleParticipant isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/add-bulk-participant" 
+  element={
+    <ProtectedRoute>
+      <AddBulkJambParticipant isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/summercamp" 
+  element={
+    <ProtectedRoute>
+      <SummerCamp isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/add-single-summer-camp-participant" 
+  element={
+    <ProtectedRoute>
+      <AddSingleCampParticipant isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/add-bulk-summer-camp-participant" 
+  element={
+    <ProtectedRoute>
+      <AddBulkSummerCampParticipant isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/summer-camp-details" 
+  element={
+    <ProtectedRoute>
+      <SummerCampDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/job-opening" 
+  element={
+    <ProtectedRoute>
+      <JobOpenings isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
 
 
 
+<Route 
+  path="/add-unit-job" 
+  element={
+    <ProtectedRoute>
+      <AddJobForm isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
 
 
+<Route 
+  path="/job-details" 
+  element={
+    <ProtectedRoute>
+      <JobDetails isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+<Route 
+  path="/subscription-types" 
+  element={
+    <ProtectedRoute>
+      <SubscriptionTypes isOpen={isSidebarOpen} />
+    </ProtectedRoute>
+  } 
+/>
+
+
+<Route path="/subscription" 
+element={
+  <ProtectedRoute>
+    <SubscriptionPlanDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/add-subscription-plan" 
+element={
+  <ProtectedRoute>
+    <AddSubscriptionPlan isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/promo-codes" 
+element={
+  <ProtectedRoute>
+    <PromoCodes isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/add-promo-code" 
+element={
+  <ProtectedRoute>
+    <AddPromoCode isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/promo-code-details" 
+element={
+  <ProtectedRoute>
+    <PromoCodeDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/About-us" 
+element={
+  <ProtectedRoute>
+    <AboutUs isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/add-about-us" 
+element={
+  <ProtectedRoute>
+    <AddAboutUs isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/privacy-policy" 
+element={
+  <ProtectedRoute>
+    <PrivacyPolicy isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/add-privacy-policy" 
+element={
+  <ProtectedRoute>
+    <AddPrivacyPolicy isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/testimonials" 
+element={
+  <ProtectedRoute>
+    <Testimonials isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/add-testimonials" 
+element={
+  <ProtectedRoute>
+    <AddTestimonial isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/contact-us" 
+element={
+  <ProtectedRoute>
+    <ContactUs isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/add-contact-us" 
+element={
+  <ProtectedRoute>
+    <AddContactUs isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/parentsReportType" 
+element={
+  <ProtectedRoute>
+    <ParentReportType isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/add-parent-report" 
+element={
+  <ProtectedRoute>
+    <AddParentReportType isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/banner" 
+element={
+  <ProtectedRoute>
+    <Banner isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+
+<Route path="/Banner/AddBanner" 
+element={
+  <ProtectedRoute>
+    <AddBanner isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/Banner/BannerDetails" 
+element={
+  <ProtectedRoute>
+    <BannerDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/sales-team" 
+element={
+  <ProtectedRoute>
+    <SalesTeam isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+
+<Route path="/SalesTeam/Details" 
+element={
+  <ProtectedRoute>
+    <SalesTeamDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/SalesTeam/AddsalesTeamMember" 
+element={
+  <ProtectedRoute>
+    <AddSalesTeam isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/push-notification" 
+element={
+  <ProtectedRoute>
+    <PushNotification isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="PushNotification/AddNotification" 
+element={
+  <ProtectedRoute>
+    <AddNotification isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/PushNotification/NotificationDetails" 
+element={
+  <ProtectedRoute>
+    <NotificationDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/country-list" 
+element={
+  <ProtectedRoute>
+    <CountryList isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/Countries/AddCountry" 
+element={
+  <ProtectedRoute>
+    <AddCountry isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/Countries/Details" 
+element={
+  <ProtectedRoute>
+    <CountryDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/badges" 
+element={
+  <ProtectedRoute>
+    <Badges isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/Badges/AddBadge" 
+element={
+  <ProtectedRoute>
+    <AddBadge isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/Badges/Details" 
+element={
+  <ProtectedRoute>
+    <BadgeDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/user-report" 
+element={
+  <ProtectedRoute>
+    <UserReport isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/Reports/Details" 
+element={
+  <ProtectedRoute>
+    <UserReportDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/produuct-list" 
+element={
+  <ProtectedRoute>
+    <ProductList isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/store/add" 
+element={
+  <ProtectedRoute>
+    <AddStoreItem isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/store/item-details" 
+element={
+  <ProtectedRoute>
+    <StoreItemDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+<Route path="/store/order-details" 
+element={
+  <ProtectedRoute>
+    <OrderItemDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+<Route path="/donation-enquiry" 
+element={
+  <ProtectedRoute>
+    <DonationEnquiry isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
+
+
+<Route path="donation-details" 
+element={
+  <ProtectedRoute>
+    <DonationDetails isOpen={isSidebarOpen} />
+  </ProtectedRoute>
+} 
+/>
 
         <Route path='/UploadBulkUser' element={ <ProtectedRoute>
           <Customadduser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />

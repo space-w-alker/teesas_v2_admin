@@ -1,8 +1,8 @@
 import React from 'react';
-const Custombutton = ({ value, img, backgroundcolor, textcolor, imagePosition,onClick,icon,hidden,width}) => {
+const Custombutton = ({ value, img, backgroundcolor, textcolor, imagePosition, onClick, icon, hidden, width, height, border }) => {
   const justifyContent = imagePosition === 'left' ? 'flex-start' : 'flex-end';
   return (
-    <div onClick={onClick} className={`flex items-center justify-${justifyContent} gap-[15px] ${width} h-[30px] rounded-md border border-[#ECEDEE] p-[10px] ${backgroundcolor}`}>
+    <div onClick={onClick} className={`mt-4 flex items-center justify-center ${width} ${height} rounded-md ${border ? 'border border-[#ECEDEE]' : ''} p-[10px] ${backgroundcolor}`}>
       {imagePosition === 'left' && (
         <div>
           <img src={img} className={`w-[22px] h-[22px] pt-[2px] ${hidden}`} />
@@ -14,7 +14,7 @@ const Custombutton = ({ value, img, backgroundcolor, textcolor, imagePosition,on
       </button>
       {imagePosition === 'right' && (
         <div className=''>
-          <img src={img} className={`w-[22px] h-[22px] pt-[2px] ${hidden}`} alt='Right Icon'  onClick={onClick} />
+          <img src={img} className={`w-[22px] h-[22px] pt-[2px] ${hidden}`} alt='Right Icon' onClick={onClick} />
           {icon}
         </div>
       )}

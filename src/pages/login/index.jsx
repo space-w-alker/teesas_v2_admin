@@ -10,12 +10,11 @@ import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
 
 function Login() {
-  // const router = useRouter();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
   const userLoginResponse = useSelector(loginResponse);
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -29,34 +28,33 @@ function Login() {
   };
 
 
+
+   
+  
   const SubmitSigninAction = () => {
-    const errorData = Validation(formData);
-    setError(errorData);
-    if (Object.keys(errorData).length < 1) {
-      setLoading(true);
-      const FinalData = {
-        email: formData.email,
-        password: formData.password,
-      };
-      loginAsync({
-        dispatch: dispatch,
-        body: FinalData,
-        callbackFn: (res) => {
-          if (res?.data?.status === 200) {
-            const data = res?.data?.data?.admin;
-            const username = data?.firstName + " " + data?.lastName;
-            localStorage.setItem('userData', JSON.stringify(data));
-            localStorage.setItem("authToken", res?.data?.data?.admin?.token);
-            navigate("/Dashboard");
-            setLoading(false);
-          } else {
-            toast.error(res?.data?.message);
-            setLoading(false);
-            // navigate('/Dashboard');
-          }
-        },
-      });
-    }
+    const credentials = {
+      email: formData.email,
+      password: formData.password
+    };
+  
+    loginAsync({
+      dispatch,
+      body: credentials,
+      callbackFn: (response) => {
+        console.log('Before navigation:', response.data);
+        if (response?.data?.status === 200) {
+          const token = response.data.data.token;
+          const role = response.data.data.role;
+          const userData = { token, role };
+          
+          localStorage.setItem('userData', JSON.stringify(userData));
+          localStorage.setItem('authToken', token);
+          console.log('Token stored:', token);
+          navigate('/Dashboard');
+          console.log('After navigation');
+        }
+      }
+    });
   };
 
   return (

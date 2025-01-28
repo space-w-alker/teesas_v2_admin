@@ -1,6 +1,6 @@
 import React from 'react'
 import Group1000001600 from "../../assets/images/Group1000001600.png";
-const UserCard = ({label,backgroundcolor,width,height,value,value2,img,imglogo,imgbg,img2 }) => {
+const UserCard = ({label,backgroundcolor,width,height,value,value2,img,imglogo,imgbg,img2, subContent }) => {
   return (
     <div className={` py-[15px] lg:mt-0 mt-[10px] px-[15px] rounded-xl flex gap-[8px] flex-col  w-full lg:${width} ${height} ${backgroundcolor}`}>  
     <div className='w-[32px] h-[32px] rounded-lg'>
@@ -18,6 +18,7 @@ const UserCard = ({label,backgroundcolor,width,height,value,value2,img,imglogo,i
     <div >
      <p className='text-[20px] leading-[20px] font-medium'>{value}</p>
     </div>
+    {subContent}
     <div className='flex items-center gap-[7px] '>
      <img src={img} className='w-12px h-[12px] text-[#06AA8D]'/>
      <p>{value2}</p>

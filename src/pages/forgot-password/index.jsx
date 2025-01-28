@@ -4,10 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import success from "../../assets/images/success.png";
 import OtpInput from "react-otp-input";
 import {
-  Verifyresponse,
+ 
   verificationCodeAsync,
-  changePasswordAsync,
-  resetPasswordAsync,
+  verifyCodeAsync,
+  setNewPasswordAsync,
+  // resetPasswordAsync,
 } from "../../apis/slices/authSlice";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
@@ -32,7 +33,7 @@ function ForgetPassword() {
       setLoading(true);
       const FinalData = {
         email: email,
-        type: "Admin",
+       
       };
 
       verificationCodeAsync({
@@ -67,11 +68,11 @@ function ForgetPassword() {
       setLoading(true);
       const FinalData = {
         email: email,
-        type: "Admin",
         otp: otp,
+        type: "ADMIN",
       };
 
-      changePasswordAsync({
+      verifyCodeAsync({
         dispatch: dispatch,
         body: FinalData,
         callbackFn: (res) => {
@@ -95,17 +96,18 @@ function ForgetPassword() {
       setLoading(true);
       const FinalData = {
         email: email,
-        type: "Admin",
+        type: "ADMIN",
         password: newPassword,
       };
 
-      resetPasswordAsync({
+      setNewPasswordAsync({
         dispatch: dispatch,
         body: FinalData,
         callbackFn: (res) => {
           console.log("response", res);
           if (res?.data?.status === 200) {
             setLoading(false);
+            setShowModal(true);
             setpage(page + 1);
           } else {
             toast.error(res?.data?.message);
@@ -330,7 +332,7 @@ function ForgetPassword() {
         <div className="flex justify-center items-center mt-2 text-center text-[14px] leading-[22px] font-normal px-3">
           Remember Password ?
           <Link
-            to="/login"
+            to="/"
             className="text-[16px] leading-6 ml-1  text-[#27AE60]"
           >
             Sign In

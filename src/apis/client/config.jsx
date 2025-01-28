@@ -1,13 +1,15 @@
 export const config = {
-  BASEURL: 
-  //"https://29f3-182-68-25-240.ngrok-free.app/v1/",
-   "https://api.v2.teesas.com/v1/",
+   BASEURL: "http://localhost:3000/v1/",
+  USERLOGIN: "admin/auth/login",
+  VERFICATION: "admin/auth/forgot-password",
+  VERIFY_CODE: "admin/auth/reset-password",
+  SetNewPassword: "admin/auth/set-new-password",
+ChangeNewPassword:"admin/auth/change-password",
+logout: "admin/auth/logout",
+  RESET_PASSWORD: "auth/reset-password",
    GET_DASHBOARD:"admin/users/get-dashboard-details",
    GET_COURSES:"admin/live-classes/get-course-details",
-  USERLOGIN: "auth/admin-login",
-  VERFICATION: "auth/send-verification-code",
-  VERIFY_CODE:"auth/verify-code",
-  RESET_PASSWORD:"auth/reset-password",
+
   USER: "admin/users/get-statistics",
   GETUSER: "admin/users/get-users",
   GET_USER_BY_ID:"get-user-by-id",

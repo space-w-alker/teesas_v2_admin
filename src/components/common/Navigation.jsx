@@ -8,7 +8,7 @@ const Navigation = ({ isOpen, toggleSidebar }) => {
   return (
     <>
       <div className="fixed top-0 w-full z-40 bg-[#E9FDEE]">
-        <div className="flex items-center justify-between px-4 py-2">
+        <div className="flex items-center justify-between px-[24px] md:px-[78px] py-4">
           <div className="max-w-content" onClick={toggleSidebar}>
             <img src={menu} className="w-8 h-8" alt="Menu" />
           </div>
@@ -29,3 +29,5 @@ const Navigation = ({ isOpen, toggleSidebar }) => {
   );
 };
 export default Navigation;
+
+

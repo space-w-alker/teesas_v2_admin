@@ -3,7 +3,8 @@ import {
   getAPICall,
   postAPICall,
   postFileAPICall,
-  deleteAPICall
+  deleteAPICall,
+  putAPICall
 } from "../client/methodCalls";
 import { toast } from "react-toastify";
 
@@ -13,6 +14,7 @@ const {
   BASEURL,
   USERLOGIN,
   VERFICATION,
+  ChangeNewPassword,
   USER,
   GETUSER,
   ADDUSER,
@@ -23,6 +25,7 @@ const {
   UPDATE_USER,
   GET_USER_BY_ID,
   VERIFY_CODE,
+  SetNewPassword,
   RESET_PASSWORD,DELETE_USER
 } = config;
 
@@ -38,9 +41,13 @@ export const authSlice = createSlice({
     verifyCodeResponse: {
       isLoading: false,
     },
-    resetPasswordResponse: {
-      isLoading: false,
+    resetPassword:{
+       isLoading: false ,
+
     },
+    // resetPasswordResponse: {
+    //   isLoading: false,
+    // },
     Verifyresponse: {
       isLoading: false,
     },
@@ -82,9 +89,18 @@ export const authSlice = createSlice({
     verifyCode: (state, action) => {
       state.verifyCodeResponse = action.payload;
     },
-    resetPassword: (state, action) => {
-      state.resetPasswordResponse = action.payload;
+    setNewPassword: (state, action) => {
+      state.isLoading = action.payload.isLoading;
+      state.response = action.payload.response;
     },
+
+    setlogout: (state, action) => {
+      state.isLoading = action.payload.isLoading;
+      state.response = action.payload.response;
+    },
+    // resetPassword: (state, action) => {
+    //   state.resetPasswordResponse = action.payload;
+    // },
     verify: (state, action) => {
       state.Verifyresponse = action.payload;
     },
@@ -144,28 +160,26 @@ export const authSlice = createSlice({
 
 export const loginAsync = async ({ dispatch, body, callbackFn }) => {
   try {
-    // dispatch(UserLogin({ isLoading: true }));
     const URL = `${BASEURL}${USERLOGIN}`;
-    const result = await postAPICall(URL, body).then((res) => {
-      callbackFn && callbackFn(res);
-      return res;
-    });
-    dispatch(login({ isLoading: false, response: result.data }));
+    const result = await postAPICall(URL, body);
+    
+    if (result?.data?.status === 200) {
+      dispatch(login({ isLoading: false, response: result.data }));
+      localStorage.setItem('authToken', result.data.data.token);
+      localStorage.setItem('userRole', result.data.data.role);
+      callbackFn(result);
+    }
   } catch (error) {
-    dispatch(login({ isLoading: false }));
+    console.error('Login error:', error);
   }
 };
 
-export const changePasswordAsync = async ({
-  dispatch,
-  body,
-  callbackFn,
-  token,
-}) => {
+
+
+export const changePasswordAsync = async ({dispatch, body, token, callbackFn}) => {
   try {
-    // dispatch(UserLogin({ isLoading: true }));
-    const URL = `${BASEURL}${CHANGE_PASSWORD}`;
-    const result = await postAPICall(URL, body, true, token).then((res) => {
+    const URL = `${BASEURL}${ChangeNewPassword}`;
+    const result = await putAPICall(URL, body, true, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });
@@ -174,6 +188,7 @@ export const changePasswordAsync = async ({
     dispatch(changePassword({ isLoading: false }));
   }
 };
+
 
 export const verifyCodeAsync = async ({
   dispatch,
@@ -193,24 +208,41 @@ export const verifyCodeAsync = async ({
     dispatch(verifyCode({ isLoading: false }));
   }
 };
-export const resetPasswordAsync = async ({
-  dispatch,
-  body,
-  callbackFn,
-  token,
-}) => {
+export const setNewPasswordAsync = async ({dispatch, body, callbackFn}) => {
   try {
-    // dispatch(UserLogin({ isLoading: true }));
-    const URL = `${BASEURL}${RESET_PASSWORD}`;
-    const result = await postAPICall(URL, body, true, token).then((res) => {
+    const URL = `${BASEURL}${SetNewPassword}`;
+    const result = await postAPICall(URL, body).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });
-    dispatch(resetPassword({ isLoading: false, response: result.data }));
+    dispatch(setNewPassword({ isLoading: false, response: result.data }));
   } catch (error) {
-    dispatch(resetPassword({ isLoading: false }));
+    dispatch(setNewPassword({ isLoading: false }));
   }
 };
+
+// export const resetPasswordAsync = async ({
+//   dispatch,
+//   body,
+//   callbackFn,
+//   token,
+// }) => {
+//   try {
+//     // dispatch(UserLogin({ isLoading: true }));
+//     const URL = `${BASEURL}${VERIFY_CODE}`;
+//     const result = await postAPICall(URL, body, true, token).then((res) => {
+//       callbackFn && callbackFn(res);
+//       return res;
+//     });
+//     dispatch(resetPassword({ isLoading: false, response: result.data }));
+//   } catch (error) {
+//     dispatch(resetPassword({ isLoading: false }));
+//   }
+// };
+
+
+
+
 
 export const verificationCodeAsync = async ({ dispatch, body, callbackFn }) => {
   try {
@@ -397,6 +429,7 @@ export const {
   login,
   reset,
   verify,
+  setNewPassword,
   user,
   getuser,
   adduser,
