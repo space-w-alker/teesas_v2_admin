@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'teesas_admin',
-      script: 'dist/main.js',
+      script: 'dist/index.html',
       instances: 1,
       exec_mode: 'fork',
       watch: false,
