@@ -175,6 +175,7 @@ import UniversityViewPdf from './components/QuestionBank/UniversityViewPdf';
 import AddBulkSummerCampParticipant from './components/SummerCamp/AddBulkSummerCampParticipant';
 import AddBulkJambParticipant from './components/JAMB and SSCE Tutorial/AddBulkJambParticipant';
 import AddBulk7HabitBootcamp from './components/7HabitsBootcamp/AddBulk7HabitBootcamp';
+import SignupPage from './pages/login/signup';
 
 
 
@@ -201,6 +202,12 @@ function App() {
         <Route path="/forgot-password" element={<ForgetPassword />} />
         
         {/* Protected Routes */}
+
+        // Change this route
+<Route
+  path="/signup"
+  element={<SignupPage />} 
+/>
         <Route
           path="/addusers"
           element={

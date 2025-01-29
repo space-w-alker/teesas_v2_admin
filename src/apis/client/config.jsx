@@ -1,6 +1,7 @@
 export const config = {
    BASEURL: "http://46.202.164.175:3000/v1/",
   USERLOGIN: "admin/auth/login",
+  SIGNUP: "admin/auth/signup",
   VERFICATION: "admin/auth/forgot-password",
   VERIFY_CODE: "admin/auth/reset-password",
   SetNewPassword: "admin/auth/set-new-password",

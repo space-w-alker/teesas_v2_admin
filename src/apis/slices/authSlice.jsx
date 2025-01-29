@@ -13,6 +13,7 @@ import { config } from "../client/config";
 const {
   BASEURL,
   USERLOGIN,
+  SIGNUP,
   VERFICATION,
   ChangeNewPassword,
   USER,
@@ -33,6 +34,9 @@ export const authSlice = createSlice({
   name: "auth",
   initialState: {
     loginResponse: {
+      isLoading: false,
+    },
+    signupResponse: {
       isLoading: false,
     },
     changePasswordResponse: {
@@ -82,6 +86,9 @@ export const authSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.loginResponse = action.payload;
+    },
+    signup: (state, action) => {
+      state.signupResponse = action.payload;
     },
     changePassword: (state, action) => {
       state.changePasswordResponse = action.payload;
@@ -173,7 +180,22 @@ export const loginAsync = async ({ dispatch, body, callbackFn }) => {
     console.error('Login error:', error);
   }
 };
-
+export const signupAsync = async ({ dispatch, body, callbackFn }) => {
+  try {
+    const URL = `${BASEURL}${SIGNUP}`;
+    const result = await postAPICall(URL, body);
+    
+    if (result?.data?.status === 200) {
+      dispatch(signup({ isLoading: false, response: result.data }));
+      callbackFn(result);
+    } else {
+      throw new Error(result?.data?.message || 'Signup failed');
+    }
+  } catch (error) {
+    console.error('Signup error:', error);
+    dispatch(signup({ isLoading: false, error: error.message }));
+  }
+};
 
 
 export const changePasswordAsync = async ({dispatch, body, token, callbackFn}) => {
@@ -427,6 +449,7 @@ export const deleteUserAsync = async ({
 
 export const {
   login,
+  signup,
   reset,
   verify,
   setNewPassword,
@@ -445,6 +468,7 @@ export const {
 
 } = authSlice.actions;
 export const loginResponse = (state) => state.auth.loginResponse;
+export const signupResponse = (state) => state.auth.signupResponse;
 export const Verifyresponse = (state) => state.auth.Verifyresponse;
 export const Userresponse = (state) => state.auth.Userresponse;
 export const getUserresponse = (state) => state.auth.GetUserresponse;

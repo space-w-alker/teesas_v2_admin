@@ -121,6 +121,16 @@ function Login() {
           >
             Sign In
           </button>
+
+          <button
+  type="button"
+  onClick={() => {
+    navigate('/signup');  // Adjust the path based on your router configuration
+  }}
+  className={`mt-[20px] bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg`}
+>
+  Sign up
+</button>
         </div>
       </div>
       <ToastContainer
