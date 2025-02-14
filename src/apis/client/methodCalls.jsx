@@ -16,9 +16,39 @@ export const getAPICall = async (
     method: 'GET',
     headers: {
       Authorization: 'Bearer ' + accessToken,
-      'Access-Control-Allow-Origin':'*',
-     mode: '*',
+      'Access-Control-Allow-Origin': '*',
+      mode: '*',
     },
+  });
+
+  const data = await response.json();
+  return { data: data };
+};
+
+export const getViaPostAPICall = async (
+  endPoint,
+  params,
+  access_token
+) => {
+  const url = new URL(endPoint);
+  // if (params) {
+  //   Object.keys(params).forEach((key) =>
+  //     url.searchParams.append(key, params[key])
+  //   );
+  // }
+  const accessToken = access_token
+    ? localStorage.getItem('authToken')
+    : access_token;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: "Bearer " + accessToken,
+      'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR',
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+      mode: '*',
+    },
+    body: JSON.stringify(params)
   });
 
   const data = await response.json();
@@ -106,7 +136,7 @@ export const postFileAPICall = async (
 export const putAPICall = async (url, body, auth = false, token = null) => {
   const headers = {
     'Content-Type': 'application/json',
-  'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR'
+    'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR'
 
   };
 
