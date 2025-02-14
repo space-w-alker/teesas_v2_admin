@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { postAPICall, getAPICall, getViaPostAPICall } from "../client/methodCalls";
+import { postAPICall, getAPICall, getViaPostAPICall, putAPICall, deleteAPICall } from "../client/methodCalls";
 import { toast } from "react-toastify";
 import { config } from "../client/config";
 
@@ -11,6 +11,8 @@ export const ebookSlice = createSlice({
     ebookDetails: {},
     addEbookResponse: {},
     ebookList: [],
+    deleteResponse: [],
+    updateResponse: [],
     ebookdownloadedList: [],
     markDownloadResponse: {},
   },
@@ -25,12 +27,18 @@ export const ebookSlice = createSlice({
       state.ebookList = action.payload;
     },
     listDownloadedEbooksSuccess: (state, action) => {
-      console.log(state.action);
       state.ebookdownloadedList = action.payload;
     },
     markDownloadSuccess: (state, action) => {
       state.markDownloadResponse = action.payload;
     },
+    deleteSuccess: (state, action) => {
+      state.deleteResponse = action.payload;
+    },
+    updateSuccess: (state, action) => {
+      state.updateResponse = action.payload;
+    },
+
     resetState: (state) => {
       state.ebookDetails = {};
       state.addEbookResponse = {};
@@ -39,6 +47,44 @@ export const ebookSlice = createSlice({
     },
   },
 });
+
+
+// **Delete Ebook**
+export const deleteEbookAsync = ({ dispatch, id, token, callbackFn }) => {
+  return async () => {
+    try {
+      const URL = `${BASEURL}ebook/delete/${id}`;
+      const response = await deleteAPICall(URL, {}, token);
+      if (response?.data?.status === 200) {
+        // callbackFn && callbackFn(response.data);
+        dispatch(getEbookDetailsSuccess(response.data));
+        toast.success('Ebook deleted successfully')
+      } else {
+        toast.error("Failed to delete eBook details.");
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+};
+
+// **Update Ebook**
+export const updateEbookAsync = ({ dispatch, id, token, callbackFn }) => {
+  return async () => {
+    try {
+      const URL = `${BASEURL}ebook/update/${id}`;
+      const response = await putAPICall(URL, {}, token);
+      if (response?.data?.status === 200) {
+        // callbackFn && callbackFn(response.data);
+        dispatch(getEbookDetailsSuccess(response.data));
+      } else {
+        toast.error("Failed to update eBook details.");
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+};
 
 // Thunk to fetch eBook details
 export const getEbookDetailsAsync = ({ dispatch, id, token, callbackFn }) => {
@@ -101,15 +147,15 @@ export const listDownloadedEbooksAsync = ({ dispatch, data, token, callbackFn })
       const URL = `${BASEURL}ebook/list`;
       // console.log('t', data);
       const response = await getViaPostAPICall(URL, data, token);
-      console.log('ebook download', response.data.status);
+      // console.log('ebook download', response.data);
       if (response?.data?.status == 200) {
-        // callbackFn && callbackFn(response.data);
+        callbackFn && callbackFn(response.data);
         dispatch(listDownloadedEbooksSuccess(response.data));
       } else {
         toast.error("Failed to fetch eBooks.");
       }
     } catch (error) {
-      toast.error("Error fetching eBooks.");
+      toast.error("Error fetching downloded eBooks.");
     }
   };
 };
@@ -132,7 +178,7 @@ export const markEbookDownloadAsync = ({ dispatch, ebookId, token, callbackFn })
   };
 };
 
-export const { getEbookDetailsSuccess, addEbookSuccess, listEbooksSuccess, listDownloadedEbooksSuccess, markDownloadSuccess, resetState } = ebookSlice.actions;
+export const { getEbookDetailsSuccess, addEbookSuccess, listEbooksSuccess, listDownloadedEbooksSuccess, markDownloadSuccess, resetState, updateSuccess, deleteSuccess } = ebookSlice.actions;
 
 export const ebookDetails = (state) => state.ebook.ebookDetails;
 export const addEbookResponse = (state) => state.ebook.addEbookResponse;

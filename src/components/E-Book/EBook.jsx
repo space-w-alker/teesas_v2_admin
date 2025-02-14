@@ -11,24 +11,26 @@ import Modal from '../common/Modal';
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { listEbooksAsync, listDownloadedEbooksAsync, addEbookAsync, ebookList } from "../../apis/slices/ebookSlice";
+import { listEbooksAsync, listDownloadedEbooksAsync, addEbookAsync, ebookList, deleteEbookAsync, updateEbookAsync } from "../../apis/slices/ebookSlice";
 
 
 
 const BookItem = ({ key, ebook }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   // console.log('bookitem', ebooks);
   const handleDelete = (ebookId) => {
+    // console.log(ebookId);
     dispatch(deleteEbookAsync({
-      dispatch, ebookId, token: token,
+      dispatch, id: ebookId,
     }));
+    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
   };
   return (
     <>
       <div className="space-y-4">
-        <div key={ebook.id} className="bg-gray-50 rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+        <div key={key} className="bg-gray-50 rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-white rounded-lg">
               <FaBook className="w-6 h-6 text-[#27AE60]" />
@@ -133,7 +135,7 @@ const EBook = ({ isOpen }) => {
 
   const dispatch = useDispatch();
   const ebooks = useSelector((state) => state.ebook.ebookList || []);
-  const bookOrder = useSelector((state) => state.ebook.ebookdownloadedList || []);
+  const bookOrder = useSelector((state) => state.ebook);
   const token = localStorage.getItem("authToken");
   const [sort, setSort] = useState({
     data: "",

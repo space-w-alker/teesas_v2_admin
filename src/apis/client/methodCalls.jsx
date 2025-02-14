@@ -16,7 +16,9 @@ export const getAPICall = async (
     method: 'GET',
     headers: {
       Authorization: 'Bearer ' + accessToken,
+      'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR',
       'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
       mode: '*',
     },
   });
@@ -61,20 +63,22 @@ export const deleteAPICall = async (
   access_token
 ) => {
   const url = new URL(endPoint);
-  if (params) {
-    Object.keys(params).forEach((key) =>
-      url.searchParams.append(key, params[key])
-    );
-  }
+  // if (params) {
+  //   Object.keys(params).forEach((key) =>
+  //     url.searchParams.append(key, params[key])
+  //   );
+  // }
   const accessToken = localStorage.getItem('authToken')
     ? localStorage.getItem('authToken')
     : access_token;
   const response = await fetch(url, {
     method: 'DELETE',
     headers: {
-      Authorization: 'Bearer ' + accessToken,
+      Authorization: "Bearer " + accessToken,
+      'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR',
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
+      mode: '*',
     },
   });
 

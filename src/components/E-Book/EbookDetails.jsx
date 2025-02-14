@@ -1,21 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
 import { FaBook } from 'react-icons/fa';
 import Screenshot from '../../assets/images/Screenshot.png';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { getEbookDetailsAsync } from '../../apis/slices/ebookSlice';
+
 
 const EbookDetails = ({ isOpen }) => {
   const location = useLocation();
-  const bookName = location.state?.name || 'Book Name';
+  const { id } = useParams();
+
+  const dispatch = useDispatch();
+  const ebooks = useSelector((state) => state.ebook.ebookDetails || []);
+
+  useEffect(() => {
+    dispatch(getEbookDetailsAsync({ dispatch, id }));
+  }, []);
+
+  console.log(ebooks.data.ebook.class.name)
+  const bookName = location.state?.name || ebooks.data.ebook.title;
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <Headers 
-        value1="Home" 
-        value2="E-Books" 
-        value3={bookName} 
+      <Headers
+        value1="Home"
+        value2="E-Books"
+        value3={bookName}
       />
 
       <div className="mt-6 bg-[#E9FDEE] rounded-xl p-6 mb-6">
@@ -53,19 +67,20 @@ const EbookDetails = ({ isOpen }) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-600">Category:</p>
-                <p className="font-medium">Mathematics</p>
+                <p className="font-medium">{ebooks.data.ebook.course.name}</p>
               </div>
               <div>
                 <p className="text-gray-600">Grade:</p>
-                <p className="font-medium">Grade 5</p>
+                <p className="font-medium">{ebooks.data.ebook.class.name}</p>
               </div>
               <div>
                 <p className="text-gray-600">Chapter:</p>
-                <p className="font-medium">Chapter 3</p>
+                <p className="font-medium">{ebooks.data.ebook.subject.name}</p>
               </div>
               <div>
                 <p className="text-gray-600">Status:</p>
-                <p className="font-medium text-[#27AE60]">Active</p>
+                <p className="font-medium text-[#27AE60]">{ebooks.data.ebook.status == "1" ? "Active" : "Inactive"}
+                </p>
               </div>
             </div>
           </div>
