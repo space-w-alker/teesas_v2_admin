@@ -11,7 +11,7 @@ import Custombutton from '../common/Custombutton'
 import Reactangle from '../../assets/images/Rectangle copy.png'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteStoreAsync, listStoresAsync } from '../../apis/slices/omotabSlice'
-
+import Headcomponent from '../common/Headcomponent';
 
 
 const StatCard = ({ title, count }) => (
@@ -41,6 +41,10 @@ const ProductList = ({ isOpen }) => {
     page: 1,
     limit: 10
   });
+  const handleSearchChange = (e) => {
+    setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
+  };
+
   useEffect(() => {
     dispatch(listStoresAsync({ dispatch, data: sort }));
   }, [sort]);
@@ -82,9 +86,9 @@ const ProductList = ({ isOpen }) => {
     price: `${item.currency_code}${" "}${item.price}`
   }));
 
-  const handleDelete = (id) => {
-    dispatch(deleteStoreAsync({ dispatch, id }));
-    dispatch(listStoresAsync({ dispatch, data: sort }));
+  const handleDelete = async (id) => {
+    await dispatch(deleteStoreAsync({ dispatch, id }));
+    await dispatch(listStoresAsync({ dispatch, data: sort }));
   };
 
   return (
@@ -196,21 +200,10 @@ const ProductList = ({ isOpen }) => {
 
       {/* Store Items */}
       <div className="bg-white rounded-xl p-6 mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold">Store Items</h3>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search items..."
-                className="pl-10 pr-4 py-2 border rounded-lg"
-              />
-              <img src={SearchButton} className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" alt="search" />
-            </div>
-            <img src={Vector} className="w-6 h-6 cursor-pointer" alt="filter" />
-            <img src={container} className="w-6 h-6 cursor-pointer" alt="menu" />
-          </div>
-        </div>
+
+        <Headcomponent value="Store items" showSearch={true} onSearchChange={handleSearchChange} />
+
+
         <div className="border-t pt-4 ">
           {storeItems.map(item => (
             <div
@@ -255,16 +248,11 @@ const ProductList = ({ isOpen }) => {
                 <Custombutton
                   value="Edit"
                   onClick={() =>
-                    navigate('/add-store-item', {
+                    navigate('/store/add', {
                       state: {
                         isEdit: true,
-                        itemData: {
-                          name: listDetailsStore.title,
-                          price: listDetailsStore.price,
-                          description: listDetailsStore.descriptions,
-                          image: listDetailsStore.image,
-                          feature: listDetailsStore.feature,
-                        },
+                        isOpen: true,
+                        itemId: item.id,
                       },
                     })
                   }

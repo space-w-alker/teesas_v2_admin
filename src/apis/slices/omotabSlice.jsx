@@ -18,6 +18,15 @@ export const omotabSlice = createSlice({
     getStoreDetailsSuccess: (state, action) => {
       state.storeDetails = action.payload;
     },
+    deleteStoreSuccess: (state, action) => {
+      state.storeDetails = action.payload;
+    },
+    addStoreSuccess: (state, action) => {
+      state.storeDetails = action.payload;
+    },
+    updateStoreSuccess: (state, action) => {
+      state.storeDetails = action.payload;
+    },
     resetState: (state) => {
       state.storeList = [];
       state.storeDetails = {};
@@ -50,7 +59,7 @@ export const getStoreDetailsAsync = ({ dispatch, id, token, callbackFn }) => {
     try {
       const URL = `${BASEURL}omotab/store-list?id=${id}`;
       const response = await getAPICall(URL, {}, token);
-      console.log('thunk', response);
+      console.log('thunkd', response);
       if (response?.data?.status === 200) {
         callbackFn && callbackFn(response.data);
         dispatch(getStoreDetailsSuccess(response.data));
@@ -69,7 +78,8 @@ export const createStoreAsync = ({ dispatch, data, token, callbackFn }) => {
     try {
       const URL = `${BASEURL}omotab/store`;
       const response = await postAPICall(URL, data, token);
-      if (response?.status === 201) {
+      console.log('response', response);
+      if (response?.data?.status === 200) {
         callbackFn && callbackFn(response);
         dispatch(addStoreSuccess(response));
         toast.success("Store created successfully.")
@@ -88,7 +98,7 @@ export const updateStoreAsync = ({ dispatch, id, data, token, callbackFn }) => {
     try {
       const URL = `${BASEURL}omotab/update/${id}`;
       const response = await putAPICall(URL, data, token);
-      if (response?.status === 200) {
+      if (response?.data?.status == 200) {
         callbackFn && callbackFn(response);
         dispatch(updateStoreSuccess(response));
         toast.success("Store updated successfully.");
@@ -107,8 +117,8 @@ export const deleteStoreAsync = ({ dispatch, id, token, callbackFn }) => {
     try {
       const URL = `${BASEURL}omotab/delete/${id}`;
       const response = await deleteAPICall(URL, token);
-      console.log(response);
-      if (response?.status === 200) {
+      console.log(response.data.status);
+      if (response?.data?.status == 200) {
         // callbackFn && callbackFn(response);
         dispatch(deleteStoreSuccess(id));
         toast.success("Store deleted successfully.");

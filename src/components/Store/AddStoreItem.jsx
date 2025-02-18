@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import success from '../../assets/images/success.png'
-import { useDispatch, useSelector } from 'react-redux';
-import { createStoreAsync } from "../../apis/slices/omotabSlice";
+import { useDispatch, useSelector } from 'react-redux'
+import { createStoreAsync, updateStoreAsync, getStoreDetailsAsync } from "../../apis/slices/omotabSlice"
+import { useLocation } from 'react-router-dom';
 
 
-const AddStoreItem = ({ isOpen }) => {
+const AddStoreItem = () => {
+  const location = useLocation();
+  const { isOpen, isEdit, itemId } = location.state || {}; // Handle undefined state
+
   const navigate = useNavigate()
   const dispatch = useDispatch();
-  const [showSuccess, setShowSuccess] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false);
+  const isEditing = !!itemId;
+  console.log(itemId)
   const [formData, setFormData] = useState({
     productName: '',
     plan: '',
@@ -23,7 +28,37 @@ const AddStoreItem = ({ isOpen }) => {
     color: '',
     image: '',
     currency_code: 'NGN'
-  })
+  });
+  const storeData = useSelector((state) => state.omotab.storeDetails?.data?.omotabStore || {});
+
+  /// Fetch data if editing
+  useEffect(() => {
+    if (isEditing) {
+      dispatch(getStoreDetailsAsync({ dispatch, id: itemId }))
+        .then(response => {
+          console.log('ormal', response)
+          console.log('storeData', storeData)
+          if (storeData) {
+            setFormData({
+              productName: storeData.title || '',
+              plan: storeData.plan || '', // Check if `plan` exists in the response
+              description: storeData.descriptions || '',
+              shortDescription: storeData.short_description || '',
+              itemDetail: storeData.item_detail || '',
+              productionDescription: storeData.production_description || '',
+              overview: storeData.overview || '',
+              shippingPolicy: storeData.shipping_policy || '',
+              price: storeData.price || '',
+              quantity: storeData.quantity || '',
+              color: storeData.color || '',
+              image: storeData.image || '',
+              currency_code: storeData.currency_code || 'NGN'
+            });
+          }
+        })
+        .catch(error => console.error("Error fetching store details:", error));
+    }
+  }, [itemId, dispatch, isEditing]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -52,14 +87,20 @@ const AddStoreItem = ({ isOpen }) => {
       color: formData.color,
       overview: formData.overview,
       shipping_policy: formData.shippingPolicy,
-      status: formData.status,
       image: formData.image,
       currency_code: formData.currency_code,
-      price: parseFloat(formData.price) || 0, // Ensure price is a number
+      price: parseFloat(formData.price) || 0,
+      status: formData.status || '1',
       extra: formData.extra,
       feature: typeof formData.feature === "string" ? formData.feature.split(",") : formData.feature || []
     };
-    dispatch(createStoreAsync({ dispatch, data: payload }));
+
+    if (isEditing) {
+      dispatch(updateStoreAsync({ dispatch, id: itemId, data: payload }));
+    } else {
+      dispatch(createStoreAsync({ data: payload }));
+    }
+
     setShowSuccess(true);
     navigate('/produuct-list');
   };
