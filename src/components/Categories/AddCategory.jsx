@@ -1,41 +1,75 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { createCategoryAsync , updateCategoryAsync } from '../../apis/slices/categoriesSlice';
 import Popup from 'reactjs-popup';
 import success from '../../assets/images/success.png';
+import Headers from '../common/Headers';
+
 
 const AddCategory = ({ isOpen }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const isEdit = location.state?.isEdit;
+  const categoryData = location.state?.categoryData;
   const [showSuccess, setShowSuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    categoryName: '',
-    description: '',
-    gradeLevel: '',
-    status: '',
-    subjects: '',
-    chapters: '',
-    lessons: ''
-  });
-
-  const [classes, setClasses] = useState([{ name: '' }]);
+    const [formData, setFormData] = useState({
+      categoryName: location.state?.categoryData?.name || '',
+      country: location.state?.categoryData?.country || '',
+      classes: location.state?.categoryData?.classes || [{ name: '' }]
+    });
+  
+ 
 
   const handleAddClass = () => {
-    setClasses([...classes, { name: '' }]);
+    setFormData(prev => ({
+      ...prev,
+      classes: [...prev.classes, { name: '' }]
+    }));
   };
 
   const handleDeleteClass = (index) => {
-    const newClasses = classes.filter((_, i) => i !== index);
-    setClasses(newClasses);
+    setFormData(prev => ({
+      ...prev,
+      classes: prev.classes.filter((_, i) => i !== index)
+    }));
   };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [e.target.name]: e.target.value
-    });
+    }));
   };
 
-  const handleAddCategory = () => {
-    setShowSuccess(true);
+  const handleClassChange = (index, value) => {
+    const updatedClasses = [...formData.classes];
+    updatedClasses[index].name = value;
+    setFormData(prev => ({
+      ...prev,
+      classes: updatedClasses
+    }));
+  };
+
+  const handleAddCategory = async () => {
+    const payload = {
+      name: formData.categoryName,
+      country_id: parseInt(formData.country),
+      classes: formData.classes.map(c => ({ name: c.name }))
+    };
+
+    if (isEdit) {
+      const result = await dispatch(updateCategoryAsync(categoryData.id, payload));
+      if (result) {
+        setShowSuccess(true);
+      }
+    } else {
+      const result = await dispatch(createCategoryAsync(payload));
+      if (result) {
+        setShowSuccess(true);
+      }
+    }
   };
 
   const handleClose = () => {
@@ -44,18 +78,10 @@ const AddCategory = ({ isOpen }) => {
   };
 
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-400">Home</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-400">Categories</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-medium">Add Category</span>
-        </div>
-      </div>
+    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
+      <Headers value1="Home" value2="Add Categories" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl p-8 shadow-sm">
             <h2 className="text-xl font-bold text-gray-900 mb-8">Add Category</h2>
@@ -65,6 +91,7 @@ const AddCategory = ({ isOpen }) => {
                 <input
                   type="text"
                   name="categoryName"
+                  value={formData.categoryName}
                   onChange={handleChange}
                   className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#27AE60]"
                   placeholder="Enter Category Name"
@@ -75,25 +102,25 @@ const AddCategory = ({ isOpen }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-3">Select Country</label>
                 <select
                   name="country"
+                  value={formData.country}
                   onChange={handleChange}
                   className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#27AE60]"
                 >
                   <option value="">Select Country</option>
-                  <option value="nigeria">Nigeria</option>
-                  <option value="ghana">Ghana</option>
+                  <option value="1">Nigeria</option>
+                  <option value="2">Ghana</option>
                 </select>
               </div>
-              {classes.map((_, index) => (
+              {formData.classes.map((classItem, index) => (
                 index % 2 === 0 && (
                   <div key={index} className="col-span-2 grid grid-cols-2 gap-6">
-                    {/* First class in row */}
                     <div className="col-span-1">
                       <div className="flex flex-col gap-2">
                         <label className="block text-sm font-medium text-gray-700 mb-3">Class Name</label>
                         <input
                           type="text"
-                          name={`className-${index}`}
-                          onChange={handleChange}
+                          value={classItem.name}
+                          onChange={(e) => handleClassChange(index, e.target.value)}
                           className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#27AE60]"
                           placeholder="Enter Class Name"
                         />
@@ -106,15 +133,14 @@ const AddCategory = ({ isOpen }) => {
                       </div>
                     </div>
 
-                    {/* Second class in row */}
-                    {index + 1 < classes.length && (
+                    {index + 1 < formData.classes.length && (
                       <div className="col-span-1">
                         <div className="flex flex-col gap-2">
                           <label className="block text-sm font-medium text-gray-700 mb-3">Class Name</label>
                           <input
                             type="text"
-                            name={`className-${index + 1}`}
-                            onChange={handleChange}
+                            value={formData.classes[index + 1].name}
+                            onChange={(e) => handleClassChange(index + 1, e.target.value)}
                             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#27AE60]"
                             placeholder="Enter Class Name"
                           />
@@ -157,9 +183,9 @@ const AddCategory = ({ isOpen }) => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Total Classes:</span>
-                  <span className="font-medium">{classes.length}</span>
+                  <span className="font-medium">{formData.classes.length}</span>
                 </div>
-                {classes.map((classItem, index) => (
+                {formData.classes.map((classItem, index) => (
                   <div key={index} className="flex justify-between">
                     <span className="text-gray-600">Class {index + 1}:</span>
                     <span className="font-medium">{classItem.name || '-'}</span>
@@ -169,7 +195,7 @@ const AddCategory = ({ isOpen }) => {
             </div>
             <button
               onClick={handleAddCategory}
-              className="w-full mt-8 px-6 py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
+              className="w-full mt-8 px-6 py-3 bg-[#27AE60] text-white rounded-lg"
             >
               Add Category
             </button>
@@ -185,7 +211,7 @@ const AddCategory = ({ isOpen }) => {
           <h2 className="text-xl font-bold mb-6">Category Added Successfully</h2>
           <button
             onClick={handleClose}
-            className="px-8 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
+            className="px-8 py-2 bg-[#27AE60] text-white rounded-lg"
           >
             Close
           </button>

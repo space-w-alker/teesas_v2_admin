@@ -4,6 +4,7 @@ import feedBackSlice from "./apis/slices/feedBackSlice";
 import adminSlice from "./apis/slices/adminSlice";
 import teacherSlice from "./apis/slices/teacherSlice";
 import liveClassSlice from "./apis/slices/liveClassSlice";
+import categoriesReducer from "./apis/slices/categoriesSlice";
 
 export default configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
     admin:adminSlice,
     teacher:teacherSlice,
     liveClass:liveClassSlice,
+    categories: categoriesReducer
   },
 });

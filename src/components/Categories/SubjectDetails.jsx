@@ -1,57 +1,70 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { FiEdit, FiTrash2, FiMoreVertical} from 'react-icons/fi';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import book from '../../assets/images/book.png';
+import Headers from '../common/Headers';
 import bookopen from '../../assets/images/bookopen.png';
-import caution from '../../assets/images/caution.png';
-import success from '../../assets/images/success.png';
-import { FiMoreVertical } from 'react-icons/fi';
-import { useCallback } from 'react';
-
+import { getSubjectDetailsAsync, deleteSubjectAsync } from '../../apis/slices/categoriesSlice';
+import Modal from '../common/Modal';
+import SuccessModal from '../common/SuccessModal';
+import StatCard from '../common/StatCard';
+import Custombutton from '../common/Custombutton';
 
 const SubjectDetails = ({ isOpen }) => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [pin, setPin] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
-
-  const handleAddSubject = useCallback(() => {
-    setIsModalOpen(true);
-  }, []);
-
-  const StatCard = ({ title, count }) => (
-    <div className="bg-white rounded-xl p-6 flex items-center gap-4 shadow-sm">
-      <div className="p-3 bg-[#E9FDEE] rounded-lg">
-        <img src={book} alt="icon" className="w-8 h-8" />
-      </div>
-      <div>
-        <p className="text-gray-600 text-sm">{title}</p>
-        <p className="font-bold text-2xl mt-1">{count}</p>
-      </div>
-    </div>
-  );
-const SubjectCard = ({ name, chapters, lessons }) => {
-  const [showDropdown, setShowDropdown] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const { data, isLoading } = useSelector(state => state.categories.subjects);
 
-  const handleDelete = () => {
-    setShowDropdown(false);
-    setShowDeleteModal(true);
-  };
+  useEffect(() => {
+    dispatch(getSubjectDetailsAsync(id, currentPage));
+  }, [dispatch, id, currentPage]);
+  
 
-  return (
-    <>
+  const SubjectCard = ({ subject }) => {
+    const dispatch = useDispatch();
+    const { id } = useParams();
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    const handleDelete = async () => {
+      setShowDropdown(false);
+      const success = await dispatch(deleteSubjectAsync(id, subject.id));
+      if (success) {
+        dispatch(getSubjectDetailsAsync(id));
+      }
+    };
+
+    return (
       <div className="bg-[#F9F9F9] rounded-xl p-6 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-gray-50 rounded-lg">
-              <img src={bookopen} alt="subject" className="w-8 h-8" />
+              {subject.media_path ? (
+                <img 
+                  src={book}
+                  alt={subject.name}
+                  className="w-8 h-8 object-cover rounded-lg"
+                />
+              ) : (
+                <img src={bookopen} alt="subject" className="w-8 h-8" />
+              )}
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-900">{name}</h3>
+              <h3 className="text-lg font-medium text-gray-900">{subject.name}</h3>
+              <button className={`mt-2 px-4 py-1 rounded-full text-sm font-medium ${
+                subject.active ? 'bg-[#27AE60] text-white' : 'bg-red-500 text-white'
+              }`}>
+                {subject.active ? 'Published' : 'Inactive'}
+              </button>
             </div>
           </div>
           <div className="relative">
@@ -63,18 +76,15 @@ const SubjectCard = ({ name, chapters, lessons }) => {
               <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg py-2 z-10">
                 <button
                   className="w-full px-4 py-2 text-left hover:bg-gray-50"
-                  onClick={() => navigate(`/subjects/${name}`)}
+                  onClick={() => navigate(`/subjects/${subject.id}/chapters`)}
                 >
-                  View Subject
+                  View Chapters
                 </button>
                 <button
                   className="w-full px-4 py-2 text-left hover:bg-gray-50"
-                  onClick={() => {
-                    setShowDropdown(false);
-                    setShowSuccessModal(true);
-                  }}
+                  onClick={() => navigate(`/add-subject/${id}/${subject.id}`)}
                 >
-                  Edit
+                  Edit Subject
                 </button>
                 <button
                   className="w-full px-4 py-2 text-left text-red-500 hover:bg-gray-50"
@@ -90,68 +100,38 @@ const SubjectCard = ({ name, chapters, lessons }) => {
         <div className="flex justify-between mt-6">
           <div>
             <p className="text-sm text-gray-500">Chapters</p>
-            <p className="font-medium">{chapters}</p>
+            <p className="font-medium">{subject.totalChapters}</p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Lessons</p>
-            <p className="font-medium">{lessons}</p>
+            <p className="font-medium">{subject.totalLessons}</p>
           </div>
         </div>
       </div>
+    );
+  };
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 text-center">
-            <img src={caution} alt="caution" className="w-24 h-24 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold mb-2 text-red-500">CAUTION!</h2>
-            <p className="text-xl text-gray-600 mb-6">You're about to delete this subject</p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium"
-              >
-                No
-              </button>
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setShowSuccessModal(true);
-                }}
-                className="px-6 py-2 bg-red-500 text-white rounded-lg font-medium"
-              >
-                Yes
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  if (isLoading) return <div>Loading...</div>;
 
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 text-center">
-            <img src={success} alt="success" className="w-24 h-24 mx-auto mb-6" />
-            <h3 className="text-2xl font-bold mb-4">Success!</h3>
-            <p className="text-gray-600 mb-8">Subject deleted successfully</p>
-            <button 
-              onClick={() => setShowSuccessModal(false)}
-              className="w-full py-3 bg-[#27AE60] text-white rounded-lg hover:bg-[#219652]"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
-};
+  const handleNextPage = () => {
+    if (currentPage < data?.pagination?.totalPages) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <div className="mb-8">
-        <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
-          Home / Categories / Primary 1 /<span className="text-black font-medium"> Subjects</span>
-        </div>
+        <Headers 
+          value1="Home" 
+          value2={"Subject Details"} 
+        />
       </div>
 
       <div className="bg-white rounded-xl p-6 mb-8">
@@ -160,135 +140,99 @@ const SubjectCard = ({ name, chapters, lessons }) => {
             <img src={bookopen} alt="category" className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Primary 1</h1>
-            <button className="mt-2 px-6 py-1 rounded-full text-sm font-medium bg-[#27AE60] text-white">
-              Published
+            <h1 className="text-xl font-bold">{data?.name}</h1>
+            <button className={`mt-2 px-6 py-1 rounded-full text-sm font-medium ${
+              data?.active ? 'bg-[#27AE60] text-white' : 'bg-red-500 text-white'
+            }`}>
+              {data?.active ? 'Published' : 'Inactive'}
             </button>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard title="Total Subjects" count="6" />
-        <StatCard title="Total Chapters" count="24" />
-        <StatCard title="Total Lessons" count="120" />
+        <StatCard title="Total Subjects" count={data?.totalSubjects} />
+        <StatCard title="Total Chapters" count={data?.totalChapters} />
+        <StatCard title="Total Lessons" count={data?.subjects?.reduce((acc, subject) => acc + subject.totalLessons, 0)} />
       </div>
 
       <div className="flex justify-end mb-6">
         <button 
-          onClick={handleAddSubject}
+          onClick={() => setShowModal(true)}
           className="px-6 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
         >
           Add Subject
         </button>
       </div>
+
       <div className="bg-white rounded-xl p-6">
+        <h2 className="text-xl font-bold mb-6">Subjects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SubjectCard name="Mathematics" chapters="8" lessons="32" />
-          <SubjectCard name="English" chapters="6" lessons="24" />
-          <SubjectCard name="Science" chapters="10" lessons="40" />
-          <SubjectCard name="Social Studies" chapters="7" lessons="28" />
-          <SubjectCard name="Arts" chapters="5" lessons="20" />
-          <SubjectCard name="Physical Education" chapters="4" lessons="16" />
+          {data?.subjects?.map((subject) => (
+            <SubjectCard key={subject.id} subject={subject} />
+          ))}
+        </div>
+        <div className="flex justify-between items-center mt-6">
+          <Custombutton
+            value="Previous"
+            hidden={currentPage === 1}
+            icon={<FaArrowLeft />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            
+            onClick={handlePrevPage}
+          />
+          <span className="text-gray-600">
+            Page {currentPage} of {data?.pagination?.totalPages}
+          </span>
+          <Custombutton
+            value="Next"
+            hidden={currentPage === data?.pagination?.totalPages}
+            icon={<FaArrowRight />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            
+            onClick={handleNextPage}
+          />
         </div>
       </div>
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 text-center">
-            <img src={caution} alt="caution" className="w-24 h-24 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold mb-2 text-red-500">CAUTION!</h2>
-            <p className="text-xl text-gray-600 mb-6">You're about to delete this subject</p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium"
-              >
-                No
-              </button>
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setShowSuccessModal(true);
-                }}
-                className="px-6 py-2 bg-red-500 text-white rounded-lg font-medium"
-              >
-                Yes
-              </button>
-            </div>
-          </div>
-        </div>
+
+      {showModal && (
+        <Modal
+          closeModal={() => setShowModal(false)}
+          label="Add Subject"
+          value1="Add Single Subject"
+          value2="Upload Bulk Subjects"
+          addSingleButton={() => navigate(`/add-subject/${id}`)}
+          addMutipleButton={() => navigate(`/bulk-upload-subjects/${id}`)}
+        />
       )}
 
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 text-center">
-            <img src={success} alt="success" className="w-24 h-24 mx-auto mb-6" />
-            <h3 className="text-2xl font-bold mb-4">Success!</h3>
-            <p className="text-gray-600 mb-8">Subject deleted successfully</p>
-            <button 
-              onClick={() => setShowSuccessModal(false)}
-              className="w-full py-3 bg-[#27AE60] text-white rounded-lg hover:bg-[#219652]"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <SuccessModal 
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        type="caution"
+        title="Delete Subject"
+        message="Are you sure you want to delete this subject?"
+        buttonText="Delete"
+        onConfirm={() => {
+          setShowDeleteModal(false);
+          setShowSuccessModal(true);
+        }}
+      />
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-[400px] p-6">
-            <h2 className="text-xl font-bold mb-4">Add Subject</h2>
-            <p className="text-gray-600 mb-4">Select one of the options below</p>
-            
-            <div className="bg-[#E9FDEE] rounded-xl p-4 space-y-4">
-              <div className="flex items-center gap-4">
-                <div
-                  onClick={() => setSelectedOption('unit')}
-                  className={`w-6 h-6 rounded-full cursor-pointer border-2 ${
-                    selectedOption === 'unit' ? 'bg-[#27AE60] border-[#27AE60]' : 'border-gray-300'
-                  }`}
-                />
-                <span className="font-medium">Add Single Subject</span>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div
-                  onClick={() => setSelectedOption('bulk')}
-                  className={`w-6 h-6 rounded-full cursor-pointer border-2 ${
-                    selectedOption === 'bulk' ? 'bg-[#27AE60] border-[#27AE60]' : 'border-gray-300'
-                  }`}
-                />
-                <span className="font-medium">Upload Bulk Subjects</span>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 mt-6">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  if (selectedOption === 'unit') {
-                    navigate('/add-subject');
-                  }
-                  setShowModal(false);
-                }}
-                disabled={!selectedOption}
-                className="px-6 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors disabled:opacity-50"
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SuccessModal 
+        isOpen={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false);
+          dispatch(getSubjectDetailsAsync(id));
+        }}
+        type="success"
+        title="Success"
+        message="Subject deleted successfully"
+      />
     </div>
   );
 };
+
 export default SubjectDetails;

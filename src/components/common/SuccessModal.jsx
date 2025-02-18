@@ -5,12 +5,20 @@ import caution from '../../assets/images/caution.png';
 const SuccessModal = ({ 
   isOpen, 
   onClose, 
-  type = 'success', // success or caution
+  type = 'success', 
   title, 
   message,
-  buttonText = 'Close'
+  buttonText = 'Close',
+  onConfirm 
 }) => {
   if (!isOpen) return null;
+  const handleClick = () => {
+    if (type === 'caution' && onConfirm) {
+      onConfirm();
+    } else {
+      onClose();
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -29,7 +37,7 @@ const SuccessModal = ({
         </h2>
         <p className="text-gray-600 mb-6">{message}</p>
         <button
-          onClick={onClose}
+          onClick={handleClick}
           className={`px-8 py-2 text-white rounded-lg font-medium ${
             type === 'success' ? 'bg-[#27AE60] hover:bg-[#219652]' : 'bg-[#F2994A] hover:bg-[#E08B3E]'
           } transition-colors`}

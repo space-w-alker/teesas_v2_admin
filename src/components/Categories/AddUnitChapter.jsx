@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { FiTrash2, FiPlus } from 'react-icons/fi';
-import book from '../../assets/images/book.png';
+import Headers from '../common/Headers';
+import { createChapterAsync } from '../../apis/slices/categoriesSlice';
 
 const AddUnitChapter = ({ isOpen }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [chapterName, setChapterName] = useState('');
-  const [topics, setTopics] = useState(['']);
+  const [topics, setTopics] = useState([{ name: '', active: true }]);
 
   const addTopic = () => {
-    setTopics([...topics, '']);
+    setTopics([...topics, { name: '', active: true }]);
   };
 
   const removeTopic = (index) => {
@@ -17,20 +23,33 @@ const AddUnitChapter = ({ isOpen }) => {
 
   const updateTopic = (index, value) => {
     const newTopics = [...topics];
-    newTopics[index] = value;
+    newTopics[index] = { ...newTopics[index], name: value };
     setTopics(newTopics);
+  };
+
+  const handleSubmit = async () => {
+    const chapterData = {
+      name: chapterName,
+      active: true,
+      topics: topics.filter(topic => topic.name.trim() !== '')
+    };
+
+    const success = await dispatch(createChapterAsync(id, chapterData));
+    if (success) {
+      navigate(`/subjects/${id}/chapters`);
+    }
   };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <div className="mb-8">
-        <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
-          Home / Categories / Primary 1 / Mathematics / Chapters / <span className="text-black font-medium">Add Chapter</span>
-        </div>
+        <Headers 
+          value1="Chapters" 
+          value2="Add Chapter" 
+        />
       </div>
 
       <div className="flex gap-6">
-        {/* Left Section */}
         <div className="flex-[2] bg-white rounded-xl p-6">
           <h2 className="text-2xl font-bold mb-6">Add Chapter</h2>
           
@@ -47,22 +66,24 @@ const AddUnitChapter = ({ isOpen }) => {
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Add Topics</label>
+              <label className="block text-gray-700 font-medium mb-2">Topics</label>
               {topics.map((topic, index) => (
                 <div key={index} className="flex gap-4 mb-4">
                   <input
                     type="text"
-                    value={topic}
+                    value={topic.name}
                     onChange={(e) => updateTopic(index, e.target.value)}
                     className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#27AE60]"
                     placeholder="Enter topic name"
                   />
-                  <button 
-                    onClick={() => removeTopic(index)}
-                    className="text-red-500 hover:text-red-600"
-                  >
-                    <FiTrash2 size={20} />
-                  </button>
+                  {topics.length > 1 && (
+                    <button 
+                      onClick={() => removeTopic(index)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <FiTrash2 size={20} />
+                    </button>
+                  )}
                 </div>
               ))}
               <button 
@@ -73,14 +94,9 @@ const AddUnitChapter = ({ isOpen }) => {
                 Add Topic
               </button>
             </div>
-
-            <button className="w-full py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652]">
-              Add Lesson
-            </button>
           </div>
         </div>
 
-        {/* Right Section */}
         <div className="flex-1 bg-white rounded-xl p-6 h-fit">
           <h3 className="text-xl font-bold mb-6">Summary</h3>
           
@@ -92,10 +108,14 @@ const AddUnitChapter = ({ isOpen }) => {
 
             <div>
               <p className="text-gray-600 mb-1">Topics</p>
-              <p className="font-medium">{topics.filter(t => t).length} Topics</p>
+              <p className="font-medium">{topics.filter(t => t.name.trim()).length} Topics</p>
             </div>
 
-            <button className="w-full py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] mt-6">
+            <button 
+              onClick={handleSubmit}
+              disabled={!chapterName || topics.every(t => !t.name.trim())}
+              className="w-full py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Create Chapter
             </button>
           </div>
