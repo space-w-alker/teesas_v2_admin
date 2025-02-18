@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import success from '../../assets/images/success.png'
+import { useDispatch, useSelector } from 'react-redux';
+import { createStoreAsync } from "../../apis/slices/omotabSlice";
+
 
 const AddStoreItem = ({ isOpen }) => {
   const navigate = useNavigate()
+  const dispatch = useDispatch();
   const [showSuccess, setShowSuccess] = useState(false)
   const [formData, setFormData] = useState({
     productName: '',
@@ -17,7 +21,8 @@ const AddStoreItem = ({ isOpen }) => {
     price: '',
     quantity: '',
     color: '',
-    image: ''
+    image: '',
+    currency_code: 'NGN'
   })
 
   const handleInputChange = (e) => {
@@ -37,8 +42,28 @@ const AddStoreItem = ({ isOpen }) => {
   }
 
   const handleSubmit = () => {
-    setShowSuccess(true)
-  }
+    const payload = {
+      title: formData.productName,
+      descriptions: formData.description,
+      short_description: formData.shortDescription,
+      production_description: formData.productionDescription,
+      quantity: formData.quantity,
+      item_detail: formData.itemDetail,
+      color: formData.color,
+      overview: formData.overview,
+      shipping_policy: formData.shippingPolicy,
+      status: formData.status,
+      image: formData.image,
+      currency_code: formData.currency_code,
+      price: parseFloat(formData.price) || 0, // Ensure price is a number
+      extra: formData.extra,
+      feature: typeof formData.feature === "string" ? formData.feature.split(",") : formData.feature || []
+    };
+    dispatch(createStoreAsync({ dispatch, data: payload }));
+    setShowSuccess(true);
+    navigate('/produuct-list');
+  };
+
 
   return (
     <>
@@ -207,7 +232,7 @@ const AddStoreItem = ({ isOpen }) => {
                   </div>
                 </div>
 
-                
+
               </div>
             </div>
           </div>
@@ -264,7 +289,7 @@ const AddStoreItem = ({ isOpen }) => {
               </div>
 
               <div className="pt-6 mt-6">
-                <button 
+                <button
                   onClick={handleSubmit}
                   className="w-full py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
                 >

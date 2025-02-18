@@ -1583,7 +1583,7 @@ function App() {
           }
         />
 
-        <Route path="/store/item-details"
+        <Route path="/store/item-details/:id"
           element={
             <ProtectedRoute>
               <StoreItemDetails isOpen={isSidebarOpen} />
