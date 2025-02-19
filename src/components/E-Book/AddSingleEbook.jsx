@@ -5,7 +5,7 @@ import Headers from '../common/Headers';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
 import { addEbookAsync } from '../../apis/slices/ebookSlice';
-import { addEbookAsync } from '../../apis/slices/ebookSlice';
+// import { addEbookAsync } from '../../apis/slices/ebookSlice';
 import { listCategoriesAsync, getCategoryDetailsAsync, getClassDetailsAsync, listChaptersAsync, listLessonsAsync } from '../../apis/slices/categorySlice';
 import { useDispatch } from 'react-redux';
 
