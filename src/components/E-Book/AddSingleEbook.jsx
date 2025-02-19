@@ -25,9 +25,19 @@ const AddSingleEbook = ({ isOpen }) => {
   });
 
   const [dragActive, setDragActive] = useState(false);
+  const [pdfFile, setPdfFile] = useState(null);
+  const [iconFile, setIconFile] = useState(null);
 
-  const handlePdfUpload = (e) => {
-    setFormData({ ...formData, pdf: e.target.files[0] });
+  const handlePdfChange = (e) => {
+    setPdfFile(e.target.files[0]);
+  };
+
+  const handleIconChange = (e) => {
+    setIconFile(e.target.files[0]);
+  };
+
+  const handleFileUpload = (e, field) => {
+    setFormData({ ...formData, [field]: e.target.files[0] });
   };
 
   const handleDrag = (e) => {
@@ -56,9 +66,9 @@ const AddSingleEbook = ({ isOpen }) => {
       title: formData.bookTitle || '',
       description: formData.description || '',
       short_des: formData.description ? formData.description.substring(0, 100) : '',
-      icon: '', // Default empty if unavailable
-      source: formData.pdf ? formData.pdf.name : '',
-      sample_source: '', // Default empty if no sample
+      // icon: '', // Default empty if unavailable
+      // source: formData.pdf ? formData.pdf.name : '',
+      // sample_source: '', // Default empty if no sample
       price: formData.price || '',
       // discount: formData.discount || '',
       // seo: formData.bookTitle
@@ -73,19 +83,28 @@ const AddSingleEbook = ({ isOpen }) => {
       // status: formData.status || '',
       // is_paid: formData.is_paid || ''
     };
+    if (!pdfFile || !iconFile) {
+      alert("Please select both files before uploading.");
+      return;
+    }
+
 
     // Creating FormData for sending files
     const formDataToSend = new FormData();
+
+    // Append all other request data
     Object.keys(requestData).forEach((key) => {
       formDataToSend.append(key, requestData[key]);
     });
 
-    if (formData.pdf) {
-      formDataToSend.append('pdf', formData.pdf);
-    }
+    // Append multiple files under the same key
+    formDataToSend.append("files[]", pdfFile);
+    formDataToSend.append("files[]", iconFile);
+
+    console.log([...formDataToSend]); // Debug output to check the form data
 
     // Dispatch Redux action to create an ebook
-    dispatch(addEbookAsync({ dispatch, data: requestData }));
+    dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
   };
 
 
@@ -223,7 +242,7 @@ const AddSingleEbook = ({ isOpen }) => {
                         type="file"
                         className="hidden"
                         accept=".jpg"
-                        onChange={handlePdfUpload}
+                        onChange={(e) => handleIconChange(e)}
                         required
                       />
                     </label>
@@ -233,7 +252,7 @@ const AddSingleEbook = ({ isOpen }) => {
                   {formData.icon && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.pdf.name}</p>
+                      <p className="text-gray-600">{formData.icon.name}</p>
                     </div>
                   )}
                 </div>
@@ -259,7 +278,7 @@ const AddSingleEbook = ({ isOpen }) => {
                         type="file"
                         className="hidden"
                         accept=".pdf"
-                        onChange={handlePdfUpload}
+                        onChange={(e) => handlePdfChange(e)}
                         required
                       />
                     </label>
@@ -302,6 +321,10 @@ const AddSingleEbook = ({ isOpen }) => {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Book Price:</span>
                   <span className="font-medium">{formData.price || '-'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Icon:</span>
+                  <span className="font-medium">{formData.icon?.name || '-'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">PDF:</span>

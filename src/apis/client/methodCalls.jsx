@@ -86,21 +86,40 @@ export const deleteAPICall = async (
   return { data: data };
 };
 
-
-export const postAPICall = async (url, params) => {
+export const postAPICall = async (url, params, isFormData = false) => {
   const myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
   myHeaders.append('api-key', 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR');
 
-  const requestOptions = {
+  let requestOptions = {
     method: 'POST',
     headers: myHeaders,
-    body: JSON.stringify(params)
+    body: null,
   };
 
-  console.log('Request:', { url, body: params });
+  if (isFormData) {
+    // Create FormData object
+    const formDataToSend = new FormData();
+    Object.keys(params).forEach((key) => {
+      if (Array.isArray(params[key])) {
+        // If the value is an array (for multiple files), append each item
+        params[key].forEach((file) => formDataToSend.append(`${key}[]`, file));
+      } else {
+        formDataToSend.append(key, params[key]);
+      }
+    });
+
+    requestOptions.body = formDataToSend;
+  } else {
+    // Handle JSON request
+    myHeaders.append('Content-Type', 'application/json');
+    requestOptions.body = JSON.stringify(params);
+  }
+
+  console.log('Request:', { url, body: requestOptions.body });
+
   const response = await fetch(url, requestOptions);
   const data = await response.json();
+
   console.log('Response:', data);
   return { data };
 };
