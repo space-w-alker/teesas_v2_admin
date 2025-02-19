@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCategoryDetailsAsync, selectCategoryDetails } from '../../apis/slices/categoriesSlice';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import SuccessModal from '../common/SuccessModal';
-import book from '../../assets/images/book.png';
 import bookopen from '../../assets/images/bookopen.png';
+import Custombutton from '../common/Custombutton';
 import StatCard from '../common/StatCard';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
-const ClassItem = ({ name, onDelete }) => {
+
+const ClassItem = ({ name, id, onDelete }) => {
   const navigate = useNavigate();
 
-  const handleEdit = () => {
-    navigate('/create-new-subject', { 
-      state: { 
-        mode: 'edit',
-        subjectData: {
-          subjectTitle: name,
-          university: 'unilag'
-        }
+  const handleAddSubject = () => {
+    navigate('/create-new-subject', {
+      state: {
+        classId: id,
+        mode: 'create'
       }
     });
   };
@@ -31,52 +32,47 @@ const ClassItem = ({ name, onDelete }) => {
         <span className="font-medium text-gray-800">{name}</span>
       </div>
       <div className="flex gap-4 items-center">
-        <button 
-          onClick={() => navigate('/add-subject-utme')}
+        <button
+          onClick={() => navigate('/add-subject-utme', {
+            state: {
+              classId: id,
+              className: name
+            }
+          })}
+          className="text-[#27AE60] hover:text-[#219652] font-medium"
+        >
+          View Subjects
+        </button>
+
+        <button
+          onClick={handleAddSubject}
           className="text-[#27AE60] hover:text-[#219652] font-medium"
         >
           Add Subject
         </button>
-        <button 
-          onClick={handleEdit}
-          className="text-[#27AE60] hover:text-[#219652]"
-        >
-          Edit
-        </button>
-        <button 
-          onClick={() => onDelete(name)}
-          className="text-red-500 hover:text-red-600"
-        >
-          Delete
-        </button>
+
+
       </div>
     </div>
   );
 };
 
 const UTMELesson = ({ isOpen }) => {
-  const location = useLocation();
+  const dispatch = useDispatch();
+  const { data: categoryData, isLoading } = useSelector(selectCategoryDetails);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
-  
-  const classes = [
-    'Post UTME',
-    'SSCE',
-    'UTME',
-  ];
 
-  const handleDelete = (className) => {
-    setSelectedClass(className);
-    setShowDeleteModal(true);
-  };
+  useEffect(() => {
+    dispatch(getCategoryDetailsAsync(163));
+  }, [dispatch]);
 
-  const handleConfirmDelete = () => {
-    setShowDeleteModal(false);
-    setSelectedClass(null);
-  };
+  if (isLoading || !categoryData?.classes) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
 
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
+    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <Headers value1="Home" value2="Classes" />
 
       <div className="p-6 border-b border-gray-100">
@@ -85,11 +81,11 @@ const UTMELesson = ({ isOpen }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-        <StatCard title="Total Classes" count="6" />
-        <StatCard title="Active Classes" count="4" />
-        <StatCard title="Students" count="120" />
-        <StatCard title="Teachers" count="8" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatCard title="Total Subject" count={categoryData.totalSubjects} />
+        <StatCard title="Total Chapter" count={categoryData.totalChapters} />
+        <StatCard title="Total Topics" count={categoryData.totalLessons} />
+
       </div>
 
       <div className="bg-white rounded-xl shadow-sm">
@@ -98,15 +94,46 @@ const UTMELesson = ({ isOpen }) => {
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {classes.map((className, index) => (
-              <ClassItem 
-                key={index} 
-                name={className}
-                onDelete={handleDelete} 
+            {categoryData.classes.map((classItem) => (
+              <ClassItem
+                key={classItem.id}
+                id={classItem.id}
+                name={classItem.name}
+                onDelete={(name) => {
+                  setSelectedClass(name);
+                  setShowDeleteModal(true);
+                }}
               />
             ))}
           </div>
+          <div className="flex justify-between items-center mt-6">
+            <Custombutton
+              value="Previous"
+              hidden="hidden"
+              icon={<FaArrowLeft />}
+              backgroundcolor="bg-[#F2F2F2]"
+              textcolor="text-[#000000]"
+              imagePosition="left"
+            />
+            <Custombutton
+              value="View All"
+              hidden="hidden"
+              backgroundcolor="bg-[#F2F2F2]"
+              textcolor="text-[#000000]"
+            />
+            <Custombutton
+              value="Next"
+              hidden="hidden"
+              icon={<FaArrowRight />}
+              backgroundcolor="bg-[#F2F2F2]"
+              textcolor="text-[#000000]"
+              imagePosition="right"
+            />
+          </div>
         </div>
+
+
+
       </div>
 
       <SuccessModal
@@ -120,5 +147,4 @@ const UTMELesson = ({ isOpen }) => {
     </div>
   );
 };
-
 export default UTMELesson;

@@ -5,10 +5,11 @@ import { FiEdit, FiTrash2, FiMoreVertical } from 'react-icons/fi';
 import Headers from '../common/Headers';
 import bookopen from '../../assets/images/bookopen.png';
 import { getChapterDetailsAsync } from '../../apis/slices/categoriesSlice';
-
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import SuccessModal from '../common/SuccessModal';
 import StatCard from '../common/StatCard';
 import Headcomponent from '../common/Headcomponent';
+import Custombutton from '../common/Custombutton';
 
 const SubjectChapterDetails = ({ isOpen }) => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const SubjectChapterDetails = ({ isOpen }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState(null);
-  
+
   const { data, isLoading } = useSelector(state => state.categories.chapters);
 
   useEffect(() => {
@@ -84,9 +85,9 @@ const SubjectChapterDetails = ({ isOpen }) => {
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <div className="mb-8">
-        <Headers 
-          value1="Home" 
-          value2={data?.name} 
+        <Headers
+          value1="Home"
+          value2={data?.name}
         />
       </div>
 
@@ -97,9 +98,8 @@ const SubjectChapterDetails = ({ isOpen }) => {
           </div>
           <div>
             <h1 className="text-xl font-bold">{data?.name}</h1>
-            <button className={`mt-2 px-6 py-1 rounded-full text-sm font-medium ${
-              data?.active ? 'bg-[#27AE60] text-white' : 'bg-red-500 text-white'
-            }`}>
+            <button className={`mt-2 px-6 py-1 rounded-full text-sm font-medium ${data?.active ? 'bg-[#27AE60] text-white' : 'bg-red-500 text-white'
+              }`}>
               {data?.active ? 'Published' : 'Inactive'}
             </button>
           </div>
@@ -112,27 +112,54 @@ const SubjectChapterDetails = ({ isOpen }) => {
       </div>
 
       <div className="flex justify-end mb-6">
-  <button
-    onClick={() => navigate(`/add-unit-chapter/${id}`)}
-    className="px-6 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
-  >
-    Add Chapter
-  </button>
-</div>
+        <button
+          onClick={() => navigate(`/add-unit-chapter/${id}`)}
+          className="px-6 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
+        >
+          Add Chapter
+        </button>
+      </div>
 
 
       <div className="bg-white rounded-xl p-6">
-      <Headcomponent value="Chapters"  showSearch={false}/>
+        <Headcomponent value="Chapters" showSearch={false} />
         <div className="grid grid-cols-1 gap-4">
           {data?.chapters?.map((chapter) => (
             <ChapterCard key={chapter.id} chapter={chapter} />
           ))}
         </div>
+        <div className="flex justify-between items-center mt-6">
+          <Custombutton
+            value="Previous"
+            hidden="hidden"
+            icon={<FaArrowLeft />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="left"
+          />
+
+          <Custombutton
+            value="View All"
+            hidden="hidden"
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+          />
+
+          <Custombutton
+            value="Next"
+            hidden="hidden"
+            icon={<FaArrowRight />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="right"
+          />
+        </div>
+
       </div>
 
-      
 
-      <SuccessModal 
+
+      <SuccessModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         type="caution"
@@ -145,7 +172,7 @@ const SubjectChapterDetails = ({ isOpen }) => {
         }}
       />
 
-      <SuccessModal 
+      <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => {
           setShowSuccessModal(false);

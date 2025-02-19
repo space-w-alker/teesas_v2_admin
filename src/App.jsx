@@ -71,14 +71,11 @@ import SubjectChapterDetails from './components/Categories/SubjectChapterDetails
 import AddUnitChapter from './components/Categories/AddUnitChapter';
 import BulkUploadChapter from './components/Categories/BulkUploadChapter';
 import AddUnitTopic from './components/Categories/AddUnitTopic';
-import BulkUploadTopic from './components/Categories/BulkUploadTopic';
-import UTME from './components/UTME/UTME';
 import UTMELesson from './components/UTME/UTMELesson';
 import AddSubjectUtme from './components/UTME/AddSubjectUtme';
 import CreateSubject from './components/UTME/CreateSubject';
 import CreateChapter from './components/UTME/CreateChapterUtme';
-import AddTopicUtme from './components/UTME/AddTopicUtme';
-import AddMedia from './components/UTME/AddMedia';
+
 import Practice from './components/Practice/Practice';
 import PracticeClasses from './components/Practice/PracticeClasses';
 import PracticeSubject from './components/Practice/PracticeSubject';
@@ -169,7 +166,7 @@ import AddUnitMedia from './components/Lesson/AddUnitMedia';
 import TopicDetails from './components/Lesson/TopicDetail';
 import AddPracticeUtme from './components/UTME/AddPracticeUtme';
 import AddPractice from './components/Practice/AddPractice';
-import AddTestUtme from './components/UTME/AddTestUtme';
+
 import PracticeDetails from './components/Practice/PracticeDetails';
 import UniversityViewPdf from './components/QuestionBank/UniversityViewPdf';
 import AddBulkSummerCampParticipant from './components/SummerCamp/AddBulkSummerCampParticipant';
@@ -840,14 +837,6 @@ function App() {
 
 
 
-        <Route
-          path="/utme"
-          element={
-            <ProtectedRoute>
-              <UTME isOpen={isSidebarOpen} />
-            </ProtectedRoute>
-          }
-        />
 
 
         <Route
@@ -887,14 +876,7 @@ function App() {
         />
 
 
-        <Route
-          path="/add-topic-utme"
-          element={
-            <ProtectedRoute>
-              <AddTopicUtme isOpen={isSidebarOpen} />
-            </ProtectedRoute>
-          }
-        />
+
         <Route
           path="/topic/:topicId"
           element={
@@ -904,14 +886,7 @@ function App() {
           }
         />
 
-        <Route
-          path="/add-media"
-          element={
-            <ProtectedRoute>
-              <AddMedia isOpen={isSidebarOpen} />
-            </ProtectedRoute>
-          }
-        />
+
         <Route
           path="/add-practice-utme"
           element={
@@ -920,15 +895,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/add-test-utme"
-          element={
-            <ProtectedRoute>
-              <AddTestUtme isOpen={isSidebarOpen} />
-            </ProtectedRoute>
-          }
-        />
-        add-practice
+
 
         <Route
           path="/practice"
