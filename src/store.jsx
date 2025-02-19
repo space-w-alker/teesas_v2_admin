@@ -7,6 +7,7 @@ import liveClassSlice from "./apis/slices/liveClassSlice";
 // import assessmentSlice from "./apis/slices/assessmentSlice";
 import ebookSlice from "./apis/slices/ebookSlice";
 import omotabSlice from "./apis/slices/omotabSlice";
+import { categorySlice } from "./apis/slices/categorySlice";
 
 export default configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export default configureStore({
     liveClass: liveClassSlice,
     // assessment: assessmentSlice,
     ebook: ebookSlice,
-    omotab: omotabSlice
+    omotab: omotabSlice,
+    category: categorySlice,
   },
 });

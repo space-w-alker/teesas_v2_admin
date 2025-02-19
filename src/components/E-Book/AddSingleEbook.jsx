@@ -5,6 +5,8 @@ import Headers from '../common/Headers';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
 import { addEbookAsync } from '../../apis/slices/ebookSlice';
+import { addEbookAsync } from '../../apis/slices/ebookSlice';
+import { listCategoriesAsync, getCategoryDetailsAsync, getClassDetailsAsync, listChaptersAsync, listLessonsAsync } from '../../apis/slices/categorySlice';
 import { useDispatch } from 'react-redux';
 
 
@@ -200,6 +202,43 @@ const AddSingleEbook = ({ isOpen }) => {
                   required
                 />
               </div>
+              {/* upload icon */}
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Upload Icon
+                </label>
+                <div
+                  className="border-2 border-dashed rounded-lg p-8 text-center bg-[#E9FDEE] border-[#27AE60]"
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                >
+                  <FaCloudUploadAlt className="mx-auto text-5xl text-gray-400 mb-4" />
+                  <p className="text-gray-600 mb-4">
+                    Drag and drop your Icon here, or
+                    <label className="text-[#27AE60] cursor-pointer ml-1">
+                      browse
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept=".jpg"
+                        onChange={handlePdfUpload}
+                        required
+                      />
+                    </label>
+                  </p>
+                  <p className="text-sm text-gray-500 mb-2">Supported format: jpg</p>
+                  <p className="text-sm text-gray-500">Maximum file size: 10MB</p>
+                  {formData.icon && (
+                    <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
+                      <p className="font-medium">Selected file:</p>
+                      <p className="text-gray-600">{formData.pdf.name}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* upload ebook */}
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">
                   Upload Ebook
