@@ -876,7 +876,6 @@ function App() {
         />
 
 
-
         <Route
           path="/topic/:topicId"
           element={
@@ -886,7 +885,6 @@ function App() {
           }
         />
 
-
         <Route
           path="/add-practice-utme"
           element={
@@ -895,7 +893,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="/practice"
@@ -1165,7 +1162,7 @@ function App() {
         />
 
         <Route
-          path="/ebook-details"
+          path="/ebook-details/:id"
           element={
             <ProtectedRoute>
               <EBookDetails isOpen={isSidebarOpen} />
@@ -1605,7 +1602,7 @@ function App() {
           }
         />
 
-        <Route path="/store/item-details"
+        <Route path="/store/item-details/:id"
           element={
             <ProtectedRoute>
               <StoreItemDetails isOpen={isSidebarOpen} />

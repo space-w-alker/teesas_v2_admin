@@ -21,6 +21,11 @@ export const config = {
   CREATE_SUBJECT: "admin/class",
   UPDATE_SUBJECT: "admin/class/",
 
+
+  CREATE_ASSESSMENT: "/assessment/create-assessment/",
+  GET_ASSESSMENT: "/assessment/get-assessment/",
+
+  logout: "admin/auth/logout",
   RESET_PASSWORD: "auth/reset-password",
   GET_DASHBOARD: "admin/users/get-dashboard-details",
   GET_COURSES: "admin/live-classes/get-course-details",

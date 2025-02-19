@@ -1,12 +1,31 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 import book from '../../assets/images/receip.png';
-import productImage from '../../assets/images/productImage.png'
+import productImage from '../../assets/images/productImage.png';
+import { getStoreDetailsAsync } from '../../apis/slices/omotabSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const StoreItemDetails = ({ isOpen }) => {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { id } = useParams();
+
+  // Get item details from location state
   const itemName = location.state?.name || 'Item Name';
   const itemPrice = location.state?.price || '₦0';
+  const itemFeature = location.state?.extra || '';
+  const itemId = location.state?.id || '';
+
+  // Get store details from Redux state
+  const listDetailsStore = useSelector((state) => state.omotab.storeDetails?.data?.omotabStore || {});
+
+  useEffect(() => {
+    if (itemId) {
+      dispatch(getStoreDetailsAsync({ dispatch, id }));
+    }
+  }, [dispatch, itemId]); // Added itemId to dependencies
+
+  console.log(listDetailsStore);
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -33,9 +52,7 @@ const StoreItemDetails = ({ isOpen }) => {
       </div>
 
       <div className="flex justify-center mb-6">
-        <button className="px-8 py-2 text-[#27AE60] font-medium">
-          Edit Item
-        </button>
+        <button className="px-8 py-2 text-[#27AE60] font-medium">Edit Item</button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -51,23 +68,25 @@ const StoreItemDetails = ({ isOpen }) => {
               </div>
               <div>
                 <p className="text-gray-600">Plan:</p>
-                <p className="font-medium">Premium</p>
+                <p className="font-medium">{listDetailsStore?.extra}</p>
               </div>
               <div>
                 <p className="text-gray-600">Price:</p>
-                <p className="font-medium text-[#F2994A]">{itemPrice}</p>
+                <p className="font-medium text-[#F2994A]">{listDetailsStore.currency_code}{" "}{listDetailsStore.price}</p>
               </div>
               <div>
                 <p className="text-gray-600">Quantity:</p>
-                <p className="font-medium">50</p>
+                <p className="font-medium">{listDetailsStore.quantity ?? 0}</p>
               </div>
               <div>
-                <p className="text-gray-600">Color:</p>
-                <p className="font-medium">Blue</p>
+                <p className="text-gray-600">Description:</p>
+                <p className="font-medium">{listDetailsStore.descriptions}</p>
               </div>
               <div>
                 <p className="text-gray-600">Status:</p>
-                <p className="font-medium text-[#27AE60]">In Stock</p>
+                <p className={`font-medium ${listDetailsStore.status === 1 ? 'text-[#27AE60]' : 'text-red-500'}`}>
+                  {listDetailsStore.status === 1 ? 'In Stock' : 'Out of Stock'}
+                </p>
               </div>
             </div>
           </div>
@@ -80,7 +99,7 @@ const StoreItemDetails = ({ isOpen }) => {
         </div>
         <div className="space-y-4">
           <div className="p-4 border border-gray-200 rounded-lg">
-            <img src={productImage} alt="product" className="w-full h-[400px] object-cover rounded" />
+            <img src={listDetailsStore.image} alt="product" className="w-full h-[400px] object-cover rounded" />
           </div>
         </div>
       </div>

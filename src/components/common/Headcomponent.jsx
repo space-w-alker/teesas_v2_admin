@@ -4,7 +4,7 @@ import Vector from "../../assets/images/Vector.png";
 import SearchButton from "../../assets/images/Searchbutton.png";
 import Modal from '../common/Modal';
 
-const Headcomponent = ({ value, border, showSearch = true }) => {
+const Headcomponent = ({ value, border, showSearch = true, onSearchChange }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
 
@@ -28,6 +28,7 @@ const Headcomponent = ({ value, border, showSearch = true }) => {
                             <input
                                 type="text"
                                 name="search"
+                                onChange={onSearchChange}
                                 className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
                                 placeholder="Search Item"
                             />
