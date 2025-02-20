@@ -115,20 +115,23 @@ const AddSingleEbook = ({ isOpen }) => {
       return;
     }
 
-
-    // Creating FormData for sending files
     const formDataToSend = new FormData();
 
-    // Append all other request data
+    // Append all request data (if not null/undefined)
     Object.keys(requestData).forEach((key) => {
-      formDataToSend.append(key, requestData[key]);
+      if (requestData[key] !== undefined && requestData[key] !== null) {
+        formDataToSend.append(key, requestData[key]);
+      }
     });
 
-    // Append multiple files under the same key
-    formDataToSend.append("files[]", pdfFile);
-    formDataToSend.append("files[]", iconFile);
+    // Append files only if they exist
+    if (pdfFile instanceof File) formDataToSend.append("files[]", pdfFile);
+    if (iconFile instanceof File) formDataToSend.append("files[]", iconFile);
 
-    console.log([...formDataToSend]); // Debug output to check the form data
+    // Debugging: Check FormData content
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0], pair[1]);
+    }
 
     // Dispatch Redux action to create an ebook
     dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
@@ -288,7 +291,7 @@ const AddSingleEbook = ({ isOpen }) => {
                   {formData.icon && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.icon.name}</p>
+                      <p className="text-gray-600">{formData.icon?.name}</p>
                     </div>
                   )}
                 </div>
@@ -324,7 +327,7 @@ const AddSingleEbook = ({ isOpen }) => {
                   {formData.pdf && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.pdf.name}</p>
+                      <p className="text-gray-600">{formData.pdf?.name}</p>
                     </div>
                   )}
                 </div>

@@ -60,7 +60,7 @@ export const listCategoriesAsync = ({ dispatch, token }) => {
         try {
             const URL = `${BASEURL}admin/category/list`;
             const response = await getAPICall(URL, {}, token);
-            console.log(response.data?.status);
+            // console.log(response.data?.status);
 
             if (response?.data?.status == 200) {
                 dispatch(listCategoriesSuccess(response.data));
