@@ -16,8 +16,8 @@ const AddSingleEbook = ({ isOpen }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const categories = useSelector((state) => state.category?.categoryList?.data?.categories);
   const grades = useSelector((state) => state.category?.categoryDetails.data?.classes);
-  const chapters = useSelector((state) => state.category?.chapterList?.data?.chapters);
-  console.log(categories, grades, chapters)
+  const chapters = useSelector((state) => state.category?.classDetails?.data?.subjects);
+  console.log("categories", categories, "grades", grades, "chapters", chapters)
   const [formData, setFormData] = useState({
     category: location.state?.ebookData?.category || '',
     grade: location.state?.ebookData?.grade || '',
@@ -76,10 +76,10 @@ const AddSingleEbook = ({ isOpen }) => {
   // Fetch Chapters when Grade Changes
   useEffect(() => {
     if (formData.grade) {
-      dispatch(listChaptersAsync({ dispatch, id: formData.category }));
+      dispatch(getClassDetailsAsync({ dispatch, id: formData.grade }));
       setFormData((prev) => ({ ...prev, chapter: "" })); // Reset chapter
     }
-  }, [dispatch, formData.category]);
+  }, [dispatch, formData.grade]);
 
 
   const handleSubmit = async (event) => {
@@ -93,22 +93,7 @@ const AddSingleEbook = ({ isOpen }) => {
       title: formData.bookTitle || '',
       description: formData.description || '',
       short_des: formData.description ? formData.description.substring(0, 100) : '',
-      // icon: '', // Default empty if unavailable
-      // source: formData.pdf ? formData.pdf.name : '',
-      // sample_source: '', // Default empty if no sample
       price: formData.price || '',
-      // discount: formData.discount || '',
-      // seo: formData.bookTitle
-      //   ? `${formData.bookTitle} ${formData.category || ''} ${formData.grade || ''} ${formData.chapter || ''}`
-      //   : '',
-      // publisher: formData.publisher || '',
-      // publication: formData.publication || '',
-      // ISBN_no: formData.ISBN_no || '',
-      // country_id: formData.country_id || '',
-      // language: formData.language || '',
-      // publish_date: formData.publish_date || '',
-      // status: formData.status || '',
-      // is_paid: formData.is_paid || ''
     };
     if (!pdfFile || !iconFile) {
       alert("Please select both files before uploading.");
@@ -125,8 +110,8 @@ const AddSingleEbook = ({ isOpen }) => {
     });
 
     // Append files only if they exist
-    if (pdfFile instanceof File) formDataToSend.append("files[]", pdfFile);
-    if (iconFile instanceof File) formDataToSend.append("files[]", iconFile);
+    if (pdfFile instanceof File) formDataToSend.append("files", pdfFile);
+    if (iconFile instanceof File) formDataToSend.append("files", iconFile);
 
     // Debugging: Check FormData content
     for (let pair of formDataToSend.entries()) {

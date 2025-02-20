@@ -77,7 +77,7 @@ export const getClassDetailsAsync = ({ dispatch, id, token }) => {
         try {
             const URL = `${BASEURL}admin/class/${id}/details`;
             const response = await getAPICall(URL, {}, token);
-            // console.log(response);
+            console.log(response);
             if (response?.data?.status == 200) {
                 dispatch(getClassDetailsSuccess(response.data));
             } else {

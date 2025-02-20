@@ -86,75 +86,43 @@ export const deleteAPICall = async (
   return { data: data };
 };
 
-export const postAPICall = async (url, params, isFormData = false) => {
+export const postAPICall = async (url, params) => {
   const myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
   myHeaders.append('api-key', 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR');
 
-  let requestOptions = {
+  const requestOptions = {
     method: 'POST',
     headers: myHeaders,
-    body: null,
+    body: JSON.stringify(params)
   };
 
-  if (isFormData) {
-    // Create FormData object
-    const formDataToSend = new FormData();
-    Object.keys(params).forEach((key) => {
-      if (Array.isArray(params[key])) {
-        // If the value is an array (for multiple files), append each item
-        params[key].forEach((file) => formDataToSend.append(`${key}[]`, file));
-      } else {
-        formDataToSend.append(key, params[key]);
-      }
-    });
-
-    requestOptions.body = formDataToSend;
-  } else {
-    // Handle JSON request
-    myHeaders.append('Content-Type', 'application/json');
-    requestOptions.body = JSON.stringify(params);
-  }
-
-  console.log('Request:', { url, body: requestOptions.body });
-
+  console.log('Request:', { url, body: params });
   const response = await fetch(url, requestOptions);
   const data = await response.json();
-
   console.log('Response:', data);
   return { data };
 };
 
-export const postFileAPICall = async (
-  url,
-  formdata,
-  access_token
-) => {
-  const myHeaders = new Headers();
-  myHeaders.append('mode', '*');
-
-  const accessToken = localStorage.getItem('authToken')
-    ? localStorage.getItem('authToken')
-    : access_token;
-
+export const postFileAPICall = async (url, formData, access_token) => {
+  const accessToken = localStorage.getItem('authToken') || access_token;
+  const API_KEY = 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR';
   const requestOptions = {
     method: 'POST',
     headers: {
-      Authorization: 'Bearer ' + accessToken,
+      'Authorization': `Bearer ${accessToken}`,
+      'api-key': API_KEY
     },
-    body: formdata,
-    redirect: 'follow',
+    body: formData
   };
+
   const response = await fetch(url, requestOptions);
   const data = await response.json();
 
-  // if (data?.statusCode == 401) {
-  //   deleteCookie('username');
-  //   deleteCookie('authToken');
-  //   deleteCookie('authID');
-  // } else {
-  // }
-  return { data: data };
+  return { data };
 };
+
+
 
 export const putAPICall = async (url, body, auth = false, token = null) => {
   const headers = {
