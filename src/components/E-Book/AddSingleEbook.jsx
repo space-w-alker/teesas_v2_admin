@@ -7,13 +7,17 @@ import SuccessModal from '../common/SuccessModal';
 import { addEbookAsync } from '../../apis/slices/ebookSlice';
 // import { addEbookAsync } from '../../apis/slices/ebookSlice';
 import { listCategoriesAsync, getCategoryDetailsAsync, getClassDetailsAsync, listChaptersAsync, listLessonsAsync } from '../../apis/slices/categorySlice';
-import { useDispatch } from 'react-redux';
-
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddSingleEbook = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
+  const categories = useSelector((state) => state.category?.categoryList?.data?.categories);
+  const grades = useSelector((state) => state.category?.categoryDetails.data?.classes);
+  const chapters = useSelector((state) => state.category?.chapterList?.data?.chapters);
+  console.log(categories, grades, chapters)
   const [formData, setFormData] = useState({
     category: location.state?.ebookData?.category || '',
     grade: location.state?.ebookData?.grade || '',
@@ -55,6 +59,29 @@ const AddSingleEbook = ({ isOpen }) => {
     }
   };
   const dispatch = useDispatch();
+
+  // Fetch Categories on Mount
+  useEffect(() => {
+    dispatch(listCategoriesAsync({ dispatch }));
+  }, [dispatch]);
+
+  // Fetch Grades when Category Changes
+  useEffect(() => {
+    if (formData.category) {
+      dispatch(getCategoryDetailsAsync({ dispatch, id: formData.category }));
+      setFormData((prev) => ({ ...prev, grade: "", chapter: "" })); // Reset grade and chapter
+    }
+  }, [dispatch, formData.category]);
+
+  // Fetch Chapters when Grade Changes
+  useEffect(() => {
+    if (formData.grade) {
+      dispatch(listChaptersAsync({ dispatch, id: formData.category }));
+      setFormData((prev) => ({ ...prev, chapter: "" })); // Reset chapter
+    }
+  }, [dispatch, formData.category]);
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -148,9 +175,11 @@ const AddSingleEbook = ({ isOpen }) => {
                     required
                   >
                     <option value="">Select Category</option>
-                    <option value="1">Mathematics</option>
-                    <option value="2">Science</option>
-                    <option value="3">English</option>
+                    {categories?.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -162,12 +191,16 @@ const AddSingleEbook = ({ isOpen }) => {
                     onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
+                    disabled={!formData.category} // Disable if no category is selected
                   >
                     <option value="">Select Grade</option>
-                    <option value="1">Grade 1</option>
-                    <option value="2">Grade 2</option>
-                    <option value="3">Grade 3</option>
+                    {grades?.map((grade) => (
+                      <option key={grade.id} value={grade.id}>
+                        {grade.name}
+                      </option>
+                    ))}
                   </select>
+
                 </div>
                 <div>
                   <label className="block text-gray-700 text-sm font-medium mb-2">
@@ -178,11 +211,14 @@ const AddSingleEbook = ({ isOpen }) => {
                     onChange={(e) => setFormData({ ...formData, chapter: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
+                    disabled={!formData.grade} // Disable if no grade is selected
                   >
                     <option value="">Select Chapter</option>
-                    <option value="1">Chapter 1</option>
-                    <option value="2">Chapter 2</option>
-                    <option label="3">Chapter 3</option>
+                    {chapters?.map((chapter) => (
+                      <option key={chapter.id} value={chapter.id}>
+                        {chapter.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>

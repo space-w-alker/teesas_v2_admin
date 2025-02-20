@@ -109,7 +109,7 @@ export const addEbookAsync = ({ dispatch, data, token, callbackFn }) => {
   return async () => {
     try {
       const URL = `${BASEURL}ebook/add`;
-      const response = await postAPICall(URL, data, true, token);
+      const response = await postAPICall(URL, data, false, token);
       if (response?.data?.status === 200) {
         callbackFn && callbackFn(response.data);
         dispatch(addEbookSuccess(response.data));

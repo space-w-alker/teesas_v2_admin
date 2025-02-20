@@ -7,7 +7,7 @@ import liveClassSlice from "./apis/slices/liveClassSlice";
 // import assessmentSlice from "./apis/slices/assessmentSlice";
 import ebookSlice from "./apis/slices/ebookSlice";
 import omotabSlice from "./apis/slices/omotabSlice";
-import { categorySlice } from "./apis/slices/categorySlice";
+import categorySlice from "./apis/slices/categorySlice";
 
 export default configureStore({
   reducer: {
