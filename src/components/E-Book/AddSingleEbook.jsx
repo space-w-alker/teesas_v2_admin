@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Headers from '../common/Headers';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
-import { addEbookAsync } from '../../apis/slices/ebookSlice';
+import { addEbookAsync, updateEbookAsync } from '../../apis/slices/ebookSlice';
 // import { addEbookAsync } from '../../apis/slices/ebookSlice';
 import { listCategoriesAsync, getCategoryDetailsAsync, getClassDetailsAsync, listChaptersAsync, listLessonsAsync } from '../../apis/slices/categorySlice';
 import { useEffect } from "react";
@@ -61,6 +61,7 @@ const AddSingleEbook = ({ isOpen }) => {
   const dispatch = useDispatch();
 
   // Fetch Categories on Mount
+
   useEffect(() => {
     dispatch(listCategoriesAsync({ dispatch }));
   }, [dispatch]);
@@ -119,7 +120,15 @@ const AddSingleEbook = ({ isOpen }) => {
     }
 
     // Dispatch Redux action to create an ebook
-    dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
+
+
+    if (id) {
+      await dispatch(updateEbookAsync({ dispatch, id, formData: formDataToSend }));
+    } else {
+      await dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
+    }
+
+    navigate("/ebooks");
   };
 
 

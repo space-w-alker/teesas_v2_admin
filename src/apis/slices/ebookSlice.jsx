@@ -70,7 +70,7 @@ export const deleteEbookAsync = ({ dispatch, id, token, callbackFn }) => {
 };
 
 // **Update Ebook**
-export const updateEbookAsync = ({ dispatch, id, token, callbackFn }) => {
+export const updateEbookAsync = ({ dispatch, id, formData, token, callbackFn }) => {
   return async () => {
     try {
       const URL = `${BASEURL}ebook/update/${id}`;
