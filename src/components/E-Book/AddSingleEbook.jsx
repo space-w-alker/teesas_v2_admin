@@ -9,6 +9,8 @@ import { addEbookAsync, updateEbookAsync } from '../../apis/slices/ebookSlice';
 import { listCategoriesAsync, getCategoryDetailsAsync, getClassDetailsAsync, listChaptersAsync, listLessonsAsync } from '../../apis/slices/categorySlice';
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 
 const AddSingleEbook = ({ isOpen }) => {
   const location = useLocation();
@@ -19,13 +21,15 @@ const AddSingleEbook = ({ isOpen }) => {
   const chapters = useSelector((state) => state.category?.classDetails?.data?.subjects);
   console.log("categories", categories, "grades", grades, "chapters", chapters)
   const [formData, setFormData] = useState({
+    id: location.state?.ebookData?.id || '',
     category: location.state?.ebookData?.category || '',
     grade: location.state?.ebookData?.grade || '',
     chapter: location.state?.ebookData?.chapter || '',
     bookTitle: location.state?.ebookData?.bookTitle || '',
     price: location.state?.ebookData?.price || '',
     description: location.state?.ebookData?.description || '',
-    pdf: location.state?.ebookData?.pdf || null
+    pdf: location.state?.ebookData?.pdf || null,
+    icon: location.state?.ebookData?.icon || null
   });
 
   const [dragActive, setDragActive] = useState(false);
@@ -34,15 +38,18 @@ const AddSingleEbook = ({ isOpen }) => {
 
   const handlePdfChange = (e) => {
     setPdfFile(e.target.files[0]);
+    setFormData({ ...formData, pdf: e.target.files[0].name })
   };
 
   const handleIconChange = (e) => {
     setIconFile(e.target.files[0]);
+    setFormData({ ...formData, icon: e.target.files[0].name })
+
   };
 
-  const handleFileUpload = (e, field) => {
-    setFormData({ ...formData, [field]: e.target.files[0] });
-  };
+  // const handleFileUpload = (e, field) => {
+  //   setFormData({ ...formData, [field]: e.target.files[0] });
+  // };
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -70,7 +77,7 @@ const AddSingleEbook = ({ isOpen }) => {
   useEffect(() => {
     if (formData.category) {
       dispatch(getCategoryDetailsAsync({ dispatch, id: formData.category }));
-      setFormData((prev) => ({ ...prev, grade: "", chapter: "" })); // Reset grade and chapter
+      // setFormData((prev) => ({ ...prev, grade: "", chapter: "" })); // Reset grade and chapter
     }
   }, [dispatch, formData.category]);
 
@@ -78,10 +85,11 @@ const AddSingleEbook = ({ isOpen }) => {
   useEffect(() => {
     if (formData.grade) {
       dispatch(getClassDetailsAsync({ dispatch, id: formData.grade }));
-      setFormData((prev) => ({ ...prev, chapter: "" })); // Reset chapter
+      // setFormData((prev) => ({ ...prev, chapter: "" })); // Reset chapter
     }
   }, [dispatch, formData.grade]);
 
+  console.log('formData', formData)
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -96,10 +104,10 @@ const AddSingleEbook = ({ isOpen }) => {
       short_des: formData.description ? formData.description.substring(0, 100) : '',
       price: formData.price || '',
     };
-    if (!pdfFile || !iconFile) {
-      alert("Please select both files before uploading.");
-      return;
-    }
+    // if (!pdfFile || !iconFile) {
+    //   alert("Please select both files before uploading.");
+    //   return;
+    // }
 
     const formDataToSend = new FormData();
 
@@ -122,13 +130,29 @@ const AddSingleEbook = ({ isOpen }) => {
     // Dispatch Redux action to create an ebook
 
 
-    if (id) {
-      await dispatch(updateEbookAsync({ dispatch, id, formData: formDataToSend }));
+    if (formData.id) {
+      await dispatch(updateEbookAsync({ dispatch, id: formData.id, formData: formDataToSend }));
     } else {
       await dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
     }
 
-    navigate("/ebooks");
+    navigate("/e-book");
+
+    // const action = formData.id
+    //   ? updateEbookAsync({ dispatch, id: formData.id, formData: formDataToSend })
+    //   : addEbookAsync({ dispatch, data: formDataToSend });
+
+    // dispatch(action)
+    //   .unwrap()
+    //   .then(() => {
+    //     toast.success("Ebook saved successfully!");
+    //     navigate("/e-book");
+    //   })
+    //   .catch((error) => {
+    //     toast.error("Failed to save ebook. Please try again.");
+    //     console.error("Ebook save error:", error);
+    //   });
+
   };
 
 
@@ -142,7 +166,7 @@ const AddSingleEbook = ({ isOpen }) => {
       description: '',
       pdf: null
     });
-    navigate('/ebook-list');
+    navigate('/ebook');
   };
 
   return (
@@ -285,7 +309,7 @@ const AddSingleEbook = ({ isOpen }) => {
                   {formData.icon && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.icon?.name}</p>
+                      <p className="text-gray-600">{formData.icon}</p>
                     </div>
                   )}
                 </div>
@@ -321,7 +345,7 @@ const AddSingleEbook = ({ isOpen }) => {
                   {formData.pdf && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.pdf?.name}</p>
+                      <p className="text-gray-600">{formData.pdf}</p>
                     </div>
                   )}
                 </div>
@@ -357,11 +381,11 @@ const AddSingleEbook = ({ isOpen }) => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Icon:</span>
-                  <span className="font-medium">{formData.icon?.name || '-'}</span>
+                  <span className="font-medium">{formData.icon || '-'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">PDF:</span>
-                  <span className="font-medium">{formData.pdf?.name || '-'}</span>
+                  <span className="font-medium">{formData.pdf || '-'}</span>
                 </div>
               </div>
             </div>

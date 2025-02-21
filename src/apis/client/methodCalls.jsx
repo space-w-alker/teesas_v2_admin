@@ -125,15 +125,18 @@ export const postFileAPICall = async (url, formData, access_token) => {
 
 
 export const putAPICall = async (url, body, auth = false, token = null) => {
+  const accessToken = localStorage.getItem('authToken') || access_token;
+  const API_KEY = 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR';
   const headers = {
     'Content-Type': 'application/json',
-    'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR'
+    'api-key': API_KEY,
+    'Authorization': `Bearer ${accessToken}`,
 
   };
 
-  if (auth && token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
+  // if (auth && token) {
+  //   headers['Authorization'] = `Bearer ${accessToken}`
+  // }
 
   const response = await fetch(url, {
     method: 'PUT',

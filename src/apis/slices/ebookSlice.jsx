@@ -35,7 +35,7 @@ export const ebookSlice = createSlice({
     deleteSuccess: (state, action) => {
       state.deleteResponse = action.payload;
     },
-    updateSuccess: (state, action) => {
+    updateEbookDetailsSuccess: (state, action) => {
       state.updateResponse = action.payload;
     },
 
@@ -74,10 +74,10 @@ export const updateEbookAsync = ({ dispatch, id, formData, token, callbackFn }) 
   return async () => {
     try {
       const URL = `${BASEURL}ebook/update/${id}`;
-      const response = await putAPICall(URL, {}, token);
-      if (response?.data?.status === 200) {
+      const response = await putAPICall(URL, formData, true, token);
+      if (response?.data?.status == 200) {
         // callbackFn && callbackFn(response.data);
-        dispatch(getEbookDetailsSuccess(response.data));
+        dispatch(updateEbookDetailsSuccess(response.data));
       } else {
         toast.error("Failed to update eBook details.");
       }
@@ -93,7 +93,8 @@ export const getEbookDetailsAsync = ({ dispatch, id, token, callbackFn }) => {
     try {
       const URL = `${BASEURL}ebook/details?id=${id}`;
       const response = await getAPICall(URL, {}, token);
-      if (response?.data?.status === 200) {
+      console.log(response)
+      if (response?.data?.status == 200) {
         // callbackFn && callbackFn(response.data);
         dispatch(getEbookDetailsSuccess(response.data));
       } else {
