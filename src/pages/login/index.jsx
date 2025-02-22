@@ -29,14 +29,14 @@ function Login() {
 
 
 
-   
-  
+
+
   const SubmitSigninAction = () => {
     const credentials = {
       email: formData.email,
       password: formData.password
     };
-  
+
     loginAsync({
       dispatch,
       body: credentials,
@@ -46,7 +46,7 @@ function Login() {
           const token = response.data.data.token;
           const role = response.data.data.role;
           const userData = { token, role };
-          
+
           localStorage.setItem('userData', JSON.stringify(userData));
           localStorage.setItem('authToken', token);
           console.log('Token stored:', token);
@@ -83,7 +83,7 @@ function Login() {
 
         <div className="mt-[100px] border-[#C3C3C3] border bg-[#FFFFFF] min-w-[350px] lg:min-w-[450px]  p-10 rounded-3xl">
           <div className="text-[30px] text-start font-bold ">Sign In</div>
-          
+
           <div className="text-[12px] text-[#3D3D3D] mt-10">Email</div>{" "}
           <input
             type="text"
@@ -111,7 +111,7 @@ function Login() {
               Forgot Password?
             </div>
           </Link>
-          
+
           <button
             type="button"
             onClick={() => {
@@ -121,16 +121,6 @@ function Login() {
           >
             Sign In
           </button>
-
-          <button
-  type="button"
-  onClick={() => {
-    navigate('/signup');  // Adjust the path based on your router configuration
-  }}
-  className={`mt-[20px] bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg`}
->
-  Sign up
-</button>
         </div>
       </div>
       <ToastContainer
