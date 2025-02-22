@@ -5,7 +5,7 @@ import { createCategoryAsync, updateCategoryAsync, getCountriesAsync, selectCoun
 import Popup from 'reactjs-popup';
 import success from '../../assets/images/success.png';
 import Headers from '../common/Headers';
-import { debounce } from 'lodash';
+// import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
@@ -118,10 +118,10 @@ const AddCategory = ({ isOpen }) => {
     }
   };
 
-  const debouncedSubmit = useCallback(
-    debounce(() => handleAddCategory(), 300),
-    [formData]
-  );
+  // const debouncedSubmit = useCallback(
+  //   debounce(() => handleAddCategory(), 300),
+  //   [formData]
+  // );
 
   const handleClose = () => {
     setShowSuccess(false);
