@@ -8,7 +8,7 @@ import categoriesReducer from "./apis/slices/categoriesSlice";
 // import assessmentSlice from "./apis/slices/assessmentSlice";
 import ebookSlice from "./apis/slices/ebookSlice";
 import omotabSlice from "./apis/slices/omotabSlice";
-import { categorySlice } from "./apis/slices/categorySlice";
+import categorySlice from "./apis/slices/categorySlice";
 import paymentReducer from "./apis/slices/paymentSlice";
 
 export default configureStore({
