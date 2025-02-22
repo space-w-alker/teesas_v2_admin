@@ -9,6 +9,7 @@ import categoriesReducer from "./apis/slices/categoriesSlice";
 import ebookSlice from "./apis/slices/ebookSlice";
 import omotabSlice from "./apis/slices/omotabSlice";
 import { categorySlice } from "./apis/slices/categorySlice";
+import paymentReducer from "./apis/slices/paymentSlice";
 
 export default configureStore({
   reducer: {
@@ -22,5 +23,6 @@ export default configureStore({
     ebook: ebookSlice,
     omotab: omotabSlice,
     category: categorySlice,
+    payments: paymentReducer,
   },
 });

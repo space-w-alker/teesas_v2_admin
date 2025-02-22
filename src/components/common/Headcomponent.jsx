@@ -4,17 +4,8 @@ import Vector from "../../assets/images/Vector.png";
 import SearchButton from "../../assets/images/Searchbutton.png";
 import Modal from '../common/Modal';
 
-const Headcomponent = ({ value, border, showSearch = true, onSearchChange }) => {
+const Headcomponent = ({ value, border, showSearch = true, onSearch }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
-
-    const toggleSearchBox = () => {
-        setIsSearchBoxOpen(prevState => !prevState);
-    };
-
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-    };
 
     return (
         <div className={`flex justify-between items-center ${border} relative mt-3`}>
@@ -28,7 +19,7 @@ const Headcomponent = ({ value, border, showSearch = true, onSearchChange }) => 
                             <input
                                 type="text"
                                 name="search"
-                                onChange={onSearchChange}
+                                onChange={(e) => onSearch(e.target.value)}
                                 className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
                                 placeholder="Search Item"
                             />
@@ -45,7 +36,7 @@ const Headcomponent = ({ value, border, showSearch = true, onSearchChange }) => 
             )}
             {isModalOpen && (
                 <Modal
-                    closeModal={handleModalClose}
+                    closeModal={() => setIsModalOpen(false)}
                     label="Sort By"
                 />
             )}

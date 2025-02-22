@@ -1,27 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPaymentDetailsAsync, selectPaymentDetails } from '../../apis/slices/paymentSlice';
 import Headers from '../common/Headers';
-import Modal from '../common/Modal';
-import Custombutton from '../common/Custombutton';
-import { useNavigate } from 'react-router-dom';
 import banklogo from "../../assets/images/banklogo.png";
-import SuccessModal from '../common/SuccessModal';
-
+import { config } from "../../apis/client/config";
 const PaymentDetails = ({ isOpen }) => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const { data: paymentData, isLoading } = useSelector(selectPaymentDetails);
 
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showCautionModal, setShowCautionModal] = useState(false);
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (id) {
+      dispatch(getPaymentDetailsAsync(id));
+    }
+  }, [dispatch, id]);
 
-  const paymentData = {
-    name: "John Doe",
-    amount: "₦ 50,000",
-    paymentType: "Monthly Subscription/Payment",
-    status: "Active",
-    date: "January 20, 2024",
-    paymentMethod: "Bank Transfer",
-    email: "johndoe@example.com",
-    phone: "+234 123 456 7890"
-  };
+  if (isLoading || !paymentData) return <div>Loading...</div>;
+
+  const { payment_info, user_info, transaction_details } = paymentData;
+  const imageUrl = `${config.MainUrl}public/${transaction_details.proof_image}`;
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
@@ -30,31 +28,18 @@ const PaymentDetails = ({ isOpen }) => {
       <div className="bg-[#E9FDEE] rounded-xl p-6 mt-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-[#FFFFFF] flex items-center justify-center">
-            <span className="text-[#27AE60] font-medium text-xl">{paymentData.name[0]}</span>
+            <span className="text-[#27AE60] font-medium text-xl">{user_info.name[0]}</span>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">{paymentData.name}</h2>
-            <Custombutton
-              value="Active"
-              hidden="hidden"
-              backgroundcolor="bg-[#27AE60] "
-              textcolor="text-white"
-              imagePosition="center"
-              width="w-[80px]"
-             
-            />
+            <h2 className="text-xl font-bold text-gray-900">{user_info.name}</h2>
+            <span className={`inline-block px-3 py-1 rounded-full text-sm ${payment_info.status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
+              payment_info.status === 'completed' ? 'bg-green-100 text-green-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+              {payment_info.status}
+            </span>
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-center mb-8">
-        <Custombutton
-          value="View Profile"
-          hidden="hidden"
-          backgroundcolor="bg-[#F2F2F2]"
-          textcolor="text-[#27AE60]"
-          imagePosition="center"
-        />
       </div>
 
       <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
@@ -64,85 +49,60 @@ const PaymentDetails = ({ isOpen }) => {
         <div className="p-4 border border-gray-200 rounded-lg">
           <div className="flex items-center gap-4">
             <img src={banklogo} alt="bank" className="w-8 h-8" />
-            <p className="text-gray-600">{paymentData.paymentMethod}</p>
+            <p className="text-gray-600">{payment_info.payment_type}</p>
           </div>
         </div>
       </div>
-
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <div className="border-b border-gray-200 pb-2 mb-4">
+          <h3 className="text-lg font-bold text-gray-900">Payment Proof</h3>
+        </div>
+        <div className="p-4 border border-gray-200 rounded-lg">
+          {transaction_details.proof_image && (
+            <>
+              <img
+                src={imageUrl}
+                alt="Payment Proof"
+                className="w-full h-[400px] object-cover rounded"
+                onError={(e) => {
+                  console.log("Image load error:", e);
+                  e.target.style.display = 'none';
+                }}
+              />
+            </>
+          )}
+        </div>
+      </div>
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="border-b border-gray-200 pb-2 mb-4">
-          <h3 className="text-lg font-bold text-gray-900">Payment Details</h3>
+          <h3 className="text-lg font-bold text-gray-900">Transaction Details</h3>
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
-          <div className="bg-white rounded-lg p-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-gray-600">Amount:</p>
-                <p className="font-medium text-[#27AE60]">{paymentData.amount}</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Payment Date:</p>
-                <p className="font-medium">{paymentData.date}</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Email:</p>
-                <p className="font-medium">{paymentData.email}</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Phone:</p>
-                <p className="font-medium">{paymentData.phone}</p>
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-gray-600">Subscription:</p>
+              <p className="font-medium">{transaction_details.subscription}</p>
+            </div>
+            <div>
+              <p className="text-gray-600">Date:</p>
+              <p className="font-medium">{new Date(payment_info.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</p>
+            </div>
+            <div>
+              <p className="text-gray-600">Account Holder:</p>
+              <p className="font-medium">{transaction_details.account_holder}</p>
+            </div>
+            <div>
+              <p className="text-gray-600">Device ID:</p>
+              <p className="font-medium">{transaction_details.device_id}</p>
             </div>
           </div>
         </div>
-
-        <div className="flex justify-center gap-4 mt-6">
-          <Custombutton
-            value="Reject"
-            hidden="hidden"
-            backgroundcolor="bg-red-500"
-            textcolor="text-white"
-            imagePosition="center"
-            width="w-[80px]"
-            onClick={() => setShowCautionModal(true)}
-          />
-          <Custombutton
-            value="Approve"
-            hidden="hidden"
-            backgroundcolor="bg-[#27AE60]"
-            textcolor="text-white"
-            imagePosition="center"
-            width="w-[80px]"
-            onClick={() => setShowSuccessModal(true)}
-
-          />
-        </div>
       </div>
-      
-
-
-<SuccessModal
-  isOpen={showSuccessModal}
-  onClose={() => setShowSuccessModal(false)}
-  type="success"
-  title="Payment Approved!"
-  message="The payment has been successfully approved."
-  buttonText="Continue"
-/>
-
-
-<SuccessModal
-  isOpen={showCautionModal}
-  onClose={() => setShowCautionModal(false)}
-  type="caution"
-  title="Confirm Rejection"
-  message="Are you sure you want to reject this payment?"
-  buttonText="Confirm"
-/>
-
-
     </div>
   );
 };
-
 export default PaymentDetails;

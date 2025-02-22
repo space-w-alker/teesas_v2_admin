@@ -1,5 +1,6 @@
 export const config = {
-  BASEURL: "http://46.202.164.175:3000/v1/",
+  // BASEURL: "http://46.202.164.175:3000/v1/",
+  BASEURL: "http://localhost:3000/v1/",
   MainUrl: "http://46.202.164.175:3000/",
 
   USERLOGIN: "admin/auth/login",
@@ -24,8 +25,11 @@ export const config = {
 
   CREATE_ASSESSMENT: "/assessment/create-assessment/",
   GET_ASSESSMENT: "/assessment/get-assessment/",
+  GET_PAYMENTS: "admin/payments",
+  GET_PAYMENTS_DETAILS: "admin/payments",
 
-  logout: "admin/auth/logout",
+
+  // logout: "admin/auth/logout",
   RESET_PASSWORD: "auth/reset-password",
   GET_DASHBOARD: "admin/users/get-dashboard-details",
   GET_COURSES: "admin/live-classes/get-course-details",

@@ -634,7 +634,7 @@ function App() {
           }
         />
         <Route
-          path="/payments/details"
+          path="/payments/:id/details"
           element={
             <ProtectedRoute>
               <PaymentDetails isOpen={isSidebarOpen} />
@@ -733,8 +733,10 @@ function App() {
 
 
 
+
+
         <Route
-          path="/categories/:categoryId/edit-class/:classId"
+          path="/categories/:id/edit-class"
           element={
             <ProtectedRoute>
               <AddClass isOpen={isSidebarOpen} />

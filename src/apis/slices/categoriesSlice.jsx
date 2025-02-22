@@ -130,6 +130,12 @@ const initialState = {
     error: null
   },
 
+  countries: {
+    isLoading: false,
+    data: null,
+    error: null
+  }
+
 };
 
 export const categoriesSlice = createSlice({
@@ -202,15 +208,23 @@ export const categoriesSlice = createSlice({
     setUniversities: (state, action) => {
       state.universities = action.payload;
     },
+    setCountries: (state, action) => {
+      state.countries = action.payload;
+    }
 
   }
 });
 
 
-export const getCategoriesAsync = () => async (dispatch) => {
+export const getCategoriesAsync = (page = 1, limit = 10, search = '') => async (dispatch) => {
   try {
     dispatch(setCategoryList({ isLoading: true, data: null, error: null }));
-    const URL = `${BASEURL}${LIST_CATEGORIES}`;
+    let URL = `${BASEURL}${LIST_CATEGORIES}?page=${page}&limit=${limit}`;
+
+    if (search.trim()) {
+      URL += `&search=${encodeURIComponent(search.trim())}`;
+    }
+
     const result = await getAPICall(URL);
 
     if (result?.data?.status === 200) {
@@ -220,14 +234,13 @@ export const getCategoriesAsync = () => async (dispatch) => {
         stats: result.data.data.stats,
         error: null
       }));
-    } else {
-      throw new Error(result?.data?.message || 'Failed to fetch categories');
     }
   } catch (error) {
-    console.error('Categories fetch error:', error);
+    console.log('Search error:', error);
     dispatch(setCategoryList({ isLoading: false, data: null, error: error.message }));
   }
 };
+
 
 export const createCategoryAsync = (categoryData) => async (dispatch) => {
   try {
@@ -294,11 +307,14 @@ export const updateCategoryAsync = (categoryId, categoryData) => async (dispatch
   }
 };
 
-export const getCategoryDetailsAsync = (categoryId) => async (dispatch) => {
+export const getCategoryDetailsAsync = (id, page = 1, limit = 5, search = '') => async (dispatch) => {
   try {
     dispatch(setCategoryDetails({ isLoading: true, data: null, error: null }));
-    const URL = `${BASEURL}${GET_CATEGORY_DETAILS}/${categoryId}/details`;
-    console.log('Full URL:', URL);
+    let URL = `${BASEURL}${GET_CATEGORY_DETAILS}/${id}/details?page=${page}&limit=${limit}`;
+
+    if (search.trim()) {
+      URL += `&search=${encodeURIComponent(search.trim())}`;
+    }
 
     const result = await getAPICall(URL);
 
@@ -308,13 +324,12 @@ export const getCategoryDetailsAsync = (categoryId) => async (dispatch) => {
         data: result.data.data,
         error: null
       }));
-    } else {
-      throw new Error(result?.data?.message || 'Failed to fetch category details');
     }
   } catch (error) {
     dispatch(setCategoryDetails({ isLoading: false, data: null, error: error.message }));
   }
 };
+
 
 export const addClassAsync = (categoryId, className) => async (dispatch) => {
   try {
@@ -660,6 +675,24 @@ export const getUniversitiesAsync = () => async (dispatch) => {
   }
 };
 
+export const getCountriesAsync = () => async (dispatch) => {
+  try {
+    dispatch(setCountries({ isLoading: true, data: null, error: null }));
+    const URL = `${BASEURL}utils/get-countries`;
+    const result = await getAPICall(URL);
+
+    if (result?.data?.status === 200) {
+      dispatch(setCountries({
+        isLoading: false,
+        data: result.data.data.countries,
+        error: null
+      }));
+    }
+  } catch (error) {
+    dispatch(setCountries({ isLoading: false, data: null, error: error.message }));
+  }
+};
+
 
 
 
@@ -685,7 +718,8 @@ export const { setCategoryList,
   setTopicMedia,
   setTopicDetail,
   setDeleteTopicMedia,
-  setUniversities
+  setUniversities,
+  setCountries
 
 
 } = categoriesSlice.actions;
@@ -703,6 +737,7 @@ export const selectDeleteSubject = (state) => state.categories.deleteSubject;
 export const selectTopicMedia = (state) => state.categories.topicMedia;
 export const selectDeleteTopicMedia = (state) => state.categories.deleteTopicMedia;
 export const selectUniversities = (state) => state.categories.universities;
+export const selectCountries = (state) => state.categories.countries;
 
 
 
