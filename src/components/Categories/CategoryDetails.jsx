@@ -39,7 +39,7 @@ const ClassItem = ({ classData, onEdit, onDelete }) => {
             <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg py-2 z-10">
               <button
                 className="w-full px-4 py-2 text-left hover:bg-gray-50"
-                onClick={() => navigate(`/classes/${classData.id}/subjects`)}
+                onClick={() => navigate(`/class/${classData.id}/subjects`)}
               >
                 View Subjects
               </button>
