@@ -8,9 +8,9 @@ const { BASEURL } = config;
 export const categorySlice = createSlice({
     name: "category",
     initialState: {
-        categoryDetails: {},
+        categoryDetails: [],
         categoryList: [],
-        classDetails: {},
+        classDetails: [],
         chapterList: [],
         lessonList: [],
     },
@@ -41,7 +41,7 @@ export const categorySlice = createSlice({
 export const getCategoryDetailsAsync = ({ dispatch, id, token }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}/admin/category/${id}/details`;
+            const URL = `${BASEURL}admin/category/${id}/details`;
             const response = await getAPICall(URL, {}, token);
             if (response?.data?.status === 200) {
                 dispatch(getCategoryDetailsSuccess(response.data));
@@ -58,9 +58,11 @@ export const getCategoryDetailsAsync = ({ dispatch, id, token }) => {
 export const listCategoriesAsync = ({ dispatch, token }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}/admin/category/list`;
+            const URL = `${BASEURL}admin/category/list`;
             const response = await getAPICall(URL, {}, token);
-            if (response?.data?.status === 200) {
+            // console.log(response.data?.status);
+
+            if (response?.data?.status == 200) {
                 dispatch(listCategoriesSuccess(response.data));
             } else {
                 toast.error("Failed to fetch category list.");
@@ -73,9 +75,10 @@ export const listCategoriesAsync = ({ dispatch, token }) => {
 export const getClassDetailsAsync = ({ dispatch, id, token }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}/admin/class/${id}/details`;
+            const URL = `${BASEURL}admin/class/${id}/details`;
             const response = await getAPICall(URL, {}, token);
-            if (response?.data?.status === 200) {
+            console.log(response);
+            if (response?.data?.status == 200) {
                 dispatch(getClassDetailsSuccess(response.data));
             } else {
                 toast.error("Failed to fetch class details.");
@@ -89,9 +92,10 @@ export const getClassDetailsAsync = ({ dispatch, id, token }) => {
 export const listChaptersAsync = ({ dispatch, id, token }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}/admin/chapter/list/${id}`;
+            const URL = `${BASEURL}admin/chapter/${id}/list`;
+            // console.log(response);
             const response = await getAPICall(URL, {}, token);
-            if (response?.data?.status === 200) {
+            if (response?.data?.status == 200) {
                 dispatch(listChaptersSuccess(response.data));
             } else {
                 toast.error("Failed to fetch chapters.");
@@ -105,7 +109,7 @@ export const listChaptersAsync = ({ dispatch, id, token }) => {
 export const listLessonsAsync = ({ dispatch, id, token }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}/admin/lesson/list/${id}`;
+            const URL = `${BASEURL}admin/lesson/list/${id}`;
             const response = await getAPICall(URL, {}, token);
             if (response?.data?.status === 200) {
                 dispatch(listLessonsSuccess(response.data));

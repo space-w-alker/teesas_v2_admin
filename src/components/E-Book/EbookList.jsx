@@ -15,20 +15,23 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listEbooksAsync, addEbookAsync, ebookList } from "../../apis/slices/ebookSlice";
 
+
 const BookItem = ({ key, ebook }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   // console.log('bookitem', ebooks);
   const handleDelete = (ebookId) => {
+    // console.log(ebookId);
     dispatch(deleteEbookAsync({
-      dispatch, ebookId, token: token,
+      dispatch, id: ebookId,
     }));
+    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
   };
   return (
     <>
       <div className="space-y-4">
-        <div key={ebook.id} className="bg-gray-50 rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+        <div key={key} className="bg-gray-50 rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-white rounded-lg">
               <FaBook className="w-6 h-6 text-[#27AE60]" />
@@ -53,12 +56,16 @@ const BookItem = ({ key, ebook }) => {
                   state: {
                     isEdit: true,
                     ebookData: {
-                      category: ebook.category,
+                      id: ebook.id,
+                      category: ebook.course.id,
                       bookTitle: ebook.title,
-                      grade: ebook.class_id,
-                      chapter: "Chapter 1",
+                      grade: ebook.class.id,
+                      chapter: ebook.subject_id,
                       description: ebook.short_des,
-                      pdf: ebook.source,
+                      price: ebook.price,
+                      icon: ebook.icon,
+                      pdf: ebook.source
+
                     },
                   },
                 })
@@ -157,17 +164,18 @@ const EbookList = ({ isOpen }) => {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm mb-8">
+
         <div className="p-6 border-b border-gray-100">
           <Headcomponent value="E-Book List" showSearch={true} onSearchChange={handleSearchChange} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {ebooks.data?.all_ebook[0]?.ebook.map((book, index) => (
-              <BookItem
-                key={index}
-                ebook={book}
-              />
-            ))}
+            {ebooks.data?.all_ebook?.map((ebookItem, index) =>
+              ebookItem.ebook.map((book, bookIndex) => (
+                <BookItem key={`${index}-${bookIndex}`} ebook={book} />
+              ))
+            )}
+
           </div>
         </div>
         <div className="p-6 border-t border-gray-100 flex justify-between items-center">

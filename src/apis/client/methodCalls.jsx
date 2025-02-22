@@ -86,7 +86,6 @@ export const deleteAPICall = async (
   return { data: data };
 };
 
-
 export const postAPICall = async (url, params) => {
   const myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
@@ -105,48 +104,39 @@ export const postAPICall = async (url, params) => {
   return { data };
 };
 
-export const postFileAPICall = async (
-  url,
-  formdata,
-  access_token
-) => {
-  const myHeaders = new Headers();
-  myHeaders.append('mode', '*');
-
-  const accessToken = localStorage.getItem('authToken')
-    ? localStorage.getItem('authToken')
-    : access_token;
-
+export const postFileAPICall = async (url, formData, access_token) => {
+  const accessToken = localStorage.getItem('authToken') || access_token;
+  const API_KEY = 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR';
   const requestOptions = {
     method: 'POST',
     headers: {
-      Authorization: 'Bearer ' + accessToken,
+      'Authorization': `Bearer ${accessToken}`,
+      'api-key': API_KEY
     },
-    body: formdata,
-    redirect: 'follow',
+    body: formData
   };
+
   const response = await fetch(url, requestOptions);
   const data = await response.json();
 
-  // if (data?.statusCode == 401) {
-  //   deleteCookie('username');
-  //   deleteCookie('authToken');
-  //   deleteCookie('authID');
-  // } else {
-  // }
-  return { data: data };
+  return { data };
 };
 
+
+
 export const putAPICall = async (url, body, auth = false, token = null) => {
+  const accessToken = localStorage.getItem('authToken') || access_token;
+  const API_KEY = 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR';
   const headers = {
     'Content-Type': 'application/json',
-    'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR'
+    'api-key': API_KEY,
+    'Authorization': `Bearer ${accessToken}`,
 
   };
 
-  if (auth && token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
+  // if (auth && token) {
+  //   headers['Authorization'] = `Bearer ${accessToken}`
+  // }
 
   const response = await fetch(url, {
     method: 'PUT',

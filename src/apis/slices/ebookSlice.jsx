@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { postAPICall, getAPICall, getViaPostAPICall, putAPICall, deleteAPICall } from "../client/methodCalls";
+import { postAPICall, getAPICall, getViaPostAPICall, putAPICall, deleteAPICall, postFileAPICall } from "../client/methodCalls";
 import { toast } from "react-toastify";
 import { config } from "../client/config";
 
@@ -35,7 +35,7 @@ export const ebookSlice = createSlice({
     deleteSuccess: (state, action) => {
       state.deleteResponse = action.payload;
     },
-    updateSuccess: (state, action) => {
+    updateEbookDetailsSuccess: (state, action) => {
       state.updateResponse = action.payload;
     },
 
@@ -61,6 +61,7 @@ export const deleteEbookAsync = ({ dispatch, id, token, callbackFn }) => {
         toast.success('Ebook deleted successfully')
       } else {
         toast.error("Failed to delete eBook details.");
+
       }
     } catch (error) {
       return rejectWithValue(error.message);
@@ -69,14 +70,14 @@ export const deleteEbookAsync = ({ dispatch, id, token, callbackFn }) => {
 };
 
 // **Update Ebook**
-export const updateEbookAsync = ({ dispatch, id, token, callbackFn }) => {
+export const updateEbookAsync = ({ dispatch, id, formData, token, callbackFn }) => {
   return async () => {
     try {
       const URL = `${BASEURL}ebook/update/${id}`;
-      const response = await putAPICall(URL, {}, token);
-      if (response?.data?.status === 200) {
+      const response = await putAPICall(URL, formData, true, token);
+      if (response?.data?.status == 200) {
         // callbackFn && callbackFn(response.data);
-        dispatch(getEbookDetailsSuccess(response.data));
+        dispatch(updateEbookDetailsSuccess(response.data));
       } else {
         toast.error("Failed to update eBook details.");
       }
@@ -92,7 +93,8 @@ export const getEbookDetailsAsync = ({ dispatch, id, token, callbackFn }) => {
     try {
       const URL = `${BASEURL}ebook/details?id=${id}`;
       const response = await getAPICall(URL, {}, token);
-      if (response?.data?.status === 200) {
+      console.log(response)
+      if (response?.data?.status == 200) {
         // callbackFn && callbackFn(response.data);
         dispatch(getEbookDetailsSuccess(response.data));
       } else {
@@ -109,8 +111,8 @@ export const addEbookAsync = ({ dispatch, data, token, callbackFn }) => {
   return async () => {
     try {
       const URL = `${BASEURL}ebook/add`;
-      const response = await postAPICall(URL, data, true, token);
-      if (response?.data?.status === 200) {
+      const response = await postFileAPICall(URL, data, true, token);
+      if (response.status == 200) {
         callbackFn && callbackFn(response.data);
         dispatch(addEbookSuccess(response.data));
       } else {

@@ -4,31 +4,52 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Headers from '../common/Headers';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
-import { addEbookAsync } from '../../apis/slices/ebookSlice';
+import { addEbookAsync, updateEbookAsync } from '../../apis/slices/ebookSlice';
 // import { addEbookAsync } from '../../apis/slices/ebookSlice';
 import { listCategoriesAsync, getCategoryDetailsAsync, getClassDetailsAsync, listChaptersAsync, listLessonsAsync } from '../../apis/slices/categorySlice';
-import { useDispatch } from 'react-redux';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 
 const AddSingleEbook = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
+  const categories = useSelector((state) => state.category?.categoryList?.data?.categories);
+  const grades = useSelector((state) => state.category?.categoryDetails.data?.classes);
+  const chapters = useSelector((state) => state.category?.classDetails?.data?.subjects);
+  console.log("categories", categories, "grades", grades, "chapters", chapters)
   const [formData, setFormData] = useState({
+    id: location.state?.ebookData?.id || '',
     category: location.state?.ebookData?.category || '',
     grade: location.state?.ebookData?.grade || '',
     chapter: location.state?.ebookData?.chapter || '',
     bookTitle: location.state?.ebookData?.bookTitle || '',
     price: location.state?.ebookData?.price || '',
     description: location.state?.ebookData?.description || '',
-    pdf: location.state?.ebookData?.pdf || null
+    pdf: location.state?.ebookData?.pdf || null,
+    icon: location.state?.ebookData?.icon || null
   });
 
   const [dragActive, setDragActive] = useState(false);
+  const [pdfFile, setPdfFile] = useState(null);
+  const [iconFile, setIconFile] = useState(null);
 
-  const handlePdfUpload = (e) => {
-    setFormData({ ...formData, pdf: e.target.files[0] });
+  const handlePdfChange = (e) => {
+    setPdfFile(e.target.files[0]);
+    setFormData({ ...formData, pdf: e.target.files[0].name })
   };
+
+  const handleIconChange = (e) => {
+    setIconFile(e.target.files[0]);
+    setFormData({ ...formData, icon: e.target.files[0].name })
+
+  };
+
+  // const handleFileUpload = (e, field) => {
+  //   setFormData({ ...formData, [field]: e.target.files[0] });
+  // };
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -45,6 +66,31 @@ const AddSingleEbook = ({ isOpen }) => {
     }
   };
   const dispatch = useDispatch();
+
+  // Fetch Categories on Mount
+
+  useEffect(() => {
+    dispatch(listCategoriesAsync({ dispatch }));
+  }, [dispatch]);
+
+  // Fetch Grades when Category Changes
+  useEffect(() => {
+    if (formData.category) {
+      dispatch(getCategoryDetailsAsync({ dispatch, id: formData.category }));
+      // setFormData((prev) => ({ ...prev, grade: "", chapter: "" })); // Reset grade and chapter
+    }
+  }, [dispatch, formData.category]);
+
+  // Fetch Chapters when Grade Changes
+  useEffect(() => {
+    if (formData.grade) {
+      dispatch(getClassDetailsAsync({ dispatch, id: formData.grade }));
+      // setFormData((prev) => ({ ...prev, chapter: "" })); // Reset chapter
+    }
+  }, [dispatch, formData.grade]);
+
+  console.log('formData', formData)
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -56,36 +102,57 @@ const AddSingleEbook = ({ isOpen }) => {
       title: formData.bookTitle || '',
       description: formData.description || '',
       short_des: formData.description ? formData.description.substring(0, 100) : '',
-      icon: '', // Default empty if unavailable
-      source: formData.pdf ? formData.pdf.name : '',
-      sample_source: '', // Default empty if no sample
       price: formData.price || '',
-      // discount: formData.discount || '',
-      // seo: formData.bookTitle
-      //   ? `${formData.bookTitle} ${formData.category || ''} ${formData.grade || ''} ${formData.chapter || ''}`
-      //   : '',
-      // publisher: formData.publisher || '',
-      // publication: formData.publication || '',
-      // ISBN_no: formData.ISBN_no || '',
-      // country_id: formData.country_id || '',
-      // language: formData.language || '',
-      // publish_date: formData.publish_date || '',
-      // status: formData.status || '',
-      // is_paid: formData.is_paid || ''
     };
+    // if (!pdfFile || !iconFile) {
+    //   alert("Please select both files before uploading.");
+    //   return;
+    // }
 
-    // Creating FormData for sending files
     const formDataToSend = new FormData();
+
+    // Append all request data (if not null/undefined)
     Object.keys(requestData).forEach((key) => {
-      formDataToSend.append(key, requestData[key]);
+      if (requestData[key] !== undefined && requestData[key] !== null) {
+        formDataToSend.append(key, requestData[key]);
+      }
     });
 
-    if (formData.pdf) {
-      formDataToSend.append('pdf', formData.pdf);
+    // Append files only if they exist
+    if (pdfFile instanceof File) formDataToSend.append("files", pdfFile);
+    if (iconFile instanceof File) formDataToSend.append("files", iconFile);
+
+    // Debugging: Check FormData content
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0], pair[1]);
     }
 
     // Dispatch Redux action to create an ebook
-    dispatch(addEbookAsync({ dispatch, data: requestData }));
+
+
+    if (formData.id) {
+      await dispatch(updateEbookAsync({ dispatch, id: formData.id, formData: formDataToSend }));
+    } else {
+      await dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
+    }
+
+    navigate("/e-book");
+
+    // const action = formData.id
+    //   ? updateEbookAsync({ dispatch, id: formData.id, formData: formDataToSend })
+    //   : addEbookAsync({ dispatch, data: formDataToSend });
+
+    // dispatch(action)
+    //   .unwrap()
+    //   .then(() => {
+    //     toast.success("Ebook saved successfully!");
+    //     navigate("/e-book");
+    //   })
+    //   .catch((error) => {
+    //     toast.error("Failed to save ebook. Please try again.");
+    //     console.error("Ebook save error:", error);
+    //   });
+
   };
 
 
@@ -99,7 +166,7 @@ const AddSingleEbook = ({ isOpen }) => {
       description: '',
       pdf: null
     });
-    navigate('/ebook-list');
+    navigate('/ebook');
   };
 
   return (
@@ -129,9 +196,11 @@ const AddSingleEbook = ({ isOpen }) => {
                     required
                   >
                     <option value="">Select Category</option>
-                    <option value="1">Mathematics</option>
-                    <option value="2">Science</option>
-                    <option value="3">English</option>
+                    {categories?.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -143,12 +212,16 @@ const AddSingleEbook = ({ isOpen }) => {
                     onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
+                    disabled={!formData.category} // Disable if no category is selected
                   >
                     <option value="">Select Grade</option>
-                    <option value="1">Grade 1</option>
-                    <option value="2">Grade 2</option>
-                    <option value="3">Grade 3</option>
+                    {grades?.map((grade) => (
+                      <option key={grade.id} value={grade.id}>
+                        {grade.name}
+                      </option>
+                    ))}
                   </select>
+
                 </div>
                 <div>
                   <label className="block text-gray-700 text-sm font-medium mb-2">
@@ -159,11 +232,14 @@ const AddSingleEbook = ({ isOpen }) => {
                     onChange={(e) => setFormData({ ...formData, chapter: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
+                    disabled={!formData.grade} // Disable if no grade is selected
                   >
                     <option value="">Select Chapter</option>
-                    <option value="1">Chapter 1</option>
-                    <option value="2">Chapter 2</option>
-                    <option label="3">Chapter 3</option>
+                    {chapters?.map((chapter) => (
+                      <option key={chapter.id} value={chapter.id}>
+                        {chapter.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -223,7 +299,7 @@ const AddSingleEbook = ({ isOpen }) => {
                         type="file"
                         className="hidden"
                         accept=".jpg"
-                        onChange={handlePdfUpload}
+                        onChange={(e) => handleIconChange(e)}
                         required
                       />
                     </label>
@@ -233,7 +309,7 @@ const AddSingleEbook = ({ isOpen }) => {
                   {formData.icon && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.pdf.name}</p>
+                      <p className="text-gray-600">{formData.icon}</p>
                     </div>
                   )}
                 </div>
@@ -259,7 +335,7 @@ const AddSingleEbook = ({ isOpen }) => {
                         type="file"
                         className="hidden"
                         accept=".pdf"
-                        onChange={handlePdfUpload}
+                        onChange={(e) => handlePdfChange(e)}
                         required
                       />
                     </label>
@@ -269,7 +345,7 @@ const AddSingleEbook = ({ isOpen }) => {
                   {formData.pdf && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.pdf.name}</p>
+                      <p className="text-gray-600">{formData.pdf}</p>
                     </div>
                   )}
                 </div>
@@ -304,8 +380,12 @@ const AddSingleEbook = ({ isOpen }) => {
                   <span className="font-medium">{formData.price || '-'}</span>
                 </div>
                 <div className="flex justify-between">
+                  <span className="text-gray-600">Icon:</span>
+                  <span className="font-medium">{formData.icon || '-'}</span>
+                </div>
+                <div className="flex justify-between">
                   <span className="text-gray-600">PDF:</span>
-                  <span className="font-medium">{formData.pdf?.name || '-'}</span>
+                  <span className="font-medium">{formData.pdf || '-'}</span>
                 </div>
               </div>
             </div>

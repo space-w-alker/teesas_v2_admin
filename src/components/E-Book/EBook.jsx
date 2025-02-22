@@ -55,12 +55,16 @@ const BookItem = ({ key, ebook }) => {
                   state: {
                     isEdit: true,
                     ebookData: {
-                      category: ebook.category,
+                      id: ebook.id,
+                      category: ebook.course.id,
                       bookTitle: ebook.title,
-                      grade: ebook.class_id,
-                      chapter: "Chapter 1",
+                      grade: ebook.class.id,
+                      chapter: ebook.subject_id,
                       description: ebook.short_des,
-                      pdf: ebook.source,
+                      price: ebook.price,
+                      icon: ebook.icon,
+                      pdf: ebook.source
+
                     },
                   },
                 })
@@ -143,7 +147,7 @@ const EBook = ({ isOpen }) => {
     sort: "",
     search: "",
     page: 1,
-    limit: 10
+    limit: 100
   });
   const handleSearchChange = (e) => {
     setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
@@ -204,12 +208,12 @@ const EBook = ({ isOpen }) => {
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {ebooks.data?.all_ebook[0]?.ebook.map((book, index) => (
-              <BookItem
-                key={index}
-                ebook={book}
-              />
-            ))}
+            {ebooks.data?.all_ebook?.map((ebookItem, index) =>
+              ebookItem.ebook.map((book, bookIndex) => (
+                <BookItem key={`${index}-${bookIndex}`} ebook={book} />
+              ))
+            )}
+
           </div>
         </div>
         <div className="p-4 border-t border-gray-100 flex justify-center">
