@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
@@ -6,8 +6,11 @@ import StatCard from '../common/StatCard';
 import Custombutton from '../common/Custombutton';
 import Modal from '../common/Modal';
 import bookopen from '../../assets/images/bookopen.png';
+import { useDispatch, useSelector } from "react-redux";
+import { getTopicsListAsync } from "../../apis/slices/categoriesSlice";
 
-const ClassItem = ({ name }) => {
+
+const ClassItem = ({ name, id, uploadedMedia }) => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
@@ -29,39 +32,42 @@ const ClassItem = ({ name }) => {
           extraStyle="hover:bg-green-50"
         />
         <Custombutton
-          value="Topic List"
-          onClick={() => navigate('/test-topic-list')}
+          value="Media List"
+          onClick={() => navigate('/test-topic-list', { state: { id, media: uploadedMedia } })}
           textcolor="text-[#27AE60]"
           backgroundcolor="bg-transparent"
           extraStyle="hover:bg-green-50"
         />
       </div>
 
-    
-{showModal && (
-  <Modal
-    label="ADD MEDIA"
-    closeModal={() => setShowModal(false)}
-    value1="Add Single Media"
-    value2="Upload Bulk Media"
-    addSingleButton={() => navigate('/testUnit-media-upload')}
-    addMutipleButton={() => navigate('/Testbulk-media-upload')}
-  />
-)}
+
+      {showModal && (
+        <Modal
+          label="ADD MEDIA"
+          closeModal={() => setShowModal(false)}
+          value1="Add Single Media"
+          value2="Upload Bulk Media"
+          addSingleButton={() => navigate('/testUnit-media-upload')}
+          addMutipleButton={() => navigate('/Testbulk-media-upload')}
+        />
+      )}
 
     </div>
   );
 };
 
 const TestTopics = ({ isOpen }) => {
-  const topics = [
-    'Mathematics of Beggining',
-    'Number and Numeration',
-    'Fractions',
-    'Decimals',
-    'Algebra',
-    'Geometry',
-  ];
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const id = location.state.id || {};
+  const topics = useSelector((state) => state.categories?.topics?.data?.lessons || []);
+  // console.log('topic', id, topics);
+
+  useEffect(() => {
+    dispatch(getTopicsListAsync(id)).then(() => setLoading(false));
+  }, [dispatch])
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -84,13 +90,14 @@ const TestTopics = ({ isOpen }) => {
         <div className="p-6 border-b border-gray-100">
           <Headcomponent value="Topics" showSearch={false} />
         </div>
-        
+
         <div className="p-6">
           <div className="space-y-4">
             {topics.map((topicName, index) => (
-              <ClassItem 
-                key={index} 
-                name={topicName}
+              <ClassItem
+                key={index}
+                name={topicName.name}
+                id={topicName.id}
               />
             ))}
           </div>
