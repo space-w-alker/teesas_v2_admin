@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from 'react-router-dom';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
@@ -8,9 +8,11 @@ import bookopen from '../../assets/images/bookopen.png';
 import sharp from '../../assets/images/sharp.png';
 import { FaPlus } from 'react-icons/fa';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { useDispatch, useSelector } from "react-redux";
+import { getTopicDetailAsync } from "../../apis/slices/categoriesSlice";
 
-const TopicItem = ({ name, navigate }) => (
-  <div 
+const TopicItem = ({ name, navigate, status, topic }) => (
+  <div
     onClick={() => navigate('/test-detail', { state: { name } })}
     className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer"
   >
@@ -27,12 +29,13 @@ const TopicItem = ({ name, navigate }) => (
             <div className="flex">
               <img src={sharp} alt="sharp" className="w-4 h-4" />
             </div>
-            <span>Visible</span>
+            <span>{status ? "Active" : "In-Active"}
+            </span>
           </div>
         }
         onClick={(e) => {
           e.stopPropagation();
-          navigate('/test-detail', { state: { name } });
+          navigate('/test-detail', { state: { name, topic } });
         }}
         textcolor="text-blue-600"
         backgroundcolor="bg-green-50"
@@ -42,15 +45,26 @@ const TopicItem = ({ name, navigate }) => (
   </div>
 );
 const TestTopicList = ({ isOpen }) => {
+  const location = useLocation();
   const navigate = useNavigate();
-  
-  const topics = [
-    'Introduction to Algebra',
-    'Linear Equations',
-    'Quadratic Equations',
-    'Polynomials',
-    'Matrices'
-  ];
+  const dispatch = useDispatch();
+
+  const id = location.state.id || {};
+
+
+  const topics = useSelector((state) => state.categories?.topicDetail?.data || []);
+  console.log('topic', id, topics);
+
+  useEffect(() => {
+    dispatch(getTopicDetailAsync(id)).then(() => setLoading(false));
+  }, [dispatch])
+  // const topics = [
+  //   'Introduction to Algebra',
+  //   'Linear Equations',
+  //   'Quadratic Equations',
+  //   'Polynomials',
+  //   'Matrices'
+  // ];
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -68,9 +82,9 @@ const TestTopicList = ({ isOpen }) => {
         <StatCard title="Total Questions" count="100" />
         <StatCard title="Total Resources" count="50" />
       </div>
-      
+
       <div className="flex justify-end mb-6">
-      <Custombutton
+        <Custombutton
           value={
             <div className="flex items-center gap-2">
               <FaPlus className="text-sm" />
@@ -84,20 +98,22 @@ const TestTopicList = ({ isOpen }) => {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm">
-      <div className="p-6 border-b border-gray-100">
-  
+        <div className="p-6 border-b border-gray-100">
+
           <Headcomponent value="Test List" showSearch={true} />
-        
-</div>
+
+        </div>
 
 
-        
+
         <div className="p-6">
           <div className="space-y-4">
             {topics.map((topic, index) => (
               <TopicItem
                 key={index}
-                name={topic}
+                name={topic.title}
+                status={topic.active}
+                topic={topic}
                 navigate={navigate}
               />
             ))}

@@ -1,14 +1,14 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
 import Custombutton from '../common/Custombutton';
 import bookopen from '../../assets/images/bookopen.png';
 
-const ClassItem = ({ name }) => {
+const ClassItem = ({ name, id }) => {
   const navigate = useNavigate();
-  
+
   return (
     <div className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-center gap-4">
@@ -19,7 +19,7 @@ const ClassItem = ({ name }) => {
       </div>
       <Custombutton
         value="Next"
-        onClick={() => navigate('/test-subject', { state: { name: name } })}
+        onClick={() => navigate('/test-subject', { state: { id } })}
         textcolor="text-[#27AE60]"
         backgroundcolor="bg-transparent"
         extraStyle="hover:bg-green-50"
@@ -29,16 +29,19 @@ const ClassItem = ({ name }) => {
 };
 
 const TestClass = ({ isOpen }) => {
+  const location = useLocation();
   const navigate = useNavigate();
-  
-  const classes = [
-    'Class 1',
-    'Class 2',
-    'Class 3',
-    'Class 4',
-    'Class 5',
-    'Class 6'
-  ];
+  const name = location.state?.name || "N/A";
+  const classes = location.state?.classes || "N/A";
+  console.log(name, classes);
+  // const classes = [
+  //   'Class 1',
+  //   'Class 2',
+  //   'Class 3',
+  //   'Class 4',
+  //   'Class 5',
+  //   'Class 6'
+  // ];
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -61,13 +64,14 @@ const TestClass = ({ isOpen }) => {
         <div className="p-6 border-b border-gray-100">
           <Headcomponent value="Classes" showSearch={false} />
         </div>
-        
+
         <div className="p-6">
           <div className="space-y-4">
             {classes.map((className, index) => (
-              <ClassItem 
-                key={index} 
-                name={className}
+              <ClassItem
+                key={index}
+                name={className.name}
+                id={className.id}
               />
             ))}
           </div>

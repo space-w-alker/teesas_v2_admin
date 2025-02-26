@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
 import Custombutton from '../common/Custombutton';
 import bookopen from '../../assets/images/bookopen.png';
+import { useDispatch, useSelector } from "react-redux";
+import { getChapterDetailsAsync } from "../../apis/slices/categoriesSlice";
 
-const ClassItem = ({ name }) => {
+
+const ClassItem = ({ name, id }) => {
   const navigate = useNavigate();
-  
+
   return (
     <div className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-center gap-4">
@@ -19,7 +22,7 @@ const ClassItem = ({ name }) => {
       </div>
       <Custombutton
         value="Edit"
-        onClick={() => navigate('/test-topic')}
+        onClick={() => navigate('/test-topic', { state: { id } })}
         textcolor="text-[#27AE60]"
         backgroundcolor="bg-transparent"
         extraStyle="hover:bg-green-50"
@@ -31,13 +34,23 @@ const ClassItem = ({ name }) => {
 const TestChapter = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { category } = location.state || {};
-  
-  const chapters = [
-    'Chapter 1',
-    'Chapter 2',
-    'Chapter 3',
-  ];
+  const dispatch = useDispatch();
+
+  const id = location.state.id || {};
+
+
+  const chapters = useSelector((state) => state.categories?.chapters?.data?.chapters || []);
+  console.log(id, chapters);
+
+  useEffect(() => {
+    dispatch(getChapterDetailsAsync(id)).then(() => setLoading(false));
+  }, [dispatch])
+
+  // const chapters = [
+  //   'Chapter 1',
+  //   'Chapter 2',
+  //   'Chapter 3',
+  // ];
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -60,13 +73,14 @@ const TestChapter = ({ isOpen }) => {
         <div className="p-6 border-b border-gray-100">
           <Headcomponent value="Chapters" showSearch={false} />
         </div>
-        
+
         <div className="p-6">
           <div className="space-y-4">
             {chapters.map((chapterName, index) => (
-              <ClassItem 
-                key={index} 
-                name={chapterName}
+              <ClassItem
+                key={index}
+                name={chapterName.name}
+                id={chapterName.id}
               />
             ))}
           </div>
