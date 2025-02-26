@@ -9,11 +9,19 @@ import bookopen from '../../assets/images/bookopen.png';
 import { useDispatch, useSelector } from "react-redux";
 import { getTopicsListAsync } from "../../apis/slices/categoriesSlice";
 
-
 const ClassItem = ({ name, id, uploadedMedia }) => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleCreateTest = () => {
+    // Navigate to test creation page with topic ID
+    navigate('/test-topic-list', { state: { topicId: id, topicName: name } });
+    setShowModal(false);
+  };
 
   return (
     <div className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer">
@@ -25,37 +33,25 @@ const ClassItem = ({ name, id, uploadedMedia }) => {
       </div>
       <div className="flex gap-4 items-center">
         <Custombutton
-          value="Add Media"
+          value="Add Bulk Practice and Mock Test"
           onClick={() => setShowModal(true)}
-          textcolor="text-[#27AE60]"
-          backgroundcolor="bg-transparent"
-          extraStyle="hover:bg-green-50"
-        />
-        <Custombutton
-          value="Media List"
-          onClick={() => navigate('/test-topic-list', { state: { id, media: uploadedMedia } })}
           textcolor="text-[#27AE60]"
           backgroundcolor="bg-transparent"
           extraStyle="hover:bg-green-50"
         />
       </div>
 
-
       {showModal && (
         <Modal
-          label="ADD MEDIA"
-          closeModal={() => setShowModal(false)}
-          value1="Add Single Media"
-          value2="Upload Bulk Media"
-          addSingleButton={() => navigate('/testUnit-media-upload')}
-          addMutipleButton={() => navigate('/Testbulk-media-upload')}
+          label="Add Test"
+          value1="Create New Test"
+          closeModal={handleCloseModal}
+          addSingleButton={handleCreateTest}
         />
       )}
-
     </div>
   );
 };
-
 const TestTopics = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();

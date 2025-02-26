@@ -36,7 +36,7 @@ const Modal = ({
     }));
   };
   const [selectedCourses, setSelectedCourses] = useState([]);
-const [activeUsers, setActiveUsers] = useState(false);
+  const [activeUsers, setActiveUsers] = useState(false);
 
   // const handleCourseClick = (course) => {
   //   setSelectedCourses((prevSelectedCourses) => {
@@ -80,7 +80,7 @@ const [activeUsers, setActiveUsers] = useState(false);
       inactiveUsers: false,
     },
   });
-  
+
 
   const handleCourseChange = (course) => {
     setFilters((prevState) => ({
@@ -141,124 +141,145 @@ const [activeUsers, setActiveUsers] = useState(false);
             </div>
           </div>
         );
-       
 
-case "Add Job Opening":
-  return (
-    <div className="px-[20px]">
-      <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
-        Select one of the options below
-      </p>
-      <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
-        <div className="flex items-center gap-[20px] mt-2 px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addSingleButton}
-          ></div>
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value1}
-          </label>
-        </div>
-        <div className="flex items-center gap-[20px] px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addMutipleButton}
-          />
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value2}
-          </label>
-        </div>
-      </div>
-    </div>
-  );
 
-        case "ADD MEDIA":
-  return (
-    <div className="px-[20px]">
-      <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
-        Select one of the options below
-      </p>
-      <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
-        <div className="flex items-center gap-[20px] mt-2 px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addSingleButton}
-          ></div>
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value1}
-          </label>
-        </div>
-        <div className="flex items-center gap-[20px] px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addMutipleButton}
-          />
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value2}
-          </label>
-        </div>
-      </div>
-    </div>
-  );
-  // Add this case in the renderModalContent() switch statement
-case "Add Category":
-  return (
-    <div className="px-[20px]">
-      <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
-        Select one of the options below
-      </p>
-      <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
-        <div className="flex items-center gap-[20px] mt-2 px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addSingleButton}
-          ></div>
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value1}
-          </label>
-        </div>
-        <div className="flex items-center gap-[20px] px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addMutipleButton}
-          />
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value2}
-          </label>
-        </div>
-      </div>
-    </div>
-  );
+      case "Add Job Opening":
+        return (
+          <div className="px-[20px]">
+            <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
+              Select one of the options below
+            </p>
+            <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
+              <div className="flex items-center gap-[20px] mt-2 px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addSingleButton}
+                ></div>
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value1}
+                </label>
+              </div>
+              <div className="flex items-center gap-[20px] px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addMutipleButton}
+                />
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value2}
+                </label>
+              </div>
+            </div>
+          </div>
+        );
 
- 
-case "Add Class":
-  return (
-    <div className="px-[20px]">
-      <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
-        Select one of the options below
-      </p>
-      <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
-        <div className="flex items-center gap-[20px] mt-2 px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addSingleButton}
-          ></div>
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value1}
-          </label>
-        </div>
-        <div className="flex items-center gap-[20px] px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addMutipleButton}
-          />
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value2}
-          </label>
-        </div>
-      </div>
-    </div>
-  );
+      case "ADD MEDIA":
+        return (
+          <div className="px-[20px]">
+            <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
+              Select one of the options below
+            </p>
+            <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
+              <div className="flex items-center gap-[20px] mt-2 px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addSingleButton}
+                ></div>
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value1}
+                </label>
+              </div>
+              <div className="flex items-center gap-[20px] px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addMutipleButton}
+                />
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value2}
+                </label>
+              </div>
+            </div>
+          </div>
+        );
+      // Add this case in the renderModalContent() switch statement
+      case "Add Category":
+        return (
+          <div className="px-[20px]">
+            <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
+              Select one of the options below
+            </p>
+            <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
+              <div className="flex items-center gap-[20px] mt-2 px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addSingleButton}
+                ></div>
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value1}
+                </label>
+              </div>
+              <div className="flex items-center gap-[20px] px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addMutipleButton}
+                />
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value2}
+                </label>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "Add Test":
+        return (
+          <div className="px-[20px]">
+            <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
+              Select option below
+            </p>
+            <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[80px]">
+              <div className="flex items-center gap-[20px] mt-2 px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addSingleButton}
+                ></div>
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value1}
+                </label>
+              </div>
+            </div>
+          </div>
+        );
+
+
+
+      case "Add Class":
+        return (
+          <div className="px-[20px]">
+            <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
+              Select one of the options below
+            </p>
+            <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
+              <div className="flex items-center gap-[20px] mt-2 px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addSingleButton}
+                ></div>
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value1}
+                </label>
+              </div>
+              <div className="flex items-center gap-[20px] px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addMutipleButton}
+                />
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value2}
+                </label>
+              </div>
+            </div>
+          </div>
+        );
 
 
       case "Export":
@@ -322,12 +343,12 @@ case "Add Class":
                     </div>
                     <div className="relative">
                       {selectedCoursesData.includes(course?.id) ? (
-                  <div className="w-[24px] h-[24px] rounded-[4px] bg-[#F2994A] relative">
-                    <FaCheck className="text-white absolute top-1 left-1" />
-                  </div>
-                ) : (
-                  <div className="w-[24px] h-[24px] rounded-[4px] border border-[#C4C4C4]"></div>
-                )}
+                        <div className="w-[24px] h-[24px] rounded-[4px] bg-[#F2994A] relative">
+                          <FaCheck className="text-white absolute top-1 left-1" />
+                        </div>
+                      ) : (
+                        <div className="w-[24px] h-[24px] rounded-[4px] border border-[#C4C4C4]"></div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -337,29 +358,29 @@ case "Add Class":
                   Filter By Status
                 </h3>
                 <div className="md:grid lg:grid grid-cols-2 gap-1  bg-[#F5F5F5]  rounded-[16px]">
-                    <div
-                      className="flex justify-between items-center max-sm:px-2 py-[5px] cursor-pointer"
-                      onClick={() => onSelectStatus(true)}
-                    >
-                      <div className="px-[20px] py-[10px]  font-medium text-[16px] leading-[16px] capitalize">
-                      Active Users 
-                      </div>
-                      <div className="relative">
-                        {selectedStatusData == true ? (
-                          <div className="w-[24px] h-[24px] rounded-[4px] bg-[#F2994A] relative">
-                            <FaCheck className="text-white absolute top-1 left-1" />
-                          </div>
-                        ) : (
-                          <div className="w-[24px] h-[24px] rounded-[4px] border border-[#C4C4C4]"></div>
-                        )}
-                      </div>
+                  <div
+                    className="flex justify-between items-center max-sm:px-2 py-[5px] cursor-pointer"
+                    onClick={() => onSelectStatus(true)}
+                  >
+                    <div className="px-[20px] py-[10px]  font-medium text-[16px] leading-[16px] capitalize">
+                      Active Users
                     </div>
-                    <div
+                    <div className="relative">
+                      {selectedStatusData == true ? (
+                        <div className="w-[24px] h-[24px] rounded-[4px] bg-[#F2994A] relative">
+                          <FaCheck className="text-white absolute top-1 left-1" />
+                        </div>
+                      ) : (
+                        <div className="w-[24px] h-[24px] rounded-[4px] border border-[#C4C4C4]"></div>
+                      )}
+                    </div>
+                  </div>
+                  <div
                     className="flex justify-between items-center py-[5px] mr-2 cursor-pointer"
                     onClick={() => onSelectStatus(false)}
                   >
                     <div className="px-[20px] py-[10px] font-medium text-[16px] leading-[16px] capitalize">
-                    Inactive Users
+                      Inactive Users
                     </div>
                     <div className="relative">
                       {selectedStatusData == false ? (
@@ -375,86 +396,86 @@ case "Add Class":
               </div>
 
               <div className="flex justify-end items-center">
-              <button className="bg-[#F2994A] text-white text-[14px] px-8 py-3 rounded-lg" onClick={onClick}>
-              Apply
-              </button>
+                <button className="bg-[#F2994A] text-white text-[14px] px-8 py-3 rounded-lg" onClick={onClick}>
+                  Apply
+                </button>
               </div>
             </div>
           </div>
         );
-        case "Filter7":
-  return (
-    <div className="px-[20px]">
-      <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px]">
-        <div 
-          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-          onClick={() => handleOptionClick('status')}
-        >
-          Filter By Status
-        </div>
-        <div 
-          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-          onClick={() => handleOptionClick('course')}
-        >
-          Filter By Course
-        </div>
-        <div 
-          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-          onClick={() => handleOptionClick('primary')}
-        >
-          Filter By Primary School Lesson
-        </div>
-        <div 
-          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-          onClick={() => handleOptionClick('secondary')}
-        >
-          Filter By Secondary School Lesson
-        </div>
-        <div 
-          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-          onClick={() => handleOptionClick('habit')}
-        >
-          Filter By 7 Habit Coaching
-        </div>
-        <div 
-          className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-          onClick={() => handleOptionClick('animation')}
-        >
-          Filter By Animation
-        </div>
-      </div>
-    </div>
-  );
+      case "Filter7":
+        return (
+          <div className="px-[20px]">
+            <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px]">
+              <div
+                className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+                onClick={() => handleOptionClick('status')}
+              >
+                Filter By Status
+              </div>
+              <div
+                className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+                onClick={() => handleOptionClick('course')}
+              >
+                Filter By Course
+              </div>
+              <div
+                className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+                onClick={() => handleOptionClick('primary')}
+              >
+                Filter By Primary School Lesson
+              </div>
+              <div
+                className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+                onClick={() => handleOptionClick('secondary')}
+              >
+                Filter By Secondary School Lesson
+              </div>
+              <div
+                className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+                onClick={() => handleOptionClick('habit')}
+              >
+                Filter By 7 Habit Coaching
+              </div>
+              <div
+                className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+                onClick={() => handleOptionClick('animation')}
+              >
+                Filter By Animation
+              </div>
+            </div>
+          </div>
+        );
 
-  case "Add Subject":
-  return (
-    <div className="px-[20px]">
-      <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
-        Select one of the options below
-      </p>
-      <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
-        <div className="flex items-center gap-[20px] mt-2 px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addSingleButton}
-          ></div>
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value1}
-          </label>
-        </div>
-        <div className="flex items-center gap-[20px] px-[10px]">
-          <div
-            className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
-            onClick={addMutipleButton}
-          />
-          <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
-            {value2}
-          </label>
-        </div>
-      </div>
-    </div>
-  );
-  
+      case "Add Subject":
+        return (
+          <div className="px-[20px]">
+            <p className="font-light text-[14px] leading-[16px] text-[#4C4C4C] my-2">
+              Select one of the options below
+            </p>
+            <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px] h-[128px]">
+              <div className="flex items-center gap-[20px] mt-2 px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addSingleButton}
+                ></div>
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value1}
+                </label>
+              </div>
+              <div className="flex items-center gap-[20px] px-[10px]">
+                <div
+                  className="w-[24px] h-[24px] bg-[#CCCCCC] rounded-full cursor-pointer"
+                  onClick={addMutipleButton}
+                />
+                <label className="font-bold text-[16px] leading-[16px] text-[#162D3A]">
+                  {value2}
+                </label>
+              </div>
+            </div>
+          </div>
+        );
+
 
 
       case "Sort By":
@@ -500,7 +521,7 @@ case "Add Class":
         return <p>No content available</p>;
     }
   };
-  
+
 
   return (
     <div>

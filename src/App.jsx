@@ -92,8 +92,6 @@ import TestClass from './components/Test/TestClass';
 import TestSubject from './components/Test/TestSubject';
 import TestChapter from './components/Test/TestChapter';
 import TestTopics from './components/Test/TestTopics';
-import TestUnitMediaUpload from './components/Test/TestUnitMediaUpload';
-import TestBulkMediaUpload from './components/Test/TestBulkMediaUpload';
 import TestTopicList from './components/Test/TestTopicList';
 import AddTest from './components/Test/AddTest';
 import TestDetail from './components/Test/TestDetails';
@@ -176,6 +174,8 @@ import AddClass from './components/Categories/AddClass';
 import TopicsList from './components/Categories/TopicsList';
 import AddTopic from './components/Categories/AddTopic';
 import TopicDetail from './components/Categories/TopicDetail';
+import UploadQuestions from './components/Test/UploadQuestions';
+import QuestionView from './components/Test/QuestionView';
 
 
 
@@ -330,6 +330,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/question-view"
+          element={
+            <ProtectedRoute>
+              <QuestionView isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/studentlistmanagement"
           element={
@@ -1018,24 +1028,6 @@ function App() {
         />
 
         <Route
-          path="/Testbulk-media-upload"
-          element={
-            <ProtectedRoute>
-              <TestBulkMediaUpload isOpen={isSidebarOpen} />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/testUnit-media-upload"
-          element={
-            <ProtectedRoute>
-              <TestUnitMediaUpload isOpen={isSidebarOpen} />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
           path="/test-topic-list"
           element={
             <ProtectedRoute>
@@ -1043,6 +1035,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/upload-questions"
+          element={
+            <ProtectedRoute>
+              <UploadQuestions isOpen={isSidebarOpen} />
+            </ProtectedRoute>
+          }
+        />
+
+
         <Route
           path="/add-test"
           element={
