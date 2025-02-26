@@ -10,6 +10,8 @@ import ebookSlice from "./apis/slices/ebookSlice";
 import omotabSlice from "./apis/slices/omotabSlice";
 import categorySlice from "./apis/slices/categorySlice";
 import paymentReducer from "./apis/slices/paymentSlice";
+import universityReducer from "./apis/slices/universitySlice";
+
 
 export default configureStore({
   reducer: {
@@ -24,5 +26,6 @@ export default configureStore({
     omotab: omotabSlice,
     category: categorySlice,
     payments: paymentReducer,
+    university: universityReducer,
   },
 });
