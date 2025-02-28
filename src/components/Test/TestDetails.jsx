@@ -28,69 +28,37 @@ const TestDetails = ({ isOpen }) => {
   const topics = useSelector((state) => state.categories?.topicDetail?.data || []);
   console.log('topic', id, topics);
 
+
   useEffect(() => {
     dispatch(getTopicDetailAsync(id)).then(() => setLoading(false));
-  }, [dispatch])
+  }, [dispatch]);
+
+
   const data = {
-    "class_id": 78,
-    "type": "options",
+    "class_id": topics[0]?.lesson?.chapters?.subjects?.classes?.id,
+    "type": "option",
     "selectedSubject": [
       {
-        "year": 2024,
-        "subject_id": 347
+        "year": "all",
+        "subject_id": topics[0]?.lesson?.chapters.subjects.id
       }
     ]
   }
   useEffect(() => {
     dispatch(getSubjectsWithQuestionsAsync({ dispatch, data })).then(() => setLoading(false));
   }, [dispatch])
-  console.log('question', id, question.data.options);
+  console.log('question', id, question?.data?.options);
 
 
-  // const [questions, setQuestions] = useState([
-  //   {
-  //     id: 1,
-  //     text: "What are the factors to consider when counting?",
-  //     type: "mcq" // Multiple choice question
-  //   },
-  //   {
-  //     id: 2,
-  //     text: "How does gravity affect motion?",
-  //     type: "theory" // Theory/subjective question
-  //   },
-  //   {
-  //     id: 3,
-  //     text: "What are the benefits of a balanced diet?",
-  //     type: "mcq"
-  //   },
-  //   {
-  //     id: 4,
-  //     text: "Explain the water cycle process.",
-  //     type: "theory"
-  //   },
-  //   {
-  //     id: 5,
-  //     text: "What is the significance of photosynthesis?",
-  //     type: "theory"
-  //   },
-  //   {
-  //     id: 6,
-  //     text: "How do computers process information?",
-  //     type: "mcq"
-  //   },
-  //   {
-  //     id: 7,
-  //     text: "What are the key principles of economics?",
-  //     type: "theory"
-  //   }
-  // ]);
 
-  const handleViewQuestion = (questionText, questionType = "mcq") => {
+
+  const handleViewQuestion = (questionText, questionType = "mcq", question) => {
     navigate('/question-view', {
       state: {
         questionText,
         topicName,
-        questionType
+        questionType,
+        question
       }
     });
   };
@@ -153,7 +121,7 @@ const TestDetails = ({ isOpen }) => {
               </div>
               <div>
                 <p className="text-gray-600">Status:</p>
-                <p className="font-medium text-[#27AE60]">{topics[0]?.active ? "Active" : "In-Active"}</p>
+                <p className="font-medium text-[#27AE60]">{topics[0]?.lesson?.active ? "Active" : "In-Active"}</p>
               </div>
             </div>
           </div>
@@ -166,19 +134,19 @@ const TestDetails = ({ isOpen }) => {
           <Headcomponent value="Uploaded Practice And Mock Test List" showSearch={true} />
         </div>
         <div className="space-y-4">
-          {question.data.options.map((question) => (
+          {question?.data?.options.map((question) => (
             <div key={question.id} className="flex items-center justify-between border-b p-4 last:border-b-0">
               <span className="text-gray-700">{question.question}</span>
               <div className="flex space-x-2">
                 <button
                   className="bg-[#27AE60] text-white px-4 py-2 rounded"
-                  onClick={() => handleViewQuestion(question.question, question.type)}
+                  onClick={() => handleViewQuestion(question.question, question.type, question)}
                 >
                   View
                 </button>
                 <button
                   className="bg-[#27AE60] text-white px-4 py-2 rounded"
-                  onClick={() => handleViewQuestion(question.question, question.type)}
+                  onClick={() => handleViewQuestion(question.question, question.type, question)}
                 >
                   Edit
                 </button>
