@@ -65,6 +65,7 @@ const UploadQuestions = ({ isOpen }) => {
       formData.append('subject_id', topic.lesson.chapters.subjects.id); // Extract subject name
       formData.append('class_id', topic.lesson.chapters.subjects.classes.id); // Extract class name
       formData.append('year', topic.lesson.chapters.subjects.classes.id); // Year is same as class
+
     }
 
 
@@ -92,12 +93,12 @@ const UploadQuestions = ({ isOpen }) => {
   const handleDownloadSample = () => {
     alert(`Downloading sample ${isTheory ? 'theory' : 'MCQ'} question template...`);
   };
-
+  console.log('chapter', topics[0]?.lesson?.chapters.id)
   const closeSuccessModal = () => {
     setShowSuccessModal(false);
     navigate('/test-topic-list', {
       state: {
-        id,
+        id: topics[0]?.lesson?.chapters.id,
       }
     });
   };
