@@ -16,7 +16,7 @@ const TopicItem = ({ name, navigate, status, topic }) => {
 
   return (
     <div
-      onClick={() => navigate('/test-detail', { state: { name } })}
+      onClick={() => navigate('/test-detail', { state: { id: topic.id, name } })}
       className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer"
     >
       <div className="flex items-center gap-4">
@@ -30,7 +30,7 @@ const TopicItem = ({ name, navigate, status, topic }) => {
           value="View"
           onClick={(e) => {
             e.stopPropagation();
-            navigate('/test-detail', { state: { name, topic } });
+            navigate('/test-detail', { state: { id: topic.id, name, topic } });
           }}
           backgroundcolor="bg-[#27AE60]"
           textcolor="text-white"
@@ -60,7 +60,7 @@ const TopicItem = ({ name, navigate, status, topic }) => {
           }
           onClick={(e) => {
             e.stopPropagation();
-            navigate('/test-detail', { state: { name, topic } });
+            navigate('/test-detail', { state: { id: topic.id, name, topic } });
           }}
           textcolor="text-blue-600"
           backgroundcolor="bg-green-50"

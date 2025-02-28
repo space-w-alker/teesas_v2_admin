@@ -33,13 +33,6 @@ const UploadQuestions = ({ isOpen }) => {
   const isTheory = questionType === 'theory';
   const pageTitle = isTheory ? 'Theory Questions Upload' : 'MCQ Questions Upload';
 
-  // Mock data if not provided in state
-  const mockData = {
-    category: category || 'Mathematics',
-    grade: grade || 'Grade 8',
-    topic: topic || 'Algebra Introduction',
-    questionCount: 20
-  };
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
@@ -65,9 +58,15 @@ const UploadQuestions = ({ isOpen }) => {
       formData.append('subject_id', topic.lesson.chapters.subjects.id); // Extract subject name
       formData.append('class_id', topic.lesson.chapters.subjects.classes.id); // Extract class name
       formData.append('year', topic.lesson.chapters.subjects.classes.id); // Year is same as class
-
     }
 
+    // Mock data if not provided in state
+    const mockData = {
+      category: topics[0]?.lesson.chapters.subjects.name || '-',
+      grade: topics[0]?.lesson.chapters.subjects.classes.name || '-',
+      topic: topics[0]?.lesson.chapters.subjects.classes.name || 'Algebra Introduction',
+      questionCount: 20
+    };
 
 
     try {
@@ -79,11 +78,11 @@ const UploadQuestions = ({ isOpen }) => {
         setShowSuccessModal(true);
       } else {
         console.error('Upload error response:', response);
-        alert(response?.message || 'Upload failed. Please try again.');
+        // alert(response?.message || 'Upload failed. Please try again.');
       }
     } catch (error) {
       console.error('Upload failed:', error);
-      alert(error?.message || 'Upload failed. Please try again.');
+      // alert(error?.message || 'Upload failed. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -163,23 +162,23 @@ const UploadQuestions = ({ isOpen }) => {
           <div className="space-y-4 bg-green-100 rounded-lg">
             <div>
               <p className="text-gray-600 mb-1">Category</p>
-              <p className="font-medium">{mockData.category || 'Not specified'}</p>
+              <p className="font-medium">{topics[0]?.lesson.chapters.subjects.name || 'Not specified'}</p>
             </div>
 
             <div>
               <p className="text-gray-600 mb-1">Grade</p>
-              <p className="font-medium">{mockData.grade || 'Not specified'}</p>
+              <p className="font-medium">{topics[0]?.lesson.chapters.subjects.classes.name || 'Not specified'}</p>
             </div>
 
             <div>
               <p className="text-gray-600 mb-1">Topic Title</p>
-              <p className="font-medium">{mockData.topic || 'Not specified'}</p>
+              <p className="font-medium">{topics[0]?.lesson.chapters.subjects.classes.name || 'Not specified'}</p>
             </div>
 
-            <div>
+            {/* <div>
               <p className="text-gray-600 mb-1">Total Questions</p>
-              <p className="font-medium">{mockData.questionCount || 'Not specified'}</p>
-            </div>
+              <p className="font-medium">{12 || 'Not specified'}</p>
+            </div> */}
 
             <button
               onClick={handleSubmit}
