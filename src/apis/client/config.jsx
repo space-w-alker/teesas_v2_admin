@@ -1,5 +1,8 @@
 export const config = {
 
+  BASEURL: "http://localhost:3000/v1/",
+  // BASEURL: "http://46.202.164.175:3000/v1/",
+  MainUrl: "http://46.202.164.175:3000/",
   USERLOGIN: "admin/auth/login",
   SIGNUP: "admin/auth/signup",
   VERFICATION: "admin/auth/forgot-password",
@@ -20,6 +23,10 @@ export const config = {
   UPDATE_SUBJECT: "admin/class/",
 
 
+  SUBSCRIBED_USERS: "admin/dashboard/subscribed-users",
+  SUBSCRIPTION_STATS: "admin/dashboard/subscription-stats",
+
+
   CREATE_ASSESSMENT: "/assessment/create-assessment/",
   GET_ASSESSMENT: "/assessment/get-assessment/",
   GET_PAYMENTS: "admin/payments",
@@ -29,13 +36,13 @@ export const config = {
   UPDATE_UNIVERSITY: "admin-universities",
   DELETE_UNIVERSITY: "admin-universities",
 
-  GET_TEACHERS: "admin_teacher/list",
+  //GET_TEACHERS: "admin_teacher/list",
 
 
   // logout: "admin/auth/logout",
   RESET_PASSWORD: "auth/reset-password",
   GET_DASHBOARD: "admin/users/get-dashboard-details",
-  GET_COURSES: "admin/live-classes/get-course-details",
+  // GET_COURSES: "admin/live-classes/get-course-details",
 
   USER: "admin/users/get-statistics",
   GETUSER: "admin/users/get-users",
@@ -60,7 +67,7 @@ export const config = {
   GET_ADMIN_USER: "admin/users/get-admin-user",
   GET_TEACHERS: "admin/teachers/get-teachers",
   GET_TEACHER_STATISTICS: "admin/teachers/get-statistics",
-  ADD_TEACHER: "admin/teachers/add-teacher",
+  // ADD_TEACHER: "admin/teachers/add-teacher",
   UPDATE_TEACHER: "admin/teachers/update-teacher",
   GET_TEACHER_DETAILS: "admin/live-classes/get-teacher-live-class",
   GET_LOCAL_GOV: "admin/users/get-local-government",

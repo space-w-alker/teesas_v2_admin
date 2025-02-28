@@ -1,80 +1,77 @@
 import React, { useEffect, useState } from "react";
-import Navigation from "../../components/common/Navigation";
-import frame2 from "../../assets/images/Frame2.png";
 import UserCard from "../../components/common/UserCard";
 import Modal from '../../components/common/Modal';
 import SubscribedUserList from "../../components/Core/SubscribedUserList";
-import Headcomponent from "../../components/common/Headcomponent";
 import arrow_upward from '../../assets/images/arrow_upward.png';
-import { useDispatch } from "react-redux";
-import { getUsersCsv, userAsync, getUserCsvAsync } from "../../apis/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getSubscriptionStatsAsync, selectSubscriptionStats } from "../../apis/slices/subscriptionsSlice";
 import { FaChevronLeft } from "react-icons/fa";
 import notes from "../../assets/images/Group1000001600.png";
 import { TailSpin } from "react-loader-spinner";
 import { useNavigate } from 'react-router-dom';
 
 const SubscribedUser = ({ isOpen }) => {
-  const [selectedMonth, setSelectedMonth] = useState("August");
-  const [data, setdata] = useState([]);
   const token = localStorage.getItem("authToken");
   const [dashFilter, setDashFilter] = useState('Daily');
-  const [csvUser, setCsvUser] = useState([]);
-  const [progressCsv, setProgressCsv] = useState([]);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [exportModal, setExportModal] = useState(false);
+
+  // Get subscription stats from Redux store with safe access
+  const subscriptionStatsState = useSelector(selectSubscriptionStats);
+  console.log("Subscription stats from Redux:", subscriptionStatsState);
 
   useEffect(() => {
+    console.log("SubscribedUser component mounted, fetching stats...");
     setLoading(true);
-    const saveData = {
-      filter: dashFilter,
-    }
-    userAsync({
+
+    // Fetch subscription stats
+    getSubscriptionStatsAsync({
       dispatch: dispatch,
-      data: saveData,
       token: token,
       callbackFn: (res) => {
-        if (res?.status == 200) {
-          setdata(res?.data?.statistics);
-        }
+        console.log("Stats callback response:", res);
+        setLoading(false);
       },
     });
-
-    getUserCsvAsync({
-      dispatch: dispatch,
-      data: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status == 200) {
-          setCsvUser(res?.data?.data?.users);
-          setProgressCsv(res?.data?.data?.user_progress)
-          setLoading(false);
-        } else {
-          setLoading(false);
-        }
-      },
-    });
-  }, []);
-
+  }, [dispatch, token]);
   const handleButtonClick = (button) => {
     setActiveButton(button);
     if (button === 'Add Subscription') {
       setIsModalOpen(true);
-    } else {
-      setExportModal(true);
-    }
-    if(button === "Manage Class") {
-      navigate('/ManageLiveClass')
+    } else if (button === "Manage Class") {
+      navigate('/ManageLiveClass');
     }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setExportModal(false)
   };
+
+  // Add console logs to debug
+  // const subscriptionStatsState = useSelector(selectSubscriptionStats);
+  console.log("Subscription stats from Redux:", subscriptionStatsState);
+
+  useEffect(() => {
+    console.log("SubscribedUser component mounted, fetching stats...");
+    setLoading(true);
+
+    // Fetch subscription stats
+    getSubscriptionStatsAsync({
+      dispatch: dispatch,
+      token: token,
+      callbackFn: (res) => {
+        console.log("Stats callback response:", res);
+        setLoading(false);
+      },
+    });
+  }, [dispatch, token]);
+
+  // Safely access subscription stats data
+  const totalSubscribedUsers = subscriptionStatsState?.data?.totalSubscribedUsers || 0;
+  const totalExpiredSubscriptions = subscriptionStatsState?.data?.totalExpiredSubscriptions || 0;
 
   return (
     <div>
@@ -90,7 +87,7 @@ const SubscribedUser = ({ isOpen }) => {
             <TailSpin color="orange" radius={5} />
           </div>
         )}
-        
+
         <div className='flex justify-start items-center lg:gap-3'>
           <FaChevronLeft />
           <div>
@@ -112,24 +109,7 @@ const SubscribedUser = ({ isOpen }) => {
                 name="dashFilter"
                 value={dashFilter}
                 onChange={(e) => {
-                  setLoading(true);
                   setDashFilter(e.target.value);
-                  const saveData = {
-                    filter: e.target.value,
-                  }
-                  userAsync({
-                    dispatch: dispatch,
-                    data: saveData,
-                    token: token,
-                    callbackFn: (res) => {
-                      if (res?.status == 200) {
-                        setdata(res?.data?.statistics);
-                        setLoading(false);
-                      } else {
-                        setLoading(false);
-                      }
-                    },
-                  });
                 }}
                 className="mt-1 text-[14px] outline-none border border-[#ECEDEE] ml-auto px-[8px] rounded w-[95px] h-[30px]"
               >
@@ -144,8 +124,8 @@ const SubscribedUser = ({ isOpen }) => {
                 width="lg:w-[50%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={50}
-                value2={50}
+                value={totalSubscribedUsers}
+                value2={0}
                 img={arrow_upward}
                 img2={notes}
               />
@@ -154,8 +134,8 @@ const SubscribedUser = ({ isOpen }) => {
                 width="lg:w-[50%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={50}
-                value2={10}
+                value={totalExpiredSubscriptions}
+                value2={0}
                 img={arrow_upward}
                 img2={notes}
               />
@@ -165,20 +145,8 @@ const SubscribedUser = ({ isOpen }) => {
 
         <div className='flex justify-end items-center gap-[15px] mt-5'>
           <div
-            className={`border rounded-[8px] ${
-              activeButton === 'Export CSV' ? 'bg-[#F2994A] text-white' : 'border-[#F2994A] text-[#F2994A]'
-            }`}
-            onClick={() => handleButtonClick('Export CSV')}
-          >
-            <button className='text-[14px] leading-[20px] pt-[2px] w-[128px] h-[40px] text-center cursor-pointer'>
-              Export CSV
-            </button>
-          </div>
-
-          <div
-            className={`border rounded-lg ${
-              activeButton === 'Add Subscription' ? 'bg-[#F2994A] text-white' : 'border-[#F2994A] text-[#F2994A]'
-            }`}
+            className={`border rounded-lg ${activeButton === 'Add Subscription' ? 'bg-[#F2994A] text-white' : 'border-[#F2994A] text-[#F2994A]'
+              }`}
             onClick={() => handleButtonClick('Add Subscription')}
           >
             <button className='text-[14px] leading-[20px] pt-[2px] text-center w-[123px] h-[40px] rounded-lg cursor-pointer'>
@@ -192,16 +160,8 @@ const SubscribedUser = ({ isOpen }) => {
               label="ADD USER"
               value1="Add Unit Subscription"
               value2="Upload Bulk Subscription"
-              addSingleButton={() => {navigate("/addSingleSubscription")}}
-              addMutipleButton={() => {navigate("/UploadBulkSubscription")}}
-            />
-          )}
-          {exportModal && (
-            <Modal
-              closeModal={closeModal}
-              label="Export"
-              csvData1={csvUser}
-              csvData2={progressCsv}
+              addSingleButton={() => { navigate("/addSingleSubscription") }}
+              addMutipleButton={() => { navigate("/UploadBulkSubscription") }}
             />
           )}
         </div>
