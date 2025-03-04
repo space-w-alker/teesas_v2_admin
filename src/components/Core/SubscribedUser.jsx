@@ -12,31 +12,31 @@ import { useNavigate } from 'react-router-dom';
 
 const SubscribedUser = ({ isOpen }) => {
   const token = localStorage.getItem("authToken");
-  const [dashFilter, setDashFilter] = useState('Daily');
+  const [dashFilter, setDashFilter] = useState('all'); // Default to 'all' instead of 'yearly'
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Get subscription stats from Redux store with safe access
   const subscriptionStatsState = useSelector(selectSubscriptionStats);
-  console.log("Subscription stats from Redux:", subscriptionStatsState);
 
-  useEffect(() => {
-    console.log("SubscribedUser component mounted, fetching stats...");
+  const fetchSubscriptionStats = (filter) => {
     setLoading(true);
-
-    // Fetch subscription stats
     getSubscriptionStatsAsync({
       dispatch: dispatch,
       token: token,
+      timeFilter: filter === 'all' ? null : filter, // Don't pass timeFilter if 'all'
       callbackFn: (res) => {
-        console.log("Stats callback response:", res);
         setLoading(false);
       },
     });
-  }, [dispatch, token]);
+  };
+
+  useEffect(() => {
+    fetchSubscriptionStats(dashFilter);
+  }, [dispatch, token, dashFilter]);
+
   const handleButtonClick = (button) => {
     setActiveButton(button);
     if (button === 'Add Subscription') {
@@ -50,26 +50,6 @@ const SubscribedUser = ({ isOpen }) => {
     setIsModalOpen(false);
   };
 
-  // Add console logs to debug
-  // const subscriptionStatsState = useSelector(selectSubscriptionStats);
-  console.log("Subscription stats from Redux:", subscriptionStatsState);
-
-  useEffect(() => {
-    console.log("SubscribedUser component mounted, fetching stats...");
-    setLoading(true);
-
-    // Fetch subscription stats
-    getSubscriptionStatsAsync({
-      dispatch: dispatch,
-      token: token,
-      callbackFn: (res) => {
-        console.log("Stats callback response:", res);
-        setLoading(false);
-      },
-    });
-  }, [dispatch, token]);
-
-  // Safely access subscription stats data
   const totalSubscribedUsers = subscriptionStatsState?.data?.totalSubscribedUsers || 0;
   const totalExpiredSubscriptions = subscriptionStatsState?.data?.totalExpiredSubscriptions || 0;
 
@@ -109,13 +89,16 @@ const SubscribedUser = ({ isOpen }) => {
                 name="dashFilter"
                 value={dashFilter}
                 onChange={(e) => {
-                  setDashFilter(e.target.value);
+                  const newFilter = e.target.value.toLowerCase();
+                  setDashFilter(newFilter);
+                  fetchSubscriptionStats(newFilter);
                 }}
                 className="mt-1 text-[14px] outline-none border border-[#ECEDEE] ml-auto px-[8px] rounded w-[95px] h-[30px]"
               >
-                <option value="Daily">Daily</option>
-                <option value="Monthly">Monthly</option>
-                <option value="Yearly">Yearly</option>
+                <option value="all">All Time</option>
+                <option value="daily">Daily</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
               </select>
             </div>
             <div className="lg:flex block gap-[10px]">
@@ -145,7 +128,7 @@ const SubscribedUser = ({ isOpen }) => {
 
         <div className='flex justify-end items-center gap-[15px] mt-5'>
           <div
-            className={`border rounded-lg ${activeButton === 'Add Subscription' ? 'bg-[#F2994A] text-white' : 'border-[#F2994A] text-[#F2994A]'
+            className={`border rounded-lg ${activeButton === 'Add Subscription' ? 'bg-[#27AE60] text-white' : 'border-[#27AE60] text-[#27AE60]'
               }`}
             onClick={() => handleButtonClick('Add Subscription')}
           >
@@ -166,7 +149,7 @@ const SubscribedUser = ({ isOpen }) => {
           )}
         </div>
 
-        <SubscribedUserList />
+        <SubscribedUserList timeFilter={dashFilter} />
       </div>
     </div>
   );

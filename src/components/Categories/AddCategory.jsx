@@ -75,6 +75,44 @@ const AddCategory = ({ isOpen }) => {
     }));
   };
 
+
+  const handleSubmit = (e) => {
+    if (e) e.preventDefault();
+
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        name: formData.categoryName,
+        country_id: parseInt(formData.country),
+        classes: formData.classes.map(c => ({ name: c.name }))
+      };
+
+      if (isEdit) {
+        dispatch(updateCategoryAsync(categoryData.id, payload))
+          .then(result => {
+            setIsSubmitting(false);
+            if (result) setShowSuccess(true);
+          });
+      } else {
+        dispatch(createCategoryAsync(payload))
+          .then(result => {
+            setIsSubmitting(false);
+            if (result) setShowSuccess(true);
+          });
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      console.error("Error submitting form:", error);
+    }
+  };
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -150,21 +188,16 @@ const AddCategory = ({ isOpen }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-3">Select Country</label>
                   <select
                     name="country"
-                    value={formData.country}
                     onChange={handleChange}
-                    className={`w-full p-3 border ${errors.country ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:outline-none focus:border-[#27AE60]`}
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#27AE60]"
                   >
                     <option value="">Select Country</option>
-                    {countries?.map((country) => (
-                      <option key={country.id} value={country.id}>
-                        {country.emoji} {country.name}
-                      </option>
-                    ))}
+                    <option value="nigeria">Nigeria</option>
+                    <option value="ghana">Ghana</option>
                   </select>
-                  {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
                 </div>
 
-                {/* Classes Section */}
+
                 {formData.classes.map((classItem, index) => (
                   index % 2 === 0 && (
                     <div key={index} className="col-span-2 grid grid-cols-2 gap-6">
@@ -251,7 +284,7 @@ const AddCategory = ({ isOpen }) => {
                 </div>
               </div>
               <button
-                onClick={debouncedSubmit}
+                onClick={handleSubmit}
                 disabled={isSubmitting}
                 className="w-full mt-8 px-6 py-3 bg-[#27AE60] text-white rounded-lg disabled:opacity-50"
               >

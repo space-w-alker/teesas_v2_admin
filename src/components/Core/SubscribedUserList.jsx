@@ -14,7 +14,7 @@ import Vector from "../../assets/images/Vector.png";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
-const SubscribedUserList = () => {
+const SubscribedUserList = ({ timeFilter = 'daily' }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const Navigate = useNavigate();
   const token = localStorage.getItem("authToken");
@@ -25,19 +25,20 @@ const SubscribedUserList = () => {
   const [sortKey, setSortKey] = useState("Latest");
   const [coursesData, setCoursesData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [limit, setLimit] = useState(5);
+
 
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [activeStatus, setActiveStatus] = useState(true);
-
-  // Get subscribed users from Redux
   const subscribedUsersState = useSelector(selectSubscribedUsers);
+
   const subscriptions = subscribedUsersState?.data || [];
+
   const pageData = {
     currentPage: subscribedUsersState?.paging?.page || 1,
-    total_pages: subscribedUsersState?.paging?.total
-      ? Math.ceil(subscribedUsersState.paging.total / (subscribedUsersState.paging.limit || 10))
-      : 1,
-    total: subscribedUsersState?.paging?.total || 0
+    totalPages: subscribedUsersState?.paging?.totalPages || 1,
+    total: subscribedUsersState?.paging?.total || 0,
+    limit: subscribedUsersState?.paging?.limit || 5
   };
 
   const handleModalClose = () => {
@@ -47,7 +48,7 @@ const SubscribedUserList = () => {
 
   const handleFilterByCourse = (course) => {
     if (!course || !course.id) {
-      return; // Skip if course is invalid
+      return;
     }
 
     setSelectedCourses((prevSelectedCourses) => {
@@ -63,9 +64,10 @@ const SubscribedUserList = () => {
     setLoading(true);
     const queryParams = {
       page: 1,
-      limit: 10,
-      sort: sortKey,
+      limit: limit,
+      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
       status: activeStatus ? "Active" : "Inactive",
+      timeFilter: timeFilter,
     };
 
     if (selectedCourses.length > 0) {
@@ -77,6 +79,7 @@ const SubscribedUserList = () => {
     }
 
     fetchSubscribedUsers(queryParams);
+    handleModalClose();
   };
 
   const handleFilterByStatus = (status) => {
@@ -86,72 +89,103 @@ const SubscribedUserList = () => {
   const latestOnClick = () => {
     setLoading(true);
     setSortKey("Latest");
+    setPage(1);
     fetchSubscribedUsers({
       page: 1,
-      limit: 10,
-      sort: "Latest",
+      limit: limit,
+      sort: "create_time:DESC",
       status: activeStatus ? "Active" : "Inactive",
       search: searchValue || undefined,
+      timeFilter: timeFilter,
     });
   };
 
   const oldestOnClick = () => {
     setLoading(true);
     setSortKey("Oldest");
+    setPage(1);
     fetchSubscribedUsers({
       page: 1,
-      limit: 10,
-      sort: "Oldest",
+      limit: limit,
+      sort: "create_time:ASC",
       status: activeStatus ? "Active" : "Inactive",
       search: searchValue || undefined,
+      timeFilter: timeFilter,
     });
   };
 
+
+
+
   const fetchSubscribedUsers = (params) => {
-    console.log("Fetching subscribed users with params:", params);
+
+    const apiParams = { ...params };
+
+
+    if (apiParams.sort === "Latest") {
+      apiParams.sort = "create_time:DESC";
+    } else if (apiParams.sort === "Oldest") {
+      apiParams.sort = "create_time:ASC";
+    }
+
+
+    if (apiParams.status !== undefined) {
+      apiParams.activeFilter = apiParams.status.toLowerCase();
+      delete apiParams.status;
+    }
+
+
+
     getSubscribedUsersAsync({
       dispatch,
-      body: params,
+      body: apiParams,
       token,
       callbackFn: (res) => {
-        console.log("Fetched subscriptions response:", res);
         setLoading(false);
         if (res?.error) {
           toast.error(res.error.message || "Failed to fetch subscriptions");
+        } else {
+
+
+          setPage(res?.data?.data?.page || 1);
         }
       },
     });
   };
 
-  useEffect(() => {
-    console.log("SubscribedUserList mounted, fetching initial data");
+  const handlePageChange = (newPage) => {
+
+
+    if (newPage < 1 || newPage > pageData.totalPages) {
+
+      return;
+    }
+
+
+    setPage(newPage);
     setLoading(true);
-    fetchSubscribedUsers({ page: 1, limit: 10 });
 
-    // The courses API is failing with 404, so let's not call it for now
-    // Instead, use an empty array for coursesData
-    setCoursesData([]);
-
-    /* 
-    The line below is causing a 404 error. This appears to be from authSlice.jsx line 352.
-    It's trying to fetch course data for filters, but the endpoint doesn't exist.
-    
-    Commenting out this call to prevent the 404 error:
-    
-    getCoursesAsync({
-      dispatch,
-      body: {},
-      token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setCoursesData(res.data.data.courses);
-        } else {
-          toast.error(res?.data?.message || "Failed to fetch courses");
-        }
-      },
+    fetchSubscribedUsers({
+      page: newPage,
+      limit: limit,
+      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+      status: activeStatus ? "Active" : "Inactive",
+      timeFilter: timeFilter,
+      ...(searchValue ? { search: searchValue } : {}),
+      ...(selectedCourses.length > 0 ? { subscription_id: selectedCourses } : {})
     });
-    */
-  }, [dispatch, token]);
+  }; useEffect(() => {
+    setLoading(true);
+    fetchSubscribedUsers({
+      page: 1,
+      limit: limit,
+      timeFilter: timeFilter,
+      status: activeStatus ? "Active" : "Inactive",
+      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC"
+    });
+
+    setCoursesData([]);
+  }, [dispatch, token, timeFilter]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -163,7 +197,6 @@ const SubscribedUserList = () => {
         day: 'numeric'
       });
     } catch (e) {
-      console.error("Date formatting error:", e);
       return dateString;
     }
   };
@@ -201,9 +234,10 @@ const SubscribedUserList = () => {
                     setLoading(true);
                     fetchSubscribedUsers({
                       page: 1,
-                      limit: 10,
-                      sort: sortKey,
+                      limit: limit,
+                      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
                       status: activeStatus ? "Active" : "Inactive",
+                      timeFilter: timeFilter,
                     });
                   }
                 }}
@@ -217,10 +251,11 @@ const SubscribedUserList = () => {
                     setLoading(true);
                     fetchSubscribedUsers({
                       page: 1,
-                      limit: 10,
+                      limit: limit,
                       search: searchValue,
-                      sort: sortKey,
+                      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
                       status: activeStatus ? "Active" : "Inactive",
+                      timeFilter: timeFilter,
                     });
                   }
                 }}
@@ -241,7 +276,7 @@ const SubscribedUserList = () => {
       <div className="py-[2px] rounded-[18px] bg-[#FFFFFF] mt-3">
         <div className="user">
           <h2 className="text-[22px] leading-6 text-[#2C2E32] font-medium">
-            Subscribed User List
+            Subscribed User List {activeStatus ? "(Active)" : "(Inactive)"}
           </h2>
           <Custombutton
             value="Filter"
@@ -255,7 +290,7 @@ const SubscribedUserList = () => {
         <div className="">
           {subscriptions.length === 0 && !isLoading ? (
             <div className="text-center py-8 text-gray-500">
-              No subscriptions found
+              No User found
             </div>
           ) : (
             <ul>
@@ -276,7 +311,7 @@ const SubscribedUserList = () => {
                   </div>
                   <div className="flex items-center justify-between p-5 max-sm:flex-col">
                     <div className="flex items-center gap-3 px-[18px]">
-                      <div className="rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
+                      <div className="rounded-full text-center p-2 w-[40px] h-[40px] bg-[##E9FDEE]">
                         {subscription?.user?.name ? subscription.user.name.charAt(0).toUpperCase() : "U"}
                       </div>
                       <div>
@@ -287,11 +322,6 @@ const SubscribedUserList = () => {
                           <p className="font-normal text-[#555555] text-[12px] leading-[15px]">
                             {subscription?.subscription?.description || "No description"}
                           </p>
-                          <div className="flex items-center h-[16px] bg-[#F2F2F2]">
-                            <p className="font-bold w-full text-[12px] leading-[15px] text-[#555555]">
-                              Amount: ${subscription?.subscription?.amount || "0.00"} / {subscription?.subscription?.time || "0"} days
-                            </p>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -299,8 +329,8 @@ const SubscribedUserList = () => {
                       <Custombutton
                         value={subscription?.status ? "Active" : "Expired"}
                         img={check}
-                        backgroundcolor={subscription?.status ? "bg-[#ede1d5]" : "bg-[#f0f0f0]"}
-                        textcolor={subscription?.status ? "text-[#EA8527]" : "text-[#999999]"}
+                        backgroundcolor={subscription?.status ? "bg-[#27ae60]" : "bg-[#f0f0f0]"}
+                        textcolor={subscription?.status ? "text-[#ffffff]" : "text-[#999999]"}
                         imagePosition="left"
                       />
                     </div>
@@ -310,65 +340,43 @@ const SubscribedUserList = () => {
             </ul>
           )}
         </div>
-        <div className="user">
+
+
+        <div className="flex justify-between items-center mt-6 ml-4 mr-4 mb-4">
           <Custombutton
-            onClick={() => {
-              if (pageData.currentPage > 1) {
-                setLoading(true);
-                setPage(pageData.currentPage - 1);
-                fetchSubscribedUsers({
-                  page: pageData.currentPage - 1,
-                  limit: 10,
-                  subscription_id: selectedCourses.length > 0 ? selectedCourses : undefined,
-                  status: activeStatus ? "Active" : "Inactive",
-                  sort: sortKey,
-                  ...(searchValue ? { search: searchValue } : {}),
-                });
-              }
-            }}
             value="Previous"
-            hidden="hidden"
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor={pageData.currentPage > 1 ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="left"
-            width="w-[115px]"
+            onClick={() => handlePageChange(pageData.currentPage - 1)}
             disabled={pageData.currentPage <= 1}
           />
-          <div className="text-[#667085] text-[12px]">
-            Page {pageData.currentPage} of {pageData.total_pages}
-          </div>
+
           <Custombutton
-            onClick={() => {
-              if (pageData.currentPage < pageData.total_pages) {
-                setLoading(true);
-                setPage(pageData.currentPage + 1);
-                fetchSubscribedUsers({
-                  page: pageData.currentPage + 1,
-                  limit: 10,
-                  subscription_id: selectedCourses.length > 0 ? selectedCourses : undefined,
-                  status: activeStatus ? "Active" : "Inactive",
-                  sort: sortKey,
-                  ...(searchValue ? { search: searchValue } : {}),
-                });
-              }
-            }}
+            value={`Page ${pageData.currentPage}`}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+          />
+
+          <Custombutton
             value="Next"
-            hidden="hidden"
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor={pageData.currentPage < pageData.total_pages ? "text-[#000000]" : "text-[#cccccc]"}
+            textcolor={pageData.currentPage < pageData.totalPages ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="right"
-            disabled={pageData.currentPage >= pageData.total_pages}
+            onClick={() => handlePageChange(pageData.currentPage + 1)}
+            disabled={pageData.currentPage >= pageData.totalPages}
           />
         </div>
+
+
         {isModalOpen && (
           <Modal
             closeModal={handleModalClose}
             label="Filter"
             coursesData={coursesData}
             onSelectCourse={handleFilterByCourse}
-
             onSelectStatus={handleFilterByStatus}
             onClick={handleApply}
             selectedCoursesData={selectedCourses}
@@ -390,3 +398,4 @@ const SubscribedUserList = () => {
 };
 
 export default SubscribedUserList;
+

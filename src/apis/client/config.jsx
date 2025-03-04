@@ -1,7 +1,7 @@
 export const config = {
 
-  BASEURL: "http://localhost:3000/v1/",
-  // BASEURL: "http://46.202.164.175:3000/v1/",
+  // BASEURL: "http://localhost:3000/v1/",
+  BASEURL: "http://46.202.164.175:3000/v1/",
   MainUrl: "http://46.202.164.175:3000/",
   USERLOGIN: "admin/auth/login",
   SIGNUP: "admin/auth/signup",
@@ -25,6 +25,12 @@ export const config = {
 
   SUBSCRIBED_USERS: "admin/dashboard/subscribed-users",
   SUBSCRIPTION_STATS: "admin/dashboard/subscription-stats",
+  DASHBOARD_USERS: "admin/dashboard/users",
+  SUBSCRIPTION_WORKFLOW: "admin/dashboard/subscription-workflow",
+  ADD_SUBSCRIPTION: "admin/dashboard/add-subscription-to-user",
+  AVAILABLE_SUBSCRIPTIONS: 'admin/dashboard/available-subscriptions',
+  GET_AVAILABLE_SUBSCRIPTIONS: 'admin/dashboard/available-subscriptions',
+
 
 
   CREATE_ASSESSMENT: "/assessment/create-assessment/",
