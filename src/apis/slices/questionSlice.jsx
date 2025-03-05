@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { postAPICall, getAPICall, postFileAPICall } from "../client/methodCalls";
+import { postAPICall, getAPICall, postFileAPICall, deleteAPICall } from "../client/methodCalls";
 import { toast } from "react-toastify";
 import { config } from "../client/config";
 
@@ -26,6 +26,17 @@ export const questionsSlice = createSlice({
         subjectsWithQuestionsSuccess: (state, action) => {
             state.subjectsWithQuestions = action.payload;
         },
+        deleteQuestionSuccess: (state, action) => {
+            state.questionsList = state.questionsList.filter(
+                (question) => question.class_id !== action.payload.class_id
+            );
+        },
+        updateQuestionSuccess: (state, action) => {
+            const updatedQuestions = state.questionsList.map((question) =>
+                question.class_id === action.payload.class_id ? action.payload : question
+            );
+            state.questionsList = updatedQuestions;
+        },
     },
 });
 
@@ -34,6 +45,8 @@ export const {
     addQuestionSuccess,
     bulkUploadSuccess,
     subjectsWithQuestionsSuccess,
+    deleteQuestionSuccess,
+    updateQuestionSuccess,
 } = questionsSlice.actions;
 
 // Thunk to add questions
@@ -86,6 +99,48 @@ export const getSubjectsWithQuestionsAsync = ({ dispatch, data, token, callbackF
             }
         } catch (error) {
             toast.error("Error fetching subjects with questions.");
+        }
+    };
+};
+
+// Thunk to delete a question
+export const deleteQuestionAsync = ({ dispatch, class_id, token, callbackFn }) => {
+    return async () => {
+        try {
+            const URL = `${BASEURL}mock/delete/${class_id}`;
+            const response = await deleteAPICall(URL, true, token);
+            if (response?.data?.status === 200) {
+                callbackFn && callbackFn(response.data);
+                dispatch(deleteQuestionSuccess(response.data));
+            } else {
+                toast.error("Failed to delete question.");
+            }
+        } catch (error) {
+            toast.error("Error deleting question.");
+        }
+    };
+};
+
+// Thunk to update a question
+export const updateQuestionAsync = ({ dispatch, class_id, data, token, callbackFn }) => {
+    return async () => {
+        try {
+            const URL = `${BASEURL}mock/update/${class_id}`;
+            const response = await postAPICall(URL, data, true, token);
+            console.log('trr', response);
+
+            if (response?.data?.status == 200) {
+                console.log('trr', response);
+                callbackFn && callbackFn(response);
+                dispatch(updateQuestionSuccess(response));
+                // toast.success("Question updated successfully!");
+
+
+            } else {
+                // toast.error("Failed to update question.");
+            }
+        } catch (error) {
+            toast.error("Error updating question.");
         }
     };
 };

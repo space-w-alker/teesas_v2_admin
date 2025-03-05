@@ -5,11 +5,16 @@ import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
 import { FaArrowLeft } from 'react-icons/fa';
+import { deleteQuestionAsync, updateQuestionAsync } from "../../apis/slices/questionSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const QuestionCard = ({ hasOptions = true, question,
     options,
     correctAnswer,
-    description }) => {
+    description,
+    class_id,
+    id }) => {
     const [isEditing, setIsEditing] = useState(false);
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -20,6 +25,7 @@ const QuestionCard = ({ hasOptions = true, question,
         correctAnswer,
         description
     });
+    const dispatch = useDispatch();
 
     const handleInputChange = (e) => {
         setFormData({
@@ -38,9 +44,20 @@ const QuestionCard = ({ hasOptions = true, question,
     };
 
     const handleSave = () => {
-        // Here you would typically make an API call to save the changes
-        // For now, we'll just exit edit mode
-        setIsEditing(false);
+        dispatch(
+            updateQuestionAsync({
+                dispatch,
+                class_id: id,
+                data: formData,
+                token: "",
+                callbackFn: () => {
+                    toast.success("Question updated successfully!");
+                    setIsEditing(false);
+                },
+
+            })
+        );
+
     };
 
     const handleCancel = () => {
@@ -54,13 +71,18 @@ const QuestionCard = ({ hasOptions = true, question,
     };
 
     const confirmDelete = () => {
-        // Here you would make an API call to delete the question
-        setShowDeleteModal(false);
-
-        // Show success message after deletion
-        setShowSuccessModal(true);
+        dispatch(
+            deleteQuestionAsync({
+                dispatch,
+                class_id: id,
+                token: "",
+                callbackFn: () => {
+                    setShowDeleteModal(false);
+                    setShowSuccessModal(true);
+                },
+            })
+        );
     };
-
     const handleSuccessClose = () => {
         setShowSuccessModal(false);
         // Navigate back to the test details page
@@ -245,7 +267,9 @@ const QuestionView = ({ isOpen }) => {
                     question={question.question}
                     options={question.optionsList}
                     correctAnswer={question.expected_answer}
-                    description={question.description} />
+                    description={question.description}
+                    class_id={question.class_id}
+                    id={question.id} />
             </div>
         </div>
     );

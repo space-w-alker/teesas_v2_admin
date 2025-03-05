@@ -7,8 +7,9 @@ import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
 import bookopen from '../../assets/images/bookopen.png';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import { getSubjectsWithQuestionsAsync } from '../../apis/slices/questionSlice';
+import { getSubjectsWithQuestionsAsync, deleteQuestionAsync } from '../../apis/slices/questionSlice';
 import { getTopicDetailAsync } from "../../apis/slices/categoriesSlice";
+
 
 
 const TestDetails = ({ isOpen }) => {
@@ -36,7 +37,7 @@ const TestDetails = ({ isOpen }) => {
 
   const data = {
     "class_id": topics[0]?.lesson?.chapters?.subjects?.classes?.id,
-    "type": "option",
+    "type": "all",
     "selectedSubject": [
       {
         "year": "all",
@@ -46,7 +47,7 @@ const TestDetails = ({ isOpen }) => {
   }
   useEffect(() => {
     dispatch(getSubjectsWithQuestionsAsync({ dispatch, data })).then(() => setLoading(false));
-  }, [dispatch])
+  }, [dispatch, topic])
   console.log('question', id, question?.data?.options);
 
 
@@ -68,13 +69,20 @@ const TestDetails = ({ isOpen }) => {
     setShowDeleteModal(true);
   };
 
+
   const confirmDelete = () => {
-
-    setQuestions(questions.filter(q => q.id !== questionToDelete));
-    setShowDeleteModal(false);
-    setShowSuccessModal(true);
+    dispatch(
+      deleteQuestionAsync({
+        dispatch,
+        class_id: questionToDelete,
+        token: "",
+        callbackFn: () => {
+          setShowDeleteModal(false);
+          setShowSuccessModal(true);
+        },
+      })
+    );
   };
-
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="Test" value3={topicName} />
