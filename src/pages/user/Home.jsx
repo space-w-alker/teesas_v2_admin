@@ -24,43 +24,43 @@ const Home = ({ isOpen, toggleSidebar }) => {
   const [loading, setLoading] = useState(false);
   
   
-  useEffect(() => {
-    setLoading(true);
-  const saveData = {
-    filter: dashFilter,
-  }
-    userAsync({
-      dispatch: dispatch,
-     data: saveData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.status == 200) {
-          setdata(res?.data?.statistics);
-          // setLoading(false);
-        } else {
-          //toast.error(res?.message);
-          // setLoading(false);
-        }
-      },
-    });
-    //setLoading(true)
-    getUserCsvAsync({
-      dispatch: dispatch,
-     data: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status == 200) {
-          setCsvUser(res?.data?.data?.users);
-          setProgressCsv(res?.data?.data?.user_progress)
-           setLoading(false);
-        } else {
-          //toast.error(res?.message);
-          setLoading(false);
-        }
-      },
-    });
+  // useEffect(() => {
+  //   setLoading(true);
+  // const saveData = {
+  //   filter: dashFilter,
+  // }
+  //   userAsync({
+  //     dispatch: dispatch,
+  //    data: saveData,
+  //     token: token,
+  //     callbackFn: (res) => {
+  //       if (res?.status == 200) {
+  //         setdata(res?.data?.statistics);
+  //         // setLoading(false);
+  //       } else {
+  //         //toast.error(res?.message);
+  //         // setLoading(false);
+  //       }
+  //     },
+  //   });
+  //   //setLoading(true)
+  //   getUserCsvAsync({
+  //     dispatch: dispatch,
+  //    data: {},
+  //     token: token,
+  //     callbackFn: (res) => {
+  //       if (res?.data?.status == 200) {
+  //         setCsvUser(res?.data?.data?.users);
+  //         setProgressCsv(res?.data?.data?.user_progress)
+  //          setLoading(false);
+  //       } else {
+  //         //toast.error(res?.message);
+  //         setLoading(false);
+  //       }
+  //     },
+  //   });
 
-  }, []);
+  // }, []);
 
   return (
     <div>

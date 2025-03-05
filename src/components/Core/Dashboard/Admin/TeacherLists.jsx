@@ -34,8 +34,12 @@ const TeacherLists = () => {
       token: token,
       callbackFn: (res) => {
         if (res?.data?.status === 200) {
-          setAdminData(res?.data?.data?.teachers);
-          setPageData(res?.data?.data?.paging);
+          setAdminData(res?.data?.data?.data);
+          setPageData({
+            limit: res?.data?.data?.limit,
+            page: res?.data?.data?.page,
+            total: res?.data?.data?.total,
+          });
           setLoading(false);
         } else {
           setLoading(false);
@@ -89,8 +93,12 @@ const TeacherLists = () => {
                         token: token,
                         callbackFn: (res) => {
                           if (res?.data?.status === 200) {
-                            setAdminData(res?.data?.data?.teachers);
-                            setPageData(res?.data?.data?.paging);
+                            setAdminData(res?.data?.data?.data);
+                            setPageData({
+                              limit: res?.data?.data?.limit,
+                              page: res?.data?.data?.page,
+                              total: res?.data?.data?.total,
+                            });
                             setPage(1);
                             setLoading(false);
                           } else {
@@ -120,8 +128,12 @@ const TeacherLists = () => {
                         token: token,
                         callbackFn: (res) => {
                           if (res?.data?.status === 200) {
-                            setAdminData(res?.data?.data?.teachers);
-                            setPageData(res?.data?.data?.paging);
+                            setAdminData(res?.data?.data?.data);
+                            setPageData({
+                              limit: res?.data?.data?.limit,
+                              page: res?.data?.data?.page,
+                              total: res?.data?.data?.total,
+                            });
                             setPage(1);
                             setLoading(false);
                           } else {
@@ -136,7 +148,7 @@ const TeacherLists = () => {
               </div>
               <div
                 className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
-               //onClick={() => setIsModalFilterOpen(true)}
+                //onClick={() => setIsModalFilterOpen(true)}
               >
                 <img src={Vector} alt="Vector" />
               </div>
@@ -149,12 +161,12 @@ const TeacherLists = () => {
       </div>
       <div className="">
         <ul>
-          {adminData.map((user) => (
+          {adminData?.map((user) => (
             <li key={user.id}>
               <div
                 className="flex justify-between gap-4 items-center"
                 onClick={() =>
-                  Navigate(`/Teacher/TeacherDetails?id=${user?.id}`)
+                  Navigate("/Teacher/TeacherDetails", { state: { user } })
                 }
               >
                 <div className="px-[18px] py-[10px] mt-5 flex  items-center gap-[10px] pr-[15px]">
@@ -172,7 +184,8 @@ const TeacherLists = () => {
                 </div> */}
                       <div className="flex items-center  gap-2">
                         <p className=" font-bold text-[14px] leading-[16px] text-[#171717] ">
-                          {user.name}
+                          {user?.first_name} {user?.middle_name}{" "}
+                          {user?.last_name}
                         </p>
                       </div>
                     </div>
@@ -196,7 +209,6 @@ const TeacherLists = () => {
           <Custombutton
             onClick={() => {
               if (page > 1) {
-                
                 setLoading(true);
                 const newData = {
                   page: page - 1,
@@ -209,8 +221,12 @@ const TeacherLists = () => {
                   token: token,
                   callbackFn: (res) => {
                     if (res?.data?.status === 200) {
-                      setAdminData(res?.data?.data?.teachers);
-                      setPageData(res?.data?.data?.paging);
+                      setAdminData(res?.data?.data?.data);
+                      setPageData({
+                        limit: res?.data?.data?.limit,
+                        page: res?.data?.data?.page,
+                        total: res?.data?.data?.total,
+                      });
                       setLoading(false);
                     } else {
                       setLoading(false);
@@ -229,12 +245,15 @@ const TeacherLists = () => {
             width="w-[115px]"
           />
           <div className="text-[#667085] text-[12px]">
-            Page {pageData?.currentPage} of {pageData?.total_pages}
+            Page {pageData?.page} of{" "}
+            {Math.ceil(pageData?.total / pageData?.limit)}
           </div>
           <Custombutton
             onClick={() => {
-              if(pageData?.currentPage != pageData?.total_pages)
-              setLoading(true);
+              if (
+                pageData?.page != Math.ceil(pageData?.total / pageData?.limit)
+              )
+                setLoading(true);
               const newData = {
                 page: page + 1,
                 page_size: 10,
@@ -246,8 +265,12 @@ const TeacherLists = () => {
                 token: token,
                 callbackFn: (res) => {
                   if (res?.data?.status === 200) {
-                    setAdminData(res?.data?.data?.teachers);
-                    setPageData(res?.data?.data?.paging);
+                    setAdminData(res?.data?.data?.data);
+                    setPageData({
+                      limit: res?.data?.data?.limit,
+                      page: res?.data?.data?.page,
+                      total: res?.data?.data?.total,
+                    });
                     setLoading(false);
                   } else {
                     setLoading(false);

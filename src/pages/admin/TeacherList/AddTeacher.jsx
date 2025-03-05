@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
 import Validation from "../../../components/validator/addTeacherValidator";
 import { getCoursesAsync } from "../../../apis/slices/authSlice";
-
+import { FaChevronLeft } from "react-icons/fa"
 const AddTeacher = ({ isOpen }) => {
   const Navigate = useNavigate();
   const token = localStorage.getItem("authToken");
@@ -23,51 +23,55 @@ const AddTeacher = ({ isOpen }) => {
   const [gradeData, setGradeData] = useState([]);
 
   useEffect(() => {
-    getLocalGovAsync({
-      dispatch: dispatch,
-      data: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setAdminData(res?.data?.data?.local_government);
-        } else {
-          alert(res?.data?.message);
-        }
-      },
-    });
-    setLoading(true);
-    getCoursesAsync({
-      dispatch: dispatch,
-      data: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setCourseData(res?.data?.data?.courses);
-          setLoading(false);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
+    // getLocalGovAsync({
+    //   dispatch: dispatch,
+    //   data: {},
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     if (res?.data?.status === 200) {
+    //       setAdminData(res?.data?.data?.local_government);
+    //     } else {
+    //       alert(res?.data?.message);
+    //     }
+    //   },
+    // });
+    // setLoading(true);
+    // getCoursesAsync({
+    //   dispatch: dispatch,
+    //   data: {},
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     if (res?.data?.status === 200) {
+    //       setCourseData(res?.data?.data?.courses);
+    //       setLoading(false);
+    //     } else {
+    //       alert(res?.data?.message);
+    //       setLoading(false);
+    //     }
+    //   },
+    // });
   }, []);
 
   const [errors, setError] = useState({});
   const [imageFile, setImageFile] = useState({});
   const [formData, setformData] = useState({
-    Full_Name: "",
+    First_Name: "",
+    Middle_Name: "",
+    Last_Name: "",
     Gender: "",
+    Date_of_Birth:"",
     Phone_Number: "",
     Email: "",
-    Academy_Code: "",
-    Academy_Name: "",
-    LGA: "",
-    Senatorial_District: "",
-    Grade: "",
-    Id: "",
-    Description: "",
-    file:"",
-    Course: "",
+    Address: "",
+    // Academy_Code: "",
+    // Academy_Name: "",
+    // LGA: "",
+    // Senatorial_District: "",
+    // Grade: "",
+    // Id: "",
+    // Description: "",
+    // file: "",
+    // Course: "",
   });
   const onchangeHandler = (event) => {
     const { name, value } = event.target;
@@ -82,36 +86,52 @@ const AddTeacher = ({ isOpen }) => {
     setError(errorData);
     if (Object.keys(errorData).length < 1) {
       setLoading(true);
-      var form_data = new FormData();
-      form_data.append("name", formData?.Full_Name);
-      form_data.append("gender", formData?.Gender);
-      form_data.append("email", formData?.Email);
-      form_data.append("mobile", formData?.Phone_Number);
-      form_data.append("file", imageFile);
-      form_data.append("academy_id", formData?.Academy_Code);
-      form_data.append("decription", formData?.Description);
-      form_data.append("id", formData?.Id);
-      form_data.append("grade", formData?.Grade);
+      // var form_data = new FormData();
+      // form_data.append("name", formData?.Full_Name);
+      // form_data.append("gender", formData?.Gender);
+      // form_data.append("email", formData?.Email);
+      // form_data.append("mobile", formData?.Phone_Number);
+      // form_data.append("file", imageFile);
+      // form_data.append("academy_id", formData?.Academy_Code);
+      // form_data.append("decription", formData?.Description);
+      // form_data.append("id", formData?.Id);
+      // form_data.append("grade", formData?.Grade);
+       
+      const form_data = {
+        first_name: formData?.First_Name,
+        middle_name: formData?.Middle_Name,
+        last_name: formData?.Last_Name,
+        gender: formData?.Gender,
+        date_of_birth: formData?.Date_of_Birth,
+        phone_number: formData?.Phone_Number,
+        email: formData?.Email,
+        address: formData?.Address
+      }
 
       addTeacherAsync({
         dispatch: dispatch,
         body: form_data,
         token: token,
         callbackFn: (res) => {
-          if (res?.data?.status === 200) {
+          if (res?.data?.status === 201) {
             setformData({
-              Full_Name: "",
+              First_Name: "",
+              Middle_Name: "",
+              Last_Name: "",
               Gender: "",
+              Date_of_Birth:"",
               Phone_Number: "",
               Email: "",
-              Academy_Code: "",
-              Academy_Name: "",
-              LGA: "",
-              Senatorial_District: "",
-              Grade: "",
-              Id: "",
-              Description: "",
-              file: "",
+              Address: "",
+              // Academy_Code: "",
+              // Academy_Name: "",
+              // LGA: "",
+              // Senatorial_District: "",
+              // Grade: "",
+              // Id: "",
+              // Description: "",
+              // file: "",
+              // Course: "",
             });
             setLoading(false);
             toast.success(res?.data?.message);
@@ -127,11 +147,25 @@ const AddTeacher = ({ isOpen }) => {
   };
 
   return (
+    <>
+      
+      <div onClick={()=>{
+        Navigate(-1);
+      }} className='flex justify-start items-center pt-[8rem] lg:pt-[8rem] lg:px-[9rem]  px-[10px]'>
+          <FaChevronLeft />
+          <div>
+            <div className='font-normal text-[14px] lg:text-[16px] leading-[20px]  text-[#B6B6B6]'>
+            Teachers / <span className='text-black font-medium'>Add Teacher</span>
+            </div>
+          </div>
+        </div>
+    
     <div
-      className={` block lg:flex justify-center gap-10 py-[8rem] lg:py-[8rem] lg:px-[9rem]  px-[10px] ${
+      className={` block lg:flex justify-center gap-10 py-[8rem] lg:py-[1rem] lg:px-[9rem] mt-3 px-[10px] ${
         isOpen ? "ml-[240px]" : ""
       }`}
     >
+          
       {loading && (
         <div
           style={{
@@ -152,11 +186,11 @@ const AddTeacher = ({ isOpen }) => {
           </h2>
         </div>
         <div className=" ">
-          <div>
+          <div className="hidden">
             <p className=" font-medium text-[14px] leading-[18px] mt-5 text-[#3D3D3D] pb-[8px]">
               Upload User Image
             </p>
-            <div className="h-[48px] py-[10px] border border-dashed text-[#B9B9B9] bg-[#FFF9ED] rounded-lg">
+            <div className="h-[48px] py-[10px] border border-dashed text-[#B9B9B9] bg-[#E9FDEE] rounded-lg">
               <p className=" font-normal text-center cursor-pointer text-[16px] leading-[24px]  translate-x-0 text-[#49454F]">
                 <div className="text-center relative ">
                   {" "}
@@ -200,25 +234,69 @@ const AddTeacher = ({ isOpen }) => {
             <div className=" block lg:grid grid-cols-2 gap-5 mt-5">
               <div>
                 <label
-                  for="Full_Name"
+                  for="First_Name"
                   className="font-medium text-[14px] mt-2 leading-[18px] text-[#3D3D3D]  block"
                 >
-                  Full Name
+                  First Name
                 </label>
                 <input
                   type="text"
-                  name="Full_Name"
-                  value={formData.Full_Name}
+                  name="First_Name"
+                  value={formData.First_Name}
                   className=" mt-1 w-full  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                   placeholder="Enter Details"
                   onChange={onchangeHandler}
                 />
-                {errors.Full_Name && (
+                {errors.First_Name && (
                   <span className=" text-red-500 block p-[8px]">
                     Enter Full Name *
                   </span>
                 )}
               </div>
+              <div>
+                <label
+                  for="Middle_Name"
+                  className="font-medium text-[14px] mt-2 leading-[18px] text-[#3D3D3D]  block"
+                >
+                  Middle Name
+                </label>
+                <input
+                  type="text"
+                  name="Middle_Name"
+                  value={formData.Middle_Name}
+                  className=" mt-1 w-full  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
+                  placeholder="Enter Details"
+                  onChange={onchangeHandler}
+                />
+                {errors.Middle_Name && (
+                  <span className=" text-red-500 block p-[8px]">
+                    Enter Middle Name *
+                  </span>
+                )}
+              </div>
+              <div>
+                <label
+                  for="Last_Name"
+                  className="font-medium text-[14px] mt-2 leading-[18px] text-[#3D3D3D]  block"
+                >
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="Last_Name"
+                  value={formData.Last_Name}
+                  className=" mt-1 w-full  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
+                  placeholder="Enter Details"
+                  onChange={onchangeHandler}
+                />
+                {errors.Last_Name && (
+                  <span className=" text-red-500 block p-[8px]">
+                    Enter Last Name *
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className=" block lg:grid grid-cols-2 gap-5 mt-5 border-b pb-5">
               <div>
                 <label
                   for="Gender"
@@ -245,9 +323,31 @@ const AddTeacher = ({ isOpen }) => {
                   </span>
                 )}
               </div>
+              <div>
+                <label
+                  for="Date_of_Birth"
+                  className="font-medium text-[14px] mt-2 leading-[18px] text-[#3D3D3D]  block"
+                >
+                 Date_of_Birth
+                </label>
+                <input
+                  type="date"
+                  name="Date_of_Birth"
+                  value={formData.Date_of_Birth}
+                  className=" mt-1 w-full  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
+                  placeholder="Enter Details"
+                  onChange={onchangeHandler}
+                  max={new Date().toISOString().split("T")[0]} // Restrict selection to past dates
+                />
+                {errors.Date_of_Birth && (
+                  <span className=" text-red-500 block p-[8px]">
+                    Enter Date of Birth *
+                  </span>
+                )}
+              </div>
             </div>
 
-            <div className="mt-4 Border ">
+            <div className="mt-4 Border hidden ">
               <label className=" font-medium text-[14px] leading-[18px] text-[#3D3D3D]">
                 Description
               </label>
@@ -301,7 +401,9 @@ const AddTeacher = ({ isOpen }) => {
                       placeholder="Enter Details"
                     />
                     {errors.Phone_Number && (
-                      <span className=" text-red-500">{errors.Phone_Number}</span>
+                      <span className=" text-red-500">
+                        {errors.Phone_Number}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -329,7 +431,7 @@ const AddTeacher = ({ isOpen }) => {
                 )}
               </div>
 
-              <div>
+              <div className="hidden">
                 <label
                   for="LGA"
                   className="font-medium text-[14px] mt-5 leading-[18px] text-[#3D3D3D] "
@@ -363,7 +465,7 @@ const AddTeacher = ({ isOpen }) => {
                   </span>
                 )}
               </div>
-              <div className="">
+              <div className="hidden">
                 <label
                   for="Academy_Name"
                   className="font-medium mt-5 text-[14px] leading-[18px] text-[#3D3D3D] "
@@ -408,7 +510,7 @@ const AddTeacher = ({ isOpen }) => {
                 )}
               </div>
 
-              <div className="">
+              <div className="hidden">
                 <label
                   for="Academy_Code"
                   className="font-medium mt-5 text-[14px] leading-[18px] text-[#3D3D3D] "
@@ -429,7 +531,7 @@ const AddTeacher = ({ isOpen }) => {
                   </span>
                 )}
               </div>
-              <div>
+              <div className="hidden">
                 <label
                   for="Senatorial_District"
                   className="font-medium mt-5 text-[14px] leading-[18px] text-[#3D3D3D] "
@@ -450,68 +552,68 @@ const AddTeacher = ({ isOpen }) => {
                   </span>
                 )}
               </div>
-              <div className="">
-                      <label
-                        for="Course"
-                        className="font-medium  text-[14px] mt-2 block leading-[18px] text-[#3D3D3D] "
-                      >
-                        Select Course
-                      </label>
-                      <select
-                        type="text"
-                        name="Course"
-                        value={formData.Course}
-                        onChange={(e) => {
-                          onchangeHandler(e);
-                          const localGovernment = courseData.find(
-                            (lg) => lg.id == e.target.value
-                          );
-                          setGradeData(localGovernment.classes);
-                        }}
-                        className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      >
-                        <option disabled value="">
-                          Please Select
-                        </option>
-                        {courseData?.map((item) => {
-                          return <option value={item?.id}>{item?.name}</option>;
-                        })}
-                      </select>
-                      {errors.Course && (
-                        <span className="text-red-500 block p-[8px]">
-                          Enter Course *
-                        </span>
-                      )}
-                    </div>
-                    {/* Grade */}
-                    <div className="">
-                      <label
-                        for="Grade"
-                        className="font-medium  text-[14px] mt-2 block leading-[18px] text-[#3D3D3D] "
-                      >
-                       Teacher Grade
-                      </label>
-                      <select
-                        type="text"
-                        name="Grade"
-                        value={formData.Grade}
-                        onChange={onchangeHandler}
-                        className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      >
-                        <option disabled value="">
-                          Please Select
-                        </option>
-                        {gradeData?.map((item) => {
-                          return <option value={item?.id}>{item?.name}</option>;
-                        })}
-                      </select>
-                      {errors.Grade && (
-                        <span className="text-red-500 block p-[8px]">
-                          Enter Grade *
-                        </span>
-                      )}
-                    </div>
-              <div className="">
+              <div className="hidden">
+                <label
+                  for="Course"
+                  className="font-medium  text-[14px] mt-2 block leading-[18px] text-[#3D3D3D] "
+                >
+                  Select Course
+                </label>
+                <select
+                  type="text"
+                  name="Course"
+                  value={formData.Course}
+                  onChange={(e) => {
+                    onchangeHandler(e);
+                    const localGovernment = courseData.find(
+                      (lg) => lg.id == e.target.value
+                    );
+                    setGradeData(localGovernment.classes);
+                  }}
+                  className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
+                >
+                  <option disabled value="">
+                    Please Select
+                  </option>
+                  {courseData?.map((item) => {
+                    return <option value={item?.id}>{item?.name}</option>;
+                  })}
+                </select>
+                {errors.Course && (
+                  <span className="text-red-500 block p-[8px]">
+                    Enter Course *
+                  </span>
+                )}
+              </div>
+              {/* Grade */}
+              <div className="hidden">
+                <label
+                  for="Grade"
+                  className="font-medium  text-[14px] mt-2 block leading-[18px] text-[#3D3D3D] "
+                >
+                  Teacher Grade
+                </label>
+                <select
+                  type="text"
+                  name="Grade"
+                  value={formData.Grade}
+                  onChange={onchangeHandler}
+                  className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
+                >
+                  <option disabled value="">
+                    Please Select
+                  </option>
+                  {gradeData?.map((item) => {
+                    return <option value={item?.id}>{item?.name}</option>;
+                  })}
+                </select>
+                {errors.Grade && (
+                  <span className="text-red-500 block p-[8px]">
+                    Enter Grade *
+                  </span>
+                )}
+              </div>
+              <div className="hidden">
                 <label
                   for="Id"
                   className="font-medium text-[14px] leading-[18px] text-[#3D3D3D] "
@@ -527,10 +629,33 @@ const AddTeacher = ({ isOpen }) => {
                   className="w-full   text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                 />
                 {errors.Id && (
-                  <span className="text-red-500 block p-[8px]">{errors.Id}</span>
+                  <span className="text-red-500 block p-[8px]">
+                    {errors.Id}
+                  </span>
                 )}
               </div>
             </div>
+            <div className="mt-5">
+                <label
+                  for="Address"
+                  className="font-medium text-[14px]  mt-5 leading-[18px] text-[#3D3D3D] "
+                >
+                   Address
+                </label>
+                <input
+                  type="text"
+                  name="Address"
+                  value={formData.Address}
+                  onChange={onchangeHandler}
+                  placeholder="Enter Details"
+                  className="w-full mt-1  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
+                />
+                {errors.Address && (
+                  <span className=" text-red-500 block p-[8px]">
+                    Enter Address *
+                  </span>
+                )}
+              </div>
           </form>
         </div>
       </div>
@@ -538,7 +663,7 @@ const AddTeacher = ({ isOpen }) => {
         <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
           Summary
         </h2>
-        <div className="rounded-2xl bg-[#FFF9ED] p-2">
+        <div className="rounded-2xl bg-[#E9FDEE] p-2">
           {Object.entries(formData).map(([key, value]) => (
             <div
               key={key}
@@ -558,7 +683,7 @@ const AddTeacher = ({ isOpen }) => {
         <div className="bg-[FFF9FD] m-auto my-10">
           <button
             type="button"
-            className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#F2994A]"
+            className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]"
             onClick={submitContactForm}
           >
             {" "}
@@ -567,6 +692,7 @@ const AddTeacher = ({ isOpen }) => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

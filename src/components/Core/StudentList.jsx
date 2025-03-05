@@ -151,42 +151,42 @@ const StudentList = () => {
     });
   };
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const newData = {
       page: 1,
       page_size: 10,
     };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          setPage(1);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
-    setLoading(true);
-    getCoursesAsync({
-      dispatch: dispatch,
-      body: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setCoursesData(res?.data?.data?.courses);
-          setLoading(false);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
+    // getuserAsync({
+    //   dispatch: dispatch,
+    //   body: newData,
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     if (res?.data?.status === 200) {
+    //       setdata(res?.data?.data?.users);
+    //       setPageData(res?.data?.data?.paging);
+    //       setLoading(false);
+    //       setPage(1);
+    //     } else {
+    //       alert(res?.data?.message);
+    //       setLoading(false);
+    //     }
+    //   },
+    // });
+    // setLoading(true);
+    // getCoursesAsync({
+    //   dispatch: dispatch,
+    //   body: {},
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     if (res?.data?.status === 200) {
+    //       setCoursesData(res?.data?.data?.courses);
+    //       setLoading(false);
+    //     } else {
+    //       alert(res?.data?.message);
+    //       setLoading(false);
+    //     }
+    //   },
+    // });
   }, [dispatch, token]);
 
   return (

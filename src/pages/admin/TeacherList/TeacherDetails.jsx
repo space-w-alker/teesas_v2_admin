@@ -1,7 +1,7 @@
 import {React, useState, useEffect} from 'react'
 import letter from '../../..//assets/images/letter.png'
 import DetailsTech from '../../../components/Core/Dashboard/Admin/DetailsTech'
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate,useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import {getTeacherDetailsAsync} from "../../../apis/slices/teacherSlice"
 import { TailSpin } from "react-loader-spinner";
@@ -14,28 +14,12 @@ const TeacherDetails = ({isOpen}) => {
   const dispatch = useDispatch();
   const [adminData, setAdminData] = useState([]);
   const [loading,setLoading] = useState(false);
+  const location = useLocation();
+   
 
   useEffect(() => {
-    setLoading(true);
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    getTeacherDetailsAsync({
-      dispatch: dispatch,
-        data:{id:id},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setAdminData(res?.data?.data?.teacher);
-          setLoading(false)
-        }
-        else{
-          alert(res?.data?.message)
-          setLoading(false)
-        }
-
-        
-      },
-    });
+    const { user } = location.state || {};
+    setAdminData(user);
   }, []);
   return (
     <div
@@ -56,14 +40,14 @@ const TeacherDetails = ({isOpen}) => {
       <TailSpin color="orange" radius={5}  />
     </div>
   )}
-      <div className="bg-[#FFF9ED] border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
+      <div className="bg-[#EFF6F1] border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
         <div className="flex items-center gap-4">
-        <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-        {adminData?.name?.charAt(0).toUpperCase()}
+        <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#FFFFFF]">
+        {adminData?.first_name?.charAt(0).toUpperCase()}
       </div>
           <div className="">
             <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
-             {adminData?.name}
+             {adminData?.first_name} {adminData?.middle_name} {adminData?.last_name}
             </p>
             {adminData?.status == true ? 
           <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
@@ -76,7 +60,7 @@ const TeacherDetails = ({isOpen}) => {
         </div>
       </div>
 
-       {/*} <p className=' font-medium text-[14px] leading-[20px] text-[#F2994A] text-center cursor-pointer '>Manage</p>*/}
+       {/* <p className=' font-medium text-[14px] leading-[20px] text-[#F2994A] text-center cursor-pointer '>Delete</p> */}
       <DetailsTech adminData={adminData}/>
     </div>
   )

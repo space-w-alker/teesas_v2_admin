@@ -169,13 +169,8 @@ export const loginAsync = async ({ dispatch, body, callbackFn }) => {
   try {
     const URL = `${BASEURL}${USERLOGIN}`;
     const result = await postAPICall(URL, body);
-
-    if (result?.data?.status === 200) {
-      dispatch(login({ isLoading: false, response: result.data }));
-      localStorage.setItem('authToken', result.data.data.token);
-      localStorage.setItem('userRole', result.data.data.role);
+     dispatch(login({ isLoading: false, response: result.data }));
       callbackFn(result);
-    }
   } catch (error) {
     console.error('Login error:', error);
   }
