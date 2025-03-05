@@ -97,23 +97,25 @@ const SignInList = ({ isOpen }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
     setList([...ListData]);
-    setLoading(true);
+    // setLoading(true);
     const storedAdminData = localStorage.getItem('userData');
     const admin = JSON.parse(storedAdminData);
-    getDashBoardAsync({
-      dispatch: dispatch,
-      data: {user_type:admin?.user_type},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setAdminData(res?.data?.data);
-          setLoading(false)
-        } else {
-          alert(res?.data?.message);
-          setLoading(false)
-        }
-      },
-    });
+    console.log(admin)
+    setAdminData(admin);
+    // getDashBoardAsync({
+    //   dispatch: dispatch,
+    //   data: {user_type:admin?.user_type},
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     if (res?.data?.status === 200) {
+    //       setAdminData(res?.data?.data);
+    //       setLoading(false)
+    //     } else {
+    //       alert(res?.data?.message);
+    //       setLoading(false)
+    //     }
+    //   },
+    // });
   }, []);
 
   const handleModalClose = () => {
@@ -175,7 +177,7 @@ const SignInList = ({ isOpen }) => {
         <div className=" rounded-xl p-[16px] w-full bg-[#FFFFFF] dash mt-5">
           <div>
             <h3 className="font-bold text-[22px] text-[#2C2E32] leading-[28px] ">
-              Welcome, <span className="text-[#4AC384]">{adminData?.admin_name}</span>
+              Welcome, <span className="text-[#4AC384]">{adminData?.user?.firstName} {adminData?.user?.lastName} </span>
             </h3>
            
           </div>

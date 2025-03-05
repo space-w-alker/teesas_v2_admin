@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAPICall, postAPICall,postFileAPICall } from "../client/methodCalls";
+import { getAPICall, postAPICall,postFileAPICall,deleteAPICall } from "../client/methodCalls";
 import { toast } from "react-toastify";
 
 import { config } from "../client/config";
@@ -30,6 +30,9 @@ export const teacherSlice = createSlice({
     getLiveClassTeachersResponse: {
       response: {},
     },
+    deleteTeacherResponse: { 
+      response:{},
+    },
   },
   reducers: {
     getTeachers: (state, action) => {
@@ -53,6 +56,9 @@ export const teacherSlice = createSlice({
      getLiveClassTeachers: (state, action) => {
       state.getLiveClassTeachersResponse = action.payload;
     },
+    deleteTeacher: (state, action) => {
+      state.deleteTeacherResponse = action.payload;
+    },
 
     reset: (state, action) => {
       state.getAdminRolesResponse = {
@@ -73,6 +79,29 @@ export const getTeachersAsync = async ({ dispatch, callbackFn, data, token }) =>
     dispatch(getTeachers({ isLoading: false, response: result.data }));
   } catch (err) {
     dispatch(getTeachers({ isLoading: false }));
+  }
+};
+
+export const deleteTeacherAsync = async ({
+  dispatch,
+  callbackFn,
+  id,
+  token,
+}) => {
+  try {
+    const URL = `${BASEURL}admin_teacher/${id}`;
+
+    await deleteAPICall(URL, {}, token).then((res) => {
+      if (res?.data?.status === 200) {
+        const data = res?.data;
+        callbackFn && callbackFn(data);
+        dispatch(deleteTeacher({ isLoading: false, response: result.data }));
+      } else {
+        toast.error(res?.data?.message);
+      }
+    });
+  } catch (err) {
+    dispatch(deleteTeacher({ isLoading: false }));
   }
 };
 
@@ -121,7 +150,7 @@ export const addTeacherAsync = async ({ dispatch, body, callbackFn,token }) => {
     try {
       // dispatch(UserLogin({ isLoading: true }));
       const URL = `${BASEURL}${ADD_TEACHER}`;
-      const result = await postFileAPICall(URL, body,token).then((res) => {
+      const result = await postAPICall(URL, body,token).then((res) => {
         callbackFn && callbackFn(res);
         return res;
       });
@@ -163,7 +192,7 @@ export const addTeacherAsync = async ({ dispatch, body, callbackFn,token }) => {
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
-export const { getTeachers,getTeacherStats,updateTeacher,addTeacher,getTeacherDetails,getLocalGov,getLiveClassTeachers} =
+export const { getTeachers,getTeacherStats,updateTeacher,addTeacher,getTeacherDetails,getLocalGov,getLiveClassTeachers,deleteTeacher} =
   teacherSlice.actions;
 
 export const getTeachersResponse = (state) => state.teacher.getTeachersResponse;

@@ -43,7 +43,7 @@ export const config = {
   UPDATE_UNIVERSITY: "admin-universities",
   DELETE_UNIVERSITY: "admin-universities",
 
-  //GET_TEACHERS: "admin_teacher/list",
+  GET_TEACHERS: "admin_teacher/list",
 
 
   // logout: "admin/auth/logout",
@@ -75,6 +75,7 @@ export const config = {
   // GET_TEACHERS: "admin/teachers/get-teachers",
   GET_TEACHER_STATISTICS: "admin/teachers/get-statistics",
   // ADD_TEACHER: "admin/teachers/add-teacher",
+  ADD_TEACHER: "admin_teacher/create",
   UPDATE_TEACHER: "admin/teachers/update-teacher",
   GET_TEACHER_DETAILS: "admin/live-classes/get-teacher-live-class",
   GET_LOCAL_GOV: "admin/users/get-local-government",

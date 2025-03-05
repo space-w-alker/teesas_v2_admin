@@ -34,7 +34,7 @@ const Sidebar = ({ isOpen }) => {
   };
 
   return (
-    <div className={`w-80 side-bar bg-white fixed z-40 top-[105px]  ml-4 flex flex-col py-[10px] px-[18px] overflow-y-auto h-[calc(100vh-80px)] ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300`}> <div className=' w-full border border-[#E1E1E1] rounded-xl mb-4 bg-white'>
+    <div className={`w-80 side-bar bg-white fixed z-40 top-[105px]  ml-4 flex flex-col py-[10px] px-[18px] pb-5 overflow-y-auto h-[calc(100vh-100px)] ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300`}> <div className=' w-full border border-[#E1E1E1] rounded-xl mb-4 bg-white'>
       <div className='flex items-center justify-between px-4 py-2'>
         <div className='flex items-center gap-3'>
           <img

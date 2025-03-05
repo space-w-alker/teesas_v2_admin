@@ -10,47 +10,48 @@ const Profile = ({isOpen}) => {
         {
           id: 1,
           label: "Full Name",
-          value: admin?.name
+          value: admin?.user?.firstName + admin?.user?.lastName
         },
-        {
-          id: 2,
-          label: "Gender",
-          value: admin?.gender
-        },
-        {
-          id: 3,
-          label: "Date of Birth",
-          value: admin?.dateOfBirth
-        },
+        // {
+        //   id: 2,
+        //   label: "Gender",
+        //   value: admin?.gender
+        // },
+        // {
+        //   id: 3,
+        //   label: "Date of Birth",
+        //   value: admin?.dateOfBirth
+        // },
         {
           id: 4,
           label: "Email",
-          value: admin?.email
+          value: admin?.user?.email
         },
-        {
-          id: 5,
-          label: "Phone Number",
-          value: admin?.mobile
-        },
-        {
-          id: 6,
-          label: "Address",
-          value: admin?.address
-        },
+        // {
+        //   id: 5,
+        //   label: "Phone Number",
+        //   value: admin?.mobile
+        // },
+        // {
+        //   id: 6,
+        //   label: "Address",
+        //   value: admin?.address
+        // },
       ]
+      
   return (
 <div className={`py-[8rem] lg:px-[9rem] px-[10px]  ${isOpen ? "ml-[240px]" : ""}`}>
       <div className="bg-[#FFFFFF] border rounded-lg mb-[20px] border-[#CAC4D0] h-[80px] p-[8px]">
         <div className="flex items-center gap-4">
         <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-        {admin?.name.charAt(0).toUpperCase()}
+        {admin?.user?.firstName?.charAt(0).toUpperCase()}
       </div>
           <div className="">
             <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
-              {admin?.name}
+              {admin?.user?.firstName} {admin?.user?.lastName}
             </p>
-            <button className="w-[97px] h-[21px] rounded-full font-medium text-[13px] leading-[15px]  text-[#2760EA] bg-[#DBE5FF]">
-            {admin?.user_type}
+            <button className="w-[150px] h-[21px] rounded-full font-medium text-[13px] leading-[15px]  text-[#2760EA] bg-[#DBE5FF]">
+            {admin?.user?.role}
             </button>
           </div>
         </div>

@@ -23,6 +23,13 @@ function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(()=>{
+    const loginCheck = localStorage.getItem("authToken");
+    if(loginCheck){
+      navigate("/Dashboard");
+    }
+  },[])
+
   const handlechange = (e) => {
     setFormData({
       ...formData,
@@ -43,79 +50,39 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
-  const SubmitSigninAction = () => {
-    // Validate form inputs
+  const SubmitSigninAction = async () => {
     const validationErrors = Validation(formData);
-
-    // Display validation errors if present
     if (Object.keys(validationErrors).length > 0) {
       setError(validationErrors);
       return;
     }
-
+  
     setError({});
     setLoading(true);
-
+  
     const credentials = {
       email: formData.email,
       password: formData.password
     };
-
-    try {
-      loginAsync({
-        dispatch,
-        body: credentials,
-        callbackFn: (response) => {
-          setLoading(false);
-
-          if (response?.data?.status === 200) {
-            const token = response.data.data.token;
-            const role = response.data.data.role;
-            const userData = { token, role };
-
-            localStorage.setItem('userData', JSON.stringify(userData));
-            localStorage.setItem('authToken', token);
-
-            toast.success("Login successful");
-            navigate('/Dashboard');
-          } else {
-            // Handle error responses directly in the callback
-            const errorMessage = response?.data?.message || "Login failed. Please check your credentials.";
-            toast.error(errorMessage);
-
-            if (response?.data?.status === 404) {
-              setError(prev => ({ ...prev, email: "Account not found. Please check your email" }));
-            } else if (response?.data?.status === 401) {
-              setError(prev => ({ ...prev, password: "Invalid credentials" }));
-            }
-          }
-        },
-        errorFn: (error) => {
-          console.error("Login error:", error);
-          setLoading(false);
-
-          let errorMessage = "An error occurred during login. Please try again.";
-
-          // Extract error message from response if available
-          if (error.response && error.response.data) {
-            errorMessage = error.response.data.message || errorMessage;
-
-            // Set specific field errors based on status code
-            if (error.response.data.status === 404) {
-              setError(prev => ({ ...prev, email: "Account not found. Please check your email" }));
-            } else if (error.response.data.status === 401) {
-              setError(prev => ({ ...prev, password: "Invalid credentials" }));
-            }
-          }
-
-          toast.error(errorMessage);
+  
+    loginAsync({
+      dispatch,
+      body: credentials,
+      callbackFn: ({ data }) => {
+        setLoading(false);
+        if (data?.status === 200) {
+          const { token, role } = data.data;
+          localStorage.setItem('userData', JSON.stringify(data.data));
+          localStorage.setItem('authToken', token);
+          toast.success("Login successful");
+          navigate('/Dashboard');
+        } else {
+          toast.error(data?.message || "Login failed.");
+          setError({ general: data?.message });
         }
-      });
-    } catch (error) {
-      setLoading(false);
-      toast.error("An unexpected error occurred. Please try again.");
-      console.error("Login exception:", error);
-    }
+      },
+      
+    });
   };
 
   return (
@@ -178,30 +145,39 @@ function Login() {
             <div className="text-red-500 text-[11px] mt-1">{error.password}</div>
           )}
 
-          <Link to="/forgot-password">
-            <div className="flex items-center justify-end text-[12px] mt-2 cursor-pointer text-[#3D3D3D]">
+          {/* <Link to="/forgot-password"> */}
+            <div className="flex items-center justify-end text-[12px] mt-2  text-[#3D3D3D]">
+            <div className="cursor-pointer" onClick={()=>{
+              navigate("/forgot-password")
+            }}>
               Forgot Password?
+              </div>
             </div>
-          </Link>
+          {/* </Link> */}
 
           <button
             type="button"
             onClick={SubmitSigninAction}
-            className={`mt-[20px] bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg`}
+            disabled={loading || !formData.password || !formData.email}
+            className={`mt-[20px] bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg ${
+              loading || !formData.password || !formData.email
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
+            }`}
           >
             Sign In
           </button>
         </div>
       </div>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
-        autoClose={2000}
+        autoClose={1000}
         ProgressBar={true}
         newestOnTop={false}
         closeOnClick={false}
         rtl={false}
         pauseOnHover={false}
-      />
+      /> */}
     </>
   );
 }
