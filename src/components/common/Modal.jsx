@@ -325,6 +325,7 @@ const Modal = ({
           </div>
         );
       case "Filter":
+
         return (
           <div className="filter lg:px-[20px] px-[10px]">
             <div className="lg:px-[20px] px-[10px] py-[20px] bg-[#FFFFFF] mt-4 rounded-[24px]">
@@ -334,11 +335,11 @@ const Modal = ({
               <div className=" md:grid lg:grid grid-cols-2 gap-5 bg-[#F5F5F5] px-[20px] py-[20px] rounded-[20px]">
                 {coursesData?.map((course) => (
                   <div
-                    key={course}
+                    key={course.id}
                     className="flex justify-between py-[5px] cursor-pointer"
                     onClick={() => onSelectCourse(course)}
                   >
-                    <div className=" font-medium text-[16px] leading-[16px] capitalize">
+                    <div className="font-medium text-[16px] leading-[16px] capitalize">
                       {course?.name}
                     </div>
                     <div className="relative">

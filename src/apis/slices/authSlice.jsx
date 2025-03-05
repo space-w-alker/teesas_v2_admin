@@ -27,7 +27,7 @@ const {
   GET_USER_BY_ID,
   VERIFY_CODE,
   SetNewPassword,
-  RESET_PASSWORD,DELETE_USER
+  RESET_PASSWORD, DELETE_USER
 } = config;
 
 export const authSlice = createSlice({
@@ -45,8 +45,8 @@ export const authSlice = createSlice({
     verifyCodeResponse: {
       isLoading: false,
     },
-    resetPassword:{
-       isLoading: false ,
+    resetPassword: {
+      isLoading: false,
 
     },
     // resetPasswordResponse: {
@@ -169,7 +169,7 @@ export const loginAsync = async ({ dispatch, body, callbackFn }) => {
   try {
     const URL = `${BASEURL}${USERLOGIN}`;
     const result = await postAPICall(URL, body);
-    
+
     if (result?.data?.status === 200) {
       dispatch(login({ isLoading: false, response: result.data }));
       localStorage.setItem('authToken', result.data.data.token);
@@ -184,7 +184,7 @@ export const signupAsync = async ({ dispatch, body, callbackFn }) => {
   try {
     const URL = `${BASEURL}${SIGNUP}`;
     const result = await postAPICall(URL, body);
-    
+
     if (result?.data?.status === 200) {
       dispatch(signup({ isLoading: false, response: result.data }));
       callbackFn(result);
@@ -198,7 +198,7 @@ export const signupAsync = async ({ dispatch, body, callbackFn }) => {
 };
 
 
-export const changePasswordAsync = async ({dispatch, body, token, callbackFn}) => {
+export const changePasswordAsync = async ({ dispatch, body, token, callbackFn }) => {
   try {
     const URL = `${BASEURL}${ChangeNewPassword}`;
     const result = await putAPICall(URL, body, true, token).then((res) => {
@@ -230,7 +230,7 @@ export const verifyCodeAsync = async ({
     dispatch(verifyCode({ isLoading: false }));
   }
 };
-export const setNewPasswordAsync = async ({dispatch, body, callbackFn}) => {
+export const setNewPasswordAsync = async ({ dispatch, body, callbackFn }) => {
   try {
     const URL = `${BASEURL}${SetNewPassword}`;
     const result = await postAPICall(URL, body).then((res) => {
@@ -349,7 +349,7 @@ export const getCoursesAsync = async ({
 }) => {
   try {
     const URL = `${BASEURL}${GET_COURSES}`;
-    const result = getAPICall(URL, {course_type:"EDOBEST"}, token).then((res) => {
+    const result = getAPICall(URL, { course_type: "EDOBEST" }, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });

@@ -1,58 +1,165 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaChevronLeft } from "react-icons/fa";
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getSubscriptionWorkflowAsync,
+  createSubscriptionAsync,
+  selectSubscriptionWorkflow,
+  selectSubscriptionCreation,
+  resetSubscriptionCreation
+} from '../../apis/slices/subscriptionsSlice';
+import { TailSpin } from "react-loader-spinner";
+import { toast } from 'react-toastify';
+
 const AddSubscriptionForm = ({ isOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const token = localStorage.getItem("authToken");
+
   const selectedUser = location.state?.user;
   const [formData, setFormData] = useState({
-    category: '',
-    subscriptionPlan: '',
-    class: '',
-    duration: '',
-    startDate: ''
+    user_id: selectedUser?.id || '',
+    category_id: '',
+    class_id: '',
+    subscription_id: '',
+    start_date: new Date().toISOString().substr(0, 10),
+    transaction_id: `manual-${Date.now()}`,
+    tx_ref: `manual-ref-${Date.now()}`
   });
-  const [categories, setCategories] = useState([{ category: '', plan: '', class: '', duration: '' }]);
+
+  // Redux state selectors
+  const workflowState = useSelector(selectSubscriptionWorkflow);
+  const subscriptionCreationState = useSelector(selectSubscriptionCreation);
+
+  // Local state for UI
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  
-  const addCategory = () => {
-    setCategories([...categories, { category: '', plan: '', class: '', duration: '' }]);
-  };
+  const [categories, setCategories] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
 
-  const categoryOptions = [
-    'Search',
-    'Matric',
-    'Leader In Me',
-    'Primary',
-    'Secondary',
-    'Common Entrance'
-  ];
+  // Initial load - fetch categories
+  useEffect(() => {
+    if (selectedUser?.id) {
+      getSubscriptionWorkflowAsync({
+        dispatch,
+        body: { user_id: selectedUser.id },
+        token,
+        callbackFn: (result) => {
+          if (result?.error) {
+            toast.error("Failed to load categories: " + result.error.message);
+          }
+        }
+      });
+    } else {
+      toast.error("No user selected. Please go back and select a user.");
+      navigate('/add-single-subscription');
+    }
+  }, [dispatch, selectedUser, token, navigate]);
 
-  const classOptions = [
-    'Search',
-    'Primary 1',
-    'Primary 2',
-    'Primary 3',
-    'Primary 4'
-  ];
+  // Handle workflow data updates
+  useEffect(() => {
+    if (workflowState.data) {
+      setCategories(workflowState.data.categories || []);
 
-  const durationOptions = [
-    '1 Month',
-    '3 Months',
-    '6 Months'
-  ];
+      // Only update classes if we have a category selected
+      if (formData.category_id) {
+        setClasses(workflowState.data.classList || []);
+      }
+
+      // Only update subscriptions if we have a class selected
+      if (formData.class_id) {
+        setSubscriptions(workflowState.data.availableSubscriptions || []);
+      }
+    }
+  }, [workflowState.data, formData.category_id, formData.class_id]);
+
+  // Watch for subscription creation success
+  useEffect(() => {
+    if (subscriptionCreationState.success) {
+      setShowSuccessModal(true);
+    }
+    if (subscriptionCreationState.error) {
+      toast.error("Failed to create subscription: " + subscriptionCreationState.error);
+    }
+  }, [subscriptionCreationState]);
 
   const handleInputChange = (e) => {
-    setFormData({
+    const { name, value } = e.target;
+    const updatedFormData = {
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
+    };
+
+    // Reset dependent fields when parent field changes
+    if (name === 'category_id') {
+      updatedFormData.class_id = '';
+      updatedFormData.subscription_id = '';
+
+      // If category changes, fetch classes for this category
+      if (value) {
+        getSubscriptionWorkflowAsync({
+          dispatch,
+          body: {
+            user_id: selectedUser.id,
+            category_id: value
+          },
+          token
+        });
+      }
+    } else if (name === 'class_id') {
+      updatedFormData.subscription_id = '';
+
+      // If class changes, fetch subscriptions for this class
+      if (value) {
+        getSubscriptionWorkflowAsync({
+          dispatch,
+          body: {
+            user_id: selectedUser.id,
+            category_id: updatedFormData.category_id,
+            class_id: value
+          },
+          token
+        });
+      }
+    }
+
+    setFormData(updatedFormData);
+  };
+
+  const handleSubmit = () => {
+    // Validate required fields
+    if (!formData.category_id) {
+      toast.warning("Please select a category");
+      return;
+    }
+    if (!formData.class_id) {
+      toast.warning("Please select a class");
+      return;
+    }
+    if (!formData.subscription_id) {
+      toast.warning("Please select a subscription plan");
+      return;
+    }
+
+    createSubscriptionAsync({
+      dispatch,
+      body: formData,
+      token,
+      callbackFn: (result) => {
+        if (result?.error) {
+          toast.error("Failed to create subscription: " + result.error.message);
+        }
+      }
     });
   };
 
   const SuccessModal = () => {
     const handleClose = () => {
       setShowSuccessModal(false);
-      navigate('/subscribed-users'); 
+      dispatch(resetSubscriptionCreation());
+      navigate('/subscribed-users');
     };
 
     return (
@@ -64,8 +171,8 @@ const AddSubscriptionForm = ({ isOpen }) => {
             </svg>
           </div>
           <h3 className="text-2xl font-bold mb-4">Success!</h3>
-          <p className="text-gray-600 mb-8">Your action is successful</p>
-          <button 
+          <p className="text-gray-600 mb-8">Subscription has been added successfully</p>
+          <button
             onClick={handleClose}
             className="w-full py-3 bg-[#27AE60] text-white rounded-lg hover:bg-[#219652]"
           >
@@ -89,92 +196,117 @@ const AddSubscriptionForm = ({ isOpen }) => {
 
       <div className="mt-8 grid grid-cols-3 gap-6">
         <div className="col-span-2 bg-white rounded-xl p-6">
-          <h2 className="font-bold text-[22px] leading-[28px] text-[#2C2E32] mb-6">
+          <h2 className="font-bold text-[22px] leading-[28px] text-[#2C2E32] mb-4">
             Add Subscription
           </h2>
-          {categories.map((item, index) => (
-            <div key={index} className="mb-6">
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-[14px] text-gray-600 mb-2">Select Category</label>
-                  <select className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2">
-                    <option value="">Select Category</option>
-                    {categoryOptions.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[14px] text-gray-600 mb-2">Subscription Plan</label>
-                  <select className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2">
-                    <option value="">Select Plan</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="yearly">Yearly</option>
-                  </select>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[14px] text-gray-600 mb-2">Select Class</label>
-                  <select className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2">
-                    <option value="">Select Class</option>
-                    {classOptions.map((cls) => (
-                      <option key={cls} value={cls}>{cls}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[14px] text-gray-600 mb-2">Select Duration</label>
-                  <select className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2">
-                    <option value="">Select Duration</option>
-                    {durationOptions.map((duration) => (
-                      <option key={duration} value={duration}>{duration}</option>
-                    ))}
-                  </select>
-                </div>
+          {/* Add user info prominently at the top of the form */}
+          <div className="mb-6 p-4 bg-[#F8F8F8] rounded-lg">
+            <div className="flex items-center">
+              <div className="w-10 h-10 rounded-full bg-[#E9FDEE] text-[#27AE60] flex items-center justify-center font-medium mr-3">
+                {selectedUser?.name ? selectedUser.name.charAt(0).toUpperCase() : "U"}
               </div>
-              
-              {index > 0 && (
-                <div className="flex justify-end mt-2">
-                  <button 
-                    onClick={() => {
-                      const newCategories = categories.filter((_, i) => i !== index)
-                      setCategories(newCategories)
-                    }}
-                    className="text-red-500 text-sm"
-                  >
-                    Delete Category
-                  </button>
-                </div>
+              <div>
+                <h3 className="font-semibold text-[16px]">{selectedUser?.name || "Unknown User"}</h3>
+                <p className="text-gray-600 text-sm">{selectedUser?.email || "No email available"}</p>
+              </div>
+              {selectedUser?.is_verified && (
+                <span className="ml-auto px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Verified</span>
               )}
             </div>
-          ))}
-
-          <button 
-            onClick={addCategory}
-            className="text-black flex items-center gap-2 mb-6"
-          >
-            <span className="text-[#27AE60] text-xl">+</span> Add Another Category
-          </button>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[14px] text-gray-600 mb-2">Starting Date</label>
-              <input
-                type="date"
-                className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2"
-              />
-            </div>
-            <div>
-              <label className="block text-[14px] text-gray-600 mb-2">Sales Referral Code</label>
-              <input
-                type="text"
-                className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2"
-                placeholder="Enter referral code"
-              />
-            </div>
           </div>
+
+          {workflowState.isLoading && !categories.length ? (
+            <div className="flex justify-center my-8">
+              <TailSpin color="orange" radius={5} />
+            </div>
+          ) : (
+            <>
+              <div className="mb-6">
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-[14px] text-gray-600 mb-2">Select Category</label>
+                    <select
+                      name="category_id"
+                      value={formData.category_id}
+                      onChange={handleInputChange}
+                      className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2"
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map(category => (
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[14px] text-gray-600 mb-2">Select Class</label>
+                    <select
+                      name="class_id"
+                      value={formData.class_id}
+                      onChange={handleInputChange}
+                      className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2"
+                      disabled={!formData.category_id || workflowState.isLoading}
+                    >
+                      <option value="">Select Class</option>
+                      {classes.map(classItem => (
+                        <option key={classItem.id} value={classItem.id}>{classItem.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[14px] text-gray-600 mb-2">Subscription Plan</label>
+                    <select
+                      name="subscription_id"
+                      value={formData.subscription_id}
+                      onChange={handleInputChange}
+                      className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2"
+                      disabled={!formData.class_id || workflowState.isLoading}
+                    >
+                      <option value="">Select Plan</option>
+                      {subscriptions.map(plan => (
+                        <option key={plan.id} value={plan.id}>
+                          {plan.description} - ₦{plan.amount} for {plan.time} days
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[14px] text-gray-600 mb-2">Starting Date</label>
+                    <input
+                      type="date"
+                      name="start_date"
+                      value={formData.start_date}
+                      onChange={handleInputChange}
+                      className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-[14px] text-gray-600 mb-2">Transaction Reference (Optional)</label>
+                <input
+                  type="text"
+                  name="transaction_id"
+                  value={formData.transaction_id}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#F8F8F8] border border-[#ECEDEE] rounded-lg p-2"
+                  placeholder="Enter transaction reference"
+                />
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={subscriptionCreationState.isLoading}
+                className="w-full py-3 rounded-lg text-white bg-[#27AE60] hover:bg-[#219652] mt-6 disabled:bg-gray-300"
+              >
+                {subscriptionCreationState.isLoading ? 'Processing...' : 'Add Subscription'}
+              </button>
+            </>
+          )}
         </div>
 
         <div className="bg-white rounded-xl p-6">
@@ -182,35 +314,39 @@ const AddSubscriptionForm = ({ isOpen }) => {
           <div className="space-y-4">
             <div>
               <p className="text-gray-600 text-sm">User Name</p>
-              <p className="font-medium">{selectedUser?.name || 'Esther Obianuju'}</p>
+              <p className="font-medium">{selectedUser?.name || '-'}</p>
+            </div>
+            <div>
+              <p className="text-gray-600 text-sm">Email</p>
+              <p className="font-medium">{selectedUser?.email || '-'}</p>
             </div>
             <div>
               <p className="text-gray-600 text-sm">Category</p>
-              <p className="font-medium">{categories[0]?.category || '-'}</p>
+              <p className="font-medium">
+                {formData.category_id ?
+                  categories.find(c => c.id == formData.category_id)?.name || '-' :
+                  '-'}
+              </p>
             </div>
             <div>
-              <p className="text-gray-600 text-sm">Class</p>
-              <p className="font-medium">{categories[0]?.class || '-'}</p>
-            </div>
-            <div>
-              <p className="text-gray-600 text-sm">Duration</p>
-              <p className="font-medium">{categories[0]?.duration || '-'}</p>
+
+              <p className="text-gray-600 text-sm">Subscription</p>
+              <p className="font-medium">
+                {formData.subscription_id ?
+                  subscriptions.find(s => s.id == formData.subscription_id)?.description || '-' :
+                  '-'}
+              </p>
             </div>
             <div>
               <p className="text-gray-600 text-sm">Start Date</p>
-              <p className="font-medium">{formData.startDate || '-'}</p>
+              <p className="font-medium">{formData.start_date || '-'}</p>
             </div>
           </div>
-          <button 
-            onClick={() => setShowSuccessModal(true)}
-            className="w-full py-3 rounded-lg text-white bg-[#27AE60] hover:bg-[#219652] mt-6"
-          >
-            Add Subscription
-          </button>
         </div>
       </div>
       {showSuccessModal && <SuccessModal />}
     </div>
   );
 };
+
 export default AddSubscriptionForm;

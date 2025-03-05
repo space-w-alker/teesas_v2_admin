@@ -11,6 +11,7 @@ import omotabSlice from "./apis/slices/omotabSlice";
 import categorySlice from "./apis/slices/categorySlice";
 import paymentReducer from "./apis/slices/paymentSlice";
 import universityReducer from "./apis/slices/universitySlice";
+import subscriptionsReducer from "./apis/slices/subscriptionsSlice";
 
 
 export default configureStore({
@@ -27,5 +28,6 @@ export default configureStore({
     category: categorySlice,
     payments: paymentReducer,
     university: universityReducer,
+    subscriptions: subscriptionsReducer,
   },
 });

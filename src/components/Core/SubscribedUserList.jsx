@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from "react";
-import arrowleft from "../../assets/images/arrowleft.png";
-import arrowright from "../../assets/images/arrowright.png";
 import Custombutton from "../common/Custombutton";
 import frame2 from "../../assets/images/Frame2.png";
 import check from "../../assets/images/check.png";
 import Modal from "../common/Modal";
-import {
-  getuserAsync,
-  userAsync,
-  getCoursesAsync,
-} from "../../apis/slices/authSlice";
+import { getSubscribedUsersAsync, selectSubscribedUsers } from "../../apis/slices/subscriptionsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
@@ -20,24 +14,32 @@ import Vector from "../../assets/images/Vector.png";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
-const StudentList = () => {
+const SubscribedUserList = ({ timeFilter = 'daily' }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState(null);
-  const [data, setdata] = useState([]);
   const Navigate = useNavigate();
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
-  const [pageData, setPageData] = useState({});
-  const [loading, setLoading] = useState(false);
   const [isModalFilterOpen, setIsModalFilterOpen] = useState(false);
-  const [searchValue, setVearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [sortKey, setSortKey] = useState("Latest");
   const [coursesData, setCoursesData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [limit, setLimit] = useState(5);
+
 
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [activeUsers, setActiveUsers] = useState(true);
+  const [activeStatus, setActiveStatus] = useState(true);
+  const subscribedUsersState = useSelector(selectSubscribedUsers);
+
+  const subscriptions = subscribedUsersState?.data || [];
+
+  const pageData = {
+    currentPage: subscribedUsersState?.paging?.page || 1,
+    totalPages: subscribedUsersState?.paging?.totalPages || 1,
+    total: subscribedUsersState?.paging?.total || 0,
+    limit: subscribedUsersState?.paging?.limit || 5
+  };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -45,6 +47,10 @@ const StudentList = () => {
   };
 
   const handleFilterByCourse = (course) => {
+    if (!course || !course.id) {
+      return;
+    }
+
     setSelectedCourses((prevSelectedCourses) => {
       if (prevSelectedCourses.includes(course.id)) {
         return prevSelectedCourses.filter((c) => c !== course.id);
@@ -56,142 +62,150 @@ const StudentList = () => {
 
   const handleApply = () => {
     setLoading(true);
-    const newData = {
+    const queryParams = {
       page: 1,
-      page_size: 10,
-      sort: sortKey,
-      course_id: selectedCourses,
-      status: activeUsers ? "Active" : "Inactive",
+      limit: limit,
+      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+      status: activeStatus ? "Active" : "Inactive",
+      timeFilter: timeFilter,
     };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          handleModalClose();
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
-  };
 
-  // const handleFilterByCourse = (course) => {
-  //   setSelectedCourse(course);
-  //   setIsModalOpen(false);
-  // };
+    if (selectedCourses.length > 0) {
+      queryParams.subscription_id = selectedCourses;
+    }
+
+    if (searchValue.trim()) {
+      queryParams.search = searchValue;
+    }
+
+    fetchSubscribedUsers(queryParams);
+    handleModalClose();
+  };
 
   const handleFilterByStatus = (status) => {
-    setActiveUsers(status);
+    setActiveStatus(status);
   };
 
-  const handleFilterByMonth = (month) => {
-    setSelectedMonth(month);
-    setIsModalOpen(false);
-  };
   const latestOnClick = () => {
     setLoading(true);
     setSortKey("Latest");
-    const newData = {
+    setPage(1);
+    fetchSubscribedUsers({
       page: 1,
-      page_size: 10,
-      sort: "Latest",
-      course_id: selectedCourses,
-      status: activeUsers ? "Active" : "Inactive",
-    };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          handleModalClose();
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
+      limit: limit,
+      sort: "create_time:DESC",
+      status: activeStatus ? "Active" : "Inactive",
+      search: searchValue || undefined,
+      timeFilter: timeFilter,
     });
   };
 
   const oldestOnClick = () => {
     setLoading(true);
     setSortKey("Oldest");
-    const newData = {
+    setPage(1);
+    fetchSubscribedUsers({
       page: 1,
-      page_size: 10,
-      sort: "Oldest",
-      course_id: selectedCourses,
-      status: activeUsers ? "Active" : "Inactive",
-    };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
+      limit: limit,
+      sort: "create_time:ASC",
+      status: activeStatus ? "Active" : "Inactive",
+      search: searchValue || undefined,
+      timeFilter: timeFilter,
+    });
+  };
+
+
+
+
+  const fetchSubscribedUsers = (params) => {
+
+    const apiParams = { ...params };
+
+
+    if (apiParams.sort === "Latest") {
+      apiParams.sort = "create_time:DESC";
+    } else if (apiParams.sort === "Oldest") {
+      apiParams.sort = "create_time:ASC";
+    }
+
+
+    if (apiParams.status !== undefined) {
+      apiParams.activeFilter = apiParams.status.toLowerCase();
+      delete apiParams.status;
+    }
+
+
+
+    getSubscribedUsersAsync({
+      dispatch,
+      body: apiParams,
+      token,
       callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          setPage(1);
-          handleModalClose();
+        setLoading(false);
+        if (res?.error) {
+          toast.error(res.error.message || "Failed to fetch subscriptions");
         } else {
-          alert(res?.data?.message);
-          setLoading(false);
+
+
+          setPage(res?.data?.data?.page || 1);
         }
       },
     });
   };
-  useEffect(() => {
+
+  const handlePageChange = (newPage) => {
+
+
+    if (newPage < 1 || newPage > pageData.totalPages) {
+
+      return;
+    }
+
+
+    setPage(newPage);
     setLoading(true);
-    const newData = {
+
+    fetchSubscribedUsers({
+      page: newPage,
+      limit: limit,
+      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+      status: activeStatus ? "Active" : "Inactive",
+      timeFilter: timeFilter,
+      ...(searchValue ? { search: searchValue } : {}),
+      ...(selectedCourses.length > 0 ? { subscription_id: selectedCourses } : {})
+    });
+  }; useEffect(() => {
+    setLoading(true);
+    fetchSubscribedUsers({
       page: 1,
-      page_size: 10,
-    };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          setPage(1);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
+      limit: limit,
+      timeFilter: timeFilter,
+      status: activeStatus ? "Active" : "Inactive",
+      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC"
     });
-    setLoading(true);
-    getCoursesAsync({
-      dispatch: dispatch,
-      body: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setCoursesData(res?.data?.data?.courses);
-          setLoading(false);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
-  }, [dispatch, token]);
+
+    setCoursesData([]);
+  }, [dispatch, token, timeFilter]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  const isLoading = subscribedUsersState?.isLoading || loading;
 
   return (
     <>
-      {loading && (
+      {isLoading && (
         <div
           style={{
             position: "absolute",
@@ -201,7 +215,7 @@ const StudentList = () => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="red" radius={5} />
+          <TailSpin color="orange" radius={5} />
         </div>
       )}
       <div className={`flex justify-end items-center relative mt-3`}>
@@ -215,65 +229,33 @@ const StudentList = () => {
                 placeholder="Search Item"
                 value={searchValue}
                 onChange={(e) => {
-                  setVearchValue(e.target.value);
-                  if (e.target.value == "") {
+                  setSearchValue(e.target.value);
+                  if (e.target.value === "") {
                     setLoading(true);
-                    const newData = {
+                    fetchSubscribedUsers({
                       page: 1,
-                      page_size: 10,
-                      course_id: selectedCourses,
-                      status: activeUsers ? "Active" : "Inactive",
-                      sort: sortKey,
-                    };
-                    getuserAsync({
-                      dispatch: dispatch,
-                      body: newData,
-                      token: token,
-                      callbackFn: (res) => {
-                        if (res?.data?.status === 200) {
-                          setdata(res?.data?.data?.users);
-                          setPageData(res?.data?.data?.paging);
-                          setLoading(false);
-                          setPage(1);
-                        } else {
-                          alert(res?.data?.message);
-                          setLoading(false);
-                        }
-                      },
+                      limit: limit,
+                      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+                      status: activeStatus ? "Active" : "Inactive",
+                      timeFilter: timeFilter,
                     });
                   }
                 }}
               />
               <img
                 src={SearchButton}
-                className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer"
+                className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer"
                 alt="Search icon"
                 onClick={() => {
-                  if (searchValue != "") {
+                  if (searchValue.trim() !== "") {
                     setLoading(true);
-                    const newData = {
+                    fetchSubscribedUsers({
                       page: 1,
-                      page_size: 10,
+                      limit: limit,
                       search: searchValue,
-                      course_id: selectedCourses,
-                      status: activeUsers ? "Active" : "Inactive",
-                      sort: sortKey,
-                    };
-                    getuserAsync({
-                      dispatch: dispatch,
-                      body: newData,
-                      token: token,
-                      callbackFn: (res) => {
-                        if (res?.data?.status === 200) {
-                          setdata(res?.data?.data?.users);
-                          setPageData(res?.data?.data?.paging);
-                          setLoading(false);
-                          setPage(1);
-                        } else {
-                          alert(res?.data?.message);
-                          setLoading(false);
-                        }
-                      },
+                      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+                      status: activeStatus ? "Active" : "Inactive",
+                      timeFilter: timeFilter,
                     });
                   }
                 }}
@@ -291,10 +273,10 @@ const StudentList = () => {
           </div>
         </div>
       </div>
-      <div className="py-[2px]  rounded-[18px] bg-[#FFFFFF]  mt-3 ">
+      <div className="py-[2px] rounded-[18px] bg-[#FFFFFF] mt-3">
         <div className="user">
-          <h2 className="text-[22px]  leading-6 text-[#2C2E32] font-medium">
-            Subscribed User List
+          <h2 className="text-[22px] leading-6 text-[#2C2E32] font-medium">
+            Subscribed User List {activeStatus ? "(Active)" : "(Inactive)"}
           </h2>
           <Custombutton
             value="Filter"
@@ -306,141 +288,89 @@ const StudentList = () => {
           />
         </div>
         <div className="">
-          <ul>
-            {data.map((user) => (
-              <li
-                key={user.id}
-                className="cursor-pointer"
-                onClick={() => {
-                  Navigate(`/userDetails?id=${user?.id}`);
-                }}
-              >
-                <div className="px-[18px] py-[10px]">
-                  <h6 className=" font-light text-[12px] leading-[13px] text-[#767676] ">
-                    {user.created_at}
-                  </h6>
-                </div>
-                <div className="flex items-center justify-between p-5 max-sm:flex-col  ">
-                  <div className="flex  items-center gap-3 px-[18px] ">
-                    <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-                      {user?.first_name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="flex pl-[20px] items-center  gap-2">
-                        <p>{user.first_name}</p>
-                        <p>{user.last_name}</p>
+          {subscriptions.length === 0 && !isLoading ? (
+            <div className="text-center py-8 text-gray-500">
+              No User found
+            </div>
+          ) : (
+            <ul>
+              {subscriptions.map((subscription, index) => (
+                <li
+                  key={subscription?.id || `subscription-${index}`}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    if (subscription?.user?.id) {
+                      Navigate(`/userDetails?id=${subscription.user.id}`);
+                    }
+                  }}
+                >
+                  <div className="px-[18px] py-[10px]">
+                    <h6 className="font-light text-[12px] leading-[13px] text-[#767676]">
+                      {formatDate(subscription?.create_time)}
+                    </h6>
+                  </div>
+                  <div className="flex items-center justify-between p-5 max-sm:flex-col">
+                    <div className="flex items-center gap-3 px-[18px]">
+                      <div className="rounded-full text-center p-2 w-[40px] h-[40px] bg-[##E9FDEE]">
+                        {subscription?.user?.name ? subscription.user.name.charAt(0).toUpperCase() : "U"}
                       </div>
-                      <div className="pl-[20px]  flex flex-col gap-[10px]">
-                        <p className=" font-normal text-[#555555] text-[12px] leading-[15px]">
-                          {user?.userCourses[0]?.classes?.name}
-                        </p>
-                        <div className="flex  items-center   h-[16px]  bg-[#F2F2F2] ">
-                          {/* <img
-                      className="h-[11px]"
-                      src={item.icon2}
-                      alt="Icon 2"
-                    /> */}
-                          <p className=" font-bold w-full text-[12px] leading-[15px] text-[#555555]">
-                            {user?.academies?.academy_name} /{" "}
-                            {user?.academies?.sentorial}
+                      <div>
+                        <div className="flex pl-[20px] items-center gap-2">
+                          <p>{subscription?.user?.name || "Unknown User"}</p>
+                        </div>
+                        <div className="pl-[20px] flex flex-col gap-[10px]">
+                          <p className="font-normal text-[#555555] text-[12px] leading-[15px]">
+                            {subscription?.subscription?.description || "No description"}
                           </p>
                         </div>
                       </div>
                     </div>
+                    <div className="max-sm:mt-5">
+                      <Custombutton
+                        value={subscription?.status ? "Active" : "Expired"}
+                        img={check}
+                        backgroundcolor={subscription?.status ? "bg-[#27ae60]" : "bg-[#f0f0f0]"}
+                        textcolor={subscription?.status ? "text-[#ffffff]" : "text-[#999999]"}
+                        imagePosition="left"
+                      />
+                    </div>
                   </div>
-                  <div className="max-sm:mt-5 ">
-                    <Custombutton
-                      value="Status"
-                      img={check}
-                      backgroundcolor="bg-[#ede1d5]"
-                      textcolor="text-[#EA8527]"
-                      imagePosition="left"
-                    />
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        <div className="user">
+
+
+        <div className="flex justify-between items-center mt-6 ml-4 mr-4 mb-4">
           <Custombutton
-            onClick={() => {
-              if (page > 1) {
-                setLoading(true);
-                const newData = {
-                  page: page - 1,
-                  page_size: 10,
-                  course_id: selectedCourses,
-                  status: activeUsers ? "Active" : "Inactive",
-                  sort: sortKey,
-                  ...(searchValue == '' ? {} : {  search: searchValue, })
-                };
-                setPage(page - 1);
-                getuserAsync({
-                  dispatch: dispatch,
-                  body: newData,
-                  token: token,
-                  callbackFn: (res) => {
-                    if (res?.data?.status === 200) {
-                      setdata(res?.data?.data?.users);
-                      setPageData(res?.data?.data?.paging);
-                      setLoading(false);
-                    } else {
-                      alert(res?.data?.message);
-                      setLoading(false);
-                    }
-                  },
-                });
-              }
-            }}
             value="Previous"
-            hidden="hidden"
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
+            textcolor={pageData.currentPage > 1 ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="left"
-            width="w-[115px]"
+            onClick={() => handlePageChange(pageData.currentPage - 1)}
+            disabled={pageData.currentPage <= 1}
           />
-          <div className="text-[#667085] text-[12px]">
-            Page {pageData?.currentPage} of {pageData?.total_pages}
-          </div>
+
           <Custombutton
-            onClick={() => {
-              if(pageData?.currentPage < pageData.total_pages)
-              setLoading(true);
-              const newData = {
-                page: page + 1,
-                page_size: 10,
-                course_id: selectedCourses,
-                status: activeUsers ? "Active" : "Inactive",
-                sort: sortKey,
-                ...(searchValue == '' ? {} : {  search: searchValue, })
-              };
-              setPage(page + 1);
-              getuserAsync({
-                dispatch: dispatch,
-                body: newData,
-                token: token,
-                callbackFn: (res) => {
-                  if (res?.data?.status === 200) {
-                    setdata(res?.data?.data?.users);
-                    setPageData(res?.data?.data?.paging);
-                    setLoading(false);
-                  } else {
-                    alert(res?.data?.message);
-                    setLoading(false);
-                  }
-                },
-              });
-            }}
-            value="Next"
-            hidden="hidden"
-            icon={<FaArrowRight />}
+            value={`Page ${pageData.currentPage}`}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
+          />
+
+          <Custombutton
+            value="Next"
+            icon={<FaArrowRight />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor={pageData.currentPage < pageData.totalPages ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="right"
+            onClick={() => handlePageChange(pageData.currentPage + 1)}
+            disabled={pageData.currentPage >= pageData.totalPages}
           />
         </div>
+
+
         {isModalOpen && (
           <Modal
             closeModal={handleModalClose}
@@ -450,7 +380,7 @@ const StudentList = () => {
             onSelectStatus={handleFilterByStatus}
             onClick={handleApply}
             selectedCoursesData={selectedCourses}
-            selectedStatusData={activeUsers}
+            selectedStatusData={activeStatus}
           />
         )}
 
@@ -467,4 +397,5 @@ const StudentList = () => {
   );
 };
 
-export default StudentList;
+export default SubscribedUserList;
+
