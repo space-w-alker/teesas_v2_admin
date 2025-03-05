@@ -83,25 +83,16 @@ export const getSubscribedUsersAsync = ({ dispatch, body, token, callbackFn }) =
     try {
         dispatch(setSubscribedUsers({ isLoading: true, data: null, paging: null, error: null }));
         const URL = `${BASEURL}${SUBSCRIBED_USERS}`;
+        let requestParams = {
+            ...body,
+            limit: body.limit || 100
+        };
 
 
-        let requestParams = { ...body };
-        if (requestParams.status !== undefined) {
-            requestParams.activeFilter = requestParams.status.toLowerCase();
-            delete requestParams.status;
-        }
 
         getAPICall(URL, requestParams, token)
             .then(result => {
                 if (result?.data?.status === 200) {
-
-                    console.log("API pagination data:", {
-                        total: result.data.data.total,
-                        page: result.data.data.page,
-                        limit: result.data.data.limit,
-                        totalPages: result.data.data.totalPages
-                    });
-
                     dispatch(setSubscribedUsers({
                         isLoading: false,
                         data: result.data.data.subscriptions,
@@ -124,10 +115,12 @@ export const getSubscribedUsersAsync = ({ dispatch, body, token, callbackFn }) =
                 if (callbackFn) callbackFn(result);
             })
             .catch(error => {
+                console.error("API call error:", error);
                 dispatch(setSubscribedUsers({ isLoading: false, data: null, paging: null, error: error.message }));
                 if (callbackFn) callbackFn({ error });
             });
     } catch (error) {
+        console.error("Exception in getSubscribedUsersAsync:", error);
         dispatch(setSubscribedUsers({ isLoading: false, data: null, paging: null, error: error.message }));
         if (callbackFn) callbackFn({ error });
     }
@@ -147,7 +140,7 @@ export const getSubscriptionStatsAsync = ({ dispatch, token, timeFilter = null, 
                         data: result.data.data,
                         error: null
                     }));
-                    console.log("Subscription stats retrieved:", result.data.data);
+
                 } else {
                     dispatch(setSubscriptionStats({
                         isLoading: false,
@@ -170,7 +163,6 @@ export const getSubscriptionStatsAsync = ({ dispatch, token, timeFilter = null, 
 
 export const searchUsersAsync = ({ dispatch, body, token, isPagination = false, callbackFn }) => {
     try {
-
         if (!isPagination) {
             dispatch(setSearchUsers({ isLoading: true, data: [], paging: null, error: null }));
         }

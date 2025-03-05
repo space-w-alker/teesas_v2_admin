@@ -12,7 +12,7 @@ import categorySlice from "./apis/slices/categorySlice";
 import paymentReducer from "./apis/slices/paymentSlice";
 import universityReducer from "./apis/slices/universitySlice";
 import subscriptionsReducer from "./apis/slices/subscriptionsSlice";
-
+import resellersReducer from "./apis/slices/resellersSlice";
 
 export default configureStore({
   reducer: {
@@ -29,5 +29,6 @@ export default configureStore({
     payments: paymentReducer,
     university: universityReducer,
     subscriptions: subscriptionsReducer,
+    resellers: resellersReducer,
   },
 });

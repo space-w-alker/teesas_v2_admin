@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 
 const SubscribedUser = ({ isOpen }) => {
   const token = localStorage.getItem("authToken");
-  const [dashFilter, setDashFilter] = useState('all'); // Default to 'all' instead of 'yearly'
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,21 +20,23 @@ const SubscribedUser = ({ isOpen }) => {
 
   const subscriptionStatsState = useSelector(selectSubscriptionStats);
 
-  const fetchSubscriptionStats = (filter) => {
+  useEffect(() => {
+    fetchSubscriptionStats();
+  }, [dispatch, token]);
+
+  const fetchSubscriptionStats = () => {
     setLoading(true);
     getSubscriptionStatsAsync({
       dispatch: dispatch,
       token: token,
-      timeFilter: filter === 'all' ? null : filter, // Don't pass timeFilter if 'all'
       callbackFn: (res) => {
         setLoading(false);
+        if (res?.data) {
+          console.log("Subscription stats:", res.data);
+        }
       },
     });
   };
-
-  useEffect(() => {
-    fetchSubscriptionStats(dashFilter);
-  }, [dispatch, token, dashFilter]);
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -50,7 +51,9 @@ const SubscribedUser = ({ isOpen }) => {
     setIsModalOpen(false);
   };
 
-  const totalSubscribedUsers = subscriptionStatsState?.data?.totalSubscribedUsers || 0;
+  // Updated variable names to match the new API response structure
+  const totalSubscriptions = subscriptionStatsState?.data?.totalSubscriptions || 0;
+  const totalActiveSubscriptions = subscriptionStatsState?.data?.totalActiveSubscriptions || 0;
   const totalExpiredSubscriptions = subscriptionStatsState?.data?.totalExpiredSubscriptions || 0;
 
   return (
@@ -83,43 +86,35 @@ const SubscribedUser = ({ isOpen }) => {
 
         <div className="flex gap-5 flex-col mt-4">
           <div className="lg:h-[214px] py-[16px] px-[17px] rounded-xl bg-[#FFFFFF]">
-            <div className="flex items-center justify-end mb-[10px]">
-              <select
-                type="text"
-                name="dashFilter"
-                value={dashFilter}
-                onChange={(e) => {
-                  const newFilter = e.target.value.toLowerCase();
-                  setDashFilter(newFilter);
-                  fetchSubscriptionStats(newFilter);
-                }}
-                className="mt-1 text-[14px] outline-none border border-[#ECEDEE] ml-auto px-[8px] rounded w-[95px] h-[30px]"
-              >
-                <option value="all">All Time</option>
-                <option value="daily">Daily</option>
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-              </select>
-            </div>
             <div className="lg:flex block gap-[10px]">
               <UserCard
-                label="Total Subscribed Users"
-                width="lg:w-[50%]"
+                label="Total Subscriptions"
+                width="lg:w-[33%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={totalSubscribedUsers}
-                value2={0}
-                img={arrow_upward}
+                value={totalSubscriptions}
+                // value2={0}
+                // img={arrow_upward}
                 img2={notes}
               />
               <UserCard
-                label="Total Expired Subscriptions"
-                width="lg:w-[50%]"
+                label="Active Subscriptions"
+                width="lg:w-[33%]"
+                height="lg:h-[142px]"
+                backgroundcolor="bg-[#F2F2F2]"
+                value={totalActiveSubscriptions}
+                // value2={0}
+                // img={arrow_upward}
+                img2={notes}
+              />
+              <UserCard
+                label="Expired Subscriptions"
+                width="lg:w-[33%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
                 value={totalExpiredSubscriptions}
-                value2={0}
-                img={arrow_upward}
+                // value2={0}
+                // img={arrow_upward}
                 img2={notes}
               />
             </div>
@@ -130,14 +125,14 @@ const SubscribedUser = ({ isOpen }) => {
           <div
             className={`border rounded-lg ${activeButton === 'Add Subscription' ? 'bg-[#27AE60] text-white' : 'border-[#27AE60] text-[#27AE60]'
               }`}
-            onClick={() => handleButtonClick('Add Subscription')}
+            onClick={() => navigate("/addSingleSubscription")}
           >
             <button className='text-[14px] leading-[20px] pt-[2px] text-center w-[123px] h-[40px] rounded-lg cursor-pointer'>
               Add Subscription
             </button>
           </div>
 
-          {isModalOpen && (
+          {/* {isModalOpen && (
             <Modal
               closeModal={closeModal}
               label="ADD USER"
@@ -146,10 +141,10 @@ const SubscribedUser = ({ isOpen }) => {
               addSingleButton={() => { navigate("/addSingleSubscription") }}
               addMutipleButton={() => { navigate("/UploadBulkSubscription") }}
             />
-          )}
+          )} */}
         </div>
 
-        <SubscribedUserList timeFilter={dashFilter} />
+        <SubscribedUserList />
       </div>
     </div>
   );

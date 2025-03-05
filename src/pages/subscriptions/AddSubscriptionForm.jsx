@@ -25,7 +25,7 @@ const AddSubscriptionForm = ({ isOpen }) => {
     class_id: '',
     subscription_id: '',
     start_date: new Date().toISOString().substr(0, 10),
-    transaction_id: `manual-${Date.now()}`,
+    transaction_id: "",
     tx_ref: `manual-ref-${Date.now()}`
   });
 

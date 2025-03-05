@@ -14,7 +14,7 @@ import Vector from "../../assets/images/Vector.png";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
-const SubscribedUserList = ({ timeFilter = 'daily' }) => {
+const SubscribedUserList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const Navigate = useNavigate();
   const token = localStorage.getItem("authToken");
@@ -27,37 +27,23 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
   const [loading, setLoading] = useState(false);
   const [limit, setLimit] = useState(5);
 
-
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [activeStatus, setActiveStatus] = useState(true);
   const subscribedUsersState = useSelector(selectSubscribedUsers);
 
   const subscriptions = subscribedUsersState?.data || [];
 
+
   const pageData = {
     currentPage: subscribedUsersState?.paging?.page || 1,
     totalPages: subscribedUsersState?.paging?.totalPages || 1,
     total: subscribedUsersState?.paging?.total || 0,
-    limit: subscribedUsersState?.paging?.limit || 5
+    limit: subscribedUsersState?.paging?.limit || 100
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     setIsModalFilterOpen(false);
-  };
-
-  const handleFilterByCourse = (course) => {
-    if (!course || !course.id) {
-      return;
-    }
-
-    setSelectedCourses((prevSelectedCourses) => {
-      if (prevSelectedCourses.includes(course.id)) {
-        return prevSelectedCourses.filter((c) => c !== course.id);
-      } else {
-        return [...prevSelectedCourses, course.id];
-      }
-    });
   };
 
   const handleApply = () => {
@@ -66,13 +52,8 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
       page: 1,
       limit: limit,
       sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
-      status: activeStatus ? "Active" : "Inactive",
-      timeFilter: timeFilter,
+      activeFilter: activeStatus ? "active" : "inactive",
     };
-
-    if (selectedCourses.length > 0) {
-      queryParams.subscription_id = selectedCourses;
-    }
 
     if (searchValue.trim()) {
       queryParams.search = searchValue;
@@ -84,43 +65,47 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
 
   const handleFilterByStatus = (status) => {
     setActiveStatus(status);
-  };
-
-  const latestOnClick = () => {
     setLoading(true);
-    setSortKey("Latest");
-    setPage(1);
-    fetchSubscribedUsers({
+    const queryParams = {
       page: 1,
       limit: limit,
-      sort: "create_time:DESC",
-      status: activeStatus ? "Active" : "Inactive",
-      search: searchValue || undefined,
-      timeFilter: timeFilter,
-    });
+      sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+      activeFilter: status ? "active" : "inactive",
+      ...(searchValue ? { search: searchValue } : {})
+    };
+    fetchSubscribedUsers(queryParams);
+  }
+
+  const handleSearchChange = (e) => {
+    setSearchValue(e.target.value);
+
+
+    if (e.target.value === "") {
+      setLoading(true);
+      fetchSubscribedUsers({
+        page: 1,
+        limit: limit,
+        sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+        activeFilter: activeStatus ? "active" : "inactive",
+      });
+    }
   };
 
-  const oldestOnClick = () => {
-    setLoading(true);
-    setSortKey("Oldest");
-    setPage(1);
-    fetchSubscribedUsers({
-      page: 1,
-      limit: limit,
-      sort: "create_time:ASC",
-      status: activeStatus ? "Active" : "Inactive",
-      search: searchValue || undefined,
-      timeFilter: timeFilter,
-    });
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && searchValue.trim() !== "") {
+      setLoading(true);
+      fetchSubscribedUsers({
+        page: 1,
+        limit: limit,
+        search: searchValue,
+        sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+        activeFilter: activeStatus ? "active" : "inactive",
+      });
+    }
   };
-
-
-
 
   const fetchSubscribedUsers = (params) => {
-
     const apiParams = { ...params };
-
 
     if (apiParams.sort === "Latest") {
       apiParams.sort = "create_time:DESC";
@@ -128,13 +113,7 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
       apiParams.sort = "create_time:ASC";
     }
 
-
-    if (apiParams.status !== undefined) {
-      apiParams.activeFilter = apiParams.status.toLowerCase();
-      delete apiParams.status;
-    }
-
-
+    console.log("Fetching users with params:", apiParams);
 
     getSubscribedUsersAsync({
       dispatch,
@@ -145,22 +124,30 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
         if (res?.error) {
           toast.error(res.error.message || "Failed to fetch subscriptions");
         } else {
-
-
+          console.log("Search response:", res?.data?.data);
           setPage(res?.data?.data?.page || 1);
         }
       },
     });
   };
 
+  const handleSearchClick = () => {
+    if (searchValue.trim() !== "") {
+      setLoading(true);
+      fetchSubscribedUsers({
+        page: 1,
+        limit: limit,
+        search: searchValue,
+        sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
+        activeFilter: activeStatus ? "active" : "inactive",
+      });
+    }
+  };
+
   const handlePageChange = (newPage) => {
-
-
     if (newPage < 1 || newPage > pageData.totalPages) {
-
       return;
     }
-
 
     setPage(newPage);
     setLoading(true);
@@ -169,23 +156,22 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
       page: newPage,
       limit: limit,
       sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
-      status: activeStatus ? "Active" : "Inactive",
-      timeFilter: timeFilter,
+      activeFilter: activeStatus ? "active" : "inactive",
       ...(searchValue ? { search: searchValue } : {}),
-      ...(selectedCourses.length > 0 ? { subscription_id: selectedCourses } : {})
     });
-  }; useEffect(() => {
+  };
+
+  useEffect(() => {
     setLoading(true);
     fetchSubscribedUsers({
       page: 1,
       limit: limit,
-      timeFilter: timeFilter,
-      status: activeStatus ? "Active" : "Inactive",
+      activeFilter: activeStatus ? "active" : "inactive",
       sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC"
     });
 
     setCoursesData([]);
-  }, [dispatch, token, timeFilter]);
+  }, [dispatch, token]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -236,8 +222,7 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
                       page: 1,
                       limit: limit,
                       sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
-                      status: activeStatus ? "Active" : "Inactive",
-                      timeFilter: timeFilter,
+                      activeFilter: activeStatus ? "active" : "inactive",
                     });
                   }
                 }}
@@ -254,8 +239,7 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
                       limit: limit,
                       search: searchValue,
                       sort: sortKey === "Latest" ? "create_time:DESC" : "create_time:ASC",
-                      status: activeStatus ? "Active" : "Inactive",
-                      timeFilter: timeFilter,
+                      activeFilter: activeStatus ? "active" : "inactive",
                     });
                   }
                 }}
@@ -276,7 +260,7 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
       <div className="py-[2px] rounded-[18px] bg-[#FFFFFF] mt-3">
         <div className="user">
           <h2 className="text-[22px] leading-6 text-[#2C2E32] font-medium">
-            Subscribed User List {activeStatus ? "(Active)" : "(Inactive)"}
+            Subscribed User List {activeStatus ? "(Active)" : "(Expired)"}
           </h2>
           <Custombutton
             value="Filter"
@@ -298,11 +282,11 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
                 <li
                   key={subscription?.id || `subscription-${index}`}
                   className="cursor-pointer"
-                  onClick={() => {
-                    if (subscription?.user?.id) {
-                      Navigate(`/userDetails?id=${subscription.user.id}`);
-                    }
-                  }}
+                // onClick={() => {
+                //   if (subscription?.user?.id) {
+                //     Navigate(`/userDetails?id=${subscription.user.id}`);
+                //   }
+                // }}
                 >
                   <div className="px-[18px] py-[10px]">
                     <h6 className="font-light text-[12px] leading-[13px] text-[#767676]">
@@ -320,17 +304,22 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
                         </div>
                         <div className="pl-[20px] flex flex-col gap-[10px]">
                           <p className="font-normal text-[#555555] text-[12px] leading-[15px]">
+                            {subscription?.user?.email || "No email"}
+                          </p>
+                          <p className="font-normal text-[#555555] text-[12px] leading-[15px]">
                             {subscription?.subscription?.description || "No description"}
                           </p>
                         </div>
                       </div>
                     </div>
+
+
                     <div className="max-sm:mt-5">
                       <Custombutton
-                        value={subscription?.status ? "Active" : "Expired"}
+                        value={subscription?.is_expired ? "Expired" : "Active"}
                         img={check}
-                        backgroundcolor={subscription?.status ? "bg-[#27ae60]" : "bg-[#f0f0f0]"}
-                        textcolor={subscription?.status ? "text-[#ffffff]" : "text-[#999999]"}
+                        backgroundcolor={subscription?.is_expired ? "bg-[#c14345]" : "bg-[#27ae60]"}
+                        textcolor="text-[#ffffff]"
                         imagePosition="left"
                       />
                     </div>
@@ -341,11 +330,14 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
           )}
         </div>
 
-
         <div className="flex justify-between items-center mt-6 ml-4 mr-4 mb-4">
           <Custombutton
             value="Previous"
-            icon={<FaArrowLeft />}
+            icon={
+              pageData.currentPage > 1 ?
+                <FaArrowLeft color="#000000" /> :
+                <FaArrowLeft color="#cccccc" />
+            }
             backgroundcolor="bg-[#F2F2F2]"
             textcolor={pageData.currentPage > 1 ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="left"
@@ -353,21 +345,28 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
             disabled={pageData.currentPage <= 1}
           />
 
+
           <Custombutton
-            value={`Page ${pageData.currentPage}`}
+            value={`Page ${pageData.currentPage} of ${pageData.totalPages}`}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
           />
 
+
           <Custombutton
             value="Next"
-            icon={<FaArrowRight />}
+            icon={
+              pageData.currentPage < pageData.totalPages ?
+                <FaArrowRight color="#000000" /> :
+                <FaArrowRight color="#cccccc" />
+            }
             backgroundcolor="bg-[#F2F2F2]"
             textcolor={pageData.currentPage < pageData.totalPages ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="right"
             onClick={() => handlePageChange(pageData.currentPage + 1)}
             disabled={pageData.currentPage >= pageData.totalPages}
           />
+
         </div>
 
 
@@ -376,7 +375,7 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
             closeModal={handleModalClose}
             label="Filter"
             coursesData={coursesData}
-            onSelectCourse={handleFilterByCourse}
+            //onSelectCourse={handleFilterByCourse}
             onSelectStatus={handleFilterByStatus}
             onClick={handleApply}
             selectedCoursesData={selectedCourses}
@@ -384,14 +383,14 @@ const SubscribedUserList = ({ timeFilter = 'daily' }) => {
           />
         )}
 
-        {isModalFilterOpen && (
+        {/* {isModalFilterOpen && (
           <Modal
             closeModalWithClick1={latestOnClick}
             closeModalWithClick2={oldestOnClick}
             closeModal={handleModalClose}
             label="Sort By"
           />
-        )}
+        )} */}
       </div>
     </>
   );
