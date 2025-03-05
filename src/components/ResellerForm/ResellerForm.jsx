@@ -10,36 +10,49 @@ import { getResellersAsync, selectResellersList } from '../../apis/slices/resell
 import { TailSpin } from "react-loader-spinner";
 import { toast } from 'react-toastify';
 
-const ResellerItem = ({ name, status, id, navigate }) => (
-  <div className="bg-white rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
-    <div className="flex items-center gap-4">
-      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-        {name && name[0] ? name[0].toUpperCase() : ''}
-      </div>
-      <div className="flex items-center gap-3">
-        <span className="font-medium text-gray-800">{name}</span>
-        <span className={`px-3 py-1 rounded-full text-sm ${status === 'Approved' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'
-          }`}>
-          {status}
-        </span>
-      </div>
-    </div>
-    <Custombutton
-      value="View"
-      onClick={() => navigate('/reseller-form-details', {
-        state: {
-          id: id,
-          name: name,
-          status: status
-        }
-      })}
-      textcolor="text-[#27AE60]"
-      backgroundcolor="bg-transparent"
-      extraStyle="font-medium"
-    />
-  </div>
-);
+const ResellerItem = ({ name, status, id, navigate }) => {
 
+  const navigateToDetails = () => {
+    navigate('/reseller-form-details', {
+      state: {
+        id: id,
+        name: name,
+        status: status
+      }
+    });
+  };
+
+  return (
+    <div
+      className="bg-white rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer"
+      onClick={navigateToDetails}
+    >
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+          {name && name[0] ? name[0].toUpperCase() : ''}
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="font-medium text-gray-800">{name}</span>
+          <span className={`px-3 py-1 rounded-full text-sm ${status === 'Approved' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'
+            }`}>
+            {status}
+          </span>
+        </div>
+      </div>
+      <Custombutton
+        value="View"
+        onClick={(e) => {
+          // Prevent click event from propagating to parent div
+          e.stopPropagation();
+          navigateToDetails();
+        }}
+        textcolor="text-[#27AE60]"
+        backgroundcolor="bg-transparent"
+        extraStyle="font-medium"
+      />
+    </div>
+  );
+};
 const formatDate = (dateString) => {
   try {
     const date = new Date(dateString);
@@ -59,7 +72,7 @@ const ResellerForm = ({ isOpen }) => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Safe selector usage with fallback
+
   const resellersState = useSelector(selectResellersList) || {
     data: [],
     isLoading: false,
@@ -75,12 +88,6 @@ const ResellerForm = ({ isOpen }) => {
     dispatch(getResellersAsync(currentPage));
   }, [dispatch, currentPage]);
 
-  // Debug logging to track pagination issues
-  useEffect(() => {
-    console.log("Pagination data:", resellersState.pagination);
-    console.log("Current page:", currentPage);
-    console.log("Total pages:", resellersState.pagination?.total_pages);
-  }, [resellersState.pagination, currentPage]);
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || (resellersState.pagination && newPage > resellersState.pagination.total_pages)) {
@@ -167,8 +174,6 @@ const ResellerForm = ({ isOpen }) => {
             </div>
           )}
         </div>
-
-        {/* Fixed pagination section - always show if pagination exists */}
         {resellersState && resellersState.pagination && (
           <div className="p-6 border-t border-gray-100 flex justify-between items-center">
             <Custombutton

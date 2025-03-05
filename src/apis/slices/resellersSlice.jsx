@@ -141,7 +141,7 @@ export const rejectResellerAsync = (resellerId, rejectData) => async (dispatch) 
         const URL = `${BASEURL}admin/resellers/${resellerId}/reject`;
         console.log("Rejecting reseller with ID:", resellerId);
 
-        const result = await putAPICall(URL, rejectData);
+        const result = await postAPICall(URL, rejectData);
         console.log("Reject reseller API response:", result?.data);
 
         if (result?.data?.status === 200) {
@@ -189,7 +189,7 @@ export const approveResellerAsync = (resellerId, approveData) => async (dispatch
         const URL = `${BASEURL}admin/resellers/${resellerId}/approve`;
         console.log("Approving reseller with ID:", resellerId);
 
-        const result = await putAPICall(URL, approveData);
+        const result = await postAPICall(URL, approveData);
         console.log("Approve reseller API response:", result?.data);
 
         if (result?.data?.status === 200) {

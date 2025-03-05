@@ -71,7 +71,7 @@ const ResellerFormDetails = ({ isOpen }) => {
 
   const handleApprove = () => {
     const approveData = {
-      admin_id: "ADMIN123", // You can replace this with the actual admin ID or get it from context/state
+      admin_id: "ADMIN123",
       notes: "Approved by admin"
     };
 
@@ -83,14 +83,9 @@ const ResellerFormDetails = ({ isOpen }) => {
   };
 
   const confirmReject = () => {
-    if (!rejectionReason) {
-      toast.error("Please provide a rejection reason");
-      return;
-    }
-
     const rejectData = {
-      admin_id: "ADMIN123", // You can replace this with the actual admin ID or get it from context/state
-      rejection_reason: rejectionReason,
+      admin_id: "ADMIN123",
+      rejection_reason: rejectionReason || "Rejected by admin",
       notes: rejectionNotes || "Rejected by admin"
     };
 
@@ -226,9 +221,7 @@ const ResellerFormDetails = ({ isOpen }) => {
                 alt="ID Proof"
                 className="w-full h-[400px] object-contain rounded"
                 onError={(e) => {
-                  // Prevent infinite error loop by removing the onError handler
                   e.target.onError = null;
-                  // Replace with a placeholder div
                   const parent = e.target.parentNode;
                   e.target.style.display = 'none';
                   parent.innerHTML = '<div class="h-[400px] flex items-center justify-center bg-gray-100 rounded"><p class="text-gray-500">ID Proof Image Not Available</p></div>';
@@ -247,7 +240,7 @@ const ResellerFormDetails = ({ isOpen }) => {
               textcolor="text-white"
               backgroundcolor="bg-red-500"
               extraStyle="hover:bg-red-600"
-              disabled={resellerData?.status === "Approved" || resellerData?.status === "Rejected"}
+              hidden={resellerData?.status === "Approved" || resellerData?.status === "Rejected"}
             />
             <Custombutton
               value="Approve"
@@ -255,7 +248,7 @@ const ResellerFormDetails = ({ isOpen }) => {
               textcolor="text-white"
               backgroundcolor="bg-[#27AE60]"
               extraStyle="hover:bg-[#219652]"
-              disabled={resellerData?.status === "Approved" || resellerData?.status === "Rejected"}
+              hidden={resellerData?.status === "Approved" || resellerData?.status === "Rejected"}
             />
           </div>
         </div>
