@@ -30,6 +30,7 @@ export const config = {
   ADD_SUBSCRIPTION: "admin/dashboard/add-subscription-to-user",
   AVAILABLE_SUBSCRIPTIONS: 'admin/dashboard/available-subscriptions',
   GET_AVAILABLE_SUBSCRIPTIONS: 'admin/dashboard/available-subscriptions',
+  RESELLER_LIST: "admin/resellers",
 
 
 

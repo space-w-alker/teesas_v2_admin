@@ -129,7 +129,7 @@ const Modal = ({
                   {value1}
                 </label>
               </div>
-              <div className="flex items-center gap-[20px] px-[10px]">
+              {/* <div className="flex items-center gap-[20px] px-[10px]">
                 <div
                   className="w-[24px] h-[24px]  bg-[#CCCCCC] rounded-full"
                   onClick={addMutipleButton}
@@ -137,7 +137,7 @@ const Modal = ({
                 <label className="font-bold text-[16px] leading-[16px] text-[#162D3A] ">
                   {value2}
                 </label>
-              </div>
+              </div> */}
             </div>
           </div>
         );
@@ -329,10 +329,10 @@ const Modal = ({
         return (
           <div className="filter lg:px-[20px] px-[10px]">
             <div className="lg:px-[20px] px-[10px] py-[20px] bg-[#FFFFFF] mt-4 rounded-[24px]">
-              <h3 className=" font-bold text-[16px] leading-[16px] mb-[24px]">
+              {/* <h3 className=" font-bold text-[16px] leading-[16px] mb-[24px]">
                 Filter By Course
-              </h3>
-              <div className=" md:grid lg:grid grid-cols-2 gap-5 bg-[#F5F5F5] px-[20px] py-[20px] rounded-[20px]">
+              </h3> */}
+              {/* <div className=" md:grid lg:grid grid-cols-2 gap-5 bg-[#F5F5F5] px-[20px] py-[20px] rounded-[20px]">
                 {coursesData?.map((course) => (
                   <div
                     key={course.id}
@@ -353,7 +353,7 @@ const Modal = ({
                     </div>
                   </div>
                 ))}
-              </div>
+              </div> */}
               <div className="py-[16px]  px-[10px] bg-[#FFFFFF] mt-4 rounded-[24px]">
                 <h3 className=" font-bold text-[16px] leading-[16px] mb-[24px]">
                   Filter By Status
