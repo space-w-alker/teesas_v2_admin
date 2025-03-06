@@ -156,14 +156,14 @@ const ResellerFormDetails = ({ isOpen }) => {
         </div>
       </div>
 
-      <div className="flex justify-center mb-6">
+      {/* <div className="flex justify-center mb-6">
         <Custombutton
           value="Manage"
           textcolor="text-[#27AE60]"
           backgroundcolor="bg-transparent"
           extraStyle="font-medium"
         />
-      </div>
+      </div> */}
 
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
         <div className="border-b border-gray-200 pb-2 mb-4">
@@ -254,7 +254,7 @@ const ResellerFormDetails = ({ isOpen }) => {
         </div>
       </div>
 
-      {/* Success Modal */}
+
       <SuccessModal
         isOpen={showSuccess}
         onClose={() => setShowSuccess(false)}
@@ -263,7 +263,7 @@ const ResellerFormDetails = ({ isOpen }) => {
         buttonText="Close"
       />
 
-      {/* Rejection Confirmation Modal */}
+
       <SuccessModal
         isOpen={showCaution}
         onClose={() => setShowCaution(false)}
@@ -272,35 +272,35 @@ const ResellerFormDetails = ({ isOpen }) => {
         buttonText="Reject"
         onConfirm={confirmReject}
         showCancel={true}
-        customContent={
-          <div className="mt-4 mb-4">
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Rejection Reason *
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="text"
-                placeholder="Enter rejection reason"
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Additional Notes
-              </label>
-              <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter additional notes (optional)"
-                value={rejectionNotes}
-                onChange={(e) => setRejectionNotes(e.target.value)}
-                rows="3"
-              />
-            </div>
-          </div>
-        }
+      // customContent={
+      //   <div className="mt-4 mb-4">
+      //     <div className="mb-4">
+      //       <label className="block text-gray-700 text-sm font-bold mb-2">
+      //         Rejection Reason *
+      //       </label>
+      //       <input
+      //         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      //         type="text"
+      //         placeholder="Enter rejection reason"
+      //         value={rejectionReason}
+      //         onChange={(e) => setRejectionReason(e.target.value)}
+      //         required
+      //       />
+      //     </div>
+      //     <div>
+      //       <label className="block text-gray-700 text-sm font-bold mb-2">
+      //         Additional Notes
+      //       </label>
+      //       <textarea
+      //         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      //         placeholder="Enter additional notes (optional)"
+      //         value={rejectionNotes}
+      //         onChange={(e) => setRejectionNotes(e.target.value)}
+      //         rows="3"
+      //       />
+      //     </div>
+      //   </div>
+      // }
       />
     </div>
   );
