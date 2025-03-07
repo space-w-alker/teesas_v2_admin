@@ -75,9 +75,9 @@ const Details = (adminData) => {
         </div>
         <div className="bg-[#F2F2F2] p-[16px] rounded-[16px] mt-5">
           <div>
-            <p className=" font-normal text-[14px] leading-[20px] text-[#219653] text-right">
+            {/* <p className=" font-normal text-[14px] leading-[20px] text-[#219653] text-right">
               Download CSV
-            </p>
+            </p> */}
           </div>
           <div className="bg-[#FFFFFF] py-[10px] px-[8px] mt-2 rounded">
             <div className="flex justify-between max-w-[800px]">
@@ -87,23 +87,23 @@ const Details = (adminData) => {
                     Date
                   </p>
                   <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                    {adminData?.adminData?.date}
+                    {adminData?.adminData?.class_time}
                   </p>
                 </div>
-                <div className="flex flex-col mb-4">
+                {/* <div className="flex flex-col mb-4">
                   <p className="font-normal text-[12px] lg:text-[14px] leading-[18px] text-[#1F1F1FB2]">
                     Start Time
                   </p>
                   <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
                     {adminData?.adminData?.start_time}
                   </p>
-                </div>
+                </div> */}
                 <div className="flex flex-col mb-4">
                   <p className="font-normal text-[12px] lg:text-[14px] leading-[18px] text-[#1F1F1FB2]">
                     Category
                   </p>
                   <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                    {adminData?.adminData?.course?.name}
+                    {adminData?.adminData?.courses?.name}
                   </p>
                 </div>
                 <div className="flex flex-col mb-4">
@@ -124,28 +124,28 @@ const Details = (adminData) => {
                 </div>
               </div>
               <div className="max-w-[800px]">
-                <div className="flex flex-col mb-4">
+                {/* <div className="flex flex-col mb-4">
                   <p className="font-normal text-[12px] lg:text-[14px] leading-[18px] text-[#1F1F1FB2]">
                     Duration Spent
                   </p>
                   <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
                     {adminData?.adminData?.end_time}
                   </p>
-                </div>
+                </div> */}
                 <div className="flex flex-col mb-4">
                   <p className="font-normal text-[12px] lg:text-[14px] leading-[18px] text-[#1F1F1FB2]">
                     End Time
                   </p>
                   <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                    {adminData?.adminData?.end_time}
+                    {adminData?.adminData?.class_endtime}
                   </p>
                 </div>
                 <div className="flex flex-col mb-4">
                   <p className="font-normal text-[12px] lg:text-[14px] leading-[18px] text-[#1F1F1FB2]">
-                    Grade
+                    Teacher
                   </p>
                   <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                    {adminData?.adminData?.class?.name}
+                    {adminData?.adminData?.teacher?.first_name}
                   </p>
                 </div>
                 <div className="flex flex-col mb-4">
@@ -153,7 +153,7 @@ const Details = (adminData) => {
                     Lesson Title
                   </p>
                   <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                    {adminData?.adminData?.title}
+                    {adminData?.adminData?.topic}
                   </p>
                 </div>
               </div>
@@ -164,52 +164,54 @@ const Details = (adminData) => {
       <div className=" lg:grid grid-cols-2  gap-6">
         <div className=" rounded-[18px] py-[20px] px-[10px] lg:px-[20px] bg-[#FFFFFF] box-shadow mt-5  ">
           <div className="Border">
-            <Headcomponent value="Student List" />
+            <Headcomponent showSearch={false} value="Student List" />
           </div>
 
           <div className="">
             <ul>
-              {adminData?.adminData?.class_participants?.map((user,i) => (
+              {adminData?.adminData?.class_users?.map((user, i) => (
                 <li key={i}>
                   <div className="px-[18px] py-[10px]">
-                    <h6 className=" font-light text-[12px] leading-[13px] text-[#767676] ">
-                      
-                    </h6>
+                    <h6 className=" font-light text-[12px] leading-[13px] text-[#767676] "></h6>
                   </div>
                   <div className="flex flex-col gap-2 ">
                     <div className="flex  items-center gap-3 px-[18px]">
-                     <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-                      {user?.user?.first_name.charAt(0).toUpperCase()}
-                    </div>
+                      <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
+                        {user?.name.charAt(0).toUpperCase()}
+                      </div>
                       <div className="flex items-center  gap-2">
-                       <p>{user?.user?.first_name} </p>
-                        <p>{user?.user?.last_name}</p>
+                        <p>{user?.name} </p>
+                        {/* <p>{user?.user?.last_name}</p> */}
                       </div>
                     </div>
                     <div className="flex justify-between pr-[15px]">
-                      <div>
+                      {/* <div>
                         <div className="pl-[20px]  flex flex-col gap-[10px]">
                           <p className=" font-normal text-[#555555] text-[12px] leading-[15px]">
                             User Type
                           </p>
                           <div className="flex  items-center  py-[1px]   h-[16px]  bg-[#F2F2F2] ">
-                            {/* <img
+                            <img
                                 className="h-[11px]"
                                 src={item.icon2}
                                 alt="Icon 2"
-                              /> */}
-                            <p className=" font-bold text-[12px] leading-[15px] text-[#555555]"> {adminData?.adminData?.course?.name} / {adminData?.adminData?.class?.name}</p>
+                              />
+                            <p className=" font-bold text-[12px] leading-[15px] text-[#555555]">
+                              {" "}
+                              {adminData?.adminData?.course?.name} /{" "}
+                              {adminData?.adminData?.class?.name}
+                            </p>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       <div>
-                        <Custombutton
+                        {/* <Custombutton
                           value="Status"
                           img={sharp}
                           backgroundcolor="bg-[#E9FDEE]"
                           textcolor="text-[#2760EA]"
                           imagePosition="left"
-                        />
+                        /> */}
                       </div>
                     </div>
                   </div>
@@ -237,7 +239,7 @@ const Details = (adminData) => {
             </div>
           </div>
         </div>
-        <div className=" rounded-[18px] py-[20px] px-[14px] lg:px-[20px] bg-[#FFFFFF] box-shadow mt-5  ">
+        <div className=" rounded-[18px] py-[20px] px-[14px] lg:px-[20px] bg-[#FFFFFF] box-shadow mt-5  hidden">
           <div className="Border font-medium text-[18px] leading-[25px] text-[#2C2E32]">
             Chat History
           </div>

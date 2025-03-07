@@ -12,12 +12,17 @@ import container from "../../../assets/images/container.png";
 import { FaArrowRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 import Modal2 from "../../../components/common/Modal2";
-import { getLiveClassesAsync,deleteLiveClassAsync } from "../../../apis/slices/liveClassSlice";
+import SearchButton from "../../../assets/images/Searchbutton.png";
+import Vector from "../../../assets/images/Vector.png";
+import {
+  getLiveClassesAsync,
+  deleteLiveClassAsync,
+} from "../../../apis/slices/liveClassSlice";
 import { TailSpin } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 
 const LiveClases = ({ isOpen }) => {
   const Navigate = useNavigate();
@@ -33,21 +38,25 @@ const LiveClases = ({ isOpen }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({});
-  const [classData, setClassData] =  useState("")
+  const [classData, setClassData] = useState("");
 
   useEffect(() => {
     setLoading(true);
     getLiveClassesAsync({
       dispatch: dispatch,
-      data: {
+      body: {
         page: 1,
         page_size: 10,
-        class_type: "LIVE",
+        // class_type: "LIVE",
       },
       token: token,
       callbackFn: (res) => {
-        setAdminData(res?.data?.data?.live_classes);
-        setPageData(res?.data?.data?.paging);
+        setAdminData(res?.data?.data?.classes);
+        setPageData({
+          total: res?.data?.data?.total,
+          currentPage: res?.data?.data?.currentPage,
+          totalPage: res?.data?.data?.totalPages,
+        });
         setLoading(false);
       },
     });
@@ -60,40 +69,40 @@ const LiveClases = ({ isOpen }) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const onDeleteClass = (value) =>{
-       deleteLiveClassAsync({
-        dispatch: dispatch,
-        data: {
-          id:value
-        },
-        token: token,
-        callbackFn: (res) => {
-          if(res?.data?.status == 200){
-            toast.success(res?.data?.message)
-            getLiveClassesAsync({
-              dispatch: dispatch,
-              data: {
-                page: 1,
-                page_size: 10,
-                class_type: "LIVE",
-              },
-              token: token,
-              callbackFn: (res) => {
-                setAdminData(res?.data?.data?.live_classes);
-                setPageData(res?.data?.data?.paging);
-                setLoading(false);
-                closeModal()
-                setClassData("")
-              },
-            })
-            
-          }
-          else {
-            toast.error(res?.data?.message)
-          }
-          
-        },
-      });
+  const onDeleteClass = (value) => {
+    deleteLiveClassAsync({
+      dispatch: dispatch,
+      data: {
+        id: value,
+      },
+      token: token,
+      callbackFn: (res) => {
+        if (res?.data?.status == 200) {
+          toast.success(res?.data?.message);
+          getLiveClassesAsync({
+            dispatch: dispatch,
+            data: {
+              page: 1,
+              page_size: 10,
+            },
+            token: token,
+            callbackFn: (res) => {
+              setAdminData(res?.data?.data?.classes);
+              setPageData({
+                total: res?.data?.data?.total,
+                currentPage: res?.data?.data?.currentPage,
+                totalPage: res?.data?.data?.totalPages,
+              });
+              setLoading(false);
+              closeModal();
+              setClassData("");
+            },
+          });
+        } else {
+          toast.error(res?.data?.message);
+        }
+      },
+    });
   };
 
   return (
@@ -128,7 +137,7 @@ const LiveClases = ({ isOpen }) => {
       </h2>
       <div className=" mt-5 ">
         <UserCard
-          label="Total Scheduled Live Classes"
+          label="Total Live Classes"
           height="h-[120px]"
           backgroundcolor="bg-[#FFFFFF]"
           value={pageData?.total}
@@ -145,10 +154,106 @@ const LiveClases = ({ isOpen }) => {
       </div>
       {/* <LiveclasesList/>*/}
       <div className="bg-[#FFFFFF] lg:p-4 mt-5 lg:pl-[8px] pl-[8px] rounded-[18px] pb-[20px]">
-        <Headcomponent value="Live Classes List" border="Border" />
+        {/* <Headcomponent value="Live Classes List" border="Border" /> */}
+        <div className="Border">
+          <div className={`flex justify-between items-center relative mt-3`}>
+            <div>
+              <h2 className="font-medium text-[16px] lg:text-[18px] leading-[25px] text-[#2C2E32]">
+                Live Classes List
+              </h2>
+            </div>
+            <div className="flex items-center relative">
+              <div className="h-[60px] lg:px-[8px] flex items-center mt-[5px]">
+                <div className="flex items-center relative lg:w-[204px]">
+                  <input
+                    type="text"
+                    name="search"
+                    className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
+                    placeholder="Search Item"
+                    value={searchValue}
+                    onChange={(e) => {
+                      setVearchValue(e.target.value);
+                      if (e.target.value == "") {
+                        setLoading(true);
+                        const newData = {
+                          page: 1,
+                          page_size: 10,
+                        };
+                        getLiveClassesAsync({
+                          dispatch: dispatch,
+                          data: newData,
+                          token: token,
+                          callbackFn: (res) => {
+                            if (res?.data?.status === 200) {
+                              setAdminData(res?.data?.data?.classes);
+                              setPageData({
+                                total: res?.data?.data?.total,
+                                currentPage: res?.data?.data?.currentPage,
+                                totalPage: res?.data?.data?.totalPages,
+                              });
+                              setPage(1);
+                              setLoading(false);
+                            } else {
+                              alert(res?.data?.message);
+                              setLoading(false);
+                            }
+                          },
+                        });
+                      }
+                    }}
+                  />
+                  <img
+                    src={SearchButton}
+                    className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer"
+                    alt="Search icon"
+                    onClick={() => {
+                      if (searchValue != "") {
+                        setLoading(true);
+                        const newData = {
+                          page: 1,
+                          page_size: 10,
+                          search: searchValue,
+                        };
+                        getLiveClassesAsync({
+                          dispatch: dispatch,
+                          body: newData,
+                          token: token,
+                          callbackFn: (res) => {
+                            if (res?.data?.status === 200) {
+                              setAdminData(res?.data?.data?.classes);
+                              setPageData({
+                                total: res?.data?.data?.total,
+                                currentPage: res?.data?.data?.currentPage,
+                                totalPage: res?.data?.data?.totalPages,
+                              });
+                              setPage(1);
+                              setLoading(false);
+                            } else {
+                              alert(res?.data?.message);
+                              setLoading(false);
+                            }
+                          },
+                        });
+                      }
+                    }}
+                  />
+                </div>
+                <div
+                  className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
+                  //onClick={() => setIsModalFilterOpen(true)}
+                >
+                  <img src={Vector} alt="Vector" />
+                </div>
+                <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2">
+                  <img src={container} alt="Container" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="">
           <ul>
-            {adminData.map((user, i) => (
+            {adminData?.map((user, i) => (
               <li key={i}>
                 <div className=" md:flex lg:flex justify-between  items-center gap-4">
                   <div className="lg:px-[18px] py-[10px] mt-5 flex  gap-[10px] pr-[15px]">
@@ -163,16 +268,18 @@ const LiveClases = ({ isOpen }) => {
                       <h6
                         className=" font-bold text-[14px] leading-[24px] text-[#1D2026] cursor-pointer "
                         onClick={() => {
-                          Navigate(`/LiveClassDetails?id=${user?.id}`);
+                          Navigate("/LiveClassDetails", {
+                            state: { user },
+                          });
                         }}
                       >
-                        {user?.course?.name} - {user?.subject?.name}
+                        {user?.topic} - {user?.subject?.name}
                       </h6>
-                      <span className=" font-normal text-[12px] leading-[24px] text-[#0F62FE]">
+                      {/* <span className=" font-normal text-[12px] leading-[24px] text-[#0F62FE]">
                         {moment(user?.date)?.format("DD.MM.YYYY")}
-                      </span>
+                      </span> */}
                       <span className=" font-normal text-[12px] ml-1 leading-[24px] text-[#0F62FE]">
-                        {user?.start_time}
+                        {user?.class_time}
                       </span>
                       <div className="flex items-center gap-3 px-[18px]">
                         {/* <div>
@@ -188,7 +295,7 @@ const LiveClases = ({ isOpen }) => {
                   </div>
 
                   <div className="flex items-center">
-                    <Custombutton
+                    {/* <Custombutton
                       value={user?.active ? "Visible" : "Hidden"}
                       img={sharp}
                       backgroundcolor={
@@ -198,10 +305,14 @@ const LiveClases = ({ isOpen }) => {
                         user?.active ? "text-[#2760EA]" : "text-[#707070]"
                       }
                       imagePosition="left"
+                    /> */}
+                    <img
+                      src={container}
+                      onClick={() => {
+                        setClassData(user);
+                        openModal();
+                      }}
                     />
-                    <img src={container} onClick={()=>{
-                      setClassData(user)
-                      openModal()}} />
                   </div>
                 </div>
               </li>
@@ -211,28 +322,32 @@ const LiveClases = ({ isOpen }) => {
         <div className="user">
           <Custombutton
             value="Previous"
-            hidden="hidden"
+            // hidden="hidden"
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="left"
             width="w-[115px]"
-             onClick={() => {
+            onClick={() => {
               if (page > 1) {
-              setLoading(true);
+                setLoading(true);
                 const newData = {
                   page: page - 1,
                   page_size: 10,
-                 class_type: "LIVE",
+                  // class_type: "LIVE",
                 };
                 setPage(page - 1);
                 getLiveClassesAsync({
                   dispatch: dispatch,
-                  data: newData,
+                  body: newData,
                   token: token,
                   callbackFn: (res) => {
-                    setAdminData(res?.data?.data?.live_classes);
-                    setPageData(res?.data?.data?.paging);
+                    setAdminData(res?.data?.data?.classes);
+                    setPageData({
+                      total: res?.data?.data?.total,
+                      currentPage: res?.data?.data?.currentPage,
+                      totalPage: res?.data?.data?.totalPages,
+                    });
                     setLoading(false);
                   },
                 });
@@ -240,31 +355,35 @@ const LiveClases = ({ isOpen }) => {
             }}
           />
           <div className="text-[#667085] text-[12px]">
-          Page {pageData.currentPage} of {pageData?.total_pages}
-        </div>
+            Page {pageData?.currentPage} of {pageData?.totalPage}
+          </div>
           <Custombutton
             value="Next"
-            hidden="hidden"
+            // hidden="hidden"
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="right"
             onClick={() => {
-              if (page <= pageData.total_pages) {
+              if (page < pageData.totalPage) {
                 setLoading(true);
                 const newData = {
                   page: page + 1,
                   page_size: 10,
-                  class_type: "LIVE",
+                  // class_type: "LIVE",
                 };
                 setPage(page + 1);
                 getLiveClassesAsync({
                   dispatch: dispatch,
-                  data: newData,
+                  body: newData,
                   token: token,
                   callbackFn: (res) => {
-                    setAdminData(res?.data?.data?.live_classes);
-                    setPageData(res?.data?.data?.paging);
+                    setAdminData(res?.data?.data?.classes);
+                    setPageData({
+                      total: res?.data?.data?.total,
+                      currentPage: res?.data?.data?.currentPage,
+                      totalPage: res?.data?.data?.totalPages,
+                    });
                     setLoading(false);
                   },
                 });
@@ -273,14 +392,21 @@ const LiveClases = ({ isOpen }) => {
           />
         </div>
 
-        <Modal2 isOpen={isModalOpen} onDelete={onDeleteClass} data={classData} onClose={closeModal} />
-        <ToastContainer position="top-right"
-    autoClose={2000}
-    ProgressBar={true}
-    newestOnTop={false}
-    closeOnClick={false}
-    rtl={false}
-    pauseOnHover={false}/>
+        <Modal2
+          isOpen={isModalOpen}
+          onDelete={onDeleteClass}
+          data={classData}
+          onClose={closeModal}
+        />
+        {/* <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          ProgressBar={true}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnHover={false}
+        /> */}
       </div>
     </div>
   );

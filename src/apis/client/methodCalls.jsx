@@ -1,25 +1,22 @@
-export const getAPICall = async (
-  endPoint,
-  params,
-  access_token
-) => {
+export const getAPICall = async (endPoint, params, access_token) => {
   const url = new URL(endPoint);
   if (params) {
     Object.keys(params).forEach((key) =>
       url.searchParams.append(key, params[key])
     );
   }
-  const accessToken = localStorage.getItem('authToken')
-    ? localStorage.getItem('authToken')
+  const accessToken = localStorage.getItem("authToken")
+    ? localStorage.getItem("authToken")
     : access_token;
   const response = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      Authorization: 'Bearer ' + accessToken,
-      'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR',
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-      mode: '*',
+      Authorization: "Bearer " + accessToken,
+      "api-key":
+        "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR",
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+      mode: "*",
     },
   });
 
@@ -27,11 +24,7 @@ export const getAPICall = async (
   return { data: data };
 };
 
-export const getViaPostAPICall = async (
-  endPoint,
-  params,
-  access_token
-) => {
+export const getViaPostAPICall = async (endPoint, params, access_token) => {
   const url = new URL(endPoint);
   // if (params) {
   //   Object.keys(params).forEach((key) =>
@@ -39,46 +32,44 @@ export const getViaPostAPICall = async (
   //   );
   // }
   const accessToken = access_token
-    ? localStorage.getItem('authToken')
+    ? localStorage.getItem("authToken")
     : access_token;
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: "Bearer " + accessToken,
-      'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR',
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-      mode: '*',
+      "api-key":
+        "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR",
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+      mode: "*",
     },
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
   });
 
   const data = await response.json();
   return { data: data };
 };
 
-export const deleteAPICall = async (
-  endPoint,
-  params,
-  access_token
-) => {
+export const deleteAPICall = async (endPoint, params, access_token) => {
   const url = new URL(endPoint);
   // if (params) {
   //   Object.keys(params).forEach((key) =>
   //     url.searchParams.append(key, params[key])
   //   );
   // }
-  const accessToken = localStorage.getItem('authToken')
-    ? localStorage.getItem('authToken')
+  const accessToken = localStorage.getItem("authToken")
+    ? localStorage.getItem("authToken")
     : access_token;
   const response = await fetch(url, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
       Authorization: "Bearer " + accessToken,
-      'api-key': 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR',
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-      mode: '*',
+      "api-key":
+        "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR",
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+      mode: "*",
     },
   });
 
@@ -86,34 +77,36 @@ export const deleteAPICall = async (
   return { data: data };
 };
 
-export const postAPICall = async (url, params) => {
+export const postAPICall = async (url, params, token) => {
   const myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append('api-key', 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR');
-
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append(
+    "api-key",
+    "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR"
+  );
+  // myHeaders.append("Authorization", `Bearer ${token}`);
   const requestOptions = {
-    method: 'POST',
+    method: "POST",
     headers: myHeaders,
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
   };
-
-  console.log('Request:', { url, body: params });
   const response = await fetch(url, requestOptions);
   const data = await response.json();
-  console.log('Response:', data);
+  console.log("Response:", data);
   return { data };
 };
 
 export const postFileAPICall = async (url, formData, access_token) => {
-  const accessToken = localStorage.getItem('authToken') || access_token;
-  const API_KEY = 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR';
+  const accessToken = localStorage.getItem("authToken") || access_token;
+  const API_KEY =
+    "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR";
   const requestOptions = {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'api-key': API_KEY
+      Authorization: `Bearer ${accessToken}`,
+      "api-key": API_KEY,
     },
-    body: formData
+    body: formData,
   };
 
   const response = await fetch(url, requestOptions);
@@ -122,16 +115,14 @@ export const postFileAPICall = async (url, formData, access_token) => {
   return { data };
 };
 
-
-
 export const putAPICall = async (url, body, auth = false, token = null) => {
-  const accessToken = localStorage.getItem('authToken') || access_token;
-  const API_KEY = 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR';
+  const accessToken = localStorage.getItem("authToken") || access_token;
+  const API_KEY =
+    "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR";
   const headers = {
-    'Content-Type': 'application/json',
-    'api-key': API_KEY,
-    'Authorization': `Bearer ${accessToken}`,
-
+    "Content-Type": "application/json",
+    "api-key": API_KEY,
+    Authorization: `Bearer ${accessToken}`,
   };
 
   // if (auth && token) {
@@ -139,7 +130,7 @@ export const putAPICall = async (url, body, auth = false, token = null) => {
   // }
 
   const response = await fetch(url, {
-    method: 'PUT',
+    method: "PUT",
     headers: headers,
     body: JSON.stringify(body),
   });
@@ -148,4 +139,3 @@ export const putAPICall = async (url, body, auth = false, token = null) => {
     data: await response.json(),
   };
 };
-

@@ -4,7 +4,7 @@ import {
   postAPICall,
   postFileAPICall,
   deleteAPICall,
-  putAPICall
+  putAPICall,
 } from "../client/methodCalls";
 import { toast } from "react-toastify";
 
@@ -27,7 +27,8 @@ const {
   GET_USER_BY_ID,
   VERIFY_CODE,
   SetNewPassword,
-  RESET_PASSWORD, DELETE_USER
+  RESET_PASSWORD,
+  DELETE_USER,
 } = config;
 
 export const authSlice = createSlice({
@@ -47,7 +48,6 @@ export const authSlice = createSlice({
     },
     resetPassword: {
       isLoading: false,
-
     },
     // resetPasswordResponse: {
     //   isLoading: false,
@@ -169,10 +169,10 @@ export const loginAsync = async ({ dispatch, body, callbackFn }) => {
   try {
     const URL = `${BASEURL}${USERLOGIN}`;
     const result = await postAPICall(URL, body);
-     dispatch(login({ isLoading: false, response: result.data }));
-      callbackFn(result);
+    dispatch(login({ isLoading: false, response: result.data }));
+    callbackFn(result);
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
   }
 };
 export const signupAsync = async ({ dispatch, body, callbackFn }) => {
@@ -184,16 +184,20 @@ export const signupAsync = async ({ dispatch, body, callbackFn }) => {
       dispatch(signup({ isLoading: false, response: result.data }));
       callbackFn(result);
     } else {
-      throw new Error(result?.data?.message || 'Signup failed');
+      throw new Error(result?.data?.message || "Signup failed");
     }
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error("Signup error:", error);
     dispatch(signup({ isLoading: false, error: error.message }));
   }
 };
 
-
-export const changePasswordAsync = async ({ dispatch, body, token, callbackFn }) => {
+export const changePasswordAsync = async ({
+  dispatch,
+  body,
+  token,
+  callbackFn,
+}) => {
   try {
     const URL = `${BASEURL}${ChangeNewPassword}`;
     const result = await putAPICall(URL, body, true, token).then((res) => {
@@ -205,7 +209,6 @@ export const changePasswordAsync = async ({ dispatch, body, token, callbackFn })
     dispatch(changePassword({ isLoading: false }));
   }
 };
-
 
 export const verifyCodeAsync = async ({
   dispatch,
@@ -256,10 +259,6 @@ export const setNewPasswordAsync = async ({ dispatch, body, callbackFn }) => {
 //     dispatch(resetPassword({ isLoading: false }));
 //   }
 // };
-
-
-
-
 
 export const verificationCodeAsync = async ({ dispatch, body, callbackFn }) => {
   try {
@@ -344,7 +343,7 @@ export const getCoursesAsync = async ({
 }) => {
   try {
     const URL = `${BASEURL}${GET_COURSES}`;
-    const result = getAPICall(URL, { course_type: "EDOBEST" }, token).then((res) => {
+    const result = getAPICall(URL, {}).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });
@@ -459,8 +458,7 @@ export const {
   getUserById,
   resetPassword,
   verifyCode,
-  deleteUser
-
+  deleteUser,
 } = authSlice.actions;
 export const loginResponse = (state) => state.auth.loginResponse;
 export const signupResponse = (state) => state.auth.signupResponse;

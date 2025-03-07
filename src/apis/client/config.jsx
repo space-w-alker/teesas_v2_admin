@@ -1,7 +1,6 @@
 export const config = {
-
-  // BASEURL: "http://localhost:3000/v1/",
-  BASEURL: "http://46.202.164.175:3000/v1/",
+  BASEURL: "http://localhost:3000/v1/",
+  // BASEURL: "http://46.202.164.175:3000/v1/",
   MainUrl: "http://46.202.164.175:3000/",
   USERLOGIN: "admin/auth/login",
   SIGNUP: "admin/auth/signup",
@@ -22,17 +21,14 @@ export const config = {
   CREATE_SUBJECT: "admin/class",
   UPDATE_SUBJECT: "admin/class/",
 
-
   SUBSCRIBED_USERS: "admin/dashboard/subscribed-users",
   SUBSCRIPTION_STATS: "admin/dashboard/subscription-stats",
   DASHBOARD_USERS: "admin/dashboard/users",
   SUBSCRIPTION_WORKFLOW: "admin/dashboard/subscription-workflow",
   ADD_SUBSCRIPTION: "admin/dashboard/add-subscription-to-user",
-  AVAILABLE_SUBSCRIPTIONS: 'admin/dashboard/available-subscriptions',
-  GET_AVAILABLE_SUBSCRIPTIONS: 'admin/dashboard/available-subscriptions',
+  AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",
+  GET_AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",
   RESELLER_LIST: "admin/resellers",
-
-
 
   CREATE_ASSESSMENT: "/assessment/create-assessment/",
   GET_ASSESSMENT: "/assessment/get-assessment/",
@@ -45,11 +41,10 @@ export const config = {
 
   GET_TEACHERS: "admin_teacher/list",
 
-
   // logout: "admin/auth/logout",
   RESET_PASSWORD: "auth/reset-password",
   GET_DASHBOARD: "admin/users/get-dashboard-details",
-  // GET_COURSES: "admin/live-classes/get-course-details",
+  GET_COURSES: "utils/get-courses",
 
   USER: "admin/users/get-statistics",
   GETUSER: "admin/users/get-users",
@@ -61,11 +56,11 @@ export const config = {
   GETUSERSFEEDBACK: "admin/users/get-user-feedbacks",
   GETUSERFEEDBACK: "admin/users/get-user-feedback",
   REPLYFEEDBACK: "admin/users/reply-to-feedback",
-  GET_LEADERBOARD: 'leaderBoard/get-leaderboard',
-  GET_LOCAL_SCHOOLS: 'leaderBoard/get-local-schools',
-  GET_USER_PROFILE: 'leaderboard/get-user-profile',
-  GET_PERFORMANCE_HISTORY: 'leaderboard/get-performance-history',
-  GET_MONTHLY_POINTS: 'leaderboard/get-monthly-points',
+  GET_LEADERBOARD: "leaderBoard/get-leaderboard",
+  GET_LOCAL_SCHOOLS: "leaderBoard/get-local-schools",
+  GET_USER_PROFILE: "leaderboard/get-user-profile",
+  GET_PERFORMANCE_HISTORY: "leaderboard/get-performance-history",
+  GET_MONTHLY_POINTS: "leaderboard/get-monthly-points",
   GET_ADMIN_ROLES: "admin/users/get-admin-roles",
   GET_ADMIN_ROLE_PERMISSION: "admin/users/get-admin-role-permission",
   UPDATE_ROLE_PERMISSION: "admin/users/update-role-permission",
@@ -80,10 +75,10 @@ export const config = {
   GET_TEACHER_DETAILS: "admin/live-classes/get-teacher-live-class",
   GET_LOCAL_GOV: "admin/users/get-local-government",
   CHANGE_PASSWORD: "auth/change-password",
-  ADD_LIVE_CLASS: "admin/live-classes/add-live-class",
+  ADD_LIVE_CLASS: "live/create-live-class",
   UPDATE_LIVE_CLASS: "admin/live-classes/update-live-class",
-  DELETE_LIVE_CLASS: "admin/live-classes/delete-live-class",
-  GET_LIVE_CLASSSES: "admin/live-classes/get-live-classes",
+  DELETE_LIVE_CLASS: "live/delete-live-class",
+  GET_LIVE_CLASSSES: "live/live-classes-admin",
   GET_LIVE_CLASS: "admin/live-classes/get-live-class",
   GET_USER_FEEDBACKS_CSV: "admin/users/get-user-feedbacks-csv",
   GET_LIVE_CLASS_TEACHERS: "admin/teachers/get-live-class-teachers",
@@ -92,5 +87,4 @@ export const config = {
   DELETE_USER: "admin/users/delete-user",
 
   GET_TOTAL_SUBSCRIBERS: "admin/users/get-total-subscribers",
-
 };

@@ -8,7 +8,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import SucessfullSchedule from "./SucessfullSchedule";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 
 const AddLiveClass = ({ isOpen }) => {
   const dispatch = useDispatch();
@@ -24,33 +24,33 @@ const AddLiveClass = ({ isOpen }) => {
   const [gradeData, setGradeData] = useState([]);
   const [subjectData, setSubjectData] = useState([]);
   const [teacherData, setTeacherData] = useState([]);
-  const [teacherName,setTeacherName] = useState('');
-  const [subjectName, setSubjectName] = useState('');
-  const [catagoryName, setCatagoryName] = useState('');
-  const [gradeName, setGradeName] = useState('')
+  const [teacherName, setTeacherName] = useState("");
+  const [subjectName, setSubjectName] = useState("");
+  const [catagoryName, setCatagoryName] = useState("");
+  const [gradeName, setGradeName] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setLoading(true);
-    getLocalGovAsync({
-      dispatch: dispatch,
-      data: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setAdminData(res?.data?.data?.local_government);
-          setLoading(false);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
+    // setLoading(true);
+    // getLocalGovAsync({
+    //   dispatch: dispatch,
+    //   data: {},
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     if (res?.data?.status === 200) {
+    //       setAdminData(res?.data?.data?.local_government);
+    //       setLoading(false);
+    //     } else {
+    //       alert(res?.data?.message);
+    //       setLoading(false);
+    //     }
+    //   },
+    // });
     setLoading(true);
     getCoursesAsync({
       dispatch: dispatch,
       data: {},
-      token: token,
+      // token: token,
       callbackFn: (res) => {
         if (res?.data?.status === 200) {
           setCourseData(res?.data?.data?.courses);
@@ -98,8 +98,8 @@ const AddLiveClass = ({ isOpen }) => {
         class_type: "LIVE",
         course_id: formData?.Category_Name,
         class_id: formData?.Grade_Name,
-        subject_id:formData?.Subject_Name,
-        teacher_id:formData?.Teacher
+        subject_id: formData?.Subject_Name,
+        teacher_id: formData?.Teacher,
       };
 
       addLiveClassAsync({
@@ -121,7 +121,7 @@ const AddLiveClass = ({ isOpen }) => {
               Description: "",
             });
             setmodalopen(!modalopen);
-            setAcadmyData(res?.data?.data?.live_class)
+            setAcadmyData(res?.data?.data?.live_class);
             setLoading(false);
           } else {
             toast.error(res?.data?.message);
@@ -131,7 +131,7 @@ const AddLiveClass = ({ isOpen }) => {
       });
     } else {
       setError(validationErrors);
-      toast.error("Please fill all required fields")
+      toast.error("Please fill all required fields");
     }
   };
   return (
@@ -192,7 +192,7 @@ const AddLiveClass = ({ isOpen }) => {
                         );
                         setGradeData(localGovernment.classes);
                         setTeacherData(localGovernment?.teachers);
-                        setCatagoryName(localGovernment?.name)
+                        setCatagoryName(localGovernment?.name);
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
@@ -226,7 +226,7 @@ const AddLiveClass = ({ isOpen }) => {
                           (lg) => lg.id == e.target.value
                         );
                         setSubjectData(localGovernment.subjects);
-                        setGradeName(localGovernment?.name)
+                        setGradeName(localGovernment?.name);
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
@@ -260,7 +260,7 @@ const AddLiveClass = ({ isOpen }) => {
                         const localGovernment = subjectData.find(
                           (lg) => lg.id == e.target.value
                         );
-                        setSubjectName(localGovernment?.name)
+                        setSubjectName(localGovernment?.name);
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
@@ -315,7 +315,7 @@ const AddLiveClass = ({ isOpen }) => {
                         const localGovernment = teacherData.find(
                           (lg) => lg.id == e.target.value
                         );
-                        setTeacherName(localGovernment?.name)
+                        setTeacherName(localGovernment?.name);
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
@@ -396,7 +396,7 @@ const AddLiveClass = ({ isOpen }) => {
                     )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 hidden">
                   <input
                     type="checkbox"
                     name="Reoccurring"
@@ -443,7 +443,15 @@ const AddLiveClass = ({ isOpen }) => {
                   {key.replace(/_/g, " ")}
                 </div>
                 <div className="text-[14px]  leading-[24px] text-[#000000]">
-                  {key == "Category_Name" ?  catagoryName :key == "Grade_Name" ? gradeName : key == "Subject_Name" ? subjectName: key == "Teacher" ? teacherName: value}
+                  {key == "Category_Name"
+                    ? catagoryName
+                    : key == "Grade_Name"
+                    ? gradeName
+                    : key == "Subject_Name"
+                    ? subjectName
+                    : key == "Teacher"
+                    ? teacherName
+                    : value}
                 </div>
               </div>
             ))}
@@ -455,7 +463,7 @@ const AddLiveClass = ({ isOpen }) => {
               className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#F2994A]"
               onClick={() => {
                 // setmodalopen(!modalopen);
-                handleSubmit()
+                handleSubmit();
               }}
             >
               Schedule Class
@@ -464,13 +472,15 @@ const AddLiveClass = ({ isOpen }) => {
         </div>
       </div>
       {modalopen && <SucessfullSchedule data={acadmyData} />}
-      <ToastContainer position="top-right"
-    autoClose={2000}
-    ProgressBar={true}
-    newestOnTop={false}
-    closeOnClick={false}
-    rtl={false}
-    pauseOnHover={false}/>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        ProgressBar={true}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnHover={false}
+      />
     </div>
   );
 };

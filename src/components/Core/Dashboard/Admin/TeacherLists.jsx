@@ -194,7 +194,7 @@ const TeacherLists = () => {
 
                 <div>
                   <Custombutton
-                    value="status"
+                    value="View"
                     img={sharp}
                     backgroundcolor="bg-[#E9FDEE]"
                     textcolor="text-[#2760EA]"
