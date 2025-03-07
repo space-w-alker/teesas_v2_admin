@@ -22,6 +22,7 @@ export const config = {
   GET_CLASS_DETAILS: "admin/class",
   CREATE_SUBJECT: "admin/class",
   UPDATE_SUBJECT: "admin/class/",
+  GET_ADMIN_Subjects: "admin/class/get-subject",
 
   SUBSCRIBED_USERS: "admin/dashboard/subscribed-users",
   SUBSCRIPTION_STATS: "admin/dashboard/subscription-stats",
@@ -81,7 +82,7 @@ export const config = {
   UPDATE_LIVE_CLASS: "admin/live-classes/update-live-class",
   DELETE_LIVE_CLASS: "live/delete-live-class",
   GET_LIVE_CLASSSES: "live/live-classes-admin",
-  GET_LIVE_CLASS: "admin/live-classes/get-live-class",
+  GET_LIVE_CLASS: "live/create-live-class",
   GET_USER_FEEDBACKS_CSV: "admin/users/get-user-feedbacks-csv",
   GET_LIVE_CLASS_TEACHERS: "admin/teachers/get-live-class-teachers",
   RESERVE_LIVE_CLASS: "live-classes/reserve-live-class",

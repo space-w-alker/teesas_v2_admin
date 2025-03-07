@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { getCoursesAsync } from "../../../apis/slices/authSlice";
-import { getLocalGovAsync } from "../../../apis/slices/teacherSlice";
-import { addLiveClassAsync } from "../../../apis/slices/liveClassSlice";
+import { getTeachersAsync } from "../../../apis/slices/teacherSlice";
+import {
+  addLiveClassAsync,
+  getSubjectsAsync,
+} from "../../../apis/slices/liveClassSlice";
 import { useDispatch } from "react-redux";
 import validateForm from "../../../components/validator/liveClassValidator";
 import { FaChevronLeft } from "react-icons/fa";
@@ -9,6 +12,7 @@ import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import SucessfullSchedule from "./SucessfullSchedule";
 import { ToastContainer } from "react-toastify";
+import moment from "moment";
 
 const AddLiveClass = ({ isOpen }) => {
   const dispatch = useDispatch();
@@ -31,7 +35,7 @@ const AddLiveClass = ({ isOpen }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // setLoading(true);
+    setLoading(true);
     // getLocalGovAsync({
     //   dispatch: dispatch,
     //   data: {},
@@ -46,6 +50,28 @@ const AddLiveClass = ({ isOpen }) => {
     //     }
     //   },
     // });
+    getTeachersAsync({
+      dispatch: dispatch,
+      data: {
+        // page: 1,
+        // page_size: 10,
+      },
+      token: token,
+      callbackFn: (res) => {
+        if (res?.data?.status === 200) {
+          setTeacherData(res?.data?.data?.data);
+          // setPageData({
+          //   limit: res?.data?.data?.limit,
+          //   page: res?.data?.data?.page,
+          //   total: res?.data?.data?.total,
+          // });
+          setLoading(false);
+        } else {
+          setLoading(false);
+          alert(res?.data?.message);
+        }
+      },
+    });
     setLoading(true);
     getCoursesAsync({
       dispatch: dispatch,
@@ -72,7 +98,7 @@ const AddLiveClass = ({ isOpen }) => {
     Date: "",
     Start_Time: "",
     End_Time: "",
-    Reoccurring: true,
+    // Reoccurring: true,
     Description: "",
   });
   const onchangeHandler = (event) => {
@@ -89,17 +115,23 @@ const AddLiveClass = ({ isOpen }) => {
     if (Object.keys(validationErrors).length === 0) {
       setLoading(true);
       var form_data = {
-        title: formData?.Lesson_Title,
+        topic: formData?.Lesson_Title,
         description: formData?.Description,
-        date: formData?.Date,
-        start_time: formData?.Start_Time,
-        end_time: formData?.End_Time,
-        is_reoccurring: formData?.Reoccurring,
-        class_type: "LIVE",
+        class_time: moment(
+          formData?.Date + formData?.Start_Time,
+          "YYYY-MM-DDHH:mm"
+        ).toISOString(),
+        class_endtime: moment(
+          formData?.Date + formData?.End_Time,
+          "YYYY-MM-DDHH:mm"
+        ).toISOString(),
+        // class_type: "LIVE",
+        // class_status
         course_id: formData?.Category_Name,
         class_id: formData?.Grade_Name,
         subject_id: formData?.Subject_Name,
         teacher_id: formData?.Teacher,
+        class_status: "",
       };
 
       addLiveClassAsync({
@@ -107,7 +139,7 @@ const AddLiveClass = ({ isOpen }) => {
         body: form_data,
         token: token,
         callbackFn: (res) => {
-          if (res?.data?.status === 200) {
+          if (res?.data?.status === 201) {
             setformData({
               Category_Name: "",
               Grade_Name: "",
@@ -117,11 +149,10 @@ const AddLiveClass = ({ isOpen }) => {
               Date: "",
               Start_Time: "",
               End_Time: "",
-              Reoccurring: true,
               Description: "",
             });
             setmodalopen(!modalopen);
-            setAcadmyData(res?.data?.data?.live_class);
+            setAcadmyData(res?.data?.data);
             setLoading(false);
           } else {
             toast.error(res?.data?.message);
@@ -156,7 +187,12 @@ const AddLiveClass = ({ isOpen }) => {
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
-          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+          <div
+            onClick={() => {
+              Navigate(-1);
+            }}
+            className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]"
+          >
             Home /
             <span className="text-black font-medium"> Add Live Class</span>
           </div>
@@ -191,7 +227,7 @@ const AddLiveClass = ({ isOpen }) => {
                           (lg) => lg.id == e.target.value
                         );
                         setGradeData(localGovernment.classes);
-                        setTeacherData(localGovernment?.teachers);
+                        // setTeacherData(localGovernment?.teachers);
                         setCatagoryName(localGovernment?.name);
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
@@ -225,7 +261,22 @@ const AddLiveClass = ({ isOpen }) => {
                         const localGovernment = gradeData.find(
                           (lg) => lg.id == e.target.value
                         );
-                        setSubjectData(localGovernment.subjects);
+                        // setSubjectData(localGovernment.subjects);
+                        setLoading(true);
+                        getSubjectsAsync({
+                          dispatch: dispatch,
+                          data: e.target.value,
+                          // token: token,
+                          callbackFn: (res) => {
+                            if (res?.data?.status === 200) {
+                              setSubjectData(res?.data?.data?.subjects);
+                              setLoading(false);
+                            } else {
+                              alert(res?.data?.message);
+                              setLoading(false);
+                            }
+                          },
+                        });
                         setGradeName(localGovernment?.name);
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
@@ -315,7 +366,10 @@ const AddLiveClass = ({ isOpen }) => {
                         const localGovernment = teacherData.find(
                           (lg) => lg.id == e.target.value
                         );
-                        setTeacherName(localGovernment?.name);
+                        setTeacherName(
+                          localGovernment?.first_name +
+                            localGovernment?.last_name
+                        );
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
@@ -323,7 +377,12 @@ const AddLiveClass = ({ isOpen }) => {
                         Please Select
                       </option>
                       {teacherData?.map((item) => {
-                        return <option value={item?.id}>{item?.name}</option>;
+                        return (
+                          <option value={item?.id}>
+                            {item?.first_name} {item?.middle_name}
+                            {item?.last_name}
+                          </option>
+                        );
                       })}
                     </select>
                     {errors.Teacher && (
@@ -436,7 +495,7 @@ const AddLiveClass = ({ isOpen }) => {
           <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
             Summary
           </h2>
-          <div className="rounded-2xl bg-[#FFF9ED] p-2">
+          <div className="rounded-2xl bg-[#EFF6F1] p-2">
             {Object.entries(formData).map(([key, value]) => (
               <div key={key} className="flex  justify-between mt-2">
                 <div className="font-light mt-1 text-[14px] leading-[16px] text-[#5A5B5C]">
@@ -460,7 +519,7 @@ const AddLiveClass = ({ isOpen }) => {
           <div className="bg-[FFF9FD] m-auto my-10">
             <button
               type="button"
-              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#F2994A]"
+              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#34C759]"
               onClick={() => {
                 // setmodalopen(!modalopen);
                 handleSubmit();
@@ -472,7 +531,7 @@ const AddLiveClass = ({ isOpen }) => {
         </div>
       </div>
       {modalopen && <SucessfullSchedule data={acadmyData} />}
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={2000}
         ProgressBar={true}
@@ -480,7 +539,7 @@ const AddLiveClass = ({ isOpen }) => {
         closeOnClick={false}
         rtl={false}
         pauseOnHover={false}
-      />
+      /> */}
     </div>
   );
 };

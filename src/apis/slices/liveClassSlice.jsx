@@ -13,6 +13,7 @@ const {
   DELETE_LIVE_CLASS,
   RESERVE_LIVE_CLASS,
   GET_STUDENTS_LIVE_CLASS,
+  GET_ADMIN_Subjects,
 } = config;
 
 export const liveClassSlice = createSlice({
@@ -39,6 +40,9 @@ export const liveClassSlice = createSlice({
     getStudentsLiveClassesResponse: {
       response: {},
     },
+    getSubjectsResponse: {
+      response: {},
+    },
   },
   reducers: {
     getLiveClasses: (state, action) => {
@@ -61,6 +65,9 @@ export const liveClassSlice = createSlice({
     },
     getStudentsLiveClasses: (state, action) => {
       state.getStudentsLiveClassesResponse = action.payload;
+    },
+    getSubjects: (state, action) => {
+      state.getSubjectsResponse = action.payload;
     },
 
     reset: (state, action) => {
@@ -104,6 +111,24 @@ export const getLiveClassAsync = async ({
     dispatch(getLiveClass({ isLoading: false, response: result.data }));
   } catch (err) {
     dispatch(getLiveClass({ isLoading: false }));
+  }
+};
+
+export const getSubjectsAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
+  try {
+    const URL = `${BASEURL}${GET_ADMIN_Subjects}/${data}`;
+    const result = getAPICall(URL, {}, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(getSubjects({ isLoading: false, response: result.data }));
+  } catch (err) {
+    dispatch(getSubjects({ isLoading: false }));
   }
 };
 
@@ -214,6 +239,7 @@ export const {
   deleteLiveClass,
   reserveLiveClass,
   getStudentsLiveClasses,
+  getSubjectsResponse,
 } = liveClassSlice.actions;
 export const getLiveClassesResponse = (state) =>
   state.liveClass.getLiveClassesResponse;
