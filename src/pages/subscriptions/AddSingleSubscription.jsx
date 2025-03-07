@@ -155,8 +155,11 @@ const AddSingleSubscription = ({ isOpen }) => {
             <Custombutton
               onClick={() => handlePageChange(paging.page - 1)}
               value="Previous"
-              hidden="hidden"
-              icon={<FaArrowLeft />}
+              icon={
+                paging.page <= 1 ?
+                  <FaArrowLeft color="#cccccc" /> :
+                  <FaArrowLeft color="#000000" />
+              }
               backgroundcolor="bg-[#F2F2F2]"
               textcolor={paging.page <= 1 ? "text-[#cccccc]" : "text-[#000000]"}
               imagePosition="left"
@@ -170,13 +173,17 @@ const AddSingleSubscription = ({ isOpen }) => {
             <Custombutton
               onClick={() => handlePageChange(paging.page + 1)}
               value="Next"
-              hidden="hidden"
-              icon={<FaArrowRight />}
+              icon={
+                paging.page >= paging.totalPages ?
+                  <FaArrowRight color="#cccccc" /> :
+                  <FaArrowRight color="#000000" />
+              }
               backgroundcolor="bg-[#F2F2F2]"
               textcolor={paging.page >= paging.totalPages ? "text-[#cccccc]" : "text-[#000000]"}
               imagePosition="right"
               disabled={paging.page >= paging.totalPages}
             />
+
           </div>
         )}
 
