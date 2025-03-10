@@ -86,10 +86,11 @@ export const deleteAPICall = async (
   return { data: data };
 };
 
-export const postAPICall = async (url, params) => {
+export const postAPICall = async (url, params, token) => {
   const myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   myHeaders.append('api-key', 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR');
+  myHeaders.append('Authorization', `Bearer ${token}`);
 
   const requestOptions = {
     method: 'POST',

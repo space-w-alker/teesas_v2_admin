@@ -17,7 +17,8 @@ import { NavLink } from "react-router-dom";
 
 const LeaderBoardlist = () => {
   const Navigate = useNavigate();
-  const token = localStorage.getItem("authToken");
+  // const token = localStorage.getItem("authToken");
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQxMzI4ODU3LCJleHAiOjE3NDM5MjA4NTd9.0SFMftryZT9gXW89a_GgU3H2yWfs3fs08UyhtYrG634";
   const dispatch = useDispatch();
   const [localSchools, setLocalSchools] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState("all");
@@ -36,6 +37,8 @@ const LeaderBoardlist = () => {
 
   useEffect(() => {
     setLoading(true);
+
+    /*
     GetLocalSchoolsAsync({
       dispatch: dispatch,
       data: {},
@@ -43,9 +46,9 @@ const LeaderBoardlist = () => {
       callbackFn: (res) => {
         setLocalSchools(res?.data?.local_school);
         setSchoolId(res?.data?.current_student?.id);
-        // setLoading(false)
       },
     });
+    
     getCoursesAsync({
       dispatch: dispatch,
       data: {},
@@ -53,14 +56,14 @@ const LeaderBoardlist = () => {
       callbackFn: (res) => {
         if (res?.data?.status === 200) {
           setCourseData(res?.data?.data?.courses);
-          // setLoading(false);
         } else {
           toast(res?.data?.message);
-          // setLoading(false);
         }
       },
     });
-    // setLoading(true);
+    */
+
+    // Keep the leaderboard API call
     GetLeaderBoardAsync({
       dispatch: dispatch,
       data: {
@@ -69,9 +72,20 @@ const LeaderBoardlist = () => {
       },
       token: token,
       callbackFn: (res) => {
-        setStudentData(res?.data?.users);
-        setCurrentLevel(res?.data?.level);
-        setPagingData(res?.data?.paging);
+        // Add console log to see actual response structure
+        console.log("API Response:", res);
+
+        // Check if data is in the expected format
+        if (res?.data?.leaderboard && Array.isArray(res?.data?.leaderboard)) {
+          setStudentData(res.data.leaderboard);
+        } else if (res?.leaderboard && Array.isArray(res?.leaderboard)) {
+          // Sometimes APIs wrap data differently
+          setStudentData(res.leaderboard);
+        } else {
+          console.error("Unexpected data format:", res);
+          setStudentData([]);
+        }
+
         setLoading(false);
       },
     });
@@ -80,14 +94,7 @@ const LeaderBoardlist = () => {
   return (
     <>
       <div className="lg:flex justify-end items-center gap-5">
-        <div className="flex gap-5 my-5">
-          {/*<NavLink
-            to=""
-            className=" text-[16px] font-bold leading-[21px]  text-[#B8B8B8]"
-          >
-            ALL
-          </NavLink>*/}
-
+        {/* <div className="flex gap-5 my-5">
           <NavLink
             to=""
             className="text-[16px] font-bold leading-[21px]  text-[#B8B8B8] flex items-center"
@@ -101,8 +108,8 @@ const LeaderBoardlist = () => {
                   const str = e.target.value;
                   const parts = str.split("/");
 
-                  const part1 = parts[0]; // "Esan North East"
-                  const part2 = parts[1]; // "4"
+                  const part1 = parts[0];
+                  const part2 = parts[1];
                   setSelectedSchool(str);
                   setSchoolId(part2);
                   setLoading(true);
@@ -118,9 +125,7 @@ const LeaderBoardlist = () => {
                     },
                     token: token,
                     callbackFn: (res) => {
-                      setStudentData(res?.data?.users);
-                      setCurrentLevel(res?.data?.level);
-                      setPagingData(res?.data?.paging);
+                      setStudentData(res?.data?.leaderboard || []);
                       setLoading(false);
                     },
                   });
@@ -159,13 +164,10 @@ const LeaderBoardlist = () => {
                     page: 1,
                     page_size: 20,
                     class_id: e.target.value,
-                    // ...(schoolId == 'all' ? {} : { school_id: schoolId }),
                   },
                   token: token,
                   callbackFn: (res) => {
-                    setStudentData(res?.data?.users);
-                    setCurrentLevel(res?.data?.level);
-                    setPagingData(res?.data?.paging);
+                    setStudentData(res?.data?.leaderboard || []);
                     setLoading(false);
                   },
                 });
@@ -185,8 +187,9 @@ const LeaderBoardlist = () => {
               })}
             </select>
           </NavLink>
-        </div>
-        <div className="flex items-center relative lg:w-[204px]">
+        </div> */}
+
+        {/* <div className="flex items-center relative lg:w-[204px]">
           <input
             type="text"
             name="search"
@@ -203,13 +206,10 @@ const LeaderBoardlist = () => {
                     page: 1,
                     page_size: 20,
                     search: searchValue,
-                    // ...(schoolId == 'all' ? {} : { school_id: schoolId }),
                   },
                   token: token,
                   callbackFn: (res) => {
-                    setStudentData(res?.data?.users);
-                    setCurrentLevel(res?.data?.level);
-                    setPagingData(res?.data?.paging);
+                    setStudentData(res?.data?.leaderboard || []);
                     setLoading(false);
                   },
                 });
@@ -223,33 +223,26 @@ const LeaderBoardlist = () => {
             onClick={() => {
               if (searchValue != "") {
                 setLoading(true);
-                const newData = {
-                  page: 1,
-                  page_size: 10,
-                };
                 GetLeaderBoardAsync({
                   dispatch: dispatch,
                   data: {
                     page: 1,
                     page_size: 20,
                     search: searchValue,
-                    // ...(schoolId == 'all' ? {} : { school_id: schoolId }),
                   },
                   token: token,
                   callbackFn: (res) => {
-                    setStudentData(res?.data?.users);
-                    setCurrentLevel(res?.data?.level);
-                    setPagingData(res?.data?.paging);
+                    setStudentData(res?.data?.leaderboard || []);
                     setLoading(false);
                   },
                 });
               }
             }}
           />
-        </div>
+        </div> */}
       </div>
 
-      <div class="overflow-x-auto mt-5  rounded-t-[16px]  ">
+      <div className="overflow-x-auto mt-5 rounded-t-[16px]">
         {loading && (
           <div
             style={{
@@ -264,58 +257,60 @@ const LeaderBoardlist = () => {
           </div>
         )}
 
-        <table id="table-body" class=" min-w-full rounded-2xl">
-          <thead class="bg-[#B053F9] text-white">
+        <table id="table-body" className="min-w-full rounded-2xl">
+          <thead className="bg-[#B053F9] text-white">
             <tr>
-              <th class="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
+              <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
                 Position
               </th>
-              <th class="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
+              <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
                 Student Name
               </th>
-              <th class="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
+              {/* <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
                 Academy Name
               </th>
-              <th class="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
+              <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
                 Local Government
               </th>
-              <th class="px-4 py-4 whitespace-nowra font-bold text-[14px] leading-[16px] text-whitep">
+              <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
                 Last seen
-              </th>
-              <th class="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
+              </th> */}
+              <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
                 Points
               </th>
-              <th class="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white"></th>
+              <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white"></th>
             </tr>
           </thead>
           <tbody>
-            {studentData?.map((user, i) => {
+            {studentData?.map((item, i) => {
               return (
-                <tr class="bg-white my-4">
-                  <td class="px-4 py-5 text-center whitespace-nowrap  font-semibold text-[15px] leading-[20px] text-[#000000] ">
-                    {user?.rank}
+                <tr className="bg-white my-4" key={i}>
+                  <td className="px-4 py-5 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
+                    {item?.rank_number ?? i + 1}
                   </td>
-                  <td class="px-4 py-5 text-center whitespace-nowrap  font-semibold text-[15px] leading-[20px] text-[#000000] ">
-                    {user?.first_name} {user?.last_name}
+                  <td className="px-4 py-5 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
+                    {item?.user?.name}
                   </td>
-                  <td class="px-4 py-4 text-center whitespace-nowrap  font-semibold text-[15px] leading-[20px] text-[#000000] ">
-                    {user?.academies?.academy_name}
+                  {/* <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
+
+                    {item?.academy_name || "-"}
                   </td>
-                  <td class="px-4 py-4 text-center whitespace-nowrap  font-semibold text-[15px] leading-[20px] text-[#000000] ">
-                    {user?.academies?.schools?.name}
+                  <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
+
+                    {item?.local_government || "-"}
                   </td>
-                  <td class="px-4 py-4 text-center whitespace-nowrap  font-semibold text-[15px] leading-[20px] text-[#000000] ">
-                    {user?.updated_at}
+                  <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
+
+                    {item?.last_seen || "-"}
+                  </td> */}
+                  <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
+                    {item?.user_score || 0}
                   </td>
-                  <td class="px-4 py-4 text-center whitespace-nowrap  font-semibold text-[15px] leading-[20px] text-[#000000] ">
-                    {" "}
-                    {user?.total_points ? user?.total_points : 0}
-                  </td>
-                  <td class="px-4 py-4 text-center whitespace-nowrap  font-semibold text-[15px] leading-[20px] text-[#000000] ">
+                  <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
                     <div
                       className="text-[#FB9F00] font-normal text-[12px] leading-[16px] cursor-pointer"
                       onClick={() => {
-                        Navigate(`/LeaderBoardProfile?id=${user?.id}`);
+                        Navigate(`/LeaderBoardProfile?id=${item?.user?.id}`);
                       }}
                     >
                       View Performance
@@ -330,27 +325,19 @@ const LeaderBoardlist = () => {
           <Custombutton
             onClick={() => {
               if (page > 1) {
-              
                 setLoading(true);
                 const newData = {
                   page: page - 1,
                   page_size: 10,
                 };
                 setPage(page - 1);
-                getuserAsync({
+                GetLeaderBoardAsync({
                   dispatch: dispatch,
-                  body: newData,
+                  data: newData,
                   token: token,
                   callbackFn: (res) => {
-                    if (res?.data?.status === 200) {
-                      setStudentData(res?.data?.users);
-                      setCurrentLevel(res?.data?.level);
-                      setPagingData(res?.data?.paging);
-                      setLoading(false);
-                    } else {
-                      alert(res?.data?.message);
-                      setLoading(false);
-                    }
+                    setStudentData(res?.data?.leaderboard || []);
+                    setLoading(false);
                   },
                 });
               }
@@ -364,7 +351,7 @@ const LeaderBoardlist = () => {
             width="w-[115px]"
           />
           <div className="text-[#667085] text-[12px]">
-            Page {pagingData?.currentPage} of {pagingData?.total_pages}
+            Page {pagingData?.currentPage || page} of {pagingData?.total_pages || 1}
           </div>
           <Custombutton
             onClick={() => {
@@ -379,9 +366,8 @@ const LeaderBoardlist = () => {
                 data: newData,
                 token: token,
                 callbackFn: (res) => {
-                  setStudentData(res?.data?.users);
-                  setCurrentLevel(res?.data?.level);
-                  setPagingData(res?.data?.paging);
+                  setStudentData(res?.data?.leaderboard || []);
+
                   setLoading(false);
                 },
               });
