@@ -52,9 +52,10 @@ const LeaderboardProfile = ({ isOpen }) => {
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState([]);
   const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get("id");
+  const user_id = urlParams.get("user_id");
+  const class_id = urlParams.get("class_id");
   const [loading, setLoading] = useState(false);
   const [performanceHistory, setPerformanceHistory] = useState([]);
   const [monthlyData, setMonthlyData] = useState({});
@@ -64,11 +65,18 @@ const LeaderboardProfile = ({ isOpen }) => {
     GetUserProfileAsync({
       dispatch: dispatch,
       data: {
-        user_id: id,
+        user_id: user_id,
+        class_id: class_id,
       },
       token: token,
       callbackFn: (res) => {
-        setUserData(res?.data);
+        if (res?.status == 200) {
+          setUserData(res?.data);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          toast.error(res?.message);
+        }
       },
     });
     // GetMonthlyReportAsync({
@@ -164,7 +172,12 @@ const LeaderboardProfile = ({ isOpen }) => {
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
-          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+          <div
+            onClick={() => {
+              Navigate(-1);
+            }}
+            className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]"
+          >
             Home /<span className="text-black font-medium"> LeaderBoard</span>
           </div>
         </div>
@@ -181,14 +194,18 @@ const LeaderboardProfile = ({ isOpen }) => {
           </div>
           <div className="flex flex-col items-center gap-2 pt-[12px] lg:pt-0">
             <h3 className=" font-bold text-[20px] leading-[27px] text-[#171818]">
-              {userData?.user?.first_name} {userData?.user?.last_name}
+              {userData?.leaderboardDetails?.user?.name}{" "}
+              {/* {userData?.user?.last_name} */}
             </h3>
-            <div className="w-[118px]">
-              <p className=" font-bold text-[12px] text-[#7A7A7A]">
-                {userData?.user?.userCourses[0]?.classes?.name}
+            <div className="w-[118px] text-center">
+              <p
+                className=" font-bold text-[14
+              px] text-[#7A7A7A]"
+              >
+                {userData?.leaderboardDetails?.classes?.name}
               </p>
               <p className=" pt-3  font-normal text-[12px] leading-[21px] text-[#7A7A7A]">
-                Last seen - {userData?.user?.updated_at}
+                Last seen - {userData?.leaderboardDetails?.lastOpenAplication}
               </p>
             </div>
           </div>
@@ -203,11 +220,11 @@ const LeaderboardProfile = ({ isOpen }) => {
             </div>
             <div>
               <p className="font-bold text-[19px] lg:text-[26px] leading-[38px] text-[#000000]">
-                {userData?.total_points}
+                {userData?.leaderboardDetails?.totalPoints}
               </p>
             </div>
           </div>
-          {/*<div className="p-[10px] bg-[#F3F7FC] flex flex-col gap-2 mt-4 lg:mt-0  lg:w-[223px]  lh-[80px]  py-[10px]  px-[15px] rounded-xl">
+          <div className="p-[10px] bg-[#F3F7FC] flex flex-col gap-2 mt-4 lg:mt-0  lg:w-[223px]  lh-[80px]  py-[10px]  px-[15px] rounded-xl">
             <div>
               <p className="text-[16px] leading-[12px] text-[#001D4A] mt-2">
                 Dialogues Passed
@@ -215,7 +232,7 @@ const LeaderboardProfile = ({ isOpen }) => {
             </div>
             <div>
               <p className="font-bold text-[19px] lg:text-[26px] leading-[38px] text-[#000000]">
-                20
+                {userData?.leaderboardDetails?.dialoguesPassed}
               </p>
             </div>
           </div>
@@ -227,7 +244,7 @@ const LeaderboardProfile = ({ isOpen }) => {
             </div>
             <div>
               <p className="font-bold text-[19px] lg:text-[26px] leading-[38px] text-[#000000]">
-                20
+                {userData?.leaderboardDetails?.top3Finish}
               </p>
             </div>
           </div>
@@ -239,14 +256,14 @@ const LeaderboardProfile = ({ isOpen }) => {
             </div>
             <div>
               <p className="font-bold text-[26px] leading-[38px] text-[#000000]">
-                20
+                {userData?.leaderboardDetails?.highestScore}
               </p>
             </div>
-          </div>*/}
+          </div>
         </div>
       </div>
       <div>
-        <div className=" rounded-[12px] border border-[#EFF1F5] lg:p-[24px] bg-[#FFFFFF] mt-10">
+        <div className=" rounded-[12px] border border-[#EFF1F5] lg:p-[24px] bg-[#FFFFFF] mt-10 hidden">
           {/* <div className=" lg:grid grid-cols-3 gap-[33px]">
             <div className=" font-bold text-[18px] leading-[20px] text-[#A7A7A7]">
               Daily Points Stats
