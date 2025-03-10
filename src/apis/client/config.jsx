@@ -43,7 +43,7 @@ export const config = {
   DELETE_UNIVERSITY: "admin-universities",
 
   GET_TEACHERS: "admin_teacher/list",
-  GET_LEADERBOARD: "leaderboard/list",
+  GET_LEADERBOARD: "leaderboard/admin-list",
 
   // logout: "admin/auth/logout",
   RESET_PASSWORD: "auth/reset-password",
@@ -60,10 +60,10 @@ export const config = {
   GETUSERSFEEDBACK: "admin/users/get-user-feedbacks",
   GETUSERFEEDBACK: "admin/users/get-user-feedback",
   REPLYFEEDBACK: "admin/users/reply-to-feedback",
-  GET_LOCAL_SCHOOLS: 'leaderBoard/get-local-schools',
-  GET_USER_PROFILE: 'leaderboard/get-user-profile',
-  GET_PERFORMANCE_HISTORY: 'leaderboard/get-performance-history',
-  GET_MONTHLY_POINTS: 'leaderboard/get-monthly-points',
+  GET_LOCAL_SCHOOLS: "leaderBoard/get-local-schools",
+  GET_USER_PROFILE: "leaderboard/get-user-profile",
+  GET_PERFORMANCE_HISTORY: "leaderboard/get-performance-history",
+  GET_MONTHLY_POINTS: "leaderboard/get-monthly-points",
   GET_ADMIN_ROLES: "admin/users/get-admin-roles",
   GET_ADMIN_ROLE_PERMISSION: "admin/users/get-admin-role-permission",
   UPDATE_ROLE_PERMISSION: "admin/users/update-role-permission",
