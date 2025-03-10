@@ -44,6 +44,7 @@ export const config = {
   DELETE_UNIVERSITY: "admin-universities",
 
   GET_TEACHERS: "admin_teacher/list",
+  GET_LEADERBOARD: "leaderboard/list",
 
 
   // logout: "admin/auth/logout",
@@ -61,7 +62,6 @@ export const config = {
   GETUSERSFEEDBACK: "admin/users/get-user-feedbacks",
   GETUSERFEEDBACK: "admin/users/get-user-feedback",
   REPLYFEEDBACK: "admin/users/reply-to-feedback",
-  GET_LEADERBOARD: 'leaderBoard/get-leaderboard',
   GET_LOCAL_SCHOOLS: 'leaderBoard/get-local-schools',
   GET_USER_PROFILE: 'leaderboard/get-user-profile',
   GET_PERFORMANCE_HISTORY: 'leaderboard/get-performance-history',
