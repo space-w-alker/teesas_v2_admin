@@ -32,6 +32,7 @@ export const config = {
   AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",
   GET_AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",
   RESELLER_LIST: "admin/resellers",
+  GET_COURSES_AND_CLASSES: "leaderboard/courses-and-classes",
 
   CREATE_ASSESSMENT: "/assessment/create-assessment/",
   GET_ASSESSMENT: "/assessment/get-assessment/",
