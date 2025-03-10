@@ -1,9 +1,11 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
- import {GetUserProfileAsync,
-  GetLocalSchoolsAsync} from "../../apis/slices/feedBackSlice"
-  import {deleteUserAsync} from "../../apis/slices/authSlice"
-  import { useDispatch, useSelector } from "react-redux";
+import {
+  GetUserProfileAsync,
+  GetLocalSchoolsAsync
+} from "../../apis/slices/feedBackSlice"
+import { deleteUserAsync } from "../../apis/slices/authSlice"
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import { TailSpin } from "react-loader-spinner";
 
@@ -55,7 +57,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
     setIsModalOpen(false);
   };
 
-  const onRefresh =()=>{
+  const onRefresh = () => {
     setLoading(true)
     GetUserProfileAsync({
       dispatch: dispatch,
@@ -70,7 +72,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
     });
     closeModal();
   }
-  const onDeleteUser = ()=>{
+  const onDeleteUser = () => {
     setLoading(true)
     deleteUserAsync({
       dispatch: dispatch,
@@ -85,8 +87,8 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
         //   Navigate('/users')
         //   setLoading(true)
         // }, 3000);
-       
-        
+
+
       },
     });
     closeModal();
@@ -149,7 +151,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
     {
       id: 5,
       label: "Phone Number",
-      value:userData?.user?.mobile,
+      value: userData?.user?.mobile,
     },
     {
       id: 6,
@@ -165,23 +167,22 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
   );
   return (
     <div
-      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
-    {loading && (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}
-      >
-        <TailSpin color="orange" radius={5}  />
-      </div>
-    )}
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
+          <TailSpin color="orange" radius={5} />
+        </div>
+      )}
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
@@ -191,68 +192,68 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
           </div>
         </div>
       </div>
-      <div className="bg-[#FFF9ED] mt-5 border rounded-lg mb-[20px] border-[#CAC4D0] h-[80px] p-[8px]">
+      <div className="bg-[#EFF6F1] mt-5 border rounded-lg mb-[20px] border-[#CAC4D0] h-[80px] p-[8px]">
         <div className="flex items-center gap-4">
-        <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-        {userData?.user?.first_name.charAt(0).toUpperCase()}
-      </div>
+          <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
+            {userData?.user?.first_name.charAt(0).toUpperCase()}
+          </div>
           <div className="">
             <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
               {userData?.user?.first_name} {userData?.user?.last_name}
             </p>
-            {userData?.user?.status == 1 ? 
+            {userData?.user?.status == 1 ?
               <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
                 Active
               </button> : <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#aa0808]">
-              Inactive
-            </button>}
+                Inactive
+              </button>}
           </div>
         </div>
       </div>
       <div className=" lg:grid grid-cols-2 gap-4">
         <div className="">
           <div className=" w-full rounded-2xl border py-[10px] px-[12px] lg:px-[18px]  bg-[#FFFFFF] ">
-            
+
 
             <div className={`flex justify-between items-center relative mt-3`}>
-            <div>
+              <div>
                 <h2 className="font-medium text-[16px] lg:text-[18px] leading-[25px] text-[#2C2E32]">Basic Information</h2>
-            </div>
-            <div className="flex items-center relative">
-                <div className="h-[60px] lg:px-[8px] flex items-center mt-[5px]">
-                <div className=" items-center relative lg:w-[204px] hidden">
-                
-                <input
-                  type="text"
-                  name="search"
-                  className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
-                  placeholder="Search Item"
-                />
-                <img src={SearchButton} className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer" alt="Search icon" />
               </div>
-                    <div className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2 hidden" 
-                    // onClick={() => setIsModalOpen(true)}
-                    >
-                        <img src={Vector} alt="Vector" />
-                    </div>
-                    <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2" onClick={() => setIsModalOpen(true)}>
-                        <img src={container} alt="Container" />
-                    </div>
+              <div className="flex items-center relative">
+                <div className="h-[60px] lg:px-[8px] flex items-center mt-[5px]">
+                  <div className=" items-center relative lg:w-[204px] hidden">
+
+                    <input
+                      type="text"
+                      name="search"
+                      className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
+                      placeholder="Search Item"
+                    />
+                    <img src={SearchButton} className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer" alt="Search icon" />
+                  </div>
+                  <div className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2 hidden"
+                  // onClick={() => setIsModalOpen(true)}
+                  >
+                    <img src={Vector} alt="Vector" />
+                  </div>
+                  <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2" onClick={() => setIsModalOpen(true)}>
+                    <img src={container} alt="Container" />
+                  </div>
                 </div>
-            </div>
-            {isModalOpen && (
+              </div>
+              {isModalOpen && (
                 <Modal
-                    closeModal={closeModal}
-                    label="User Details"
-                    value1="Refresh"
-                    value2="Delete User"
-                    //  onClick={handleClick}
-                    closeModalWithClick1={onRefresh}
-                    closeModalWithClick2={onDeleteUser}
+                  closeModal={closeModal}
+                  label="User Details"
+                  value1="Refresh"
+                  value2="Delete User"
+                  //  onClick={handleClick}
+                  closeModalWithClick1={onRefresh}
+                  closeModalWithClick2={onDeleteUser}
                 />
-                
-            )}
-        </div>
+
+              )}
+            </div>
             <div className="rounded-2xl p-[8px] bg-[#F2F2F2] pb-[20px] mt-5">
               <div className="px-[5px]">
                 <h3 className=" font-medium text-[16px] leading-[35px] text-[#49454F]">
@@ -326,7 +327,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                 </div>
               </div>
             </div>
-           {/* <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
+            {/* <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
               <div className="px-[5px]">
                 <h3 className=" font-medium text-[16px] leading-[35px] text-[#49454F]">
                   Certain Performance
@@ -365,9 +366,9 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                 </h2>
               </div>
               <div
-                className=" text-[#F2994A] cursor-pointer"
+                className=" text-[#27AE60] cursor-pointer"
                 onClick={() => {
-                 // Navigate("/Parent");
+                  // Navigate("/Parent");
                 }}
               >
                 Edit

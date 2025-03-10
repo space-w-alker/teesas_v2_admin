@@ -47,6 +47,7 @@ const LiveClases = ({ isOpen }) => {
       body: {
         page: 1,
         page_size: 10,
+        class_type: "group",
         // class_type: "LIVE",
       },
       token: token,
@@ -107,9 +108,8 @@ const LiveClases = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -125,7 +125,8 @@ const LiveClases = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home /<span className="text-black font-medium">Live Classes</span>
@@ -146,7 +147,7 @@ const LiveClases = ({ isOpen }) => {
       </div>
       <div className=" flex  justify-end ">
         <button
-          className="text-[14px] leading-[20px] text-center font-bold  w-[166px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#F2994A] text-white"
+          className="text-[14px] leading-[20px] text-center font-bold  w-[166px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
           onClick={() => Navigate("/AddLiveClass")}
         >
           + Add Live Class
@@ -240,7 +241,7 @@ const LiveClases = ({ isOpen }) => {
                 </div>
                 <div
                   className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
-                  //onClick={() => setIsModalFilterOpen(true)}
+                //onClick={() => setIsModalFilterOpen(true)}
                 >
                   <img src={Vector} alt="Vector" />
                 </div>

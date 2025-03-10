@@ -45,9 +45,8 @@ const LiveClassDetails = ({ isOpen }) => {
   // }, []);
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -63,7 +62,8 @@ const LiveClassDetails = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+
         <div>
           <div
             onClick={() => Navigate(-1)}

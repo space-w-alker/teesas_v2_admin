@@ -1,4 +1,4 @@
-import {React, useState, useEffect} from 'react'
+import { React, useState, useEffect } from 'react'
 import live from '../../assets/images/live.png'
 import liveimage from '../../assets/images/liveimage.png'
 import UserCard from '../common/UserCard'
@@ -8,7 +8,7 @@ import { TailSpin } from "react-loader-spinner"
 import BannerList from '../Core/Dashboard/Admin/BannerList'
 import SalesTeamList from '../Core/Dashboard/Admin/SalesTeamList'
 
-const SalesTeam = ({isOpen}) => {
+const SalesTeam = ({ isOpen }) => {
   const navigate = useNavigate()
   const [bannerData, setBannerData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -41,7 +41,7 @@ const SalesTeam = ({isOpen}) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      
+
       <div className='flex justify-start items-center lg:gap-3'>
         <FaChevronLeft />
         <div>
@@ -52,7 +52,7 @@ const SalesTeam = ({isOpen}) => {
       </div>
 
       <h2 className="mt-6 font-bold text-[22px] leading-[28px] text-[#2C2E32]">
-      Sales Team
+        Sales Team
       </h2>
 
       <div className="mt-3">
@@ -67,15 +67,15 @@ const SalesTeam = ({isOpen}) => {
       </div>
 
       <div className="flex justify-end mt-4">
-        <button 
-          className="text-[14px] leading-[20px] text-center font-bold w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#F2994A] text-white" 
+        <button
+          className="text-[14px] leading-[20px] text-center font-bold w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
           onClick={() => navigate('/SalesTeam/AddsalesTeamMember')}
         >
           + Add Sales Team
         </button>
       </div>
 
-      <SalesTeamList/>
+      <SalesTeamList />
     </div>
   )
 }

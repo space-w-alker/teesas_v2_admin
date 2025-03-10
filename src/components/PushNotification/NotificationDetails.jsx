@@ -3,11 +3,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
 import badgeIcon from "../../assets/images/Banner-icon.png";
 
-const NotificationDetails = ({isOpen}) => {
+const NotificationDetails = ({ isOpen }) => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const notificationId = searchParams.get('id')
-  
+
   const [notificationData, setNotificationData] = useState({
     id: 1,
     title: "System Update Notification",
@@ -52,11 +52,11 @@ const NotificationDetails = ({isOpen}) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      
-      <div className="bg-[#FFF9ED] border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
+
+      <div className="bg-[#EFF6F1] border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
         <div className="flex items-center gap-4">
           <div className="rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-           <img src={badgeIcon} alt="badge" className="w-[20px] h-[20px] object-contain" />
+            <img src={badgeIcon} alt="badge" className="w-[20px] h-[20px] object-contain" />
           </div>
           <div className="">
             <p className="font-bold text-[16px] leading-[24px] tracking-wider text-[#1D2026]">
@@ -76,7 +76,7 @@ const NotificationDetails = ({isOpen}) => {
       </div>
 
       <div className="text-center mb-4">
-        <button className="font-medium text-[14px] leading-[20px] text-[#F2994A] cursor-pointer">
+        <button className="font-medium text-[14px] leading-[20px] text-[#27AE60] cursor-pointer">
           Manage
         </button>
       </div>

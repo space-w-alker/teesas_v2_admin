@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import success from "../../assets/images/success.png";
 import OtpInput from "react-otp-input";
 import {
- 
+
   verificationCodeAsync,
   verifyCodeAsync,
   setNewPasswordAsync,
@@ -33,7 +33,7 @@ function ForgetPassword() {
       setLoading(true);
       const FinalData = {
         email: email,
-       
+
       };
 
       verificationCodeAsync({
@@ -123,7 +123,7 @@ function ForgetPassword() {
   };
 
   const handlemodal = (e) => {
-      setShowModal(true);
+    setShowModal(true);
   };
 
   const validateEmail = (email) => {
@@ -171,7 +171,7 @@ function ForgetPassword() {
           </p>
           <button
             onClick={handleModalClose}
-            className="w-full bg-[#F2994A] mt-[50px] text-white rounded-lg py-2"
+            className="w-full bg-[#27AE60] mt-[50px] text-white rounded-lg py-2"
           >
             Login
           </button>
@@ -182,9 +182,8 @@ function ForgetPassword() {
 
   return (
     <div
-      className={`p-8 flex justify-center items-center flex-col ${
-        showModal ? "overflow-hidden" : ""
-      }`}
+      className={`p-8 flex justify-center items-center flex-col ${showModal ? "overflow-hidden" : ""
+        }`}
     >
       {loading && (
         <div
@@ -208,10 +207,10 @@ function ForgetPassword() {
             {page === 0
               ? "We’ve Got You 👍🏽"
               : page === 1
-              ? "You’ve Got Mail 👍🏽"
-              : page === 2
-              ? "New Password👍🏽"
-              : ""}
+                ? "You’ve Got Mail 👍🏽"
+                : page === 2
+                  ? "New Password👍🏽"
+                  : ""}
           </h2>
 
           <p className=" font-normal text-[16px] text-center text-[#313957] leading-7 mt-5">
@@ -246,46 +245,46 @@ function ForgetPassword() {
             </>
           ) : page == 1 ? (
             <>
-            <div className="flex w-[70%]  mx-auto my-[20px] justify-center items-center gap-3">
-              <OtpInput
-                value={otp}
-                // onChange={((e)=>{setOtp(e.target.value)})}
-                onChange={setOtp}
-                numInputs={4}
-                renderSeparator={
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      marginLeft: "20px",
-                      marginRight: "5px",
-                    }}
-                  >
-                    {" "}
-                  </span>
-                }
-                renderInput={(props) => (
-                  <input required value={otp || ""} {...props} />
-                )}
-                inputStyle={{
-                  width: "72px",
-                  marginBottom: "40px",
-                  height: "72px",
-                  border: "1px solid #D9D9D9",
-                  backgroundColor: "transparent",
-                  borderRadius: "8px",
-                  padding: "10px 24px 10px 24px",
-                  outline: "none",
-                }}
-              />
-              
-              
-            </div>
-            {error?.otp && (
-              <div className=" text-red-500 ml-6 mt-[-40px] text-[12px] ">
-                {error?.otp}
+              <div className="flex w-[70%]  mx-auto my-[20px] justify-center items-center gap-3">
+                <OtpInput
+                  value={otp}
+                  // onChange={((e)=>{setOtp(e.target.value)})}
+                  onChange={setOtp}
+                  numInputs={4}
+                  renderSeparator={
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        marginLeft: "20px",
+                        marginRight: "5px",
+                      }}
+                    >
+                      {" "}
+                    </span>
+                  }
+                  renderInput={(props) => (
+                    <input required value={otp || ""} {...props} />
+                  )}
+                  inputStyle={{
+                    width: "72px",
+                    marginBottom: "40px",
+                    height: "72px",
+                    border: "1px solid #D9D9D9",
+                    backgroundColor: "transparent",
+                    borderRadius: "8px",
+                    padding: "10px 24px 10px 24px",
+                    outline: "none",
+                  }}
+                />
+
+
               </div>
-            )}
-              </>
+              {error?.otp && (
+                <div className=" text-red-500 ml-6 mt-[-40px] text-[12px] ">
+                  {error?.otp}
+                </div>
+              )}
+            </>
           ) : (
             <>
               <label for="email" className="block  mt-8">
@@ -315,15 +314,13 @@ function ForgetPassword() {
               page == 0
                 ? handleOnSubmit
                 : page == 1 ? handleOnSubmitOtp
-                : page == 2  ? handleOnSubmitNewPass : handlemodal
+                  : page == 2 ? handleOnSubmitNewPass : handlemodal
             }
-            className={` ${
-              page == 1 ? "mt-[100px]" : "mt-[80px]"
-            } bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg ${
-              isLoading || !email
+            className={` ${page == 1 ? "mt-[100px]" : "mt-[80px]"
+              } bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg ${isLoading || !email
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer"
-            }`}
+              }`}
             disabled={isLoading || !email}
           >
             {page == 1 ? "Continue" : "Reset Password"}
@@ -341,23 +338,23 @@ function ForgetPassword() {
       </div>
       {showModal && <Mymodal />}
       <div className="absolute top-8 left-8 flex items-center cursor-pointer" onClick={() => navigate('/')}>
-  <svg 
-    width="24" 
-    height="24" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path 
-      d="M19 12H5M5 12L12 19M5 12L12 5" 
-      stroke="#000000" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    />
-  </svg>
-  <span className="ml-2 text-black font-bold">Forgot Password</span>
-</div>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 12H5M5 12L12 19M5 12L12 5"
+            stroke="#000000"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span className="ml-2 text-black font-bold">Forgot Password</span>
+      </div>
 
 
     </div>

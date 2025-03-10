@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { FiUpload } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch  } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useEffect  } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { createSubjectAsync , updateSubjectAsync ,getSubjectDetailsAsync } from '../../apis/slices/categoriesSlice';
+import { createSubjectAsync, updateSubjectAsync, getSubjectDetailsAsync } from '../../apis/slices/categoriesSlice';
 
 const AddSubject = ({ isOpen }) => {
   const { id, subjectId } = useParams();
@@ -14,7 +14,7 @@ const AddSubject = ({ isOpen }) => {
   const [isEdit, setIsEdit] = useState(false);
   const navigate = useNavigate();
   const [subjectName, setSubjectName] = useState('');
-  const [selectedColor, setSelectedColor] = useState(''); 
+  const [selectedColor, setSelectedColor] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -22,7 +22,7 @@ const AddSubject = ({ isOpen }) => {
     { label: 'Green', value: '#27AE60' },
     { label: 'Blue', value: '#2D9CDB' },
     { label: 'Purple', value: '#9B51E0' },
-    { label: 'Orange', value: '#F2994A' }
+    { label: 'Orange', value: '#27AE60' }
   ];
 
   const handleFileChange = (event) => {
@@ -65,7 +65,7 @@ const AddSubject = ({ isOpen }) => {
       formData.append('image', selectedFile);
     }
 
-    const success = isEdit 
+    const success = isEdit
       ? await dispatch(updateSubjectAsync(id, subjectId, formData))
       : await dispatch(createSubjectAsync(id, formData));
 
@@ -73,7 +73,7 @@ const AddSubject = ({ isOpen }) => {
       navigate(`/class/${id}/subjects`);
     }
   };
-  
+
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
@@ -88,7 +88,7 @@ const AddSubject = ({ isOpen }) => {
       <div className="flex gap-6">
         <div className="flex-[2] bg-white rounded-xl p-6">
           <h2 className="text-2xl font-bold mb-6">{isEdit ? 'Edit Subject' : 'Add Subject'}</h2>
-          
+
           <div className="space-y-6">
             <div>
               <label className="block text-gray-700 font-medium mb-2">Subject Name</label>
@@ -145,7 +145,7 @@ const AddSubject = ({ isOpen }) => {
 
         <div className="flex-1 bg-white rounded-xl p-6 h-fit">
           <h3 className="text-xl font-bold mb-6">Summary</h3>
-          
+
           <div className="space-y-4">
             <div>
               <p className="text-gray-600 mb-1">Subject Name</p>
@@ -156,8 +156,8 @@ const AddSubject = ({ isOpen }) => {
               <div>
                 <p className="text-gray-600 mb-1">Selected Color</p>
                 <div className="flex items-center gap-2">
-                  <div 
-                    className="w-6 h-6 rounded-full" 
+                  <div
+                    className="w-6 h-6 rounded-full"
                     style={{ backgroundColor: selectedColor }}
                   />
                   <span>{colors.find(c => c.value === selectedColor)?.label}</span>
@@ -165,7 +165,7 @@ const AddSubject = ({ isOpen }) => {
               </div>
             )}
 
-            <button 
+            <button
               onClick={handleSubmit}
               className="w-full py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] mt-6"
             >
@@ -176,4 +176,4 @@ const AddSubject = ({ isOpen }) => {
       </div>
     </div>
   );
-};export default AddSubject;
+}; export default AddSubject;

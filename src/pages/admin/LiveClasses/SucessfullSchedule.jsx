@@ -19,7 +19,7 @@ const SucessfullSchedule = (data) => {
           <h3 className="font-bold text-[18px] lg:text-[42px] lg:leading-[54px] text-[#171818]">
             Class Schedule Successful
           </h3>
-          <div className=" rounded-lg py-[10px] px-[20px] bg-[#FFF9ED] flex justify-between w-[280px] lg:w-[500px] h-[78px]">
+          <div className=" rounded-lg py-[10px] px-[20px] bg-[#EFF6F1] flex justify-between w-[280px] lg:w-[500px] h-[78px]">
             <div>
               <p className=" font-normal text-[12px] lg:text-[14px] leading-[19px] text-[#000000]">
                 Your Live Class Link
@@ -47,7 +47,7 @@ const SucessfullSchedule = (data) => {
           </div>
           <div className="flex  gap-2 lg:gap-4">
             <button
-              className=" rounded-lg border border-[#F2994A] w-[120px] text-[14px] text-[#F2994A] leading-[20px] text-center lg:w-[244px] h-[40px]"
+              className=" rounded-lg border border-[#27AE60] w-[120px] text-[14px] text-[#27AE60] leading-[20px] text-center lg:w-[244px] h-[40px]"
               onClick={() => {
                 Navigate("/scheduleliveclasses");
               }}
@@ -61,14 +61,14 @@ const SucessfullSchedule = (data) => {
                 );
                 toast.success("Your Live Class Link Copied");
               }}
-              className="rounded-lg border border-[#F2994A] w-[137px] text-[14px] text-[#F2994A] leading-[20px] text-center lg:w-[244px] h-[40px]"
+              className="rounded-lg border border-[#27AE60] w-[137px] text-[14px] text-[#27AE60] leading-[20px] text-center lg:w-[244px] h-[40px]"
             >
               Send Class Invitation
             </button>
           </div>
         </div>
       </Popup>
-      {/* <ToastContainer
+      <ToastContainer
         position="top-right"
         autoClose={2000}
         ProgressBar={true}
@@ -76,7 +76,7 @@ const SucessfullSchedule = (data) => {
         closeOnClick={false}
         rtl={false}
         pauseOnHover={false}
-      /> */}
+      />
     </div>
   );
 };

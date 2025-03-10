@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { getCoursesAsync } from "../../../apis/slices/authSlice";
-import { getLocalGovAsync } from "../../../apis/slices/teacherSlice";
-import { addLiveClassAsync } from "../../../apis/slices/liveClassSlice";
+import { getTeachersAsync } from "../../../apis/slices/teacherSlice";
+import {
+  addLiveClassAsync,
+  getSubjectsAsync,
+} from "../../../apis/slices/liveClassSlice";
 import { useDispatch } from "react-redux";
 import validateForm from "../../../components/validator/liveClassValidator";
 import { FaChevronLeft } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import SucessfullSchedule from "./SucessfullSchedule";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const AddoneOnOneclass = ({ isOpen }) => {
+  const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [modalopen, setmodalopen] = useState(false);
   const [errors, setError] = useState({});
@@ -23,17 +29,21 @@ const AddoneOnOneclass = ({ isOpen }) => {
   const [gradeData, setGradeData] = useState([]);
   const [subjectData, setSubjectData] = useState([]);
   const [teacherData, setTeacherData] = useState([]);
+  const [teacherName, setTeacherName] = useState("");
+  const [subjectName, setSubjectName] = useState("");
+  const [catagoryName, setCatagoryName] = useState("");
+  const [gradeName, setGradeName] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setLoading(true);
-    getLocalGovAsync({
+    getTeachersAsync({
       dispatch: dispatch,
       data: {},
       token: token,
       callbackFn: (res) => {
         if (res?.data?.status === 200) {
-          setAdminData(res?.data?.data?.local_government);
+          setTeacherData(res?.data?.data?.data);
           setLoading(false);
         } else {
           alert(res?.data?.message);
@@ -84,17 +94,25 @@ const AddoneOnOneclass = ({ isOpen }) => {
     if (Object.keys(validationErrors).length === 0) {
       setLoading(true);
       var form_data = {
-        title: formData?.Lesson_Title,
+        topic: formData?.Lesson_Title,
         description: formData?.Description,
-        date: formData?.Date,
-        start_time: formData?.Start_Time,
-        end_time: formData?.End_Time,
-        is_reoccurring: formData?.Reoccurring,
-        class_type: "OTO",
+        class_time: moment(
+          formData?.Date + formData?.Start_Time,
+          "YYYY-MM-DDHH:mm"
+        ).toISOString(),
+        class_endtime: moment(
+          formData?.Date + formData?.End_Time,
+          "YYYY-MM-DDHH:mm"
+        ).toISOString(),
+        class_type: "one_on_one",
         course_id: formData?.Category_Name,
         class_id: formData?.Grade_Name,
-        subject_id:formData?.Subject_Name,
-        teacher_id:formData?.Teacher
+        subject_id: formData?.Subject_Name,
+        teacher_id: formData?.Teacher,
+        // is_reoccurring: formData?.Reoccurring,
+        class_status: "",
+
+
       };
 
       addLiveClassAsync({
@@ -102,7 +120,7 @@ const AddoneOnOneclass = ({ isOpen }) => {
         body: form_data,
         token: token,
         callbackFn: (res) => {
-          if (res?.data?.status === 200) {
+          if (res?.data?.status === 200 || res?.data?.status === 201) {
             setformData({
               Category_Name: "",
               Grade_Name: "",
@@ -116,7 +134,7 @@ const AddoneOnOneclass = ({ isOpen }) => {
               Description: "",
             });
             setmodalopen(!modalopen);
-            setAcadmyData(res?.data?.data?.live_class)
+            setAcadmyData(res?.data?.data);
             setLoading(false);
           } else {
             toast.error(res?.data?.message);
@@ -126,13 +144,13 @@ const AddoneOnOneclass = ({ isOpen }) => {
       });
     } else {
       setError(validationErrors);
+      toast.error("Please fill all required fields");
     }
   };
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -148,11 +166,17 @@ const AddoneOnOneclass = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+
         <div>
-          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+          <div
+            onClick={() => {
+              Navigate(-1);
+            }}
+            className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]"
+          >
             Home /
-            <span className="text-black font-medium"> Add One-on-One Classes</span>
+            <span className="text-black font-medium"> Add One-on-One Class</span>
           </div>
         </div>
       </div>
@@ -160,7 +184,7 @@ const AddoneOnOneclass = ({ isOpen }) => {
         <div className=" rounded-[24px] py-[20px] px-[16px] bg-[#FFFFFF] lg:w-[80%]">
           <div className="Border ">
             <h2 className=" font-medium text-[18px]  leading-[20px] text-[#000000] pb-[20px]">
-            Add One-on-One Class
+              Add One-on-One Class
             </h2>
           </div>
           <div>
@@ -185,7 +209,7 @@ const AddoneOnOneclass = ({ isOpen }) => {
                           (lg) => lg.id == e.target.value
                         );
                         setGradeData(localGovernment.classes);
-                        setTeacherData(localGovernment?.teachers);
+                        setCatagoryName(localGovernment?.name);
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
@@ -218,7 +242,22 @@ const AddoneOnOneclass = ({ isOpen }) => {
                         const localGovernment = gradeData.find(
                           (lg) => lg.id == e.target.value
                         );
-                        setSubjectData(localGovernment.subjects);
+                        setLoading(true);
+                        getSubjectsAsync({
+                          dispatch: dispatch,
+                          data: e.target.value,
+                          token: token,
+                          callbackFn: (res) => {
+                            if (res?.data?.status === 200) {
+                              setSubjectData(res?.data?.data?.subjects);
+                              setLoading(false);
+                            } else {
+                              alert(res?.data?.message);
+                              setLoading(false);
+                            }
+                          },
+                        });
+                        setGradeName(localGovernment?.name);
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
@@ -246,7 +285,13 @@ const AddoneOnOneclass = ({ isOpen }) => {
                       type="text"
                       name="Subject_Name"
                       value={formData.Subject_Name}
-                      onChange={onchangeHandler}
+                      onChange={(e) => {
+                        onchangeHandler(e);
+                        const localGovernment = subjectData.find(
+                          (lg) => lg.id == e.target.value
+                        );
+                        setSubjectName(localGovernment?.name);
+                      }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
                       <option disabled value="">
@@ -294,14 +339,28 @@ const AddoneOnOneclass = ({ isOpen }) => {
                       type="text"
                       name="Teacher"
                       value={formData.Teacher}
-                      onChange={onchangeHandler}
+                      onChange={(e) => {
+                        onchangeHandler(e);
+                        const localGovernment = teacherData.find(
+                          (lg) => lg.id == e.target.value
+                        );
+                        setTeacherName(
+                          localGovernment?.first_name + " " +
+                          (localGovernment?.middle_name ? localGovernment?.middle_name + " " : "") +
+                          localGovernment?.last_name
+                        );
+                      }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     >
                       <option disabled value="">
                         Please Select
                       </option>
                       {teacherData?.map((item) => {
-                        return <option value={item?.id}>{item?.name}</option>;
+                        return (
+                          <option value={item?.id}>
+                            {item?.first_name} {item?.middle_name} {item?.last_name}
+                          </option>
+                        );
                       })}
                     </select>
                     {errors.Teacher && (
@@ -374,7 +433,7 @@ const AddoneOnOneclass = ({ isOpen }) => {
                     )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="Reoccurring"
@@ -387,9 +446,9 @@ const AddoneOnOneclass = ({ isOpen }) => {
                     }}
                   />
                   <p className=" font-normal text-[14px] leading-[20px] text-[#101928]">
-                    Activate Reoccurring Live Class
+                    Activate Reoccurring One-on-One Class
                   </p>
-                </div>
+                </div> */}
                 <div className="mt-4">
                   <label className=" font-medium text-[14px] leading-[18px] text-[#3D3D3D]">
                     Description
@@ -414,14 +473,22 @@ const AddoneOnOneclass = ({ isOpen }) => {
           <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
             Summary
           </h2>
-          <div className="rounded-2xl bg-[#FFF9ED] p-2">
+          <div className="rounded-2xl bg-[#EFF6F1] p-2">
             {Object.entries(formData).map(([key, value]) => (
-              <div key={key} className="flex  justify-between mt-2">
-                <div className="font-light mt-3 text-[14px] leading-[16px] text-[#5A5B5C]">
+              <div key={key} className="flex justify-between mt-2">
+                <div className="font-light mt-1 text-[14px] leading-[16px] text-[#5A5B5C]">
                   {key.replace(/_/g, " ")}
                 </div>
-                <div className="text-[16px] leading-[24px] text-[#000000]">
-                  {value}
+                <div className="text-[14px] leading-[24px] text-[#000000]">
+                  {key == "Category_Name"
+                    ? catagoryName
+                    : key == "Grade_Name"
+                      ? gradeName
+                      : key == "Subject_Name"
+                        ? subjectName
+                        : key == "Teacher"
+                          ? teacherName
+                          : value}
                 </div>
               </div>
             ))}
@@ -430,10 +497,9 @@ const AddoneOnOneclass = ({ isOpen }) => {
           <div className="bg-[FFF9FD] m-auto my-10">
             <button
               type="button"
-              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#F2994A]"
+              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]"
               onClick={() => {
-                // setmodalopen(!modalopen);
-                handleSubmit()
+                handleSubmit();
               }}
             >
               Schedule Class

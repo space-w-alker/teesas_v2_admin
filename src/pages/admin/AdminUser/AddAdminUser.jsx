@@ -86,9 +86,8 @@ const AddAdminUser = ({ isOpen }) => {
   };
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${
-        isOpen ? "lg:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -123,7 +122,7 @@ const AddAdminUser = ({ isOpen }) => {
             <p className=" font-medium text-[14px] leading-[18px] mt-5 text-[#3D3D3D] pb-[8px]">
               Upload User Image
             </p>
-            <div className="h-[48px] py-[10px] border border-dashed text-[#B9B9B9] bg-[#FFF9ED] rounded-lg">
+            <div className="h-[48px] py-[10px] border border-dashed text-[#B9B9B9] bg-[#EFF6F1] rounded-lg">
               <p className=" font-normal text-center cursor-pointer text-[16px] leading-[24px]  translate-x-0 text-[#49454F]">
                 <div className="text-center relative ">
                   {" "}
@@ -153,7 +152,7 @@ const AddAdminUser = ({ isOpen }) => {
                       }
                     }
                   }}
-                  className="text-[#FFF9ED]   opacity-0 absolute top-0 left-[45%] max-sm:left-0 "
+                  className="text-[#EFF6F1]   opacity-0 absolute top-0 left-[45%] max-sm:left-0 "
                   placeholder=""
                 />
               </p>
@@ -410,7 +409,7 @@ const AddAdminUser = ({ isOpen }) => {
           <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
             Summary
           </h2>
-          <div className="rounded-2xl bg-[#FFF9ED] p-2">
+          <div className="rounded-2xl bg-[#EFF6F1] p-2">
             {Object.entries(formData).map(([key, value]) => (
               <div
                 key={key}
@@ -430,7 +429,7 @@ const AddAdminUser = ({ isOpen }) => {
           <div className="bg-[FFF9FD] m-auto my-10">
             <button
               type="button"
-              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#F2994A]"
+              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]"
               onClick={() => {
                 submitContactForm();
               }}

@@ -143,7 +143,7 @@ const ResellerFormDetails = ({ isOpen }) => {
               textcolor={
                 resellerData?.status === "Approved" ? "text-[#27AE60]" :
                   resellerData?.status === "Rejected" ? "text-[#EB5757]" :
-                    "text-[#F2994A]"
+                    "text-[#27AE60]"
               }
               backgroundcolor={
                 resellerData?.status === "Approved" ? "bg-[#E9FDEE]" :

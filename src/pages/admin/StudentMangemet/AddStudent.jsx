@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaChevronLeft } from "react-icons/fa";
-import { reserveLiveClassAsync,getLiveClassesAsync } from "../../../apis/slices/liveClassSlice";
+import { reserveLiveClassAsync, getLiveClassesAsync } from "../../../apis/slices/liveClassSlice";
 import Select from "react-select";
 import { useDispatch } from "react-redux";
 import {
@@ -9,7 +9,7 @@ import {
   getCoursesAsync,
 } from "../../../apis/slices/authSlice";
 
-import {toast} from "react-toastify"
+import { toast } from "react-toastify"
 
 const SearchableDropdown = ({
   label,
@@ -24,13 +24,13 @@ const SearchableDropdown = ({
 
   const handleSearch = (event) => {
     const value = event.target.value;
-   
+
     onChange(event);
-    if(value != ""){
+    if (value != "") {
       setIsOpen(true)
       onSearch(value);
     }
-    
+
   };
 
   return (
@@ -56,17 +56,18 @@ const SearchableDropdown = ({
         <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-48 overflow-y-auto">
           {options.map((option, index) => {
             return (
-            <li
-              key={index}
-              onMouseDown={() => {
-                onChange({ target: { name, value: name == "Student_Name" ? (option?.first_name + " "+ option?.id) :(option?.title+ " "+ option?.id) } });
-                setIsOpen(false);
-              }}
-              className="px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
-            >
-             {name == "Student_Name" ? (option?.first_name  + " " + option?.last_name) : (option?.title)}
-            </li>
-       ) })}
+              <li
+                key={index}
+                onMouseDown={() => {
+                  onChange({ target: { name, value: name == "Student_Name" ? (option?.first_name + " " + option?.id) : (option?.title + " " + option?.id) } });
+                  setIsOpen(false);
+                }}
+                className="px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+              >
+                {name == "Student_Name" ? (option?.first_name + " " + option?.last_name) : (option?.title)}
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>
@@ -91,8 +92,8 @@ const AddStudent = ({ isOpen }) => {
     if (Object.keys(validationErrors).length === 0) {
       setLoading(true);
       const parts = formData?.Student_Name.split(' ');
-      
-      const parts2 = formData?.Live_Class_Name.split(' '); 
+
+      const parts2 = formData?.Live_Class_Name.split(' ');
       var form_data = {
         user_id: parts[1],
         class_id: parts2[2],
@@ -105,8 +106,8 @@ const AddStudent = ({ isOpen }) => {
         callbackFn: (res) => {
           if (res?.data?.status === 200) {
             setformData({
-               Student_Name: "",
-               Live_Class_Name: "",
+              Student_Name: "",
+              Live_Class_Name: "",
             });
             setStudentOptions([]);
             setStudentOptions([]);
@@ -123,19 +124,19 @@ const AddStudent = ({ isOpen }) => {
   };
 
   const validateLiveClass = (formData) => {
-  
-  const errors = {};
 
-  
-  if (!formData.Student_Name) {
-    errors.Student_Name = 'Student Name is required';
-  }
-  if (!formData.Live_Class_Name) {
-    errors.Live_Class_Name = 'Live Class  is required';
-  }
+    const errors = {};
 
-  return errors;
-};
+
+    if (!formData.Student_Name) {
+      errors.Student_Name = 'Student Name is required';
+    }
+    if (!formData.Live_Class_Name) {
+      errors.Live_Class_Name = 'Live Class  is required';
+    }
+
+    return errors;
+  };
 
   const onchangeHandler = (event) => {
     const { name, value } = event.target;
@@ -184,9 +185,8 @@ const AddStudent = ({ isOpen }) => {
   };
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
-        isOpen ? "lg:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
+        }`}
     >
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
@@ -237,7 +237,7 @@ const AddStudent = ({ isOpen }) => {
           <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
             Summary
           </h2>
-          <div className="rounded-2xl bg-[#FFF9ED] p-2">
+          <div className="rounded-2xl bg-[#EFF6F1] p-2">
             {Object.entries(formData).map(([key, value]) => (
               <div key={key} className="flex  justify-between mt-2">
                 <div className="font-light mt-3 text-[14px] leading-[16px] text-[#5A5B5C]">
@@ -252,10 +252,10 @@ const AddStudent = ({ isOpen }) => {
           <div className="bg-[FFF9FD] m-auto my-10">
             <button
               type="button"
-              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#F2994A]"
-             onClick={() => {
+              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]"
+              onClick={() => {
                 handleSubmit()
-               }}
+              }}
             >
               Add Student
             </button>

@@ -5,7 +5,7 @@ import { changePasswordAsync } from "../../../apis/slices/authSlice";
 import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
 
-const ChangePassword = ({isOpen}) => {
+const ChangePassword = ({ isOpen }) => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("authToken");
   const [errors, setError] = useState({});
@@ -31,7 +31,7 @@ const ChangePassword = ({isOpen}) => {
       newPassword: formData.Password,
       confirmPassword: formData.Confirm_Password
     };
-  
+
     changePasswordAsync({
       dispatch: dispatch,
       body: body,
@@ -52,8 +52,8 @@ const ChangePassword = ({isOpen}) => {
       },
     });
   };
-  
-  
+
+
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "lg:ml-[260px]" : ""}`}>
@@ -135,7 +135,7 @@ const ChangePassword = ({isOpen}) => {
           <h2 className="text-[18px] leading-[20px] pb-[10px] text-[#000000] font-medium">
             Summary
           </h2>
-          <div className="rounded-2xl bg-[#FFF9ED] p-2">
+          <div className="rounded-2xl bg-[#EFF6F1] p-2">
             {Object.entries(formData).map(([key, value]) => (
               <div key={key} className="flex justify-between mt-2">
                 <div className="font-light mt-3 text-[14px] leading-[16px] text-[#5A5B5C]">
@@ -151,7 +151,7 @@ const ChangePassword = ({isOpen}) => {
             <button
               onClick={handleChangePassword}
               type="button"
-              className="h-[32px] rounded-lg text-center w-[200px] text-white bg-[#F2994A]"
+              className="h-[32px] rounded-lg text-center w-[200px] text-white bg-[#27AE60]"
             >
               Change Password
             </button>

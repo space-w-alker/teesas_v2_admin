@@ -46,7 +46,7 @@ const StoreItemDetails = ({ isOpen }) => {
           </div>
           <div className="flex flex-col">
             <h2 className="font-bold text-gray-900">{itemName}</h2>
-            <span className="text-[#F2994A] font-bold mt-2">{itemPrice}</span>
+            <span className="text-[#27AE60] font-bold mt-2">{itemPrice}</span>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ const StoreItemDetails = ({ isOpen }) => {
               </div>
               <div>
                 <p className="text-gray-600">Price:</p>
-                <p className="font-medium text-[#F2994A]">{listDetailsStore.currency_code}{" "}{listDetailsStore.price}</p>
+                <p className="font-medium text-[#27AE60]">{listDetailsStore.currency_code}{" "}{listDetailsStore.price}</p>
               </div>
               <div>
                 <p className="text-gray-600">Quantity:</p>

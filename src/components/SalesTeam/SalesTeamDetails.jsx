@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
 
-const SalesTeamDetails = ({isOpen}) => {
+const SalesTeamDetails = ({ isOpen }) => {
   const navigate = useNavigate()
   const [salesData, setSalesData] = useState({
     id: 1,
@@ -38,8 +38,8 @@ const SalesTeamDetails = ({isOpen}) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      
-      <div className="bg-[#FFF9ED] border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
+
+      <div className="bg-[#EFF6F1] border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
         <div className="flex items-center gap-4">
           <div className="rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
             {salesData?.name?.charAt(0).toUpperCase()}
@@ -61,7 +61,7 @@ const SalesTeamDetails = ({isOpen}) => {
         </div>
       </div>
       <div className="text-center mb-4">
-        <button className="font-medium text-[14px] leading-[20px] text-[#F2994A] cursor-pointer">
+        <button className="font-medium text-[14px] leading-[20px] text-[#27AE60] cursor-pointer">
           Manage
         </button>
       </div>

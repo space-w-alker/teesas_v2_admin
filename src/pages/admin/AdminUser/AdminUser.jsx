@@ -54,13 +54,13 @@ const AdminUser = ({ isOpen }) => {
     setIsModalFilterOpen(false);
   };
 
-  const latestOnClick = ()=> {
+  const latestOnClick = () => {
     setLoading(true)
     setSortKey('Latest')
     const newData = {
-        page: 1,
-        page_size: 10,
-       filter:'Latest'
+      page: 1,
+      page_size: 10,
+      filter: 'Latest'
     };
     getAdminUsersAsync({
       dispatch: dispatch,
@@ -80,13 +80,13 @@ const AdminUser = ({ isOpen }) => {
     });
   }
 
-  const oldestOnClick = ()=> {
+  const oldestOnClick = () => {
     setLoading(true)
     setSortKey('Oldest');
     const newData = {
-        page: 1,
-        page_size: 10,
-       filter:'Oldest'
+      page: 1,
+      page_size: 10,
+      filter: 'Oldest'
     };
     getAdminUsersAsync({
       dispatch: dispatch,
@@ -108,23 +108,22 @@ const AdminUser = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${
-        isOpen ? "lg:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
+        }`}
     >
-    {loading && (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}
-      >
-        <TailSpin color="orange" radius={5}  />
-      </div>
-    )}
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
+          <TailSpin color="orange" radius={5} />
+        </div>
+      )}
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
@@ -148,7 +147,7 @@ const AdminUser = ({ isOpen }) => {
       </div>
       <div className=" flex  justify-end mt-4 ">
         <button
-          className="text-[14px] leading-[20px] text-center font-bold  w-[160px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#F2994A] text-white"
+          className="text-[14px] leading-[20px] text-center font-bold  w-[160px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
           onClick={() => {
             Navigate("/AddAdminUser");
           }}
@@ -263,7 +262,7 @@ const AdminUser = ({ isOpen }) => {
                     <div>
                       <div
                         className="flex items-center gap-3 px-[18px] cursor-pointer"
-                        
+
                       >
                         {/* <div>
                   <img src={item.icon1} alt="Icon 1" />
@@ -305,7 +304,7 @@ const AdminUser = ({ isOpen }) => {
             width="w-[115px]"
             onClick={() => {
               if (page > 1) {
-              setLoading(true);
+                setLoading(true);
                 const newData = {
                   page: page + 1,
                   page_size: 10,
@@ -330,8 +329,8 @@ const AdminUser = ({ isOpen }) => {
             }}
           />
           <div className="text-[#667085] text-[12px]">
-          Page {adminData?.paging?.currentPage} of {adminData?.paging?.total_pages}
-        </div>
+            Page {adminData?.paging?.currentPage} of {adminData?.paging?.total_pages}
+          </div>
           <Custombutton
             value="Next"
             hidden="hidden"
@@ -341,13 +340,13 @@ const AdminUser = ({ isOpen }) => {
             imagePosition="right"
             onClick={() => {
               if (page < adminData?.paging?.total_pages) {
-              setLoading(true)
-                const newData = { 
+                setLoading(true)
+                const newData = {
                   page: page - 1,
                   page_size: 10,
                   filter: sortKey
                 };
-                setPage(page +1);
+                setPage(page + 1);
                 getAdminUsersAsync({
                   dispatch: dispatch,
                   data: newData,

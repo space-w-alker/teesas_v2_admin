@@ -344,7 +344,7 @@ const Modal = ({
                     </div>
                     <div className="relative">
                       {selectedCoursesData.includes(course?.id) ? (
-                        <div className="w-[24px] h-[24px] rounded-[4px] bg-[#F2994A] relative">
+                        <div className="w-[24px] h-[24px] rounded-[4px] bg-[#27AE60] relative">
                           <FaCheck className="text-white absolute top-1 left-1" />
                         </div>
                       ) : (
@@ -368,7 +368,7 @@ const Modal = ({
                     </div>
                     <div className="relative">
                       {selectedStatusData == true ? (
-                        <div className="w-[24px] h-[24px] rounded-[4px] bg-[#F2994A] relative">
+                        <div className="w-[24px] h-[24px] rounded-[4px] bg-[#27AE60] relative">
                           <FaCheck className="text-white absolute top-1 left-1" />
                         </div>
                       ) : (
@@ -385,7 +385,7 @@ const Modal = ({
                     </div>
                     <div className="relative">
                       {selectedStatusData == false ? (
-                        <div className="w-[24px] h-[24px] rounded-[4px] bg-[#F2994A] relative">
+                        <div className="w-[24px] h-[24px] rounded-[4px] bg-[#27AE60] relative">
                           <FaCheck className="text-white absolute top-1 left-1" />
                         </div>
                       ) : (
@@ -397,7 +397,7 @@ const Modal = ({
               </div>
 
               <div className="flex justify-end items-center">
-                <button className="bg-[#F2994A] text-white text-[14px] px-8 py-3 rounded-lg" onClick={onClick}>
+                <button className="bg-[#27AE60] text-white text-[14px] px-8 py-3 rounded-lg" onClick={onClick}>
                   Apply
                 </button>
               </div>
@@ -532,7 +532,7 @@ const Modal = ({
         onClose={closeModal}
         position="center center"
       >
-        <div className=" pb-[20px] pt-2 bg-[#FFF9ED] overflow-y-scroll">
+        <div className=" pb-[20px] pt-2 bg-[#EFF6F1] overflow-y-scroll">
           <div className="flex justify-end cursor-pointer">
             <IoIosCloseCircleOutline
               onClick={closeModal}

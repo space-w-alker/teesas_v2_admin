@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
 import BadgesList from '../Core/Dashboard/Admin/BadgeList'
 
-const Badges = ({isOpen}) => {
+const Badges = ({ isOpen }) => {
   const navigate = useNavigate()
   const [badgeData, setBadgeData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -56,20 +56,20 @@ const Badges = ({isOpen}) => {
           height="h-[111px]"
           backgroundcolor="bg-[#FFFFFF]"
           value={badgeData?.total_badges}
-         
+
         />
       </div>
 
       <div className="flex justify-end mt-4">
         <button
-          className="text-[14px] leading-[20px] text-center font-bold w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#F2994A] text-white"
+          className="text-[14px] leading-[20px] text-center font-bold w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
           onClick={() => navigate('/Badges/AddBadge')}
         >
           + Add Badge
         </button>
       </div>
 
-      <BadgesList/>
+      <BadgesList />
     </div>
   )
 }

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
 import NotificationList from '../Core/Dashboard/Admin/NotificationList'
 
-const PushNotification = ({isOpen}) => {
+const PushNotification = ({ isOpen }) => {
   const navigate = useNavigate()
   const [notificationData, setNotificationData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -39,7 +39,7 @@ const PushNotification = ({isOpen}) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      
+
       <div className='flex justify-start items-center lg:gap-3'>
         <FaChevronLeft />
         <div>
@@ -65,15 +65,15 @@ const PushNotification = ({isOpen}) => {
       </div>
 
       <div className="flex justify-end mt-4">
-        <button 
-          className="text-[14px] leading-[20px] text-center font-bold w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#F2994A] text-white" 
+        <button
+          className="text-[14px] leading-[20px] text-center font-bold w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
           onClick={() => navigate('/PushNotification/AddNotification')}
         >
           + Add Notification
         </button>
       </div>
 
-      <NotificationList/>
+      <NotificationList />
     </div>
   )
 }

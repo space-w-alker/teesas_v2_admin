@@ -17,10 +17,9 @@ const Button = ({ value1, value2, csvData1, csvData2 }) => {
         } else {
             setExportModal(true);
         }
-        if(button=="Manage Class")
-            {
-                navigate('/ManageLiveClass')
-            }
+        if (button == "Manage Class") {
+            navigate('/ManageLiveClass')
+        }
     };
 
     const closeModal = () => {
@@ -33,15 +32,14 @@ const Button = ({ value1, value2, csvData1, csvData2 }) => {
         setIsModalOpen(true)
     };
 
-    
-    
+
+
 
     return (
         <div className='flex justify-end items-center gap-[15px] mt-5'>
             <div
-                className={`border  rounded-[8px] ${
-                    activeButton === value1 ? 'bg-[#F2994A] text-white' : 'border-[#F2994A] text-[#F2994A]'
-                }`}
+                className={`border  rounded-[8px] ${activeButton === value1 ? 'bg-[#27AE60] text-white' : 'border-[#27AE60] text-[#27AE60]'
+                    }`}
                 onClick={() => handleButtonClick(value1)}
             >
                 <button className='text-[14px] leading-[20px]  pt-[2px]  w-[128px] h-[40px] text-center cursor-pointer'>
@@ -50,9 +48,8 @@ const Button = ({ value1, value2, csvData1, csvData2 }) => {
             </div>
 
             <div
-                className={`border rounded-lg ${
-                    activeButton === value2 ? 'bg-[#F2994A] text-white' : 'border-[#F2994A] text-[#F2994A]'
-                }`}
+                className={`border rounded-lg ${activeButton === value2 ? 'bg-[#27AE60] text-white' : 'border-[#27AE60] text-[#27AE60]'
+                    }`}
                 onClick={() => handleButtonClick(value2)}
             >
                 <button className='text-[14px] leading-[20px] pt-[2px] text-center  w-[123px] h-[40px] rounded-lg  cursor-pointer'>
@@ -66,19 +63,19 @@ const Button = ({ value1, value2, csvData1, csvData2 }) => {
                     value1="Add Single User"
                     value2="Upload Bulk Users"
                     //  onClick={handleClick}
-                    addSingleButton={()=>{navigate("/addUsers")}}
-                    addMutipleButton={()=>{navigate("/UploadBulkUser")}}
+                    addSingleButton={() => { navigate("/addUsers") }}
+                    addMutipleButton={() => { navigate("/UploadBulkUser") }}
                 />
-                
+
             )}
             {exportModal && (
                 <Modal
-                  closeModal={closeModal}
-                  label="Export"
-                  csvData1={csvData1}
-                  csvData2={csvData2}
+                    closeModal={closeModal}
+                    label="Export"
+                    csvData1={csvData1}
+                    csvData2={csvData2}
                 />
-              )}
+            )}
         </div>
     );
 };

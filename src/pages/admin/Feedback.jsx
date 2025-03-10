@@ -3,7 +3,7 @@ import Headcomponent from "../../components/common/Headcomponent";
 import Userfeedback from "../../components/Core/Dashboard/Admin/Userfeedback";
 import { FaChevronLeft } from "react-icons/fa";
 import Modal from "../../components/common/Modal";
-import { getUsersFeedbackAsync,getUserFeedBacksCsvAsync } from "../../apis/slices/feedBackSlice";
+import { getUsersFeedbackAsync, getUserFeedBacksCsvAsync } from "../../apis/slices/feedBackSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
@@ -23,7 +23,7 @@ const Feedback = ({ isOpen }) => {
   const [loading, setLoading] = useState(false);
   const [totalFeedback, setTotalFeedback] = useState("");
   const [csvUser, setCsvUser] = useState([]);
-  const [progressCsv,setProgressCsv] = useState([]);
+  const [progressCsv, setProgressCsv] = useState([]);
 
   useEffect(() => {
     // setLoading(true);
@@ -69,9 +69,8 @@ const Feedback = ({ isOpen }) => {
   };
   return (
     <div
-      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -126,22 +125,22 @@ const Feedback = ({ isOpen }) => {
           </div>
         </div>
         <div
-          className={`border border-[#F2994A] w-[120px] h-[40px] rounded-lg py-[7px] px-[16px] mt-3 float-right bg-[#F2994A]`}
+          className={`border border-[#27AE60] w-[120px] h-[40px] rounded-lg py-[7px] px-[16px] mt-3 float-right bg-[#27AE60]`}
         >
-        <CSVLink
-                style={{ textDecoration: "none", color: "white" }}
-                data={csvUser}
-                separator={";"}
-                filename="User_List.csv"
-              >
-              <button
-            className={`text-[14px] leading-[20px] text-center text-white `}
-            // onClick={handleClick}
+          <CSVLink
+            style={{ textDecoration: "none", color: "white" }}
+            data={csvUser}
+            separator={";"}
+            filename="User_List.csv"
           >
-            Export CSV
-          </button>
-                
-              </CSVLink>
+            <button
+              className={`text-[14px] leading-[20px] text-center text-white `}
+            // onClick={handleClick}
+            >
+              Export CSV
+            </button>
+
+          </CSVLink>
         </div>
       </div>
 

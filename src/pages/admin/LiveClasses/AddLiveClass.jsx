@@ -12,9 +12,11 @@ import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import SucessfullSchedule from "./SucessfullSchedule";
 import { ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
 const AddLiveClass = ({ isOpen }) => {
+  const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [modalopen, setmodalopen] = useState(false);
   const [errors, setError] = useState({});
@@ -100,6 +102,7 @@ const AddLiveClass = ({ isOpen }) => {
     End_Time: "",
     // Reoccurring: true,
     Description: "",
+    class_type: "group",
   });
   const onchangeHandler = (event) => {
     const { name, value } = event.target;
@@ -132,6 +135,7 @@ const AddLiveClass = ({ isOpen }) => {
         subject_id: formData?.Subject_Name,
         teacher_id: formData?.Teacher,
         class_status: "",
+        class_type: "group"
       };
 
       addLiveClassAsync({
@@ -150,6 +154,7 @@ const AddLiveClass = ({ isOpen }) => {
               Start_Time: "",
               End_Time: "",
               Description: "",
+              class_type: "group"
             });
             setmodalopen(!modalopen);
             setAcadmyData(res?.data?.data);
@@ -167,9 +172,8 @@ const AddLiveClass = ({ isOpen }) => {
   };
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -185,7 +189,7 @@ const AddLiveClass = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
         <div>
           <div
             onClick={() => {
@@ -368,7 +372,7 @@ const AddLiveClass = ({ isOpen }) => {
                         );
                         setTeacherName(
                           localGovernment?.first_name +
-                            localGovernment?.last_name
+                          localGovernment?.last_name
                         );
                       }}
                       className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
@@ -505,12 +509,12 @@ const AddLiveClass = ({ isOpen }) => {
                   {key == "Category_Name"
                     ? catagoryName
                     : key == "Grade_Name"
-                    ? gradeName
-                    : key == "Subject_Name"
-                    ? subjectName
-                    : key == "Teacher"
-                    ? teacherName
-                    : value}
+                      ? gradeName
+                      : key == "Subject_Name"
+                        ? subjectName
+                        : key == "Teacher"
+                          ? teacherName
+                          : value}
                 </div>
               </div>
             ))}

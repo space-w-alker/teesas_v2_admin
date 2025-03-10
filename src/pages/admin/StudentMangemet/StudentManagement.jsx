@@ -15,15 +15,15 @@ import container from "../../../assets/images/container.png";
 import { FaArrowRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 import Modal2 from "../../../components/common/Modal2";
-import { getStudentsLiveClassesAsync,deleteLiveClassAsync } from "../../../apis/slices/liveClassSlice";
+import { getStudentsLiveClassesAsync, deleteLiveClassAsync } from "../../../apis/slices/liveClassSlice";
 import { TailSpin } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import moment from "moment";
 
 
-const StudentManagement = ({isOpen}) => {
-    const Navigate=useNavigate();
+const StudentManagement = ({ isOpen }) => {
+  const Navigate = useNavigate();
 
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ const StudentManagement = ({isOpen}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({});
-  const [classData, setClassData] =  useState("")
+  const [classData, setClassData] = useState("")
   useEffect(() => {
     setLoading(true);
     getStudentsLiveClassesAsync({
@@ -61,76 +61,76 @@ const StudentManagement = ({isOpen}) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const onDeleteClass = (value) =>{
-       deleteLiveClassAsync({
-        dispatch: dispatch,
-        data: {
-          id:value
-        },
-        token: token,
-        callbackFn: (res) => {
-          getStudentsLiveClassesAsync({
-            dispatch: dispatch,
-            data: {
-              page: 1,
-              page_size: 10,
-              class_type: "OTO",
-            },
-            token: token,
-            callbackFn: (res) => {
-              setAdminData(res?.data?.data?.live_classes);
-              setPageData(res?.data?.data?.paging);
-              setLoading(false);
-              closeModal()
-              setClassData("")
-            },
-          });
-        },
-      });
+  const onDeleteClass = (value) => {
+    deleteLiveClassAsync({
+      dispatch: dispatch,
+      data: {
+        id: value
+      },
+      token: token,
+      callbackFn: (res) => {
+        getStudentsLiveClassesAsync({
+          dispatch: dispatch,
+          data: {
+            page: 1,
+            page_size: 10,
+            class_type: "OTO",
+          },
+          token: token,
+          callbackFn: (res) => {
+            setAdminData(res?.data?.data?.live_classes);
+            setPageData(res?.data?.data?.paging);
+            setLoading(false);
+            closeModal()
+            setClassData("")
+          },
+        });
+      },
+    });
   };
-  
+
   return (
     <div
-    className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "lg:ml-[260px]" : ""}`}>
-    {loading && (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}
-      >
-        <TailSpin color="orange" radius={5} />
-      </div>
-    )}
-    <div className='flex justify-start  items-center lg:gap-3'>
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "lg:ml-[260px]" : ""}`}>
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
+          <TailSpin color="orange" radius={5} />
+        </div>
+      )}
+      <div className='flex justify-start  items-center lg:gap-3'>
         <FaChevronLeft />
         <div>
           <div className=' font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home / <span className='text-black font-medium'>Live Classes</span></div>
         </div>
       </div>
-    <h2 className=" font-bold text-[22px] mt-5  leading-[28px] text-[#2C2E32] ">
-    Live Classes - Students
-    </h2>
-    <div className=" mt-5 ">
-    <UserCard
-        label="Total Live Classes Students"
-        height="h-[111px]"
-        backgroundcolor="bg-[#FFFFFF]"
-        value={pageData?.total}
-        imgbg={live}
-        imglogo={liveimage}
-      />
-    </div>
-    <div className=" flex  justify-end mt-4 ">
-      <button className="text-[14px] leading-[20px] text-center font-bold  w-[200px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#F2994A] text-white" onClick={()=>Navigate('/AddLiveClassStudent')}>
-      + Add Student
-      </button>
-    </div>
-   {/*<OneClassList/>*/}
-   <div className="bg-[#FFFFFF] lg:p-4 mt-5 lg:pl-[8px] pl-[8px] rounded-[18px] pb-[20px]">
+      <h2 className=" font-bold text-[22px] mt-5  leading-[28px] text-[#2C2E32] ">
+        Live Classes - Students
+      </h2>
+      <div className=" mt-5 ">
+        <UserCard
+          label="Total Live Classes Students"
+          height="h-[111px]"
+          backgroundcolor="bg-[#FFFFFF]"
+          value={pageData?.total}
+          imgbg={live}
+          imglogo={liveimage}
+        />
+      </div>
+      <div className=" flex  justify-end mt-4 ">
+        <button className="text-[14px] leading-[20px] text-center font-bold  w-[200px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white" onClick={() => Navigate('/AddLiveClassStudent')}>
+          + Add Student
+        </button>
+      </div>
+      {/*<OneClassList/>*/}
+      <div className="bg-[#FFFFFF] lg:p-4 mt-5 lg:pl-[8px] pl-[8px] rounded-[18px] pb-[20px]">
         <Headcomponent value="Student List" border="Border" />
         <div className="">
           <ul>
@@ -152,7 +152,7 @@ const StudentManagement = ({isOpen}) => {
                           Navigate(`/LiveClassDetails?id=${user?.live_class?.id}`);
                         }}
                       >
-                        {user?.user?.first_name}  {user?.user?.last_name} 
+                        {user?.user?.first_name}  {user?.user?.last_name}
                       </h6>
                       <span className=" font-normal text-[12px] leading-[24px] text-[#0F62FE]">
                         {moment(user?.date)?.format("DD.MM.YYYY")}
@@ -179,9 +179,9 @@ const StudentManagement = ({isOpen}) => {
                       }
                       imagePosition="left"
                     />
-                    <img src={container} onClick={()=>{
+                    <img src={container} onClick={() => {
                       setClassData(user)
-                      }} />
+                    }} />
                   </div>
                 </div>
               </li>
@@ -197,9 +197,9 @@ const StudentManagement = ({isOpen}) => {
             textcolor="text-[#000000]"
             imagePosition="left"
             width="w-[115px]"
-             onClick={() => {
+            onClick={() => {
               if (page > 1) {
-              setLoading(true);
+                setLoading(true);
                 const newData = {
                   page: page - 1,
                   page_size: 10,
@@ -219,8 +219,8 @@ const StudentManagement = ({isOpen}) => {
             }}
           />
           <div className="text-[#667085] text-[12px]">
-          Page {pageData.currentPage} of {pageData?.total_pages}
-        </div>
+            Page {pageData.currentPage} of {pageData?.total_pages}
+          </div>
           <Custombutton
             value="Next"
             hidden="hidden"
@@ -253,7 +253,7 @@ const StudentManagement = ({isOpen}) => {
 
         <Modal2 isOpen={isModalOpen} onDelete={onDeleteClass} data={classData} onClose={closeModal} />
       </div>
-  </div>
+    </div>
   )
 }
 

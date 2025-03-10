@@ -7,7 +7,7 @@ import { getAdminUserAsync } from "../../../apis/slices/adminSlice";
 import { TailSpin } from "react-loader-spinner";
 
 const AdminUserDetails = ({ isOpen }) => {
- 
+
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [adminData, setAdminData] = useState({});
@@ -32,23 +32,22 @@ const AdminUserDetails = ({ isOpen }) => {
   }, []);
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${
-        isOpen ? "lg:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
+        }`}
     >
-    {loading && (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}
-      >
-        <TailSpin color="orange" radius={5}  />
-      </div>
-    )}
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
+          <TailSpin color="orange" radius={5} />
+        </div>
+      )}
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
@@ -58,7 +57,7 @@ const AdminUserDetails = ({ isOpen }) => {
           </div>
         </div>
       </div>
-      <div className="bg-[#FFF9ED] mt-10 border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
+      <div className="bg-[#EFF6F1] mt-10 border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
         <div className="flex items-center gap-4">
           <div>
             <img src={letter} className="w-[20px] h-[20px]" />
@@ -80,7 +79,7 @@ const AdminUserDetails = ({ isOpen }) => {
         </div>
       </div>
 
-    { /* <p className=" font-medium text-[14px] leading-[20px] text-[#F2994A] text-center cursor-pointer ">
+      { /* <p className=" font-medium text-[14px] leading-[20px] text-[#27AE60] text-center cursor-pointer ">
         Manage
       </p>*/}
       <div>

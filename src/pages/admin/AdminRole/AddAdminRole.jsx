@@ -8,7 +8,7 @@ import {
   updateRolePermissionAsync,
 } from "../../../apis/slices/adminSlice";
 import { TailSpin } from "react-loader-spinner";
- 
+
 
 const AddAdminRole = ({ isOpen }) => {
   const token = localStorage.getItem("authToken");
@@ -35,23 +35,22 @@ const AddAdminRole = ({ isOpen }) => {
   }, []);
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${
-        isOpen ? "lg:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
+        }`}
     >
-    {loading && (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}
-      >
-        <TailSpin color="orange" radius={5}  />
-      </div>
-    )}
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
+          <TailSpin color="orange" radius={5} />
+        </div>
+      )}
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
@@ -88,7 +87,7 @@ const AddAdminRole = ({ isOpen }) => {
                     <button
                       onClick={() => {
                         setLoading(true);
-                       const body = {
+                        const body = {
                           role_id: item?.admin_role_id,
                           role_permission_id: item?.id,
                           permission_id: item?.adminPermissions?.id,
@@ -124,9 +123,8 @@ const AddAdminRole = ({ isOpen }) => {
                           },
                         });
                       }}
-                      className={`toggle-btn ${
-                        item?.status ? "toggled" : "off"
-                      }`}
+                      className={`toggle-btn ${item?.status ? "toggled" : "off"
+                        }`}
                     >
                       <div className="thumb"></div>
                     </button>
@@ -140,7 +138,7 @@ const AddAdminRole = ({ isOpen }) => {
           <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
             Summary
           </h2>
-          {/* <div className=" rounded-2xl bg-[#FFF9ED] p-4 ">
+          {/* <div className=" rounded-2xl bg-[#EFF6F1] p-4 ">
                 {
                   formData.map((item) => (
                     <div key={item.id} className=" flex justify-between mt-2 ">
@@ -154,7 +152,7 @@ const AddAdminRole = ({ isOpen }) => {
           <div className="bg-[FFF9FD] m-auto my-10">
             <button
               type="button"
-              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#F2994A]"
+              className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]"
               onClick={() => {
                 setmodalopen(!modalopen);
               }}

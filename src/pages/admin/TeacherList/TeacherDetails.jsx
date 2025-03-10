@@ -20,9 +20,8 @@ const TeacherDetails = ({ isOpen }) => {
   }, []);
   return (
     <div
-      className={` py-[8rem] lg:px-[10rem] px-[10px]  ${
-        isOpen ? "ml-[240px]" : ""
-      }`}
+      className={` py-[8rem] lg:px-[10rem] px-[10px]  ${isOpen ? "ml-[240px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -58,7 +57,7 @@ const TeacherDetails = ({ isOpen }) => {
         </div>
       </div>
 
-      {/* <p className=' font-medium text-[14px] leading-[20px] text-[#F2994A] text-center cursor-pointer '>Delete</p> */}
+      {/* <p className=' font-medium text-[14px] leading-[20px] text-[#27AE60] text-center cursor-pointer '>Delete</p> */}
       <DetailsTech adminData={adminData} />
     </div>
   );

@@ -10,7 +10,7 @@ const AddSalesTeam = ({ isOpen }) => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [errors, setError] = useState({})
-  
+
   const [formData, setFormData] = useState({
     Full_Name: "",
     Gender: "",
@@ -248,7 +248,7 @@ const AddSalesTeam = ({ isOpen }) => {
           <h2 className="text-[18px] leading-[20px] pb-[10px] text-[#000000] font-medium">
             Summary
           </h2>
-          <div className="rounded-2xl bg-[#FFF9ED] p-2">
+          <div className="rounded-2xl bg-[#EFF6F1] p-2">
             {Object.entries(formData).map(([key, value]) => (
               <div
                 key={key}
@@ -267,7 +267,7 @@ const AddSalesTeam = ({ isOpen }) => {
           <div className="bg-[FFF9FD] m-auto my-10">
             <button
               type="button"
-              className="h-[32px] rounded-lg text-center w-[200px] text-white bg-[#F2994A]"
+              className="h-[32px] rounded-lg text-center w-[200px] text-white bg-[#27AE60]"
               onClick={submitForm}
             >
               Add Team Member

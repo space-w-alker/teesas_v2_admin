@@ -44,9 +44,8 @@ const TeacherList = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -84,7 +83,7 @@ const TeacherList = ({ isOpen }) => {
       </div>
       <div className=" flex  justify-end mt-4 ">
         <button
-          className="text-[14px] leading-[20px] text-center font-bold  w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#F2994A] text-white"
+          className="text-[14px] leading-[20px] text-center font-bold  w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
           onClick={() => Navigate("/Teacher/AddTeacher")}
         >
           + Add Teacher
