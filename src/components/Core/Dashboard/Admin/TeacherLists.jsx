@@ -12,6 +12,7 @@ import SearchButton from "../../../../assets/images/Searchbutton.png";
 import Vector from "../../../../assets/images/Vector.png";
 import container from "../../../../assets/images/container.png";
 import { TailSpin } from "react-loader-spinner";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const TeacherLists = () => {
   const Navigate = useNavigate();
@@ -148,7 +149,7 @@ const TeacherLists = () => {
               </div>
               <div
                 className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
-                //onClick={() => setIsModalFilterOpen(true)}
+              //onClick={() => setIsModalFilterOpen(true)}
               >
                 <img src={Vector} alt="Vector" />
               </div>
@@ -237,8 +238,7 @@ const TeacherLists = () => {
               }
             }}
             value="Previous"
-            hidden="hidden"
-            icon={<arrowleft />}
+            icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="left"
@@ -250,38 +250,37 @@ const TeacherLists = () => {
           </div>
           <Custombutton
             onClick={() => {
-              if (
-                pageData?.page != Math.ceil(pageData?.total / pageData?.limit)
-              )
+              if (pageData?.page < Math.ceil(pageData?.total / pageData?.limit)) {
                 setLoading(true);
-              const newData = {
-                page: page + 1,
-                page_size: 10,
-              };
-              setPage(page + 1);
-              getTeachersAsync({
-                dispatch: dispatch,
-                data: newData,
-                token: token,
-                callbackFn: (res) => {
-                  if (res?.data?.status === 200) {
-                    setAdminData(res?.data?.data?.data);
-                    setPageData({
-                      limit: res?.data?.data?.limit,
-                      page: res?.data?.data?.page,
-                      total: res?.data?.data?.total,
-                    });
-                    setLoading(false);
-                  } else {
-                    setLoading(false);
-                    alert(res?.data?.message);
-                  }
-                },
-              });
+                setLoading(true);
+                const newData = {
+                  page: page + 1,
+                  page_size: 10,
+                };
+                setPage(page + 1);
+                getTeachersAsync({
+                  dispatch: dispatch,
+                  data: newData,
+                  token: token,
+                  callbackFn: (res) => {
+                    if (res?.data?.status === 200) {
+                      setAdminData(res?.data?.data?.data);
+                      setPageData({
+                        limit: res?.data?.data?.limit,
+                        page: res?.data?.data?.page,
+                        total: res?.data?.data?.total,
+                      });
+                      setLoading(false);
+                    } else {
+                      setLoading(false);
+                      alert(res?.data?.message);
+                    }
+                  },
+                });
+              }
             }}
             value="Next"
-            hidden="hidden"
-            icon={<arrowRight />}
+            icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="right"
