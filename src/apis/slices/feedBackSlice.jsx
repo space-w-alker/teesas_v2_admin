@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 import { config } from "../client/config";
 
-const {GETUSERSFEEDBACK, GETUSERFEEDBACK, REPLYFEEDBACK,BASEURL,GET_LEADERBOARD,GET_MONTHLY_POINTS,GET_LOCAL_SCHOOLS,GET_PERFORMANCE_HISTORY,GET_USER_PROFILE,GET_USER_FEEDBACKS_CSV  } = config;
+const { GETUSERSFEEDBACK, GETUSERFEEDBACK, REPLYFEEDBACK, BASEURL, GET_LEADERBOARD, GET_MONTHLY_POINTS, GET_LOCAL_SCHOOLS, GET_PERFORMANCE_HISTORY, GET_USER_PROFILE, GET_USER_FEEDBACKS_CSV } = config;
 
 export const feedBackSlice = createSlice({
   name: "feedBack",
@@ -15,8 +15,8 @@ export const feedBackSlice = createSlice({
     getUserFeedbackResponse: {
       response: {},
     },
-    replyFeedbaclResponse: { 
-      response:{},
+    replyFeedbaclResponse: {
+      response: {},
     },
     getLocalSchoolsResponse: {
       response: {},
@@ -30,10 +30,10 @@ export const feedBackSlice = createSlice({
     getUserFeedBacksCsvResponse: {
       reaponse: {},
     },
-    getMonthlyReportResponse:{
+    getMonthlyReportResponse: {
       reaponse: {},
     }
-    
+
 
   },
   reducers: {
@@ -75,10 +75,10 @@ export const feedBackSlice = createSlice({
 
 
 
-export const getUsersFeedbackAsync = async ({ dispatch, callbackFn,data, token }) => {
+export const getUsersFeedbackAsync = async ({ dispatch, callbackFn, data, token }) => {
   try {
     const URL = `${BASEURL}${GETUSERSFEEDBACK}`;
-    const result = postAPICall(URL, data,true, token).then((res) => {
+    const result = postAPICall(URL, data, true, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });
@@ -101,11 +101,11 @@ export const getUserFeedbackAsync = async ({ dispatch, callbackFn, data, token }
   }
 };
 
-export const replyFeedbackAsync = async ({ dispatch, body, callbackFn,token }) => {
+export const replyFeedbackAsync = async ({ dispatch, body, callbackFn, token }) => {
   try {
     // dispatch(UserLogin({ isLoading: true }));
     const URL = `${BASEURL}${REPLYFEEDBACK}`;
-    const result = await postAPICall(URL, body,true,token).then((res) => {
+    const result = await postAPICall(URL, body, true, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });
@@ -114,6 +114,7 @@ export const replyFeedbackAsync = async ({ dispatch, body, callbackFn,token }) =
     dispatch(replyFeedback({ isLoading: false }));
   }
 };
+
 export const GetLeaderBoardAsync = async ({
   dispatch,
   data,
@@ -122,7 +123,7 @@ export const GetLeaderBoardAsync = async ({
 }) => {
   try {
     const URL = `${BASEURL}${GET_LEADERBOARD}`;
-    await getAPICall(URL, data, token).then((res) => {
+    await postAPICall(URL, data, token).then((res) => {
       if (res?.data?.status === 200) {
         const data = res?.data;
         callbackFn && callbackFn(data);
@@ -135,6 +136,7 @@ export const GetLeaderBoardAsync = async ({
     console.log('error from get mock tests by subscription-->', error);
   }
 };
+
 
 export const GetLocalSchoolsAsync = async ({
   dispatch,
@@ -241,10 +243,10 @@ export const getUserFeedBacksCsvAsync = async ({ dispatch, callbackFn, data, tok
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
-export const { getUsersFeedback, getUserFeedback,replyFeedback, GetLeaderBoard,
+export const { getUsersFeedback, getUserFeedback, replyFeedback, GetLeaderBoard,
   GetLocalSchools,
   GetUserProfile,
-  GetPerformanceHistory,getUserFeedBacksCsv,GetMonthlyReport } =
+  GetPerformanceHistory, getUserFeedBacksCsv, GetMonthlyReport } =
   feedBackSlice.actions;
 export const getUsersFeedbackResponse = (state) => state.feedBack.getUsersFeedbackResponse;
 export const getUserFeedbackResponse = (state) => state.feedBack.getUserFeedbackResponse;
