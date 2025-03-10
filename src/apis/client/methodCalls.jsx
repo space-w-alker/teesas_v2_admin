@@ -79,12 +79,10 @@ export const deleteAPICall = async (endPoint, params, access_token) => {
 
 export const postAPICall = async (url, params, token) => {
   const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-  myHeaders.append(
-    "api-key",
-    "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR"
-  );
-  // myHeaders.append("Authorization", `Bearer ${token}`);
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('api-key', 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR');
+  myHeaders.append('Authorization', `Bearer ${token}`);
+
   const requestOptions = {
     method: "POST",
     headers: myHeaders,
