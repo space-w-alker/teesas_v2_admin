@@ -18,7 +18,8 @@ import { NavLink } from "react-router-dom";
 const LeaderBoardlist = () => {
   const Navigate = useNavigate();
   // const token = localStorage.getItem("authToken");
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQxMzI4ODU3LCJleHAiOjE3NDM5MjA4NTd9.0SFMftryZT9gXW89a_GgU3H2yWfs3fs08UyhtYrG634";
+  const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQxMzI4ODU3LCJleHAiOjE3NDM5MjA4NTd9.0SFMftryZT9gXW89a_GgU3H2yWfs3fs08UyhtYrG634";
   const dispatch = useDispatch();
   const [localSchools, setLocalSchools] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState("all");
@@ -67,6 +68,12 @@ const LeaderBoardlist = () => {
     GetLeaderBoardAsync({
       dispatch: dispatch,
       data: {
+        data: "",
+        filterList: "", // Filters applied
+        sort: "",
+        search: "",
+        class_id: 71,
+        filterBy: "monthly",
         page: 1,
         page_size: 20,
       },
@@ -351,7 +358,8 @@ const LeaderBoardlist = () => {
             width="w-[115px]"
           />
           <div className="text-[#667085] text-[12px]">
-            Page {pagingData?.currentPage || page} of {pagingData?.total_pages || 1}
+            Page {pagingData?.currentPage || page} of{" "}
+            {pagingData?.total_pages || 1}
           </div>
           <Custombutton
             onClick={() => {
