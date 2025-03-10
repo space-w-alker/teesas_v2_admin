@@ -15,6 +15,7 @@ const {
   GET_PERFORMANCE_HISTORY,
   GET_USER_PROFILE,
   GET_USER_FEEDBACKS_CSV,
+  GET_COURSES_AND_CLASSES,
 } = config;
 
 export const feedBackSlice = createSlice({
@@ -44,6 +45,9 @@ export const feedBackSlice = createSlice({
     getMonthlyReportResponse: {
       reaponse: {},
     },
+    getCoursesAndClassesResponse: {
+      response: {},
+    }
   },
   reducers: {
     getUsersFeedback: (state, action) => {
@@ -72,6 +76,9 @@ export const feedBackSlice = createSlice({
     },
     GetMonthlyReport: (state, action) => {
       state.getMonthlyReportResponse = action.payload;
+    },
+    GetCoursesAndClasses: (state, action) => {
+      state.getCoursesAndClassesResponse = action.payload;
     },
 
     reset: (state, action) => {
@@ -261,6 +268,29 @@ export const getUserFeedBacksCsvAsync = async ({
   }
 };
 
+export const GetCoursesAndClassesAsync = async ({
+  dispatch,
+  data,
+  token,
+  callbackFn,
+}) => {
+  try {
+    const URL = `${BASEURL}${GET_COURSES_AND_CLASSES}`;
+    await getAPICall(URL, data, token).then((res) => {
+      if (res?.data?.status === 200) {
+        const data = res?.data;
+        callbackFn && callbackFn(data);
+        dispatch(GetCoursesAndClasses(data));
+      } else {
+        toast.error(res?.data?.message || "Failed to fetch courses and classes");
+      }
+    });
+  } catch (error) {
+    console.log("error fetching courses and classes:", error);
+    toast.error("An error occurred while fetching courses and classes");
+  }
+};
+
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
@@ -274,6 +304,7 @@ export const {
   GetPerformanceHistory,
   getUserFeedBacksCsv,
   GetMonthlyReport,
+  GetCoursesAndClasses,
 } = feedBackSlice.actions;
 export const getUsersFeedbackResponse = (state) =>
   state.feedBack.getUsersFeedbackResponse;

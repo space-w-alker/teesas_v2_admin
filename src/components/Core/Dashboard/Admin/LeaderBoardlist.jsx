@@ -5,248 +5,205 @@ import { FaArrowRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 import {
   GetLeaderBoardAsync,
-  GetLocalSchoolsAsync,
+  GetCoursesAndClassesAsync
 } from "../../../../apis/slices/feedBackSlice";
-import { getCoursesAsync } from "../../../../apis/slices/authSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
 import { TailSpin } from "react-loader-spinner";
-import frame from "../../../../assets/images/Frame2.png";
 import search from "../../../../assets/images/search.svg";
 import { NavLink } from "react-router-dom";
 
 const LeaderBoardlist = () => {
   const Navigate = useNavigate();
-  // const token = localStorage.getItem("authToken");
-  // const token =
-  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQxMzI4ODU3LCJleHAiOjE3NDM5MjA4NTd9.0SFMftryZT9gXW89a_GgU3H2yWfs3fs08UyhtYrG634";
   const dispatch = useDispatch();
-  const [localSchools, setLocalSchools] = useState([]);
-  const [selectedSchool, setSelectedSchool] = useState("all");
   const [studentData, setStudentData] = useState([]);
-  const [currentLevel, setCurrentLevel] = useState("");
-  const [searchValue, setVearchValue] = useState("");
-
-  const [pagingData, setPagingData] = useState({});
-
+  const [searchValue, setSearchValue] = useState("");
+  const [pagingData, setPagingData] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    total: 0
+  });
   const [loading, setLoading] = useState(false);
-  const [courseData, setCourseData] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("all");
-  const [schoolId, setSchoolId] = useState("all");
-  const [page, setPage] = useState(1);
-  // const [pageData, setPageData] = useState([]);
 
-  useEffect(() => {
+  const [courses, setCourses] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [filteredClasses, setFilteredClasses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("all");
+  const [selectedClass, setSelectedClass] = useState("all");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const fetchLeaderboardData = (params = {}) => {
     setLoading(true);
 
-    /*
-    GetLocalSchoolsAsync({
-      dispatch: dispatch,
-      data: {},
-      token: token,
-      callbackFn: (res) => {
-        setLocalSchools(res?.data?.local_school);
-        setSchoolId(res?.data?.current_student?.id);
-      },
-    });
-    
-    getCoursesAsync({
-      dispatch: dispatch,
-      data: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setCourseData(res?.data?.data?.courses);
-        } else {
-          toast(res?.data?.message);
-        }
-      },
-    });
-    */
+    const apiParams = {
+      page: params.page || page,
+      page_size: pageSize,
+      ...(searchValue.trim() !== "" && !params.clearSearch ? { search: searchValue } : {}),
+      ...(selectedCourse !== "all" ? { course_id: selectedCourse } : {}),
+      ...(selectedClass !== "all" ? { class_id: selectedClass } : {}),
+      ...params
+    };
 
-    // Keep the leaderboard API call
+    if (params.clearSearch) {
+      delete apiParams.search;
+    }
+
+    if (params.page) {
+      setPage(params.page);
+    }
+
     GetLeaderBoardAsync({
       dispatch: dispatch,
-      data: {
-        data: "",
-        filterList: "", // Filters applied
-        sort: "",
-        search: "",
-        class_id: 71,
-        filterBy: "monthly",
-        page: 1,
-        page_size: 20,
-      },
-      // token: token,
+      data: apiParams,
       callbackFn: (res) => {
-        // Add console log to see actual response structure
-        console.log("API Response:", res);
-
-        // Check if data is in the expected format
         if (res?.data?.leaderboard && Array.isArray(res?.data?.leaderboard)) {
           setStudentData(res.data.leaderboard);
+
+          if (res.data.pagination) {
+            setPagingData({
+              currentPage: res.data.pagination.currentPage || 1,
+              totalPages: res.data.pagination.totalPages || 1,
+              total: res.data.pagination.total || 0
+            });
+
+            setPage(res.data.pagination.currentPage || 1);
+          }
         } else if (res?.leaderboard && Array.isArray(res?.leaderboard)) {
-          // Sometimes APIs wrap data differently
           setStudentData(res.leaderboard);
         } else {
-          console.error("Unexpected data format:", res);
           setStudentData([]);
         }
 
         setLoading(false);
       },
     });
+  };
+
+  useEffect(() => {
+    GetCoursesAndClassesAsync({
+      dispatch: dispatch,
+      data: {},
+      callbackFn: (res) => {
+        if (res?.data?.courses && Array.isArray(res?.data?.courses)) {
+          setCourses(res.data.courses);
+        }
+
+        if (res?.data?.classes && Array.isArray(res?.data?.classes)) {
+          setClasses(res.data.classes);
+          setFilteredClasses(res.data.classes);
+        }
+
+        fetchLeaderboardData();
+      },
+    });
   }, []);
+
+  useEffect(() => {
+    if (selectedCourse === "all") {
+      setFilteredClasses(classes);
+    } else {
+      const filtered = classes.filter(cls => cls.course_id === parseInt(selectedCourse));
+      setFilteredClasses(filtered);
+    }
+  }, [selectedCourse, classes]);
+
+  const handleSearch = (value) => {
+    setSearchValue(value);
+
+    if (value.trim() === "") {
+      fetchLeaderboardData({ page: 1, clearSearch: true });
+    }
+  };
+
+  const executeSearch = () => {
+    if (searchValue.trim() !== "") {
+      fetchLeaderboardData({ page: 1 });
+    }
+  };
 
   return (
     <>
       <div className="lg:flex justify-end items-center gap-5">
-        {/* <div className="flex gap-5 my-5">
+        <div className="flex gap-5 my-5">
           <NavLink
             to=""
-            className="text-[16px] font-bold leading-[21px]  text-[#B8B8B8] flex items-center"
+            className="text-[16px] font-bold leading-[21px] text-[#B8B8B8] flex items-center"
           >
             <div className="w-[17px] h-[17px] bg-[#FB9F00] rounded-full"></div>
             <div className="my-auto ml-2">
               <select
-                value={selectedSchool}
+                value={selectedCourse}
                 onChange={(e) => {
-                  setLoading(true);
-                  const str = e.target.value;
-                  const parts = str.split("/");
-
-                  const part1 = parts[0];
-                  const part2 = parts[1];
-                  setSelectedSchool(str);
-                  setSchoolId(part2);
-                  setLoading(true);
-                  GetLeaderBoardAsync({
-                    dispatch: dispatch,
-                    data: {
-                      page: 1,
-                      page_size: 20,
-                      ...(str == "all" ? {} : { school_id: part2 }),
-                      ...(selectedCourse == "all"
-                        ? {}
-                        : { class_id: selectedCourse }),
-                    },
-                    token: token,
-                    callbackFn: (res) => {
-                      setStudentData(res?.data?.leaderboard || []);
-                      setLoading(false);
-                    },
+                  setSelectedCourse(e.target.value);
+                  fetchLeaderboardData({
+                    page: 1,
+                    course_id: e.target.value === "all" ? undefined : e.target.value
                   });
                 }}
-                className="rounded-[0.125rem] border-none w-[150px] bg-[#f4f1f1]  text-sm "
+                className="rounded-[0.125rem] border-none w-[150px] bg-[#f4f1f1] text-sm"
               >
                 <option disabled value="">
-                  Please Select School
+                  Please Select Course
                 </option>
-                <option value="all">All LGAs</option>
-                {localSchools?.map((localSchool) => {
-                  return (
-                    <>
-                      <option value={localSchool.name + "/" + localSchool.id}>
-                        {localSchool?.name}
-                      </option>
-                    </>
-                  );
-                })}
+                <option value="all">All Courses</option>
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.name}
+                  </option>
+                ))}
               </select>
             </div>
           </NavLink>
 
           <NavLink
             to=""
-            className="text-[16px] font-bold leading-[21px] w-[200px]  text-[#B8B8B8] flex items-center gap-2"
+            className="text-[16px] font-bold leading-[21px] w-[200px] text-[#B8B8B8] flex items-center gap-2"
           >
             <select
-              value={selectedCourse}
+              value={selectedClass}
               onChange={(e) => {
-                setLoading(true);
-                setSelectedCourse(e.target.value);
-                GetLeaderBoardAsync({
-                  dispatch: dispatch,
-                  data: {
-                    page: 1,
-                    page_size: 20,
-                    class_id: e.target.value,
-                  },
-                  token: token,
-                  callbackFn: (res) => {
-                    setStudentData(res?.data?.leaderboard || []);
-                    setLoading(false);
-                  },
+                setSelectedClass(e.target.value);
+                fetchLeaderboardData({
+                  page: 1,
+                  class_id: e.target.value === "all" ? undefined : e.target.value
                 });
               }}
-              className="rounded-[0.125rem] border-none bg-[#f4f1f1] w-[150px] hover:border-none  text-sm "
+              className="rounded-[0.125rem] border-none bg-[#f4f1f1] w-[150px] hover:border-none text-sm"
             >
               <option disabled value="">
-                Please Select Grade
+                Please Select Class
               </option>
-              <option value="all">All Grade</option>
-              {courseData?.map((localSchool) => {
-                return (
-                  <>
-                    <option value={localSchool.id}>{localSchool?.name}</option>
-                  </>
-                );
-              })}
+              <option value="all">All Classes</option>
+              {filteredClasses.map((cls) => (
+                <option key={cls.id} value={cls.id}>
+                  {cls.name}
+                </option>
+              ))}
             </select>
           </NavLink>
-        </div> */}
+        </div>
 
-        {/* <div className="flex items-center relative lg:w-[204px]">
+        <div className="flex items-center relative lg:w-[204px]">
           <input
             type="text"
             name="search"
             className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
-            placeholder="Search Item"
+            placeholder="Search Student"
             value={searchValue}
-            onChange={(e) => {
-              setVearchValue(e.target.value);
-              if (e.target.value == "") {
-                setLoading(true);
-                GetLeaderBoardAsync({
-                  dispatch: dispatch,
-                  data: {
-                    page: 1,
-                    page_size: 20,
-                    search: searchValue,
-                  },
-                  token: token,
-                  callbackFn: (res) => {
-                    setStudentData(res?.data?.leaderboard || []);
-                    setLoading(false);
-                  },
-                });
+            onChange={(e) => handleSearch(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                executeSearch();
               }
             }}
           />
           <img
             src={search}
-            className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer"
+            className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer"
             alt="Search icon"
-            onClick={() => {
-              if (searchValue != "") {
-                setLoading(true);
-                GetLeaderBoardAsync({
-                  dispatch: dispatch,
-                  data: {
-                    page: 1,
-                    page_size: 20,
-                    search: searchValue,
-                  },
-                  token: token,
-                  callbackFn: (res) => {
-                    setStudentData(res?.data?.leaderboard || []);
-                    setLoading(false);
-                  },
-                });
-              }
-            }}
+            onClick={executeSearch}
           />
-        </div> */}
+        </div>
       </div>
 
       <div className="overflow-x-auto mt-5 rounded-t-[16px]">
@@ -273,15 +230,12 @@ const LeaderBoardlist = () => {
               <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
                 Student Name
               </th>
-              {/* <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
-                Academy Name
+              <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
+                Course Name
               </th>
               <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
-                Local Government
+                Class Name
               </th>
-              <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
-                Last seen
-              </th> */}
               <th className="px-4 py-4 whitespace-nowrap font-bold text-[14px] leading-[16px] text-white">
                 Points
               </th>
@@ -289,27 +243,21 @@ const LeaderBoardlist = () => {
             </tr>
           </thead>
           <tbody>
-            {studentData?.map((item, i) => {
-              return (
+            {studentData.length > 0 ? (
+              studentData.map((item, i) => (
                 <tr className="bg-white my-4" key={i}>
                   <td className="px-4 py-5 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
-                    {item?.rank_number ?? i + 1}
+                    {item?.rank || i + 1}
                   </td>
                   <td className="px-4 py-5 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
                     {item?.user?.name}
                   </td>
-                  {/* <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
-
-                    {item?.academy_name || "-"}
+                  <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
+                    {item?.class?.course?.name || "-"}
                   </td>
                   <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
-
-                    {item?.local_government || "-"}
+                    {item?.class?.name || "-"}
                   </td>
-                  <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
-
-                    {item?.last_seen || "-"}
-                  </td> */}
                   <td className="px-4 py-4 text-center whitespace-nowrap font-semibold text-[15px] leading-[20px] text-[#000000]">
                     {item?.user_score || 0}
                   </td>
@@ -326,68 +274,50 @@ const LeaderBoardlist = () => {
                     </div>
                   </td>
                 </tr>
-              );
-            })}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="px-4 py-5 text-center whitespace-nowrap font-semibold text-[15px]">
+                  No data found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
-        <div className="user bg-white">
+
+        <div className="user bg-white flex justify-between items-center py-3 px-4">
           <Custombutton
             onClick={() => {
               if (page > 1) {
-                setLoading(true);
-                const newData = {
-                  page: page - 1,
-                  page_size: 10,
-                };
-                setPage(page - 1);
-                GetLeaderBoardAsync({
-                  dispatch: dispatch,
-                  data: newData,
-                  token: token,
-                  callbackFn: (res) => {
-                    setStudentData(res?.data?.leaderboard || []);
-                    setLoading(false);
-                  },
-                });
+                fetchLeaderboardData({ page: page - 1 });
               }
             }}
             value="Previous"
-            // hidden="hidden"
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
+            textcolor={page > 1 ? "text-[#000000]" : "text-[#BBBBBB]"}
             imagePosition="left"
             width="w-[115px]"
+            className={page <= 1 ? "opacity-50 cursor-not-allowed" : ""}
           />
+
           <div className="text-[#667085] text-[12px]">
-            Page {pagingData?.currentPage || page} of{" "}
-            {pagingData?.total_pages || 1}
+            Page {pagingData.currentPage} of {pagingData.totalPages}
           </div>
+
           <Custombutton
             onClick={() => {
-              setLoading(true);
-              const newData = {
-                page: page + 1,
-                page_size: 10,
-              };
-              setPage(page + 1);
-              GetLeaderBoardAsync({
-                dispatch: dispatch,
-                data: newData,
-                token: token,
-                callbackFn: (res) => {
-                  setStudentData(res?.data?.leaderboard || []);
-
-                  setLoading(false);
-                },
-              });
+              if (page < pagingData.totalPages) {
+                fetchLeaderboardData({ page: page + 1 });
+              }
             }}
             value="Next"
-            // hidden="hidden"
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
+            textcolor={page < pagingData.totalPages ? "text-[#000000]" : "text-[#BBBBBB]"}
             imagePosition="right"
+            width="w-[115px]"
+            className={page >= pagingData.totalPages ? "opacity-50 cursor-not-allowed" : ""}
           />
         </div>
       </div>
