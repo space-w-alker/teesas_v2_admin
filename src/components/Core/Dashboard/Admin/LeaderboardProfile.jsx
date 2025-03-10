@@ -5,23 +5,25 @@ import Profile from "../../../../assets/images/Profile.png";
 import ActivityLog from "./ActivityLog";
 import { FaChevronLeft } from "react-icons/fa";
 
-import { Bar, Doughnut } from 'react-chartjs-2';
+import { Bar, Doughnut } from "react-chartjs-2";
 
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
- import {GetUserProfileAsync,
-  GetLocalSchoolsAsync,GetPerformanceHistoryAsync,GetMonthlyReportAsync} from "../../../../apis/slices/feedBackSlice"
-  import { useDispatch, useSelector } from "react-redux";
-import { toast } from 'react-toastify';
+import {
+  GetUserProfileAsync,
+  GetLocalSchoolsAsync,
+  GetPerformanceHistoryAsync,
+  GetMonthlyReportAsync,
+} from "../../../../apis/slices/feedBackSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
-
-
 
 const options = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      position: "top",
     },
     // title: {
     //   display: true,
@@ -35,16 +37,15 @@ const doughnutOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: {
-      position: 'right',
-      align: 'end',
+      position: "right",
+      align: "end",
       labels: {
         usePointStyle: true,
-        pointStyle: 'circle',
+        pointStyle: "circle",
       },
     },
   },
 };
-
 
 const LeaderboardProfile = ({ isOpen }) => {
   const Navigate = useNavigate();
@@ -53,13 +54,13 @@ const LeaderboardProfile = ({ isOpen }) => {
   const [modal, setModal] = useState(false);
   const [userData, setUserData] = useState({});
   const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id');
+  const id = urlParams.get("id");
   const [loading, setLoading] = useState(false);
   const [performanceHistory, setPerformanceHistory] = useState([]);
   const [monthlyData, setMonthlyData] = useState({});
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     GetUserProfileAsync({
       dispatch: dispatch,
       data: {
@@ -68,105 +69,104 @@ const LeaderboardProfile = ({ isOpen }) => {
       token: token,
       callbackFn: (res) => {
         setUserData(res?.data);
-        
       },
     });
-    GetMonthlyReportAsync({
-      dispatch: dispatch,
-      data: {
-         user_id: id,
-      },
-      token: token,
-      callbackFn: (res) => {
-        setMonthlyData(res?.data?.pointsByMonth);
-      },
-    });
+    // GetMonthlyReportAsync({
+    //   dispatch: dispatch,
+    //   data: {
+    //      user_id: id,
+    //   },
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     setMonthlyData(res?.data?.pointsByMonth);
+    //   },
+    // });
 
-    GetPerformanceHistoryAsync({
-      dispatch: dispatch,
-      data: {
-         user_id: id,
-      },
-      token: token,
-      callbackFn: (res) => {
-        setPerformanceHistory(res?.data?.result);
-        setLoading(false)
-      },
-    });
-
+    // GetPerformanceHistoryAsync({
+    //   dispatch: dispatch,
+    //   data: {
+    //      user_id: id,
+    //   },
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     setPerformanceHistory(res?.data?.result);
+    //     setLoading(false)
+    //   },
+    // });
   }, []);
 
   const labels = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
   ];
 
   const data = {
     labels,
     datasets: [
       {
-        label: 'Points',
+        label: "Points",
         data: userData?.week_points,
-        backgroundColor: 'rgba(209, 204, 242, 1)',
+        backgroundColor: "rgba(209, 204, 242, 1)",
         // innerWidth: '1rem',
         // outerHeight: '13rem'
       },
     ],
   };
 
-  const newLabels = userData?.subjects?.map(
-    (subject) => subject.subject_name
-  );
-  const newData = userData?.subjects?.map(
-    (subject) => subject.total_points
-  );
-  const data2=[
+  const newLabels = userData?.subjects?.map((subject) => subject.subject_name);
+  const newData = userData?.subjects?.map((subject) => subject.total_points);
+  const data2 = [
     {
-      time:userData?.accuracy,
-      accuracy:'Accuracy',
-      img:{Profile}
+      time: userData?.accuracy,
+      accuracy: "Accuracy",
+      img: { Profile },
     },
     {
-        time:userData?.avg_speed + " sec",
-        accuracy:' Avg Speed /Question',
-        img:{Profile}
-      },
-      // {
-      //   time:"12 sec",
-      //   accuracy:'Avg Speed /Question',
-      //   img:{Profile}
-      // },
-      // {
-      //   time:"12 sec",
-      //   accuracy:'Avg Speed /Question',
-      //   img:{Profile}
-      // },
-  ]
+      time: userData?.avg_speed + " sec",
+      accuracy: " Avg Speed /Question",
+      img: { Profile },
+    },
+    // {
+    //   time:"12 sec",
+    //   accuracy:'Avg Speed /Question',
+    //   img:{Profile}
+    // },
+    // {
+    //   time:"12 sec",
+    //   accuracy:'Avg Speed /Question',
+    //   img:{Profile}
+    // },
+  ];
   return (
     <div
-     className={`py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
-     {loading && (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}
-      >
-        <TailSpin color="orange" radius={5}  />
-      </div>
-    )}
-         <div className='flex justify-start  items-center lg:gap-3'>
+      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
+    >
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
+          <TailSpin color="orange" radius={5} />
+        </div>
+      )}
+      <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
-          <div className=' font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home /<span className='text-black font-medium'> LeaderBoard</span></div>
+          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+            Home /<span className="text-black font-medium"> LeaderBoard</span>
+          </div>
         </div>
       </div>
       <div>
@@ -181,12 +181,14 @@ const LeaderboardProfile = ({ isOpen }) => {
           </div>
           <div className="flex flex-col items-center gap-2 pt-[12px] lg:pt-0">
             <h3 className=" font-bold text-[20px] leading-[27px] text-[#171818]">
-            {userData?.user?.first_name} {userData?.user?.last_name}
+              {userData?.user?.first_name} {userData?.user?.last_name}
             </h3>
             <div className="w-[118px]">
-              <p className=" font-bold text-[12px] text-[#7A7A7A]">{userData?.user?.userCourses[0]?.classes?.name}</p>
+              <p className=" font-bold text-[12px] text-[#7A7A7A]">
+                {userData?.user?.userCourses[0]?.classes?.name}
+              </p>
               <p className=" pt-3  font-normal text-[12px] leading-[21px] text-[#7A7A7A]">
-              Last seen - {userData?.user?.updated_at}
+                Last seen - {userData?.user?.updated_at}
               </p>
             </div>
           </div>
@@ -201,7 +203,7 @@ const LeaderboardProfile = ({ isOpen }) => {
             </div>
             <div>
               <p className="font-bold text-[19px] lg:text-[26px] leading-[38px] text-[#000000]">
-              {userData?.total_points}
+                {userData?.total_points}
               </p>
             </div>
           </div>
@@ -257,80 +259,77 @@ const LeaderboardProfile = ({ isOpen }) => {
             </div>
           </div> */}
           <div className=" lg:grid grid-cols-3 gap-6 mt-3">
-          <div>
-            <div className=" my-[20px] px-[10px] font-bold text-[18px] leading-[20px] text-[#A7A7A7]">
-              Daily Points Stats
-            </div>
-            <div className=" rounded-lg px-[10px] lg:p-[16px] bg-[#FFFAF4]">
-            <Bar
-                        width={100}
-                        height={100}
-                        options={options}
-                        data={data}
-                      />
-            </div>
-            </div>
             <div>
-            <div className=" my-[20px] px-[10px] font-bold text-[18px] text-left leading-[20px] text-[#A7A7A7]">
-              Overall Stats
-            </div>
-            <div className=" lg:mt-0 mt-5 rounded-lg lg:p-[16px] bg-[#FFFAF4] ">
-            <Doughnut
-            width={300}
-            height={300}
-            options={doughnutOptions}
-            datasetIdKey='donut1'
-            data={{
-              labels: newLabels,
-              datasets: [
-                {
-                  label: 'Points',
-                  data: newData,
-                  backgroundColor: [
-                    '#61CDBB',
-                    '#E8A838',
-                    '#F1E15B',
-                    '#F47560',
-                    '#E8C1A0',
-                  ],
-                },
-              ],
-            }}
-          />
-            </div>
-            </div>
-            <div>
-            <div className=" my-[20px] px-[10px] font-bold text-[18px] text-left leading-[20px] text-[#A7A7A7] ">
-              Statistics
-            </div>
-            <div className=" rounded-lg  lg:p-[16px] bg-[#FFFAF4] ">
-     
-              <div>
-                <div className="lg:mt-0 mt-5  p-[8px] w-full flex flex-col  gap-[2rem] ">
-                    {
-                        data2.map((item)=>(
-                            <div className="lg:flex items-center w-full  bg-[#FFFFFF]  p-2 border-2 border-[#EFF1F5] rounded-[16px]">
-                            <div className="w-[24px] h-[24px] roumded-[4px]">
-                              <img src={Profile} />
-                            </div>
-                            <div>
-                              <p className=" text-[16px]  leading-[20px] font-bold text-[#252526]">{item.time}</p>
-                              <p className=" font-light text-[10px] leading-[12px] text-[#A7A7A7]">{item.accuracy}</p>
-                            </div>
-                          </div>
-                        ))
-                    }
-               
-               
-                </div>
+              <div className=" my-[20px] px-[10px] font-bold text-[18px] leading-[20px] text-[#A7A7A7]">
+                Daily Points Stats
+              </div>
+              <div className=" rounded-lg px-[10px] lg:p-[16px] bg-[#FFFAF4]">
+                <Bar width={100} height={100} options={options} data={data} />
               </div>
             </div>
+            <div>
+              <div className=" my-[20px] px-[10px] font-bold text-[18px] text-left leading-[20px] text-[#A7A7A7]">
+                Overall Stats
+              </div>
+              <div className=" lg:mt-0 mt-5 rounded-lg lg:p-[16px] bg-[#FFFAF4] ">
+                <Doughnut
+                  width={300}
+                  height={300}
+                  options={doughnutOptions}
+                  datasetIdKey="donut1"
+                  data={{
+                    labels: newLabels,
+                    datasets: [
+                      {
+                        label: "Points",
+                        data: newData,
+                        backgroundColor: [
+                          "#61CDBB",
+                          "#E8A838",
+                          "#F1E15B",
+                          "#F47560",
+                          "#E8C1A0",
+                        ],
+                      },
+                    ],
+                  }}
+                />
+              </div>
+            </div>
+            <div>
+              <div className=" my-[20px] px-[10px] font-bold text-[18px] text-left leading-[20px] text-[#A7A7A7] ">
+                Statistics
+              </div>
+              <div className=" rounded-lg  lg:p-[16px] bg-[#FFFAF4] ">
+                <div>
+                  <div className="lg:mt-0 mt-5  p-[8px] w-full flex flex-col  gap-[2rem] ">
+                    {data2.map((item) => (
+                      <div className="lg:flex items-center w-full  bg-[#FFFFFF]  p-2 border-2 border-[#EFF1F5] rounded-[16px]">
+                        <div className="w-[24px] h-[24px] roumded-[4px]">
+                          <img src={Profile} />
+                        </div>
+                        <div>
+                          <p className=" text-[16px]  leading-[20px] font-bold text-[#252526]">
+                            {item.time}
+                          </p>
+                          <p className=" font-light text-[10px] leading-[12px] text-[#A7A7A7]">
+                            {item.accuracy}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <ActivityLog userData={userData} monthlyData={monthlyData} performanceHistory={performanceHistory}/>
-
+      <ActivityLog
+        userData={userData}
+        monthlyData={monthlyData}
+        performanceHistory={performanceHistory}
+      />
     </div>
   );
 };

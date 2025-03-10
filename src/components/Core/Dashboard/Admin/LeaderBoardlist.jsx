@@ -18,8 +18,8 @@ import { NavLink } from "react-router-dom";
 const LeaderBoardlist = () => {
   const Navigate = useNavigate();
   // const token = localStorage.getItem("authToken");
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQxMzI4ODU3LCJleHAiOjE3NDM5MjA4NTd9.0SFMftryZT9gXW89a_GgU3H2yWfs3fs08UyhtYrG634";
+  // const token =
+  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQxMzI4ODU3LCJleHAiOjE3NDM5MjA4NTd9.0SFMftryZT9gXW89a_GgU3H2yWfs3fs08UyhtYrG634";
   const dispatch = useDispatch();
   const [localSchools, setLocalSchools] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState("all");
@@ -77,7 +77,7 @@ const LeaderBoardlist = () => {
         page: 1,
         page_size: 20,
       },
-      token: token,
+      // token: token,
       callbackFn: (res) => {
         // Add console log to see actual response structure
         console.log("API Response:", res);
@@ -317,7 +317,9 @@ const LeaderBoardlist = () => {
                     <div
                       className="text-[#FB9F00] font-normal text-[12px] leading-[16px] cursor-pointer"
                       onClick={() => {
-                        Navigate(`/LeaderBoardProfile?id=${item?.user?.id}`);
+                        Navigate(
+                          `/LeaderBoardProfile?user_id=${item?.user?.id}&class_id=${item?.class?.id}`
+                        );
                       }}
                     >
                       View Performance
@@ -350,7 +352,7 @@ const LeaderBoardlist = () => {
               }
             }}
             value="Previous"
-            hidden="hidden"
+            // hidden="hidden"
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -381,7 +383,7 @@ const LeaderBoardlist = () => {
               });
             }}
             value="Next"
-            hidden="hidden"
+            // hidden="hidden"
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"

@@ -4,7 +4,18 @@ import { toast } from "react-toastify";
 
 import { config } from "../client/config";
 
-const { GETUSERSFEEDBACK, GETUSERFEEDBACK, REPLYFEEDBACK, BASEURL, GET_LEADERBOARD, GET_MONTHLY_POINTS, GET_LOCAL_SCHOOLS, GET_PERFORMANCE_HISTORY, GET_USER_PROFILE, GET_USER_FEEDBACKS_CSV } = config;
+const {
+  GETUSERSFEEDBACK,
+  GETUSERFEEDBACK,
+  REPLYFEEDBACK,
+  BASEURL,
+  GET_LEADERBOARD,
+  GET_MONTHLY_POINTS,
+  GET_LOCAL_SCHOOLS,
+  GET_PERFORMANCE_HISTORY,
+  GET_USER_PROFILE,
+  GET_USER_FEEDBACKS_CSV,
+} = config;
 
 export const feedBackSlice = createSlice({
   name: "feedBack",
@@ -32,9 +43,7 @@ export const feedBackSlice = createSlice({
     },
     getMonthlyReportResponse: {
       reaponse: {},
-    }
-
-
+    },
   },
   reducers: {
     getUsersFeedback: (state, action) => {
@@ -73,9 +82,12 @@ export const feedBackSlice = createSlice({
   },
 });
 
-
-
-export const getUsersFeedbackAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getUsersFeedbackAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GETUSERSFEEDBACK}`;
     const result = postAPICall(URL, data, true, token).then((res) => {
@@ -88,7 +100,12 @@ export const getUsersFeedbackAsync = async ({ dispatch, callbackFn, data, token 
   }
 };
 
-export const getUserFeedbackAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getUserFeedbackAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GETUSERFEEDBACK}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -101,7 +118,12 @@ export const getUserFeedbackAsync = async ({ dispatch, callbackFn, data, token }
   }
 };
 
-export const replyFeedbackAsync = async ({ dispatch, body, callbackFn, token }) => {
+export const replyFeedbackAsync = async ({
+  dispatch,
+  body,
+  callbackFn,
+  token,
+}) => {
   try {
     // dispatch(UserLogin({ isLoading: true }));
     const URL = `${BASEURL}${REPLYFEEDBACK}`;
@@ -133,10 +155,9 @@ export const GetLeaderBoardAsync = async ({
       }
     });
   } catch (error) {
-    console.log('error from get mock tests by subscription-->', error);
+    console.log("error from get mock tests by subscription-->", error);
   }
 };
-
 
 export const GetLocalSchoolsAsync = async ({
   dispatch,
@@ -156,10 +177,9 @@ export const GetLocalSchoolsAsync = async ({
       }
     });
   } catch (error) {
-    console.log('error from get mock tests by subscription-->', error);
+    console.log("error from get mock tests by subscription-->", error);
   }
 };
-
 
 export const GetUserProfileAsync = async ({
   dispatch,
@@ -170,16 +190,12 @@ export const GetUserProfileAsync = async ({
   try {
     const URL = `${BASEURL}${GET_USER_PROFILE}`;
     await getAPICall(URL, data, token).then((res) => {
-      if (res?.data?.status === 200) {
-        const data = res?.data;
-        callbackFn && callbackFn(data);
-        dispatch(GetUserProfile(data));
-      } else {
-        toast.error(res?.data?.message);
-      }
+      const data = res?.data;
+      callbackFn && callbackFn(data);
+      dispatch(GetUserProfile(data));
     });
   } catch (error) {
-    console.log('error from get mock tests by subscription-->', error);
+    console.log("error user details-->", error);
   }
 };
 
@@ -201,7 +217,7 @@ export const GetPerformanceHistoryAsync = async ({
       }
     });
   } catch (error) {
-    console.log('error from get mock tests by subscription-->', error);
+    console.log("error from get mock tests by subscription-->", error);
   }
 };
 
@@ -223,11 +239,16 @@ export const GetMonthlyReportAsync = async ({
       }
     });
   } catch (error) {
-    console.log('error from get mock tests by subscription-->', error);
+    console.log("error from get mock tests by subscription-->", error);
   }
 };
 
-export const getUserFeedBacksCsvAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getUserFeedBacksCsvAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_USER_FEEDBACKS_CSV}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -243,13 +264,22 @@ export const getUserFeedBacksCsvAsync = async ({ dispatch, callbackFn, data, tok
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
-export const { getUsersFeedback, getUserFeedback, replyFeedback, GetLeaderBoard,
+export const {
+  getUsersFeedback,
+  getUserFeedback,
+  replyFeedback,
+  GetLeaderBoard,
   GetLocalSchools,
   GetUserProfile,
-  GetPerformanceHistory, getUserFeedBacksCsv, GetMonthlyReport } =
-  feedBackSlice.actions;
-export const getUsersFeedbackResponse = (state) => state.feedBack.getUsersFeedbackResponse;
-export const getUserFeedbackResponse = (state) => state.feedBack.getUserFeedbackResponse;
-export const replyFeedbaclResponse = (state) => state.feedBack.replyFeedbaclResponse;
+  GetPerformanceHistory,
+  getUserFeedBacksCsv,
+  GetMonthlyReport,
+} = feedBackSlice.actions;
+export const getUsersFeedbackResponse = (state) =>
+  state.feedBack.getUsersFeedbackResponse;
+export const getUserFeedbackResponse = (state) =>
+  state.feedBack.getUserFeedbackResponse;
+export const replyFeedbaclResponse = (state) =>
+  state.feedBack.replyFeedbaclResponse;
 
 export default feedBackSlice.reducer;

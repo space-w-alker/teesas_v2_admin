@@ -61,7 +61,7 @@ export const config = {
   GETUSERFEEDBACK: "admin/users/get-user-feedback",
   REPLYFEEDBACK: "admin/users/reply-to-feedback",
   GET_LOCAL_SCHOOLS: "leaderBoard/get-local-schools",
-  GET_USER_PROFILE: "leaderboard/get-user-profile",
+  GET_USER_PROFILE: "leaderboard/user-details",
   GET_PERFORMANCE_HISTORY: "leaderboard/get-performance-history",
   GET_MONTHLY_POINTS: "leaderboard/get-monthly-points",
   GET_ADMIN_ROLES: "admin/users/get-admin-roles",
