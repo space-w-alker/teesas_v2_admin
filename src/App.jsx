@@ -211,7 +211,7 @@ function App() {
           }
         />
         <Route
-          path="/userdetails"
+          path="/userdetails/:id"
           element={
             <ProtectedRoute>
               <UserDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
@@ -227,7 +227,7 @@ function App() {
           }
         />
         <Route
-          path="/EditUser"
+          path="/EditUser/:id"
           element={
             <ProtectedRoute>
               <EditUser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />

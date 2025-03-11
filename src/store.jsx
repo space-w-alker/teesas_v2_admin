@@ -12,6 +12,7 @@ import categorySlice from "./apis/slices/categorySlice";
 import paymentReducer from "./apis/slices/paymentSlice";
 import universityReducer from "./apis/slices/universitySlice";
 import questionsSlice from "./apis/slices/questionSlice";
+import userSlice from "./apis/slices/userSlice";
 
 
 export default configureStore({
@@ -29,5 +30,6 @@ export default configureStore({
     payments: paymentReducer,
     university: universityReducer,
     questions: questionsSlice,
+    users: userSlice,
   },
 });

@@ -19,6 +19,7 @@ import container from "../../assets/images/container.png";
 import Vector from "../../assets/images/Vector.png";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
+import { fetchUsersAsync } from "../../apis/slices/userSlice";
 
 const StudentList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +31,9 @@ const StudentList = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading,
+    setLoading] = useState(false);
+
   const [isModalFilterOpen, setIsModalFilterOpen] = useState(false);
   const [searchValue, setVearchValue] = useState("");
   const [sortKey, setSortKey] = useState("Latest");
@@ -38,6 +41,7 @@ const StudentList = () => {
 
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [activeUsers, setActiveUsers] = useState(true);
+
 
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -54,32 +58,32 @@ const StudentList = () => {
     });
   };
 
-  const handleApply = () => {
-    setLoading(true);
-    const newData = {
-      page: 1,
-      page_size: 10,
-      sort: sortKey,
-      course_id: selectedCourses,
-      status: activeUsers ? "Active" : "Inactive",
-    };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          handleModalClose();
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
-  };
+  // const handleApply = () => {
+  //   setLoading(true);
+  //   const newData = {
+  //     page: 1,
+  //     page_size: 10,
+  //     sort: sortKey,
+  //     course_id: selectedCourses,
+  //     status: activeUsers ? "Active" : "Inactive",
+  //   };
+  //   getuserAsync({
+  //     dispatch: dispatch,
+  //     body: newData,
+  //     token: token,
+  //     callbackFn: (res) => {
+  //       if (res?.data?.status === 200) {
+  //         setdata(res?.data?.data?.users);
+  //         setPageData(res?.data?.data?.paging);
+  //         setLoading(false);
+  //         handleModalClose();
+  //       } else {
+  //         alert(res?.data?.message);
+  //         setLoading(false);
+  //       }
+  //     },
+  //   });
+  // };
 
   // const handleFilterByCourse = (course) => {
   //   setSelectedCourse(course);
@@ -104,22 +108,7 @@ const StudentList = () => {
       course_id: selectedCourses,
       status: activeUsers ? "Active" : "Inactive",
     };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          handleModalClose();
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
+
   };
 
   const oldestOnClick = () => {
@@ -132,62 +121,68 @@ const StudentList = () => {
       course_id: selectedCourses,
       status: activeUsers ? "Active" : "Inactive",
     };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          setPage(1);
-          handleModalClose();
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
+    // getuserAsync({
+    //   dispatch: dispatch,
+    //   body: newData,
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     if (res?.data?.status === 200) {
+    //       setdata(res?.data?.data?.users);
+    //       setPageData(res?.data?.data?.paging);
+    //       setLoading(false);
+    //       setPage(1);
+    //       handleModalClose();
+    //     } else {
+    //       alert(res?.data?.message);
+    //       setLoading(false);
+    //     }
+    //   },
+    // });
   };
+
+
+
+  // ---------------------------------------------NEW STUFF START-------------------------------------------------------------------
+
+
+
+  const navigate = useNavigate();
+  const userList = useSelector((state) => state.users?.userList);
+  const [sort, setSort] = useState({
+    query_params: {
+      filters: {
+        // course: "",
+        // status: "active",
+        // location: "",
+        // grade: ""
+      },
+      sort: {
+        field: "userName",
+        order: "asc"
+      }
+    }
+  });
+
+
   useEffect(() => {
-    setLoading(true);
-    const newData = {
-      page: 1,
-      page_size: 10,
-    };
-    getuserAsync({
-      dispatch: dispatch,
-      body: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.users);
-          setPageData(res?.data?.data?.paging);
-          setLoading(false);
-          setPage(1);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
-    setLoading(true);
-    getCoursesAsync({
-      dispatch: dispatch,
-      body: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setCoursesData(res?.data?.data?.courses);
-          setLoading(false);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
-  }, [dispatch, token]);
+    dispatch(fetchUsersAsync({ dispatch, params: sort }));
+  }, [dispatch]);
+
+
+  // if (loading) return <p>Loading users...</p>;
+  // if (error) return <p>Error fetching users: {error}</p>;
+
+  console.log('data', userList.overview)
+
+  const handleSearchChange = (e) => {
+    setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
+  };
+
+
+
+
+  // ---------------------------------------------NEW STUFF END-------------------------------------------------------------------
+
 
   return (
     <>
@@ -214,35 +209,7 @@ const StudentList = () => {
                 className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
                 placeholder="Search Item"
                 value={searchValue}
-                onChange={(e) => {
-                  setVearchValue(e.target.value);
-                  if (e.target.value == "") {
-                    setLoading(true);
-                    const newData = {
-                      page: 1,
-                      page_size: 10,
-                      course_id: selectedCourses,
-                      status: activeUsers ? "Active" : "Inactive",
-                      sort: sortKey,
-                    };
-                    getuserAsync({
-                      dispatch: dispatch,
-                      body: newData,
-                      token: token,
-                      callbackFn: (res) => {
-                        if (res?.data?.status === 200) {
-                          setdata(res?.data?.data?.users);
-                          setPageData(res?.data?.data?.paging);
-                          setLoading(false);
-                          setPage(1);
-                        } else {
-                          alert(res?.data?.message);
-                          setLoading(false);
-                        }
-                      },
-                    });
-                  }
-                }}
+                onChange={(e) => handleSearchChange(e)}
               />
               <img
                 src={SearchButton}
@@ -259,22 +226,22 @@ const StudentList = () => {
                       status: activeUsers ? "Active" : "Inactive",
                       sort: sortKey,
                     };
-                    getuserAsync({
-                      dispatch: dispatch,
-                      body: newData,
-                      token: token,
-                      callbackFn: (res) => {
-                        if (res?.data?.status === 200) {
-                          setdata(res?.data?.data?.users);
-                          setPageData(res?.data?.data?.paging);
-                          setLoading(false);
-                          setPage(1);
-                        } else {
-                          alert(res?.data?.message);
-                          setLoading(false);
-                        }
-                      },
-                    });
+                    // getuserAsync({
+                    //   dispatch: dispatch,
+                    //   body: newData,
+                    //   token: token,
+                    //   callbackFn: (res) => {
+                    //     if (res?.data?.status === 200) {
+                    //       setdata(res?.data?.data?.users);
+                    //       setPageData(res?.data?.data?.paging);
+                    //       setLoading(false);
+                    //       setPage(1);
+                    //     } else {
+                    //       alert(res?.data?.message);
+                    //       setLoading(false);
+                    //     }
+                    //   },
+                    // });
                   }
                 }}
               />
@@ -307,12 +274,12 @@ const StudentList = () => {
         </div>
         <div className="">
           <ul>
-            {data.map((user) => (
+            {userList?.usersList?.map((user) => (
               <li
                 key={user.id}
                 className="cursor-pointer"
                 onClick={() => {
-                  Navigate(`/userDetails?id=${user?.id}`);
+                  Navigate(`/userdetails/${user?.id}`);
                 }}
               >
                 <div className="px-[18px] py-[10px]">
@@ -323,16 +290,16 @@ const StudentList = () => {
                 <div className="flex items-center justify-between p-5 max-sm:flex-col  ">
                   <div className="flex  items-center gap-3 px-[18px] ">
                     <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-                      {user?.first_name.charAt(0).toUpperCase()}
+                      {user?.userName.charAt(0).toUpperCase()}
                     </div>
                     <div>
                       <div className="flex pl-[20px] items-center  gap-2">
-                        <p>{user.first_name}</p>
-                        <p>{user.last_name}</p>
+                        <p>{user.userName}</p>
+
                       </div>
                       <div className="pl-[20px]  flex flex-col gap-[10px]">
                         <p className=" font-normal text-[#555555] text-[12px] leading-[15px]">
-                          {user?.userCourses[0]?.classes?.name}
+                          {/* {user?.course} */}
                         </p>
                         <div className="flex  items-center   h-[16px]  bg-[#F2F2F2] ">
                           {/* <img
@@ -341,8 +308,8 @@ const StudentList = () => {
                       alt="Icon 2"
                     /> */}
                           <p className=" font-bold w-full text-[12px] leading-[15px] text-[#555555]">
-                            {user?.academies?.academy_name} /{" "}
-                            {user?.academies?.sentorial}
+                            {user?.grade} /{" "}
+                            {user?.course}
                           </p>
                         </div>
                       </div>
@@ -350,7 +317,7 @@ const StudentList = () => {
                   </div>
                   <div className="max-sm:mt-5 ">
                     <Custombutton
-                      value="Status"
+                      value={user?.status}
                       img={check}
                       backgroundcolor="bg-[#ede1d5]"
                       textcolor="text-[#EA8527]"
@@ -362,6 +329,8 @@ const StudentList = () => {
             ))}
           </ul>
         </div>
+
+
         <div className="user">
           <Custombutton
             onClick={() => {
@@ -373,24 +342,10 @@ const StudentList = () => {
                   course_id: selectedCourses,
                   status: activeUsers ? "Active" : "Inactive",
                   sort: sortKey,
-                  ...(searchValue == '' ? {} : {  search: searchValue, })
+                  ...(searchValue == '' ? {} : { search: searchValue, })
                 };
                 setPage(page - 1);
-                getuserAsync({
-                  dispatch: dispatch,
-                  body: newData,
-                  token: token,
-                  callbackFn: (res) => {
-                    if (res?.data?.status === 200) {
-                      setdata(res?.data?.data?.users);
-                      setPageData(res?.data?.data?.paging);
-                      setLoading(false);
-                    } else {
-                      alert(res?.data?.message);
-                      setLoading(false);
-                    }
-                  },
-                });
+
               }
             }}
             value="Previous"
@@ -406,32 +361,18 @@ const StudentList = () => {
           </div>
           <Custombutton
             onClick={() => {
-              if(pageData?.currentPage < pageData.total_pages)
-              setLoading(true);
+              if (pageData?.currentPage < pageData.total_pages)
+                setLoading(true);
               const newData = {
                 page: page + 1,
                 page_size: 10,
                 course_id: selectedCourses,
                 status: activeUsers ? "Active" : "Inactive",
                 sort: sortKey,
-                ...(searchValue == '' ? {} : {  search: searchValue, })
+                ...(searchValue == '' ? {} : { search: searchValue, })
               };
               setPage(page + 1);
-              getuserAsync({
-                dispatch: dispatch,
-                body: newData,
-                token: token,
-                callbackFn: (res) => {
-                  if (res?.data?.status === 200) {
-                    setdata(res?.data?.data?.users);
-                    setPageData(res?.data?.data?.paging);
-                    setLoading(false);
-                  } else {
-                    alert(res?.data?.message);
-                    setLoading(false);
-                  }
-                },
-              });
+
             }}
             value="Next"
             hidden="hidden"

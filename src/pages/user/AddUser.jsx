@@ -1,34 +1,38 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import countrycode from "../../components/data/Countrycode.json";
 import Customadduser from "../../components/common/Customadduser";
-import { addUserAsync, getCoursesAsync } from "../../apis/slices/authSlice";
 import { getLocalGovAsync } from "../../apis/slices/teacherSlice";
 import { useDispatch } from "react-redux";
 import Validation from "../../components/validator/addUserValidator";
 import { FaChevronLeft } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
-import {toast} from "react-toastify"
+import { toast } from "react-toastify"
+import { addUserAsync } from "../../apis/slices/userSlice";
+import { getCountriesAsync, getCategoriesAsync } from "../../apis/slices/categoriesSlice";
 
 const AddUser = ({ isOpen, togglesidebar }) => {
   const [showCustomAddUser, setShowCustomAddUser] = useState(false);
   const [errors, setError] = useState({});
   const [formData, setformData] = useState({
-    First_Name: "",
-    Last_Name: "",
-    Student_ID: "",
-    Gender: "",
-    Date_of_Birth: "",
-    Phone_Number: "",
-    Email: "",
-    Address: "",
-    Academy_Code: "",
-    Academy_Name: "",
-    LGA: "",
-    Senatorial_District: "",
-    Course: "",
-    Grade: "",
-    Password: "",
-    Confirm_Password: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    phone: "",
+    country_id: "",
+    date_of_birth: "",
+    gender: "",
+    email: "",
+    password: "",
+    parent_name: "",
+    parent_phone: "",
+    parent_address: "",
+    parent_relationship: "",
+    grade: location.state?.categoryData?.classes || '',
+    course: location.state?.categoryData?.name || '',
+    location: location.state?.categoryData?.country || '',
+    status: "active"
+
   });
   const dispatch = useDispatch();
   const token = localStorage.getItem("authToken");
@@ -39,40 +43,55 @@ const AddUser = ({ isOpen, togglesidebar }) => {
   const [loading, setLoading] = useState(false);
   const [courseData, setCourseData] = useState([]);
   const [gradeData, setGradeData] = useState([]);
+  const countries = useSelector((state) => state.categories.countries?.data || []);
+  const category = useSelector((state) => state.categories.list?.data || []);
+  const [selectedCategory, setSelectedCategory] = useState(formData.course || "");
 
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  //   setLoading(true);
+  //   getLocalGovAsync({
+  //     dispatch: dispatch,
+  //     data: {},
+  //     token: token,
+  //     callbackFn: (res) => {
+  //       if (res?.data?.status === 200) {
+  //         setAdminData(res?.data?.data?.local_government);
+  //         setLoading(false);
+  //       } else {
+  //         alert(res?.data?.message);
+  //         setLoading(false);
+  //       }
+  //     },
+  //   });
+  //   setLoading(true);
+  //   getCoursesAsync({
+  //     dispatch: dispatch,
+  //     data: {},
+  //     token: token,
+  //     callbackFn: (res) => {
+  //       if (res?.data?.status === 200) {
+  //         setCourseData(res?.data?.data?.courses);
+  //         setLoading(false);
+  //       } else {
+  //         alert(res?.data?.message);
+  //         setLoading(false);
+  //       }
+  //     },
+  //   });
+  // }, []);
+  // console.log(course);
   useEffect(() => {
-    window.scrollTo(0, 0);
-    setLoading(true);
-    getLocalGovAsync({
-      dispatch: dispatch,
-      data: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setAdminData(res?.data?.data?.local_government);
-          setLoading(false);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
-    setLoading(true);
-    getCoursesAsync({
-      dispatch: dispatch,
-      data: {},
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setCourseData(res?.data?.data?.courses);
-          setLoading(false);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
+    dispatch(getCountriesAsync());
+    dispatch(getCategoriesAsync())
   }, []);
+
+
+  const handleCategoryChange = (event) => {
+    const selectedId = event.target.value;
+    setSelectedCategory(selectedId);
+    onchangeHandler(event);
+  };
 
   const onchangeHandler = (event) => {
     const { name, value } = event.target;
@@ -83,71 +102,51 @@ const AddUser = ({ isOpen, togglesidebar }) => {
   };
 
   const submitContactForm = () => {
-    
     const errorData = Validation(formData);
     setError(errorData);
-    if (Object.keys(errorData).length < 1) {
+
+    if (Object.keys(errorData).length === 0) {
       const finaldata = {
-        first_name: formData.First_Name,
-        last_name: formData.Last_Name,
-        gender: formData.Gender.toUpperCase(),
-        address: formData.Address,
-        birthday: formData.Date_of_Birth,
-        mobile: formData.Phone_Number,
-        email: formData.Email,
-        student_id: formData.Student_ID,
-        academy_id: formData.Academy_Code,
-        password: formData.Password,
-        class_id: formData.Grade,
-        file: imageFile,
+        first_name: formData.first_name,
+        middle_name: formData.middle_name,
+        last_name: formData.last_name,
+        phone: formData.phone,
+        country_id: formData.country_id || 81, // Default value if not provided
+        date_of_birth: formData.date_of_birth,
+        gender: formData.gender.toUpperCase(),
+        email: formData.email,
+        password: formData.password,
+        parent_name: formData.parent_name,
+        parent_phone: formData.parent_phone,
+        parent_address: formData.parent_address,
+        parent_relationship: formData.parent_relationship,
+        grade: parseInt(formData.grade, 10) || 21, // Convert to integer
+        course: parseInt(formData.course, 10) || 153, // Convert to integer
+        location: formData.location,
+        status: "active",
       };
-      const formDataObj = new FormData();
 
-      for (const key in finaldata) {
-        formDataObj.append(key, finaldata[key]);
-      }
-      addUserAsync({
-        dispatch: dispatch,
-        body: formDataObj,
-        token: token,
-
-        callbackFn: (res) => {
-          if (res?.data?.status === 200) {
-            setLoading(false);
-            setformData({ First_Name: "",
-              Last_Name: "",
-              Student_ID: "",
-              Gender: "",
-              Date_of_Birth: "",
-              Phone_Number: "",
-              Email: "",
-              Address: "",
-              Academy_Code: "",
-              Academy_Name: "",
-              LGA: "",
-              Senatorial_District: "",
-              Course: "",
-              Grade: "",
-              Password: "",
-              Confirm_Password: "",})
-              setImageFile("")
-              toast.success(res?.data?.message)
-          } else {
-            toast.error(res?.data?.message);
-            setLoading(false);
-          }
-        },
-      });
+      dispatch(addUserAsync({ dispatch, data: finaldata }));
+      // .then((response) => {
+      //   console.log(response);
+      //   if (response?.payload?.success) {
+      //     toast.success("User added successfully!");
+      //   } else {
+      //     toast.error(response?.payload?.message || "Failed to add user.");
+      //   }
+      // })
+      // .catch((error) => {
+      //   toast.error(error.message || "An error occurred.");
+      // });
     } else {
-      toast.error("Please fill all fields");
+      toast.error("Please fill all required fields.");
     }
   };
 
   return (
     <div
-      className={`  py-[7rem] lg:px-[5rem]  px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`  py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -213,30 +212,30 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                       Click to upload Image
                     </div>
                     <input
-                    onChange={(e) => {
-                      if (
-                        e.target.files[0] !== null &&
-                        e.target.files[0] !== undefined
-                      ) {
-                        const image_type_data = e.target.files[0].type;
-                        const image_array = image_type_data.split("/");
-                        const image_types = image_array[1].split(" ");
-                        const img_type = image_types[0];
-                        var types = [
-                          "jpg",
-                          "png",
-                          "svg",
-                          "jpeg",
-                          "gif",
-                          "webp",
-                        ];
-                        if (types.includes(img_type)) {
-                          setImageFile(e.target.files[0])
-                        } else {
-                          toast.error("Please Upload Only Images.");
+                      onChange={(e) => {
+                        if (
+                          e.target.files[0] !== null &&
+                          e.target.files[0] !== undefined
+                        ) {
+                          const image_type_data = e.target.files[0].type;
+                          const image_array = image_type_data.split("/");
+                          const image_types = image_array[1].split(" ");
+                          const img_type = image_types[0];
+                          var types = [
+                            "jpg",
+                            "png",
+                            "svg",
+                            "jpeg",
+                            "gif",
+                            "webp",
+                          ];
+                          if (types.includes(img_type)) {
+                            setImageFile(e.target.files[0])
+                          } else {
+                            toast.error("Please Upload Only Images.");
+                          }
                         }
-                      }
-                    }}
+                      }}
                       type="file"
                       className="text-[#FFF9ED]   opacity-0 absolute top-0 left-[45%] max-sm:left-0 "
                       placeholder=""
@@ -247,451 +246,251 @@ const AddUser = ({ isOpen, togglesidebar }) => {
 
               <div className=" ">
                 <form>
-                  {/* fullName  */}
-                  <div className=" block lg:grid grid-cols-2 gap-5 mt-5">
+
+                  {/* Full Name Fields */}
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
-                      <label
-                        for="first_name"
-                        className="font-medium text-[14px] mt-5 leading-[18px] text-[#3D3D3D]  block"
-                      >
-                        First Name
-                      </label>
+                      <label className="font-medium text-[14px]">First Name</label>
                       <input
                         type="text"
-                        name="First_Name"
-                        value={formData.First_Name}
-                        className=" mt-1 w-full  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                        placeholder="Enter Details"
+                        name="first_name"
+                        value={formData.first_name}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter First Name"
                         onChange={onchangeHandler}
                       />
-                      {errors.First_Name && (
-                        <span className=" text-red-500 block p-[8px]">
-                          Enter first_name *
-                        </span>
-                      )}
+                      {errors.first_name && <span className="text-red-500">Enter First Name *</span>}
                     </div>
                     <div>
-                      <label
-                        for="Last_Name"
-                        className="font-medium text-[14px] mt-5 leading-[18px] text-[#3D3D3D]  block"
-                      >
-                        Last Name
-                      </label>
+                      <label className="font-medium text-[14px]">Middle Name</label>
                       <input
                         type="text"
-                        name="Last_Name"
-                        value={formData.Last_Name}
-                        className=" mt-1 w-full  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                        placeholder="Enter Details"
+                        name="middle_name"
+                        value={formData.middle_name}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Middle Name"
                         onChange={onchangeHandler}
                       />
-                      {errors.Last_Name && (
-                        <span className=" text-red-500 block p-[8px]">
-                          Enter Last_name *
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className=" block lg:grid grid-cols-2 gap-5 mt-5">
-                    <div>
-                      <label
-                        for="Student_ID"
-                        className="font-medium text-[14px] mt-2 leading-[18px] text-[#3D3D3D]  block"
-                      >
-                        Student ID
-                      </label>
-                      <input
-                        type="text"
-                        name="Student_ID"
-                        value={formData.Student_ID}
-                        className="mt-1  text-[14px] w-full  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                        placeholder="Enter Details"
-                        onChange={onchangeHandler}
-                      />
-                      {errors.Student_ID && (
-                        <span className=" text-red-500 block p-[8px]">
-                          Enter Student ID *
-                        </span>
-                      )}
-                    </div>
-                    {/* Gender  */}
-                    <div>
-                      <label
-                        for="Gender"
-                        className=" font-medium text-[14px] mt-5 leading-[18px] text-[#3D3D3D]"
-                      >
-                        Gender
-                      </label>
-                      <select
-                        type="text"
-                        name="Gender"
-                        value={formData.Gender}
-                        onChange={onchangeHandler}
-                        className="w-full mt-1 text-[14px]   outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      >
-                        <option disabled value="">
-                          Please Select Gender
-                        </option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                      </select>
-                      {errors.Gender && (
-                        <span className=" text-red-500 block p-[8px]">
-                          Select Gender *
-                        </span>
-                      )}
-                    </div>
-                    {/* DOB  */}
-
-                    <div>
-                      <label
-                        for="Date_of_Birth"
-                        className=" font-medium text-[14px] mt-5 leading-[18px] text-[#3D3D3D] pb-[8px]"
-                      >
-                        Date of Birth
-                      </label>
-                      <input
-                        type="date"
-                        name="Date_of_Birth"
-                        className="mt-1  text-[14px] w-full  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                        placeholder="Enter Details"
-                        onChange={onchangeHandler}
-                        value={formData.Date_of_Birth}
-                      />
-                      {errors.Date_of_Birth && (
-                        <span className=" text-red-500 block p-[8px]">
-                          Enter Date oF Birth *
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Phone Number  */}
-                    <div>
-                      <label
-                        for="Phone_Number"
-                        className="font-medium text-[14px] mt-5 leading-[18px] text-[#3D3D3D] pb-[8px]"
-                      >
-                        Phone Number
-                      </label>
-                      <div className="flex gap-5">
-                        {/* <div className="flex w-[82px] flex-col gap-5 ">
-                        <select
-                          type="text"
-                          name="countrycode"
-                          className="w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                          id={formData.country_id}
-                    
-                        >
-                          {countrycode.map((item, index) => {
-                            return (
-                              <option key={index} value={item.code}>
-                                {item.code} - {item.country}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>*/}
-                        <div className="flex w-full  flex-col gap-2">
-                          <input
-                            type="mobile-input"
-                            name="Phone_Number"
-                            id="phonenumber"
-                            value={formData.Phone_Number}
-                            onChange={onchangeHandler}
-                            className="w-full mt-1  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                            placeholder="Enter Details"
-                          />
-                          {errors.Phone_Number && (
-                            <span className=" text-red-500">
-                              {" "}
-                              {errors.Phone_Number}{" "}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* email   */}
-                    <div className="">
-                      <label
-                        for="Email"
-                        className="font-medium text-[14px]  mt-5 leading-[18px] text-[#3D3D3D] "
-                      >
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        name="Email"
-                        value={formData.Email}
-                        onChange={onchangeHandler}
-                        placeholder="Enter Details"
-                        className="w-full mt-1  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      />
-                      {errors.Email && (
-                        <span className=" text-red-500 block p-[8px]">
-                          Enter Email *
-                        </span>
-                      )}
-                    </div>
-                    {/* Address */}
-                    <div className="">
-                      <label
-                        for="Address"
-                        className="font-medium text-[14px] mt-5 leading-[18px] text-[#3D3D3D] "
-                      >
-                        Address
-                      </label>
-                      <input
-                        type="text"
-                        name="Address"
-                        value={formData.Address}
-                        placeholder="Enter Details"
-                        onChange={onchangeHandler}
-                        className="w-full mt-1  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      />
-                      {errors.Address && (
-                        <span className="text-red-500 block p-[8px]">
-                          Enter Address *
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className=" block lg:grid grid-cols-2 gap-5 mt-5">
-                    {/* local goverment  */}
-                    <div>
-                      <label
-                        for="LGA"
-                        className="font-medium mt-5 text-[14px] leading-[18px] text-[#3D3D3D] "
-                      >
-                        LGA
-                      </label>
-                      <select
-                        type="text"
-                        name="LGA"
-                        value={formData.LGA}
-                        onChange={(e) => {
-                          onchangeHandler(e);
-                          const localGovernment = adminData.find(
-                            (lg) => lg.id == e.target.value
-                          );
-                          setAcadmyData(localGovernment.academies);
-                        }}
-                        className="w-full mt-1  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      >
-                        <option disabled value="">
-                          Please Select
-                        </option>
-                        {adminData?.map((item) => {
-                          return <option value={item?.id}>{item?.name}</option>;
-                        })}
-                      </select>
-                      {errors.LGA && (
-                        <span className="text-red-500 block p-[8px]">
-                          Select LGA *
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Academy Name */}
-                    <div className="">
-                      <label
-                        for="AcademyName"
-                        className="font-medium mt-5 text-[14px] leading-[18px] text-[#3D3D3D] "
-                      >
-                        Academy Name
-                      </label>
-                      <select
-                        type="text"
-                        name="Academy_Name"
-                        placeholder="Enter Details"
-                        value={formData.Academy_Name}
-                        onChange={(e) => {
-                          onchangeHandler(e);
-                          const academiesData = acadmyData.find(
-                            (lg) => lg.academy_name == e.target.value
-                          );
-
-                          setformData((prevFormData) => ({
-                            ...prevFormData,
-                            ["Academy_Code"]: academiesData?.id,
-                            ["Senatorial_District"]: academiesData?.sentorial,
-                          }));
-                        }}
-                        className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      >
-                        <option disabled value="">
-                          Please Select
-                        </option>
-                        {acadmyData?.map((item) => {
-                          return (
-                            <option value={item?.academy_name}>
-                              {item?.academy_name}
-                            </option>
-                          );
-                        })}
-                      </select>
-                      {errors.Academy_Name && (
-                        <span className=" text-red-500 block p-[8px]">
-                          {" "}
-                          Enter Academy Name *
-                        </span>
-                      )}
-                    </div>
-                    {/* Academy Code */}
-
-                    <div className="">
-                      <label
-                        for="Academy_Code"
-                        className="font-medium mt-5 text-[14px] leading-[18px] text-[#3D3D3D] "
-                      >
-                        Academy Code
-                      </label>
-                      <input
-                        disabled
-                        type="text"
-                        name="Academy_Code"
-                        placeholder="Enter Details"
-                        value={formData.Academy_Code}
-                        onChange={onchangeHandler}
-                        className="w-full mt-1  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      />
-                      {errors.Academy_Code && (
-                        <span className="text-red-500 block p-[8px]">
-                          Enter Academy Code *
-                        </span>
-                      )}
-                    </div>
-                    <div>
-                      <label
-                        for="Senatorial_District"
-                        className="font-medium mt-5 text-[14px] leading-[18px] text-[#3D3D3D] "
-                      >
-                        Senatorial District
-                      </label>
-                      <input
-                        type="text"
-                        disabled
-                        name="Senatorial_District"
-                        placeholder="Enter Details"
-                        value={formData.Senatorial_District}
-                        onChange={onchangeHandler}
-                        className="w-full mt-1  text-[14px]   outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      />
-                      {errors.Senatorial_District && (
-                        <span className="text-red-500 block p-[8px]">
-                          Enter Senatorial District *
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="">
-                      <label
-                        for="Course"
-                        className="font-medium  text-[14px] mt-2 block leading-[18px] text-[#3D3D3D] "
-                      >
-                        Select Course
-                      </label>
-                      <select
-                        type="text"
-                        name="Course"
-                        value={formData.Course}
-                        onChange={(e) => {
-                          onchangeHandler(e);
-                          const localGovernment = courseData.find(
-                            (lg) => lg.id == e.target.value
-                          );
-                          setGradeData(localGovernment.classes);
-                        }}
-                        className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      >
-                        <option disabled value="">
-                          Please Select
-                        </option>
-                        {courseData?.map((item) => {
-                          return <option value={item?.id}>{item?.name}</option>;
-                        })}
-                      </select>
-                      {errors.Course && (
-                        <span className="text-red-500 block p-[8px]">
-                          Enter Course *
-                        </span>
-                      )}
-                    </div>
-                    {/* Grade */}
-                    <div className="">
-                      <label
-                        for="Grade"
-                        className="font-medium  text-[14px] mt-2 block leading-[18px] text-[#3D3D3D] "
-                      >
-                        Grade
-                      </label>
-                      <select
-                        type="text"
-                        name="Grade"
-                        value={formData.Grade}
-                        onChange={onchangeHandler}
-                        className=" w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      >
-                        <option disabled value="">
-                          Please Select
-                        </option>
-                        {gradeData?.map((item) => {
-                          return <option value={item?.id}>{item?.name}</option>;
-                        })}
-                      </select>
-                      {errors.Grade && (
-                        <span className="text-red-500 block p-[8px]">
-                          Enter Grade *
-                        </span>
-                      )}
                     </div>
                   </div>
 
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
-                    <div className="">
-                      <label
-                        for="Password"
-                        className="font-medium text-[14px] leading-[18px] text-[#3D3D3D] "
-                      >
-                        Password
-                      </label>
+                    <div>
+                      <label className="font-medium text-[14px]">Last Name</label>
                       <input
-                        type="password"
-                        name="Password"
-                        placeholder="Enter Details"
-                        value={formData.Password}
+                        type="text"
+                        name="last_name"
+                        value={formData.last_name}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Last Name"
                         onChange={onchangeHandler}
-                        className="w-full mt-1  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                       />
-                      {errors.Password && (
-                        <span className="text-red-500 block p-[8px]">Enter  Password *</span>
-                      )}
+                      {errors.last_name && <span className="text-red-500">Enter Last Name *</span>}
                     </div>
-                    <div className="">
-                      <label
-                        for="ConfirmPassword"
-                        className="font-medium text-[14px] leading-[18px] text-[#3D3D3D] "
-                      >
-                        Confirm Password
-                      </label>
-                      <input
-                        type="password"
-                        name="Confirm_Password"
-                        value={formData.Confirm_Password}
-                        placeholder="Enter Details"
+
+                    {/* Gender */}
+                    <div>
+                      <label className="font-medium text-[14px]">Gender</label>
+                      <select
+                        name="gender"
+                        value={formData.gender}
                         onChange={onchangeHandler}
-                        className="w-full mt-1  text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                      />
-                      {errors.Confirm_Password && (
-                        <span className="text-red-500 block p-[8px]">
-                          Enter Confirm Password *
-                        </span>
-                      )}
+                        className="w-full mt-1 border p-2 rounded-lg"
+                      >
+                        <option disabled value="">Select Gender</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                      </select>
+                      {errors.gender && <span className="text-red-500">Select Gender *</span>}
                     </div>
                   </div>
+
+                  {/* Date of Birth & Phone Number */}
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
+                    <div>
+                      <label className="font-medium text-[14px]">Date of Birth</label>
+                      <input
+                        type="date"
+                        name="date_of_birth"
+                        value={formData.date_of_birth}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        onChange={onchangeHandler}
+                      />
+                      {errors.date_of_birth && <span className="text-red-500">Enter Date of Birth *</span>}
+                    </div>
+                    <div>
+                      <label className="font-medium text-[14px]">Phone Number</label>
+                      <input
+                        type="text"
+                        name="phone"
+                        value={formData.phone}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Phone Number"
+                        onChange={onchangeHandler}
+                      />
+                      {errors.phone && <span className="text-red-500">Enter Phone Number *</span>}
+                    </div>
+                  </div>
+
+                  {/* Email & Password */}
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
+                    <div>
+                      <label className="font-medium text-[14px]">Email</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Email"
+                        onChange={onchangeHandler}
+                      />
+                      {errors.email && <span className="text-red-500">Enter Email *</span>}
+                    </div>
+                    <div>
+                      <label className="font-medium text-[14px]">Password</label>
+                      <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Password"
+                        onChange={onchangeHandler}
+                      />
+                      {errors.password && <span className="text-red-500">Enter Password *</span>}
+                    </div>
+                  </div>
+
+                  {/* Parent Details */}
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
+                    <div>
+                      <label className="font-medium text-[14px]">Parent Name</label>
+                      <input
+                        type="text"
+                        name="parent_name"
+                        value={formData.parent_name}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Parent Name"
+                        onChange={onchangeHandler}
+                      />
+                    </div>
+                    <div>
+                      <label className="font-medium text-[14px]">Parent Phone</label>
+                      <input
+                        type="text"
+                        name="parent_phone"
+                        value={formData.parent_phone}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Parent Phone"
+                        onChange={onchangeHandler}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
+                    <div>
+                      <label className="font-medium text-[14px]">Parent Address</label>
+                      <input
+                        type="text"
+                        name="parent_address"
+                        value={formData.parent_address}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Parent Address"
+                        onChange={onchangeHandler}
+                      />
+                    </div>
+                    <div>
+                      <label className="font-medium text-[14px]">Parent Relationship</label>
+                      <input
+                        type="text"
+                        name="parent_relationship"
+                        value={formData.parent_relationship}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Relationship"
+                        onChange={onchangeHandler}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Grade, Course, Country, Location, Status */}
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
+                    <div>
+                      <label className="font-medium text-[14px]">Course</label>
+                      <select
+                        name="course"
+                        value={formData.course}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        onChange={handleCategoryChange}
+                      >
+                        <option disabled value="">Select Course</option>
+                        {category.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Grade (Class) Dropdown - Depends on Selected Course */}
+                    <div>
+                      <label className="font-medium text-[14px]">Grade</label>
+                      <select
+                        name="grade"
+                        value={formData.grade}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        onChange={onchangeHandler}
+                        disabled={!selectedCategory} // Disable if no course is selected
+                      >
+                        <option disabled value="">Select Grade</option>
+                        {category
+                          .find((cat) => cat.id == selectedCategory)
+                          ?.classes.map((cls) => (
+                            <option key={cls.id} value={cls.id}>
+                              {cls.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                  </div>
+
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
+                    <div>
+                      <label className="font-medium text-[14px]">Country</label>
+                      <select
+                        name="country_id"
+                        value={formData.country_id}
+                        onChange={onchangeHandler}
+                        className="w-full mt-1 border p-2 rounded-lg"
+                      >
+                        <option disabled value="">Select Country</option>
+                        {countries.length > 0 ? (
+                          countries.map((country) => (
+                            <option key={country.id} value={country.id}>
+                              {country.name}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>Loading countries...</option>
+                        )}
+                      </select>
+                      {errors.country_id && <span className="text-red-500">Select Country *</span>}
+                    </div>
+                    <div>
+                      <label className="font-medium text-[14px]">Location</label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Location"
+                        onChange={onchangeHandler}
+                      />
+                    </div>
+                  </div>
+
                 </form>
+
+
               </div>
             </div>
             <div className="users bg-[#ffffff] lg:mt-0 mt-5 lg:w-[45%] rounded-lg h-[50%]">

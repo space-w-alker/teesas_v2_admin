@@ -1,36 +1,41 @@
 import React, { useState, useEffect } from "react";
 import countrycode from "../../components/data/Countrycode.json";
 import Customadduser from "../../components/common/Customadduser";
-import { addUserAsync, getCoursesAsync } from "../../apis/slices/authSlice";
+import { getCoursesAsync } from "../../apis/slices/authSlice";
 import { getLocalGovAsync } from "../../apis/slices/teacherSlice";
 import { useDispatch } from "react-redux";
 import Validation from "../../components/validator/addUserValidator";
 import { FaChevronLeft } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
-import {toast} from "react-toastify"
- import {GetUserProfileAsync} from "../../apis/slices/feedBackSlice"
+import { toast } from "react-toastify"
+import { useSelector } from "react-redux";
+import { fetchUserDetailsAsync } from "../../apis/slices/userSlice";
+import { useParams } from "react-router-dom";
 
 const EditUser = ({ isOpen, togglesidebar }) => {
   const [showCustomAddUser, setShowCustomAddUser] = useState(false);
   const [errors, setError] = useState({});
+  const data = useSelector((state) => state.users?.userDetails?.usersList || {});
+
   const [formData, setformData] = useState({
-    First_Name: "",
-    Last_Name: "",
-    Student_ID: "",
-    Gender: "",
-    Date_of_Birth: "",
-    Phone_Number: "",
-    Email: "",
-    Address: "",
+    First_Name: data?.first_name,
+    Last_Name: data?.user?.last_name,
+    Student_ID: data?.user?.id,
+    Gender: data?.user?.gender,
+    Date_of_Birth: data?.user?.birthday,
+    Phone_Number: data?.user?.mobile,
+    Email: data?.user?.email,
+    Address: data?.user?.city,
     Academy_Code: "",
     Academy_Name: "",
     LGA: "",
     Senatorial_District: "",
-    Course: "",
-    Grade: "",
+    Course: data?.user?.userCourses[0]?.class_id,
+    Grade: data?.user?.userCourses[0]?.classes.id,
     Password: "",
     Confirm_Password: "",
   });
+  console.log(formData);
   const dispatch = useDispatch();
   const token = localStorage.getItem("authToken");
   const [adminData, setAdminData] = useState([]);
@@ -40,43 +45,41 @@ const EditUser = ({ isOpen, togglesidebar }) => {
   const [loading, setLoading] = useState(false);
   const [courseData, setCourseData] = useState([]);
   const [gradeData, setGradeData] = useState([]);
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id');
-  const [userData, setUserData] = useState({});
+  const { id } = useParams();
+
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const id = urlParams.get('id');
+
+  // const [userData, setUserData] = useState({});
+
+
+  // setformData({
+  //   First_Name: data?.first_name,
+  //   Last_Name: data?.user?.last_name,
+  //   Student_ID: data?.user?.id,
+  //   Gender: data?.user?.gender,
+  //   Date_of_Birth: data?.user?.birthday,
+  //   Phone_Number: data?.user?.mobile,
+  //   Email: data?.user?.email,
+  //   Address: data?.user?.city,
+  //   Academy_Code: "",
+  //   Academy_Name: "",
+  //   LGA: "",
+  //   Senatorial_District: "",
+  //   Course: data?.user?.userCourses[0]?.class_id,
+  //   Grade: data?.user?.userCourses[0]?.classes.id,
+  //   Password: "",
+  //   Confirm_Password: "",
+  // })
+  // setUserData(data);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setLoading(true)
-    GetUserProfileAsync({
+    dispatch(fetchUserDetailsAsync({
       dispatch: dispatch,
-      data: {
-        user_id: id,
-      },
-      token: token,
-      callbackFn: (res) => {
-        setUserData(res?.data);
-        const data=  res?.data;
-        setformData({
-          First_Name: data?.user?.first_name,
-          Last_Name: data?.user?.last_name,
-          Student_ID: data?.user?.id,
-          Gender: data?.user?.gender,
-          Date_of_Birth: data?.user?.birthday,
-          Phone_Number: data?.user?.mobile,
-          Email: data?.user?.email,
-          Address: data?.user?.city,
-          Academy_Code: "",
-          Academy_Name: "",
-          LGA: "",
-          Senatorial_District: "",
-          Course: data?.user?.userCourses[0]?.class_id,
-          Grade:  data?.user?.userCourses[0]?.classes.id,
-          Password: "",
-          Confirm_Password: "",
-        })
-        setLoading(false)
-      },
-    });
+      userId: id,
+    }));
     setLoading(true);
     getLocalGovAsync({
       dispatch: dispatch,
@@ -118,7 +121,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
   };
 
   const submitContactForm = () => {
-    
+
     const errorData = Validation(formData);
     setError(errorData);
     if (Object.keys(errorData).length < 1) {
@@ -149,7 +152,8 @@ const EditUser = ({ isOpen, togglesidebar }) => {
         callbackFn: (res) => {
           if (res?.data?.status === 200) {
             setLoading(false);
-            setformData({ First_Name: "",
+            setformData({
+              First_Name: "",
               Last_Name: "",
               Student_ID: "",
               Gender: "",
@@ -164,8 +168,9 @@ const EditUser = ({ isOpen, togglesidebar }) => {
               Course: "",
               Grade: "",
               Password: "",
-              Confirm_Password: "",})
-              setImageFile("")
+              Confirm_Password: "",
+            })
+            setImageFile("")
           } else {
             toast.error(res?.data?.message);
             setLoading(false);
@@ -179,9 +184,8 @@ const EditUser = ({ isOpen, togglesidebar }) => {
 
   return (
     <div
-      className={`  py-[7rem] lg:px-[5rem]  px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`  py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -234,7 +238,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
             )}
             <div className="users bg-[#FFFFFF] rounded-xl lg:w-[80%]">
               <h2 className="text-[18px]  leading-[20px] Border  pb-[10px] text-[#000000] font-medium">
-              Edit User Details
+                Edit User Details
               </h2>
               <div>
                 <p className=" font-medium text-[14px] leading-[18px] mt-5 text-[#3D3D3D] pb-[8px]">
@@ -247,30 +251,30 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                       Click to upload Image
                     </div>
                     <input
-                    onChange={(e) => {
-                      if (
-                        e.target.files[0] !== null &&
-                        e.target.files[0] !== undefined
-                      ) {
-                        const image_type_data = e.target.files[0].type;
-                        const image_array = image_type_data.split("/");
-                        const image_types = image_array[1].split(" ");
-                        const img_type = image_types[0];
-                        var types = [
-                          "jpg",
-                          "png",
-                          "svg",
-                          "jpeg",
-                          "gif",
-                          "webp",
-                        ];
-                        if (types.includes(img_type)) {
-                          setImageFile(e.target.files[0])
-                        } else {
-                          toast.error("Please Upload Only Images.");
+                      onChange={(e) => {
+                        if (
+                          e.target.files[0] !== null &&
+                          e.target.files[0] !== undefined
+                        ) {
+                          const image_type_data = e.target.files[0].type;
+                          const image_array = image_type_data.split("/");
+                          const image_types = image_array[1].split(" ");
+                          const img_type = image_types[0];
+                          var types = [
+                            "jpg",
+                            "png",
+                            "svg",
+                            "jpeg",
+                            "gif",
+                            "webp",
+                          ];
+                          if (types.includes(img_type)) {
+                            setImageFile(e.target.files[0])
+                          } else {
+                            toast.error("Please Upload Only Images.");
+                          }
                         }
-                      }
-                    }}
+                      }}
                       type="file"
                       className="text-[#FFF9ED]   opacity-0 absolute top-0 left-[45%] max-sm:left-0 "
                       placeholder=""
