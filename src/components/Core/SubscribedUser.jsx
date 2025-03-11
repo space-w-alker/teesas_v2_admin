@@ -51,7 +51,7 @@ const SubscribedUser = ({ isOpen }) => {
     setIsModalOpen(false);
   };
 
-  // Updated variable names to match the new API response structure
+
   const totalSubscriptions = subscriptionStatsState?.data?.totalSubscriptions || 0;
   const totalActiveSubscriptions = subscriptionStatsState?.data?.totalActiveSubscriptions || 0;
   const totalExpiredSubscriptions = subscriptionStatsState?.data?.totalExpiredSubscriptions || 0;
@@ -72,7 +72,7 @@ const SubscribedUser = ({ isOpen }) => {
         )}
 
         <div className='flex justify-start items-center lg:gap-3'>
-          <FaChevronLeft />
+          <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
           <div>
             <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
               Home /<span className='text-black font-medium'> Subscribed-User</span>

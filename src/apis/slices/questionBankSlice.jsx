@@ -98,8 +98,7 @@ export const updateUniversitySubjectAsync = async ({
         // Using the URL pattern provided in your question
         const URL = `${BASEURL}admin-universities/subject/${subjectId}`;
 
-        console.log("Updating subject with URL:", URL);
-        console.log("Update data:", subjectData);
+
 
         const result = await putAPICall(URL, subjectData, token).then((res) => {
             callbackFn && callbackFn(res);
@@ -125,7 +124,7 @@ export const deleteUniversitySubjectAsync = async ({
         // Using the URL pattern provided in your question
         const URL = `${BASEURL}admin-universities/subject/${subjectId}`;
 
-        console.log("Deleting subject with URL:", URL);
+
 
         const result = await deleteAPICall(URL, {}, token).then((res) => {
             callbackFn && callbackFn(res);

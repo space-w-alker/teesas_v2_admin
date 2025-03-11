@@ -22,23 +22,22 @@ const SuccessModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-8 text-center max-w-md">
-        <div className="flex justify-center mb-4">
+      <div className="bg-white rounded-xl p-8 w-[400px] text-center">
+        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
           <img
             src={type === 'success' ? success : caution}
             alt={type}
             className="w-16 h-16"
           />
         </div>
-        <h2 className={`text-xl font-bold mb-2 ${type === 'success' ? 'text-[#27AE60]' : 'text-[#27AE60]'
-          }`}>
-          {title}
-        </h2>
-        <p className="text-gray-600 mb-6">{message}</p>
+
+        <h3 className="text-2xl font-bold mb-4">{title}</h3>
+
+        <p className="text-gray-600 mb-8">{message}</p>
+
         <button
           onClick={handleClick}
-          className={`px-8 py-2 text-white rounded-lg font-medium ${type === 'success' ? 'bg-[#27AE60] hover:bg-[#219652]' : 'bg-[#27AE60] hover:bg-[#E08B3E]'
-            } transition-colors`}
+          className={`w-full py-3 ${type === 'success' ? 'bg-[#27AE60] hover:bg-[#219652]' : 'bg-[#27AE60] hover:bg-[#E08B3E]'} text-white rounded-lg font-medium transition-colors`}
         >
           {buttonText}
         </button>
