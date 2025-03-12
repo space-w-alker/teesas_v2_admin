@@ -59,8 +59,7 @@ import Payments from './components/Payments/Payments';
 import PaymentDetails from './components/Payments/PaymentDetails';
 import BankDetails from './components/Payments/BankDetails';
 import AddBank from './components/Payments/AddBank';
-import ViewBankDetails from './components/Payments/ViewBankDetails';
-import EditBankDetails from './components/Payments/EditBankDetails';
+import ViewBank from './components/Payments/ViewBank';
 import Categories from './components/Categories/Categories';
 import AddCategory from './components/Categories/AddCategory';
 import UploadBulkCategory from './components/Categories/UploadBulkCategory';
@@ -655,10 +654,10 @@ function App() {
         />
 
         <Route
-          path="/payments/view-bank"
+          path="/payments/view-bank/:id"
           element={
             <ProtectedRoute>
-              <ViewBankDetails isOpen={isSidebarOpen} />
+              <ViewBank isOpen={isSidebarOpen} />
             </ProtectedRoute>
           }
         />
@@ -673,14 +672,7 @@ function App() {
           }
         />
 
-        <Route
-          path="/payments/edit-bank"
-          element={
-            <ProtectedRoute>
-              <EditBankDetails isOpen={isSidebarOpen} />
-            </ProtectedRoute>
-          }
-        />
+
 
         <Route
           path="/categories"
