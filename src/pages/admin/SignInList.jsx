@@ -19,6 +19,8 @@ import { toast } from "react-toastify";
 import { getDashBoardAsync } from "../../apis/slices/adminSlice";
 import { Navigate, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
+import { getSubscribedUsersAsync } from "../../apis/slices/subscriptionsSlice";
+
 
 const SignInList = ({ isOpen }) => {
   const token = localStorage.getItem("authToken");
@@ -33,6 +35,29 @@ const SignInList = ({ isOpen }) => {
   const [showAllData, setShowAllData] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
+
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+
+
+
+
+
 
   const data = [
     {
@@ -116,6 +141,21 @@ const SignInList = ({ isOpen }) => {
         }
       },
     });
+
+    setLoadingSubscriptions(true);
+    getSubscribedUsersAsync({
+      dispatch,
+      body: { page: 1, limit: 5, sort: "create_time:DESC" },
+      token,
+      callbackFn: (res) => {
+        setLoadingSubscriptions(false);
+        if (res?.data?.status === 200) {
+          setSubscriptions(res?.data?.data?.subscriptions || []);
+
+        }
+      },
+    });
+
   }, []);
 
   const handleModalClose = () => {
@@ -141,12 +181,11 @@ const SignInList = ({ isOpen }) => {
     const tmp = list;
     const index = tmp.findIndex((l) => l.id == id);
   };
-  const handleUpdate = () => {};
+  const handleUpdate = () => { };
   return (
     <div
-      className={` py-[7rem] lg:px-[5rem] px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={` py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -293,7 +332,7 @@ const SignInList = ({ isOpen }) => {
                 backgroundcolor="bg-[#F2F2F2]"
                 textcolor="text-[#000000]"
                 imagePosition="right"
-                // onClick={() => setIsModalOpen(true)}
+              // onClick={() => setIsModalOpen(true)}
               />
             </div>
           </div>
@@ -357,7 +396,7 @@ const SignInList = ({ isOpen }) => {
                 backgroundcolor="bg-[#F2F2F2]"
                 textcolor="text-[#000000]"
                 imagePosition="right"
-                // onClick={() => setIsModalOpen(true)}
+              // onClick={() => setIsModalOpen(true)}
               />
             </div>
           </div>
@@ -413,7 +452,78 @@ const SignInList = ({ isOpen }) => {
             </div>
           </div>
         </div>
-        <div className="rounded-xl w-full p-[12px] bg-[#FFFFFF] dash lg:mt-0 mt-3 ">
+
+        <div className="rounded-xl w-full p-[12px] bg-[#FFFFFF] dash lg:mt-0 mt-3">
+          <h3 className="font-medium text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px]">
+            Recent Subscriptions
+          </h3>
+          <div>
+            {loadingSubscriptions ? (
+              <div className="flex justify-center py-4">
+                <p>Loading subscriptions...</p>
+              </div>
+            ) : subscriptions.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No User found
+              </div>
+            ) : (
+              <ul>
+                {subscriptions.slice(0, 4).map((subscription, index) => (
+                  <li
+                    key={subscription?.id || `subscription-${index}`}
+                    className="cursor-pointer"
+                  >
+                    <div className="px-[18px] py-[10px]">
+                      <h6 className="font-light text-[12px] leading-[13px] text-[#767676]">
+                        {formatDate(subscription?.create_time)}
+                      </h6>
+                    </div>
+                    <div className="flex items-center justify-between p-5 max-sm:flex-col">
+                      <div className="flex items-center gap-3 px-[18px]">
+                        <div className="rounded-full text-center p-2 w-[40px] h-[40px] bg-[#E9FDEE]">
+                          {subscription?.user?.name ? subscription.user.name.charAt(0).toUpperCase() : "U"}
+                        </div>
+                        <div>
+                          <div className="flex pl-[20px] items-center gap-2">
+                            <p>{subscription?.user?.name || "Unknown User"}</p>
+                          </div>
+                          <div className="pl-[20px] flex flex-col gap-[10px]">
+                            <p className="font-normal text-[#555555] text-[12px] leading-[15px]">
+                              {subscription?.user?.email || "No email"}
+                            </p>
+                            <p className="font-normal text-[#555555] text-[12px] leading-[15px]">
+                              {subscription?.subscription?.description || "No description"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="max-sm:mt-5">
+                        <Custombutton
+                          value={subscription?.is_expired ? "Expired" : "Active"}
+                          backgroundcolor={subscription?.is_expired ? "bg-[#c14345]" : "bg-[#27ae60]"}
+                          textcolor="text-[#ffffff]"
+                          imagePosition="left"
+                        />
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="flex justify-center py-[20px]">
+              <button
+                className="bg-[#ECEDEE] text-[#000000] font-normal text-[14px] leading-[18px] mt-2 py-[6px] px-[19px] rounded-md"
+                onClick={() => Navigate("/subscribed-users")}
+              >
+                View All
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div className="hidden rounded-xl w-full p-[12px] bg-[#FFFFFF] dash lg:mt-0 mt-3 ">
           <h3 className="font-meduim text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px] ">
             Assigned tasks
           </h3>
@@ -421,67 +531,67 @@ const SignInList = ({ isOpen }) => {
             <div className=" ">
               {showAllData
                 ? ListData.map((item) => (
-                    <div
-                      className="flex items-center justify-between  gap-2 Border py-[10px] "
-                      style={{
-                        textDecoration:
-                          items === item.id ? "line-through" : "none",
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          className=" rounded-full text-[#4AC384]"
-                        />
-                        <p>{item.label}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={actions}
-                          onClick={() => deleteItem(item.id)}
-                        />
-                        <img src={edit} onClick={() => setOpen(true)} />
-                      </div>
-                      {open && (
-                        <EditItemModal
-                          closeModal={() => setOpen(false)}
-                          item={items}
-                          onEdit={handleUpdate}
-                        />
-                      )}
+                  <div
+                    className="flex items-center justify-between  gap-2 Border py-[10px] "
+                    style={{
+                      textDecoration:
+                        items === item.id ? "line-through" : "none",
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        className=" rounded-full text-[#4AC384]"
+                      />
+                      <p>{item.label}</p>
                     </div>
-                  ))
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={actions}
+                        onClick={() => deleteItem(item.id)}
+                      />
+                      <img src={edit} onClick={() => setOpen(true)} />
+                    </div>
+                    {open && (
+                      <EditItemModal
+                        closeModal={() => setOpen(false)}
+                        item={items}
+                        onEdit={handleUpdate}
+                      />
+                    )}
+                  </div>
+                ))
                 : ListData.slice(0, 4).map((item, key) => (
-                    <div
-                      className="flex items-center justify-between  gap-2 Border py-[10px] "
-                      style={{
-                        textDecoration:
-                          items === item.id ? "line-through" : "none",
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          className=" rounded-full text-[#4AC384]"
-                        />
-                        <p>{item.label}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={actions}
-                          onClick={() => deleteItem(item.id)}
-                        />
-                        <img src={edit} onClick={() => setOpen(true)} />
-                      </div>
-                      {open && (
-                        <EditItemModal
-                          closeModal={() => setOpen(false)}
-                          item={items}
-                          onEdit={handleUpdate}
-                        />
-                      )}
+                  <div
+                    className="flex items-center justify-between  gap-2 Border py-[10px] "
+                    style={{
+                      textDecoration:
+                        items === item.id ? "line-through" : "none",
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        className=" rounded-full text-[#4AC384]"
+                      />
+                      <p>{item.label}</p>
                     </div>
-                  ))}
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={actions}
+                        onClick={() => deleteItem(item.id)}
+                      />
+                      <img src={edit} onClick={() => setOpen(true)} />
+                    </div>
+                    {open && (
+                      <EditItemModal
+                        closeModal={() => setOpen(false)}
+                        item={items}
+                        onEdit={handleUpdate}
+                      />
+                    )}
+                  </div>
+                ))}
             </div>
             <div className="flex justify-center py-[20px]">
               <button

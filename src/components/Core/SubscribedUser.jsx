@@ -17,6 +17,7 @@ const SubscribedUser = ({ isOpen }) => {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const Navigate = useNavigate();
 
   const subscriptionStatsState = useSelector(selectSubscriptionStats);
 
