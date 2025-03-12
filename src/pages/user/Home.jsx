@@ -12,6 +12,9 @@ import { FaChevronLeft } from "react-icons/fa";
 import notes from "../../assets/images/Group1000001600.png";
 import { TailSpin } from "react-loader-spinner";
 import { fetchUsersAsync } from "../../apis/slices/userSlice";
+import { getUserCsvAsync } from "../../apis/slices/authSlice";
+
+
 
 
 const Home = ({ isOpen, toggleSidebar }) => {
@@ -25,6 +28,8 @@ const Home = ({ isOpen, toggleSidebar }) => {
   const [loading, setLoading] = useState(false);
 
   const userList = useSelector((state) => state.users?.userList?.overview);
+  const Tdata = useSelector((state) => state.users?.userList?.usersList);
+
   const [sort, setSort] = useState({
     query_params: {
       filters: {
@@ -40,12 +45,47 @@ const Home = ({ isOpen, toggleSidebar }) => {
     }
   });
 
+  // const csvUser = [
+  //   ["firstname", "lastname", "email"],
+  //   ["Ahmed", "Tomi", "ah@smthing.co.com"],
+  //   ["Raed", "Labes", "rl@smthing.co.com"],
+  //   ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+  // ];
+  // useEffect(() => {
+  //   dispatch(fetchUsersAsync({ dispatch, params: sort }));
+  //   dispatch(getUserCsvAsync({
+  //     dispatch: dispatch,
+  //     data: {},
+  //     token: token,
+  //     callbackFn: (res) => {
+  //       if (res?.data?.status == 200) {
+  //         console.log(res?.data?.data?.users)
+  //         // setCsvUser(res?.data?.data?.users);
+  //         // setProgressCsv(res?.data?.data?.user_progress)
+  //         setLoading(false);
+  //       } else {
+  //         //toast.error(res?.message);
+  //         setLoading(false);
+  //       }
+  //     },
+  //   }));
+  // }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchUsersAsync({ dispatch, params: sort }));
-  }, [dispatch]);
 
-  console.log('homedata', userList);
+  // Extract headers dynamically
+  // const headers = Object.keys(data[0]).map(key => ({ label: key, key }));
+  // useEffect(() => {
+  //   if (!Tdata || !Tdata.length) {
+
+  const flatData = Tdata?.map(item => ({
+    ...item,
+    parent: item.parent ? JSON.stringify(item.parent) : "", // Convert nested object to string
+  }));
+  // setCsvUser(flatData)
+  // }
+  // }, []);
+  console.log('homedata', Tdata, flatData);
+
   // useEffect(() => {
   //   setLoading(true);
   //   const saveData = {
@@ -66,21 +106,7 @@ const Home = ({ isOpen, toggleSidebar }) => {
   //     },
   //   });
   //   //setLoading(true)
-  //   getUserCsvAsync({
-  //     dispatch: dispatch,
-  //     data: {},
-  //     token: token,
-  //     callbackFn: (res) => {
-  //       if (res?.data?.status == 200) {
-  //         setCsvUser(res?.data?.data?.users);
-  //         setProgressCsv(res?.data?.data?.user_progress)
-  //         setLoading(false);
-  //       } else {
-  //         //toast.error(res?.message);
-  //         setLoading(false);
-  //       }
-  //     },
-  //   });
+  //   
 
   // }, []);
 
@@ -116,8 +142,8 @@ const Home = ({ isOpen, toggleSidebar }) => {
             height="h-[153px]"
             backgroundcolor="bg-[#FFFFFF]"
             value={userList?.totalUsers}
-            value2={userList?.totalUsers + "% Since yesterday"}
-            img={arrow_upward}
+            // value2={userList?.totalUsers + "% Since yesterday"}
+            // img={arrow_upward}
             img2={notes}
           />
           <div className="  lg:h-[214px] py-[16px] px-[17px] rounded-xl bg-[#FFFFFF]">
@@ -167,8 +193,8 @@ const Home = ({ isOpen, toggleSidebar }) => {
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
                 value={userList?.activeUsers}
-                value2={userList?.totalUsers + "% Since yesterday"}
-                img={arrow_upward}
+                // value2={userList?.totalUsers + "% Since yesterday"}
+                // img={arrow_upward}
                 img2={notes}
               />
               <UserCard
@@ -177,15 +203,15 @@ const Home = ({ isOpen, toggleSidebar }) => {
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
                 value={userList?.deactivatedUsers}
-                value2={userList?.totalUsers + "% Since yesterday"}
-                img={arrow_upward}
+                // value2={userList?.totalUsers + "% Since yesterday"}
+                // img={arrow_upward}
                 img2={notes}
               />
             </div>
           </div>
         </div>
         <Button value1={"Export CSV"}
-          value2={"Add User"} csvData1={csvUser} csvData2={progressCsv} />
+          value2={"Add User"} csvData1={flatData} csvData2={progressCsv} />
         <StudentList />
       </div>
     </div>

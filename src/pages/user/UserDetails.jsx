@@ -289,9 +289,32 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                   </h2>
                 </div>
                 <div
-                  className=" text-green-500 cursor-pointer"
+                  className="text-green-500 cursor-pointer"
                   onClick={() => {
-                    Navigate(`/EditUser/${id}`);
+                    Navigate(`/EditUser/${id}`, {  // ✅ Use navigate() instead of Navigate()
+                      state: {
+                        isEdit: true,
+                        userData: {
+                          first_name: formdata?.first_name,
+                          middle_name: formdata?.middle_name,
+                          last_name: formdata?.last_name,
+                          phone: formdata?.phone,
+                          country_id: formdata?.country_id?.id || 81, // ✅ Extract the ID
+                          date_of_birth: formdata?.date_of_birth,
+                          gender: formdata?.gender?.toUpperCase(),
+                          email: formdata?.email,
+                          password: formdata?.password,
+                          parent_name: formdata?.parent_name,
+                          parent_phone: formdata?.parent_phone,
+                          parent_address: formdata?.parent_address,
+                          parent_relationship: formdata?.parent_relationship,
+                          grade: parseInt(formdata?.grade, 10) || 21, // Convert to integer
+                          course: parseInt(formdata?.course, 10) || 153, // Convert to integer
+                          location: formdata?.location,
+                          status: "active",
+                        }
+                      }
+                    });
                   }}
                 >
                   Edit
@@ -397,7 +420,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

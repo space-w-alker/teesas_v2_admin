@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getAPICall, postAPICall, postFileAPICall, deleteAPICall, patchAPICall, getViaPostAPICall } from "../client/methodCalls";
 import { toast } from "react-toastify";
 import { config } from "../client/config";
+import { useNavigate } from "react-router-dom";
 
 const { BASEURL } = config;
-
 export const userSlice = createSlice({
     name: "users",
     initialState: {
@@ -84,21 +84,22 @@ export const fetchUserDetailsAsync = ({ dispatch, userId, token }) => {
 };
 
 // Thunk to add a user
-export const addUserAsync = ({ dispatch, data, token }) => {
+export const addUserAsync = ({ dispatch, data, token, callbackFn }) => {
     return async () => {
         try {
             const URL = `${BASEURL}admin/dashboard/users/add-single`;
             const response = await postAPICall(URL, data, true, token);
-            console.log(response);
-            if (response?.data) {
+            console.log('test', response);
+            if (response?.data.data) {
+                callbackFn && callbackFn(response.data);
                 dispatch(addUserSuccess(response.data));
                 toast.success('User added successfully')
 
             } else {
-                toast.error("Failed to add user.");
+                toast.error(response?.data.error);
             }
         } catch (error) {
-            toast.error("Error adding user.");
+            toast.error(error);
         }
     };
 };
@@ -109,7 +110,7 @@ export const bulkUploadUsersAsync = ({ dispatch, formData, token }) => {
         try {
             const URL = `${BASEURL}admin/dashboard/users/create-bulk`;
             const response = await postFileAPICall(URL, formData, true, token);
-            console.log(response)
+            console.log(201)
             if (response?.data) {
                 dispatch(bulkUploadSuccess(response.data));
             } else {
@@ -139,13 +140,13 @@ export const updateUserAsync = ({ dispatch, userId, data, token }) => {
 };
 
 // Thunk to delete a user
-export const deleteUserAsync = ({ dispatch, userId, token }) => {
+export const deleteUserAsync = ({ dispatch, userId, token, callbackFn }) => {
     return async () => {
         try {
             const URL = `${BASEURL}admin/dashboard/users/${userId}/delete`;
             const response = await deleteAPICall(URL, {}, token);
-            console.log('y', response.data.message);
-            if (response?.data?.message) {
+            console.log('y', response.data);
+            if (response?.data.message) {
                 dispatch(deleteUserSuccess(response));
                 toast.success("delete user success.");
             } else {

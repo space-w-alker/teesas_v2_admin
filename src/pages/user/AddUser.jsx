@@ -10,8 +10,11 @@ import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify"
 import { addUserAsync } from "../../apis/slices/userSlice";
 import { getCountriesAsync, getCategoriesAsync } from "../../apis/slices/categoriesSlice";
+import { useNavigate } from "react-router-dom";
+
 
 const AddUser = ({ isOpen, togglesidebar }) => {
+  const Navigate = useNavigate();
   const [showCustomAddUser, setShowCustomAddUser] = useState(false);
   const [errors, setError] = useState({});
   const [formData, setformData] = useState({
@@ -47,40 +50,6 @@ const AddUser = ({ isOpen, togglesidebar }) => {
   const category = useSelector((state) => state.categories.list?.data || []);
   const [selectedCategory, setSelectedCategory] = useState(formData.course || "");
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  //   setLoading(true);
-  //   getLocalGovAsync({
-  //     dispatch: dispatch,
-  //     data: {},
-  //     token: token,
-  //     callbackFn: (res) => {
-  //       if (res?.data?.status === 200) {
-  //         setAdminData(res?.data?.data?.local_government);
-  //         setLoading(false);
-  //       } else {
-  //         alert(res?.data?.message);
-  //         setLoading(false);
-  //       }
-  //     },
-  //   });
-  //   setLoading(true);
-  //   getCoursesAsync({
-  //     dispatch: dispatch,
-  //     data: {},
-  //     token: token,
-  //     callbackFn: (res) => {
-  //       if (res?.data?.status === 200) {
-  //         setCourseData(res?.data?.data?.courses);
-  //         setLoading(false);
-  //       } else {
-  //         alert(res?.data?.message);
-  //         setLoading(false);
-  //       }
-  //     },
-  //   });
-  // }, []);
-  // console.log(course);
   useEffect(() => {
     dispatch(getCountriesAsync());
     dispatch(getCategoriesAsync())
@@ -126,11 +95,36 @@ const AddUser = ({ isOpen, togglesidebar }) => {
         status: "active",
       };
 
-      dispatch(addUserAsync({ dispatch, data: finaldata }));
+      dispatch(addUserAsync({
+        dispatch, data: finaldata, callbackFn: (res) => {
+          console.log('callback', res)
+          setformData({
+            first_name: "",
+            middle_name: "",
+            last_name: "",
+            phone: "",
+            country_id: "",
+            date_of_birth: "",
+            gender: "",
+            email: "",
+            password: "",
+            parent_name: "",
+            parent_phone: "",
+            parent_address: "",
+            parent_relationship: "",
+            grade: location.state?.categoryData?.classes || '',
+            course: location.state?.categoryData?.name || '',
+            location: location.state?.categoryData?.country || '',
+            status: "active"
+
+          });
+          Navigate(`/users`);
+        }
+      }))
       // .then((response) => {
-      //   console.log(response);
+      //   console.log('tt', response);
       //   if (response?.payload?.success) {
-      //     toast.success("User added successfully!");
+      //     toast.success('User added successfully');
       //   } else {
       //     toast.error(response?.payload?.message || "Failed to add user.");
       //   }
