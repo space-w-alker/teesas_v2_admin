@@ -1,29 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { bulkUploadAsync } from '../../apis/slices/questionSlice';
 import Headers from '../../components/common/Headers';
 import Headcomponent from '../../components/common/Headcomponent';
 import Custombutton from '../../components/common/Custombutton';
 import SuccessModal from '../../components/common/SuccessModal';
 import { FaFileUpload, FaDownload } from 'react-icons/fa';
+import { getTopicDetailAsync } from "../../apis/slices/categoriesSlice";
 
 const UploadQuestions = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const id = location.state.id || {};
+  const upload = useSelector((state) => state.questions?.bulkUploadResponse || {});
+
+  const topics = useSelector((state) => state.categories?.topicDetail?.data || []);
+  console.log('topic', id, topics);
+
+  useEffect(() => {
+    dispatch(getTopicDetailAsync(id)).then(() => setLoading(false));
+  }, [dispatch])
 
   // Get parameters from state
   const { questionType, topic, category, grade } = location.state || {};
   const isTheory = questionType === 'theory';
   const pageTitle = isTheory ? 'Theory Questions Upload' : 'MCQ Questions Upload';
 
-  // Mock data if not provided in state
-  const mockData = {
-    category: category || 'Mathematics',
-    grade: grade || 'Grade 8',
-    topic: topic || 'Algebra Introduction',
-    questionCount: 20
-  };
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
@@ -35,39 +44,73 @@ const UploadQuestions = ({ isOpen }) => {
     document.getElementById('fileUpload').click();
   };
 
-  const handleSubmit = () => {
-    if (!file) {
-      return;
+  const handleSubmit = async () => {
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('questionType', questionType);
+    if (topics.length > 0) {
+      const topic = topics[0]; // Assuming you need the first topic
+
+      formData.append('lesson_id', topic.lesson_id);
+      formData.append('subject_id', topic.lesson.chapters.subjects.id); // Extract subject name
+      formData.append('class_id', topic.lesson.chapters.subjects.classes.id); // Extract class name
+      formData.append('year', topic.lesson.chapters.subjects.classes.id); // Year is same as class
     }
-    // Here you would normally process the file upload
-    // For now, just show the success modal
-    setShowSuccessModal(true);
+
+    // Mock data if not provided in state
+    const mockData = {
+      category: topics[0]?.lesson.chapters.subjects.name || '-',
+      grade: topics[0]?.lesson.chapters.subjects.classes.name || '-',
+      topic: topics[0]?.lesson.chapters.subjects.classes.name || 'Algebra Introduction',
+      questionCount: 20
+    };
+
+
+    try {
+      console.log('Dispatching bulkUploadAsync...');
+      const response = await dispatch(bulkUploadAsync({ dispatch, formData }));
+      console.log('Upload response:', response, upload);
+
+      if (upload?.status == 200) {
+        setShowSuccessModal(true);
+      } else {
+        console.error('Upload error response:', response);
+        // alert(response?.message || 'Upload failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      // alert(error?.message || 'Upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+
   };
 
   const handleDownloadSample = () => {
-    // Logic to download a sample file
     alert(`Downloading sample ${isTheory ? 'theory' : 'MCQ'} question template...`);
   };
-
+  console.log('chapter', topics[0]?.lesson?.chapters.id)
   const closeSuccessModal = () => {
     setShowSuccessModal(false);
-    navigate('/test-topic-list');
+    navigate('/test-topic-list', {
+      state: {
+        id: topics[0]?.lesson?.chapters.id,
+      }
+    });
   };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
-      <Headers
-        value1="Home"
-        value2="Practice Subjects"
-        value3={isTheory ? 'Theory Upload' : 'MCQ Upload'}
-      />
+      <Headers value1="Home" value2="Practice Subjects" value3={isTheory ? 'Theory Upload' : 'MCQ Upload'} />
 
       <div className="p-6 border-b border-gray-100">
         <Headcomponent value={pageTitle} showSearch={false} />
       </div>
 
       <div className="flex gap-6">
-
         <div className="flex-[2] bg-white rounded-xl p-6">
           <h2 className="text-2xl font-bold mb-6">{pageTitle}</h2>
 
@@ -82,19 +125,12 @@ const UploadQuestions = ({ isOpen }) => {
                   className="hidden"
                   onChange={handleFileChange}
                 />
-                <label
-                  htmlFor="fileUpload"
-                  className="cursor-pointer flex flex-col items-center justify-center"
-                >
+                <label htmlFor="fileUpload" className="cursor-pointer flex flex-col items-center justify-center">
                   <FaFileUpload className="text-4xl text-gray-400 mb-2" />
                   <span className="text-gray-700 text-lg mb-2">
                     {file ? file.name : "Click to upload XLS or XLSX file"}
                   </span>
-                  {!file && (
-                    <span className="text-sm text-gray-500">
-                      Only Excel files are accepted
-                    </span>
-                  )}
+                  {!file && <span className="text-sm text-gray-500">Only Excel files are accepted</span>}
                 </label>
               </div>
             </div>
@@ -110,12 +146,7 @@ const UploadQuestions = ({ isOpen }) => {
               />
 
               <Custombutton
-                value={
-                  <div className="flex items-center gap-2">
-                    <FaDownload className="text-sm" />
-                    <span>Download Sample File</span>
-                  </div>
-                }
+                value={<div className="flex items-center gap-2"><FaDownload className="text-sm" /><span>Download Sample File</span></div>}
                 backgroundcolor="bg-gray-100"
                 textcolor="text-gray-700"
                 width="w-full md:w-auto"
@@ -125,37 +156,36 @@ const UploadQuestions = ({ isOpen }) => {
           </div>
         </div>
 
-
         <div className="flex-1 bg-white rounded-xl p-6 h-fit">
           <h3 className="text-xl font-bold mb-6">Summary</h3>
 
-          <div className="space-y-4 bg-green-100 rounded-lg ">
+          <div className="space-y-4 bg-green-100 rounded-lg">
             <div>
               <p className="text-gray-600 mb-1">Category</p>
-              <p className="font-medium">{mockData.category || 'Not specified'}</p>
+              <p className="font-medium">{topics[0]?.lesson.chapters.subjects.name || 'Not specified'}</p>
             </div>
 
             <div>
               <p className="text-gray-600 mb-1">Grade</p>
-              <p className="font-medium">{mockData.grade || 'Not specified'}</p>
+              <p className="font-medium">{topics[0]?.lesson.chapters.subjects.classes.name || 'Not specified'}</p>
             </div>
 
             <div>
               <p className="text-gray-600 mb-1">Topic Title</p>
-              <p className="font-medium">{mockData.topic || 'Not specified'}</p>
+              <p className="font-medium">{topics[0]?.lesson.chapters.subjects.classes.name || 'Not specified'}</p>
             </div>
 
-            <div>
+            {/* <div>
               <p className="text-gray-600 mb-1">Total Questions</p>
-              <p className="font-medium">{mockData.questionCount || 'Not specified'}</p>
-            </div>
+              <p className="font-medium">{12 || 'Not specified'}</p>
+            </div> */}
 
             <button
               onClick={handleSubmit}
-              disabled={!file}
-              className="w-full py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] mt-6"
+              disabled={!file || uploading}
+              className={`w-full py-3 ${uploading ? 'bg-gray-400' : 'bg-[#27AE60]'} text-white rounded-lg font-medium hover:bg-[#219652] mt-6`}
             >
-              Submit Practice and Mock Test
+              {uploading ? 'Uploading...' : 'Submit Practice and Mock Test'}
             </button>
           </div>
         </div>

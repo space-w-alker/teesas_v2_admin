@@ -22,7 +22,8 @@ const ClassItem = ({ name, id }) => {
       </div>
       <Custombutton
         value="Edit"
-        onClick={() => navigate('/test-topic', { state: { id } })}
+        onClick={() => navigate('/test-topic-list', { state: { id } })}
+
         textcolor="text-[#27AE60]"
         backgroundcolor="bg-transparent"
         extraStyle="hover:bg-green-50"

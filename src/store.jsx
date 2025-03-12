@@ -13,6 +13,7 @@ import paymentReducer from "./apis/slices/paymentSlice";
 import universityReducer from "./apis/slices/universitySlice";
 import subscriptionsReducer from "./apis/slices/subscriptionsSlice";
 import resellersReducer from "./apis/slices/resellersSlice";
+import questionsSlice from "./apis/slices/questionSlice";
 
 export default configureStore({
   reducer: {
@@ -30,5 +31,6 @@ export default configureStore({
     university: universityReducer,
     subscriptions: subscriptionsReducer,
     resellers: resellersReducer,
+    questions: questionsSlice,
   },
 });

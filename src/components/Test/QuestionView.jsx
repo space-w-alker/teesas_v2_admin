@@ -5,18 +5,27 @@ import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
 import { FaArrowLeft } from 'react-icons/fa';
+import { deleteQuestionAsync, updateQuestionAsync } from "../../apis/slices/questionSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
-const QuestionCard = ({ hasOptions = true }) => {
+const QuestionCard = ({ hasOptions = true, question,
+    options,
+    correctAnswer,
+    description,
+    class_id,
+    id }) => {
     const [isEditing, setIsEditing] = useState(false);
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [formData, setFormData] = useState({
-        question: "What are the factors to consider when counting?",
-        options: ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"],
-        correctAnswer: "Option 3",
-        description: "When counting, it is important to consider the starting point, the interval between numbers, and the end point. Other factors include the base system being used (decimal, binary, etc.), whether to include zero, and any specific patterns or sequences that need to be followed."
+        question,
+        options,
+        correctAnswer,
+        description
     });
+    const dispatch = useDispatch();
 
     const handleInputChange = (e) => {
         setFormData({
@@ -35,9 +44,20 @@ const QuestionCard = ({ hasOptions = true }) => {
     };
 
     const handleSave = () => {
-        // Here you would typically make an API call to save the changes
-        // For now, we'll just exit edit mode
-        setIsEditing(false);
+        dispatch(
+            updateQuestionAsync({
+                dispatch,
+                class_id: id,
+                data: formData,
+                token: "",
+                callbackFn: () => {
+                    toast.success("Question updated successfully!");
+                    setIsEditing(false);
+                },
+
+            })
+        );
+
     };
 
     const handleCancel = () => {
@@ -51,13 +71,18 @@ const QuestionCard = ({ hasOptions = true }) => {
     };
 
     const confirmDelete = () => {
-        // Here you would make an API call to delete the question
-        setShowDeleteModal(false);
-
-        // Show success message after deletion
-        setShowSuccessModal(true);
+        dispatch(
+            deleteQuestionAsync({
+                dispatch,
+                class_id: id,
+                token: "",
+                callbackFn: () => {
+                    setShowDeleteModal(false);
+                    setShowSuccessModal(true);
+                },
+            })
+        );
     };
-
     const handleSuccessClose = () => {
         setShowSuccessModal(false);
         // Navigate back to the test details page
@@ -87,19 +112,19 @@ const QuestionCard = ({ hasOptions = true }) => {
                 <>
                     <div className="mb-4">
                         {formData.options.map((option, index) => (
-                            <div key={index} className="flex items-center space-x-2 mb-2">
+                            <div key={option.id} className="flex items-center space-x-2 mb-2">
                                 {isEditing ? (
                                     <>
                                         <input
                                             type="radio"
                                             name="correctOption"
-                                            checked={formData.correctAnswer === option}
-                                            onChange={() => setFormData({ ...formData, correctAnswer: option })}
+                                            checked={formData.correctAnswer === option.title}
+                                            onChange={() => setFormData({ ...formData, correctAnswer: option.title })}
                                             className="form-radio"
                                         />
                                         <input
                                             type="text"
-                                            value={option}
+                                            value={option.title}
                                             onChange={(e) => handleOptionChange(index, e.target.value)}
                                             className="flex-1 p-2 border border-gray-300 rounded-lg"
                                         />
@@ -110,14 +135,15 @@ const QuestionCard = ({ hasOptions = true }) => {
                                             type="radio"
                                             name="question"
                                             disabled
-                                            checked={formData.correctAnswer === option}
+                                            checked={formData.correctAnswer === option.title}
                                             className="form-radio"
                                         />
-                                        <span className="text-gray-700">{option}</span>
+                                        <span className="text-gray-700">{option.title}</span>
                                     </>
                                 )}
                             </div>
                         ))}
+
                     </div>
                     <div className="font-bold text-lg mb-4">
                         Correct Answer:
@@ -208,14 +234,16 @@ const QuestionCard = ({ hasOptions = true }) => {
 const QuestionView = ({ isOpen }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { questionText, topicName, questionType = "theory" } = location.state || {
-        questionText: "What are the factors to consider when counting?",
-        topicName: "Topic Name",
-        questionType: "theory" // Default to theory if not specified
+    const { questionText, topicName, questionType = "theory", question } = location.state || {
+        questionText: "-",
+        topicName: "-",
+        questionType: "-",
+
     };
 
+    console.log(question);
     // Determine if this is a multiple choice question or a theory question
-    const hasOptions = questionType === "mcq";
+    const hasOptions = question.type === "options";
 
     return (
         <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -235,7 +263,13 @@ const QuestionView = ({ isOpen }) => {
                     />
                 </div>
 
-                <QuestionCard hasOptions={hasOptions} />
+                <QuestionCard hasOptions={hasOptions}
+                    question={question.question}
+                    options={question.optionsList}
+                    correctAnswer={question.expected_answer}
+                    description={question.description}
+                    class_id={question.class_id}
+                    id={question.id} />
             </div>
         </div>
     );

@@ -9,15 +9,14 @@ import sharp from '../../assets/images/sharp.png';
 import { FaPlus } from 'react-icons/fa';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Modal from "../common/Modal";
-// Import commented out
-// import { useDispatch, useSelector } from "react-redux";
-// import { getTopicDetailAsync } from "../../apis/slices/categoriesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getTopicsListAsync } from "../../apis/slices/categoriesSlice";
 const TopicItem = ({ name, navigate, status, topic }) => {
   const [showModal, setShowModal] = useState(false);
 
   return (
     <div
-      onClick={() => navigate('/test-detail', { state: { name } })}
+      onClick={() => navigate('/test-detail', { state: { id: topic.id, name } })}
       className="bg-[#F9F9F9] rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer"
     >
       <div className="flex items-center gap-4">
@@ -31,7 +30,7 @@ const TopicItem = ({ name, navigate, status, topic }) => {
           value="View"
           onClick={(e) => {
             e.stopPropagation();
-            navigate('/test-detail', { state: { name, topic } });
+            navigate('/test-detail', { state: { id: topic.id, name, topic } });
           }}
           backgroundcolor="bg-[#27AE60]"
           textcolor="text-white"
@@ -61,7 +60,7 @@ const TopicItem = ({ name, navigate, status, topic }) => {
           }
           onClick={(e) => {
             e.stopPropagation();
-            navigate('/test-detail', { state: { name, topic } });
+            navigate('/test-detail', { state: { id: topic.id, name, topic } });
           }}
           textcolor="text-blue-600"
           backgroundcolor="bg-green-50"
@@ -79,7 +78,7 @@ const TopicItem = ({ name, navigate, status, topic }) => {
             state: {
               questionType: 'mcq',
               topic: name,
-              topicId: topic.id,
+              id: topic.id,
               category: 'Mathematics', // This would come from your API
               grade: 'Grade 8'  // This would come from your API
             }
@@ -88,7 +87,7 @@ const TopicItem = ({ name, navigate, status, topic }) => {
             state: {
               questionType: 'theory',
               topic: name,
-              topicId: topic.id,
+              id: topic.id,
               category: 'Mathematics', // This would come from your API
               grade: 'Grade 8'  // This would come from your API
             }
@@ -101,60 +100,27 @@ const TopicItem = ({ name, navigate, status, topic }) => {
 const TestTopicList = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  // API related code commented out
-  // const dispatch = useDispatch();
-  // const id = location.state.id || {};
-  // const topics = useSelector((state) => state.categories?.topicDetail?.data || []);
-  // console.log('topic', id, topics);
+  const dispatch = useDispatch();
+  const [sort, setSort] = useState({
+    data: "",
+    filterList: "",  // Filters applied
+    sort: "",
+    search: "",
+    page: 1,
+    limit: 100
+  });
+  const handleSearchChange = (e) => {
+    setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
+  };
 
-  // Commented out API call
-  // useEffect(() => {
-  //   dispatch(getTopicDetailAsync(id)).then(() => setLoading(false));
-  // }, [dispatch])
+  const id = location.state.id || {};
+  const topics = useSelector((state) => state.categories?.topics?.data?.lessons || []);
+  console.log('topic', id, useSelector((state) => state.categories?.topics));
 
-  // Dummy data implementation
-  const dummyTopics = [
-    {
-      id: 1,
-      title: 'Introduction to Algebra',
-      active: true,
-      description: 'Learn the basics of algebraic expressions and equations',
-      tests: 5,
-      questions: 32
-    },
-    {
-      id: 2,
-      title: 'Linear Equations',
-      active: false,
-      description: 'Master solving equations with one variable',
-      tests: 3,
-      questions: 24
-    },
-    {
-      id: 3,
-      title: 'Quadratic Equations',
-      active: true,
-      description: 'Learn to solve second-degree polynomial equations',
-      tests: 4,
-      questions: 28
-    },
-    {
-      id: 4,
-      title: 'Polynomials and Factoring',
-      active: true,
-      description: 'Methods for manipulating and factoring polynomials',
-      tests: 6,
-      questions: 42
-    },
-    {
-      id: 5,
-      title: 'Matrices and Determinants',
-      active: false,
-      description: 'Study of rectangular arrays of numbers',
-      tests: 2,
-      questions: 18
-    }
-  ];
+  useEffect(() => {
+    dispatch(getTopicsListAsync(id)).then(() => setLoading(false));
+  }, [dispatch])
+
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -167,7 +133,7 @@ const TestTopicList = ({ isOpen }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-        <StatCard title="Total Topics" count={dummyTopics.length.toString()} />
+        <StatCard title="Total Topics" count={topics.length.toString()} />
         <StatCard title="Total Lessons" count="25" />
         <StatCard title="Total Questions" count="100" />
         <StatCard title="Total Resources" count="50" />
@@ -179,15 +145,15 @@ const TestTopicList = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="Test List" showSearch={true} />
+          <Headcomponent value="Topic List" showSearch={true} onSearchChange={handleSearchChange} />
         </div>
 
         <div className="p-6">
           <div className="space-y-4">
-            {dummyTopics.map((topic, index) => (
+            {topics.map((topic, index) => (
               <TopicItem
                 key={index}
-                name={topic.title}
+                name={topic.name}
                 status={topic.active}
                 topic={topic}
                 navigate={navigate}
