@@ -11,7 +11,7 @@ import Pnotes from "../../assets/images/Pnotes.png";
 import Snotes from "../../assets/images/Snotes.png";
 import catIcon from "../../assets/images/catIcon.png";
 import EditItemModal from "../../components/Core/Dashboard/Admin/EditItemModal";
-import BarChart from "../../components/Core/Dashboard/Admin/Barcharts";
+// import BarChart from "../../components/Core/Dashboard/Admin/Barcharts";
 import { FaChevronLeft } from "react-icons/fa";
 import Modal from "../../components/common/Modal";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +19,25 @@ import { toast } from "react-toastify";
 import { getDashBoardAsync } from "../../apis/slices/adminSlice";
 import { Navigate, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const SignInList = ({ isOpen }) => {
   const token = localStorage.getItem("authToken");
@@ -142,6 +161,40 @@ const SignInList = ({ isOpen }) => {
     const index = tmp.findIndex((l) => l.id == id);
   };
   const handleUpdate = () => {};
+  const Finaldata = {
+    labels: dashData?.overview?.formattedData?.map((item) => item.date),
+    datasets: [
+      {
+        label: "Users per Month",
+        data: dashData?.overview?.formattedData?.map((item) => item.tRCount),
+        backgroundColor: "rgba(54, 162, 235, 0.6)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "User Count",
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Months",
+        },
+      },
+    },
+  };
+
+  console.log(dashData);
   return (
     <div
       className={` py-[7rem] lg:px-[5rem] px-[10px] ${
@@ -351,18 +404,18 @@ const SignInList = ({ isOpen }) => {
               </h3>
             </div>
             <div>
-              <Custombutton
+              {/* <Custombutton
                 value="Filter"
                 img={frame2}
                 backgroundcolor="bg-[#F2F2F2]"
                 textcolor="text-[#000000]"
                 imagePosition="right"
-                // onClick={() => setIsModalOpen(true)}
-              />
+                onClick={() => setIsModalOpen(true)}
+              /> */}
             </div>
           </div>
-          <div>
-            <BarChart />
+          <div className="h-[400px]">
+            <Bar data={Finaldata} options={options} />
           </div>
         </div>
         <div>
@@ -371,37 +424,41 @@ const SignInList = ({ isOpen }) => {
               SignIn
             </h3>
             <div className=" block signIn lg:grid grid-cols-2  gap-5 mt-5">
-              {adminData?.users?.slice(0, 4).map((item, i) => (
-                <div
-                  key={i}
-                  className="rounded-lg border border-[#ECEDEE] box-shadow  "
-                >
-                  <div className="flex items-center gap-[18px] gaps lg:gap-[17px] xxl:gap-[21px] ">
-                    <div className="font-bold p-3 text-[14px] pr-[16px] status xl:pr-[33px] xxl:pr-[77px] leading-[22px] border-dashed text-[#2C2E32] border-r border-[#A2A4A9]  xxl:pl-[21px] ">
-                      <img src={catIcon} />
-                      {item?.first_name} {item?.last_name}
-                    </div>
-                    <div className="">
-                      <div className="flex items-center gap-4 ">
-                        <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
-                          Status
+              {dashData?.usersList?.map((item, i) => {
+                if (i < 6) {
+                  return (
+                    <div
+                      key={i}
+                      className="rounded-lg border border-[#ECEDEE] box-shadow  "
+                    >
+                      <div className="flex items-center gap-[18px] gaps lg:gap-[17px] xxl:gap-[21px] ">
+                        <div className="font-bold p-3 text-[14px] pr-[16px] status xl:pr-[33px] xxl:pr-[77px] leading-[22px] border-dashed text-[#2C2E32] border-r border-[#A2A4A9]  xxl:pl-[21px] ">
+                          <img src={catIcon} />
+                          {item?.userName}
                         </div>
-                        <div className="bg-[#DBF3E6] uppercase rounded-[22px] px-[8px] py-[5px]  lg:w-[48px] lg:h-[16px]  font-normal text-[9px] leading-[8px] text-[#6ECF9D]  ">
-                          {item?.status == 1 ? "Active" : "Inactive"}
+                        <div className="">
+                          <div className="flex items-center gap-4 ">
+                            <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
+                              Status
+                            </div>
+                            <div className="bg-[#DBF3E6] uppercase rounded-[22px] px-[8px] py-[5px]  lg:w-[48px] lg:h-[16px]  font-normal text-[9px] leading-[8px] text-[#6ECF9D]  ">
+                              {item?.status}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4 bg-[#FFF3D0] mt-[10px] px-[5px] py-[5px] rounded-2xl">
+                            <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
+                              Class
+                            </div>
+                            <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
+                              {item?.grade}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 bg-[#FFF3D0] mt-[10px] px-[5px] py-[5px] rounded-2xl">
-                        <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
-                          Class
-                        </div>
-                        <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
-                          {item?.userCourses[0]?.classes?.name}
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  );
+                }
+              })}
             </div>
             <div className="flex justify-center py-[20px]">
               <button
