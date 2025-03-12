@@ -8,6 +8,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
+import { bulkUploadUsersAsync } from "../../apis/slices/userSlice";
+import { FaCloudUploadAlt } from "react-icons/fa";
 
 const Customadduser = ({ isOpen }) => {
 
@@ -16,48 +18,59 @@ const Customadduser = ({ isOpen }) => {
   const [show, setshow] = useState(false);
   const [File, setFile] = useState({});
   const [loading, setLoading] = useState(false)
-  const handleclick = () => {
-    if (File != "") {
-      setLoading(true);
-      var form_data = new FormData();
+  const [dragActive, setDragActive] = useState(false);
 
-      form_data.append("file", File);
+  const [formData, setFormData] = useState({
+    files: null
+  });
 
-      uploadUsersAsync({
-        dispatch: dispatch,
-        body: form_data,
-        token: token,
-        callbackFn: (res) => {
+  const handleFileUpload = (e) => {
+    setFormData({ ...formData, files: e.target.files });
+  };
 
-          if (res?.data?.status === 200) {
-            setFile("")
-            setshow(!show)
-            setLoading(false);
-          } else {
-            toast.error(res?.data?.message);
-            setLoading(false);
-          }
-        },
-      });
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
     }
+  };
 
-  }
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files) {
+      setFormData({ ...formData, files: e.dataTransfer.files });
+    }
+  };
+
+  const handleclick = () => {
+    if (formData.files && formData.files.length > 0) { // Ensure files exist
+      setLoading(true);
+      const form_data = new FormData();
+
+      // Append each file separately
+      Array.from(formData.files).forEach((file, index) => {
+        form_data.append(`file`, file);
+      });
+
+      dispatch(bulkUploadUsersAsync({
+        dispatch,
+        formData: form_data,
+        token,
+      }));
+    } else {
+      toast.error("Please select a file before uploading.");
+    }
+  };
+
 
   return (
     <div className={`py-[8rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
-      {loading && (
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 9999,
-          }}
-        >
-          <TailSpin color="orange" radius={5} />
-        </div>
-      )}
+
       <div className='flex justify-start  items-center lg:gap-3'>
         <FaChevronLeft />
         <div>
@@ -77,34 +90,48 @@ const Customadduser = ({ isOpen }) => {
                 <p className=" font-medium text-[14px] leading-[18px] text-[#3D3D3D] py-[10px] px-[17px]">
                   Upload User List CSV
                 </p>
-                <div className="bg-[#EFF6F1] py-[8px] px-[24px] rounded-lg  border-dashed border border-[#B9B9B9] flex flex-col justify-center mx-5">
-                  <div className="flex flex-col justify-center items-center gap-1 text-center text-[#98A2B3]">
-                    <img src={uploadstates} alt="Rectangle" className=" w-[69px] h-[73px] mb-[20px]" />
-                    <p className=" font-medium text-[16px] leading-[24px] ">Upload Successful</p>
-                    <p className=" font-normal text-[12px] leading-[20px]">File Title.pdf | 313 KB . 31 Aug, 2022  </p>
-                    <div className=" flex items-center  gap-4 justify-center">
-                      <p className=" font-medium text-[12px] leading-[12px] text-[#27AE60]">View List</p>
-                      <p className=" font-medium text-[12px] leading-[12px] text-[#27AE60]">Reupload List</p>
+                <div
+                  className={` bg-green-50 border-2 border-dashed rounded-lg p-8 text-center ${dragActive ? 'bg-[#E9FDEE] border-[#27AE60]' : 'border-gray-300'
+                    }`}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                >
+                  <FaCloudUploadAlt className="mx-auto text-5xl text-gray-400 mb-4" />
+                  <p className="text-gray-600 mb-4">
+                    Drag and drop your PDFs here, or
+                    <label className="text-[#27AE60] cursor-pointer ml-1">
+                      browse
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept=".pdf"
+                        multiple
+                        onChange={handleFileUpload}
+                        required
+                      />
+                    </label>
+                  </p>
+                  <p className="text-sm text-gray-500 mb-2">Supported format: PDF</p>
+                  <p className="text-sm text-gray-500">Maximum file size: 10MB per file</p>
+                  {formData.files && (
+                    <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
+                      <p className="font-medium">Selected files:</p>
+                      <ul className="list-disc list-inside text-gray-600">
+                        {Array.from(formData.files).map((file, index) => (
+                          <li key={index}>{file.name}</li>
+                        ))}
+                      </ul>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
             <div className="users bg-[#ffffff]  rounded-2xl " onClick={handleclick}>
-              <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
-                Summary
-              </h2>
-              <div className="bg-[#EFF6F1] lg:w-[400px]  px-[10px] py-[20px]  h-[80px]  rounded-2xl">
-                <div className="addborder flex justify-between items-center py-[10px] ">
-                  <div className=" font-light text-[14px] leading-[16px] text-[#5A5B5C] w-full ">
-                    Total Number
-                  </div>
 
-                  <div>24</div>
-                </div>
-              </div>
               <div className="bg-[FFF9FD] mt-5 flex justify-center">
-                <button className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]">
+                <button className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#F2994A]">
                   Add User
                 </button>
               </div>
@@ -119,64 +146,63 @@ const Customadduser = ({ isOpen }) => {
                   <p className=" font-medium text-[14px] leading-[18px] text-[#3D3D3D] py-[10px] px-[17px]">
                     Upload User List CSV
                   </p>
-                  <div className="bg-[#EFF6F1] py-[8px] px-[24px] rounded-lg  border-dashed border border-[#B9B9B9] flex flex-col justify-center mx-5">
-                    <div className="flex flex-col relative justify-center items-center gap-1 text-center text-[#98A2B3]">
-                      <img src={Rectangle} alt="Rectangle" className=" w-[69px] h-[73px] mb-[20px] " />
-                      <input type="file" onChange={(e) => {
+                  <div
+                    className={` bg-green-50 border-2 border-dashed rounded-lg p-8 text-center ${dragActive ? 'bg-[#E9FDEE] border-[#27AE60]' : 'border-gray-300'
+                      }`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                  >
+                    <FaCloudUploadAlt className="mx-auto text-5xl text-gray-400 mb-4" />
+                    <p className="text-gray-600 mb-4">
+                      Drag and drop your Xlsx file here, or
+                      <label className="text-[#27AE60] cursor-pointer ml-1">
+                        browse
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept=".csv,.xlsx"
+                          // multiple
+                          onChange={handleFileUpload}
+                          required
+                        />
+                      </label>
+                    </p>
+                    <p className="text-sm text-gray-500 mb-2">Supported format: PDF</p>
+                    <p className="text-sm text-gray-500">Maximum file size: 10MB per file</p>
 
-                        if (
-                          e.target.files[0] !== null &&
-                          e.target.files[0] !== undefined
-                        ) {
-                          const image_type_data = e.target.files[0].type;
-                          const image_array = image_type_data.split("/");
-                          const image_types = image_array[1].split(" ");
-                          const img_type = image_types[0];
-                          var types = [
-                            "vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                          ];
-
-                          if (types.includes(img_type)) {
-
-                            setFile(e.target.files[0])
-                          } else {
-                            toast.error("Please Upload File.");
-                          }
-                        }
-                      }} className="text-[#EFF6F1]   opacity-0 absolute top-10 left-[40%]  max-sm:left-0 " placeholder="" />
-                      <p className=" font-medium text-[16px] leading-[24px] ">Drag and drop an image, or browse</p>
-                      <p className=" font-normal text-[12px] leading-[20px]">Upload .pdf, .doc or .doc, Max 6 MB</p>
-                      <p className=" font-medium text-[12px] leading-[12px] text-[#27AE60]">Download Sample File</p>
-
-                    </div>
                   </div>
                 </div>
               </div>
-              <div className="users bg-[#ffffff] mt-5 lg:mt-0 rounded-2xl " onClick={handleclick}>
-                <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
-                  Summary
-                </h2>
-                <div className="bg-[#EFF6F1] w-auto lg:w-[400px]  px-[10px] py-[20px]  h-[80px]  rounded-2xl">
-                  <div className="addborder flex justify-between items-center py-[10px] ">
-                    <div className=" font-light text-[14px] leading-[16px] text-[#5A5B5C] w-full ">
-                      Total Number
-                    </div>
 
-                    <div>24</div>
+              <div className="bg-[#FFF9FD] mt-5 flex flex-col items-center p-4 rounded-xl shadow-md" onClick={handleclick}>
+                {/* Add User Button */}
+                <button className="h-10 w-[200px] rounded-lg text-center text-white bg-[#F2994A] hover:bg-[#e0873d] transition duration-300">
+                  Add User
+                </button>
+
+                {/* Selected Files List */}
+                {formData.files && formData.files.length > 0 && (
+                  <div className="mt-4 w-full max-w-[400px] bg-white shadow-lg rounded-xl p-3">
+                    <p className="font-medium text-gray-700 mb-2">Selected files:</p>
+                    <ul className="space-y-1 text-gray-600 text-sm">
+                      {Array.from(formData.files).map((file, index) => (
+                        <li key={index} className="border-b py-1 last:border-none">
+                          📄 {file.name}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-                <div className="bg-[FFF9FD] mt-5 flex justify-center">
-                  <button className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]">
-                    Add User
-                  </button>
-                </div>
+                )}
               </div>
+
             </>
           )
         }
 
       </div>
-    </div>
+    </div >
   );
 };
 

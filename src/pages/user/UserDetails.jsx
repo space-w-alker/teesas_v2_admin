@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  GetUserProfileAsync,
-  GetLocalSchoolsAsync
-} from "../../apis/slices/feedBackSlice"
-import { deleteUserAsync } from "../../apis/slices/authSlice"
+import { useLocation, useParams } from "react-router-dom";
+
+// import { deleteUserAsync } from "../../apis/slices/authSlice"
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import { TailSpin } from "react-loader-spinner";
@@ -20,6 +18,7 @@ import Vector from "../../assets/images/Vector.png";
 import SearchButton from "../../assets/images/Searchbutton.png";
 import Modal from '../../components/common/Modal';
 import { Bar, Doughnut } from 'react-chartjs-2';
+import { fetchUserDetailsAsync, deleteUserAsync } from "../../apis/slices/userSlice";
 
 const doughnutOptions = {
   responsive: true,
@@ -42,13 +41,17 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
-  const [userData, setUserData] = useState({});
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id');
+  // const [userData, setUserData] = useState({});
+  // const urlParams = new URLSearchParams(window.location.search);
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
+  const userData = useSelector((state) => state.users?.userDetails?.usersList || {});
+  const userDelete = useSelector((state) => state.users?.userDetails?.usersList || {});
 
+
+  console.log(userData)
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -59,67 +62,46 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
 
   const onRefresh = () => {
     setLoading(true)
-    GetUserProfileAsync({
+    dispatch(fetchUserDetailsAsync({
       dispatch: dispatch,
-      data: {
-        user_id: id,
-      },
-      token: token,
-      callbackFn: (res) => {
-        setUserData(res?.data);
-        setLoading(false)
-      },
-    });
+      userId: id,
+    }));
     closeModal();
+    toast.success('User details refreshed')
   }
   const onDeleteUser = () => {
     setLoading(true)
-    deleteUserAsync({
+    dispatch(deleteUserAsync({
       dispatch: dispatch,
-      data: {
-        id: id,
-      },
-      token: token,
-      callbackFn: (res) => {
-        toast.success(res?.message);
-        Navigate('/users')
-        // setTimeout(() => {
-        //   Navigate('/users')
-        //   setLoading(true)
-        // }, 3000);
-
-
-      },
-    });
+      userId: id,
+    }));
     closeModal();
+    Navigate(`/users`);
+
   }
 
   useEffect(() => {
+    console.log('git her 2');
+
     setLoading(true)
-    GetUserProfileAsync({
+    dispatch(fetchUserDetailsAsync({
       dispatch: dispatch,
-      data: {
-        user_id: id,
-      },
-      token: token,
-      callbackFn: (res) => {
-        setUserData(res?.data);
-        setLoading(false)
-      },
-    });
+      userId: id,
+    }));
   }, []);
+  console.log({ userData });
   // const info = [300, 50, 100, 40, 120];
   // const labels = ["Red", "Blue", "Yellow", "Green", "Purple"];
   const data = [
     {
       id: 1,
       label: "ID",
-      value: userData?.user?.id,
+      value: userData.id,
     },
     {
       id: 2,
       label: "Date of registration",
-      value: userData?.user?.created_at,
+      value: userData?.date,
     },
     {
       id: 3,
@@ -131,32 +113,54 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
     {
       id: 1,
       label: "Full Name",
-      value: userData?.user?.first_name + " " + userData?.user?.last_name,
+      value: userData?.userName || 'NA',
     },
     {
       id: 2,
       label: "Gender",
-      value: userData?.user?.gender,
+      value: userData?.gender || 'NA',
     },
     {
       id: 3,
       label: "Date of Birth",
-      value: userData?.user?.birthday,
+      value: userData?.dob || 'NA',
     },
     {
       id: 4,
       label: "Email",
-      value: userData?.user?.email,
+      value: userData?.email || 'NA',
     },
     {
       id: 5,
       label: "Phone Number",
-      value: userData?.user?.mobile,
+      value: userData?.phone || 'NA',
     },
     {
       id: 6,
       label: "Address",
-      value: userData?.user?.city,
+      value: userData?.location?.name || 'NA',
+    },
+  ];
+  const parentformdata = [
+    {
+      id: 1,
+      label: "Full Name",
+      value: userData?.parent?.name || 'NA',
+    },
+    {
+      id: 2,
+      label: "Email",
+      value: userData?.parent?.email || 'NA',
+    },
+    {
+      id: 3,
+      label: "Relationship",
+      value: userData?.parent?.relationship || 'NA',
+    },
+    {
+      id: 4,
+      label: "Address",
+      value: userData?.location?.name || 'NA',
     },
   ];
   const labels = userData?.count?.rows?.map(
@@ -170,7 +174,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
       className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
         }`}
     >
-      {loading && (
+      {/* {loading && (
         <div
           style={{
             position: "absolute",
@@ -182,7 +186,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
         >
           <TailSpin color="orange" radius={5} />
         </div>
-      )}
+      )} */}
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
@@ -195,13 +199,13 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
       <div className="bg-[#EFF6F1] mt-5 border rounded-lg mb-[20px] border-[#CAC4D0] h-[80px] p-[8px]">
         <div className="flex items-center gap-4">
           <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-            {userData?.user?.first_name.charAt(0).toUpperCase()}
+            {userData?.userName?.charAt(0).toUpperCase()}
           </div>
           <div className="">
             <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
-              {userData?.user?.first_name} {userData?.user?.last_name}
+              {userData?.userName}
             </p>
-            {userData?.user?.status == 1 ?
+            {userData?.status == 'active' ?
               <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
                 Active
               </button> : <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#aa0808]">
@@ -285,9 +289,32 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                   </h2>
                 </div>
                 <div
-                  className=" text-green-500 cursor-pointer"
+                  className="text-green-500 cursor-pointer"
                   onClick={() => {
-                    Navigate(`/EditUser?id=${id}`);
+                    Navigate(`/EditUser/${id}`, {  // ✅ Use navigate() instead of Navigate()
+                      state: {
+                        isEdit: true,
+                        userData: {
+                          first_name: formdata?.first_name,
+                          middle_name: formdata?.middle_name,
+                          last_name: formdata?.last_name,
+                          phone: formdata?.phone,
+                          country_id: formdata?.country_id?.id || 81, // ✅ Extract the ID
+                          date_of_birth: formdata?.date_of_birth,
+                          gender: formdata?.gender?.toUpperCase(),
+                          email: formdata?.email,
+                          password: formdata?.password,
+                          parent_name: formdata?.parent_name,
+                          parent_phone: formdata?.parent_phone,
+                          parent_address: formdata?.parent_address,
+                          parent_relationship: formdata?.parent_relationship,
+                          grade: parseInt(formdata?.grade, 10) || 21, // Convert to integer
+                          course: parseInt(formdata?.course, 10) || 153, // Convert to integer
+                          location: formdata?.location,
+                          status: "active",
+                        }
+                      }
+                    });
                   }}
                 >
                   Edit
@@ -356,10 +383,11 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
             <Headcomponent
               value={"Parent Details"}
               border="border-bottom:1px solid #EBE6DC"
+              showSearch={false}
             />
           </div>
           <div className="mt-5 bg-[#F2F2F2] rounded-2xl px-[13px] lg:px-[20px] py-[20px]">
-            <div className="flex justify-between items-center ">
+            {/* <div className="flex justify-between items-center ">
               <div className="">
                 <h2 className="font-medium text-[16px] leading-[35px] text-[#49454F]">
                   Bio And Contact
@@ -373,9 +401,9 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
               >
                 Edit
               </div>
-            </div>
+            </div> */}
             <div className="bg-[#FFFFFF] py-[10px] px-[10px] mt-[10px] rounded-[8px] flex flex-col gap-4">
-              {formdata.map((item, index) => (
+              {parentformdata.map((item, index) => (
                 <div
                   key={item.id}
                   className="flex lg:gap-[5rem] gap-[10px]  md:gap-[10rem] items-center  "
@@ -392,7 +420,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

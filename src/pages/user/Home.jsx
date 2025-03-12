@@ -6,11 +6,15 @@ import Button from "../../components/common/Button";
 import StudentList from "../../components/Core/StudentList";
 import Headcomponent from "../../components/common/Headcomponent";
 import arrow_upward from '../../assets/images/arrow_upward.png'
-import { useDispatch } from "react-redux";
-import { getUsersCsv, userAsync,getUserCsvAsync } from "../../apis/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+// import { getUsersCsv, userAsync, getUserCsvAsync } from "../../apis/slices/authSlice";
 import { FaChevronLeft } from "react-icons/fa";
 import notes from "../../assets/images/Group1000001600.png";
 import { TailSpin } from "react-loader-spinner";
+import { fetchUsersAsync } from "../../apis/slices/userSlice";
+import { getUserCsvAsync } from "../../apis/slices/authSlice";
+
+
 
 
 const Home = ({ isOpen, toggleSidebar }) => {
@@ -19,19 +23,77 @@ const Home = ({ isOpen, toggleSidebar }) => {
   const token = localStorage.getItem("authToken");
   const [dashFilter, setDashFilter] = useState('Daily');
   const [csvUser, setCsvUser] = useState([]);
-  const [progressCsv,setProgressCsv] = useState([]);
+  const [progressCsv, setProgressCsv] = useState([]);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  
-  
+
+  const userList = useSelector((state) => state.users?.userList?.overview);
+  const Tdata = useSelector((state) => state.users?.userList?.usersList);
+
+  const [sort, setSort] = useState({
+    query_params: {
+      filters: {
+        // course: "",
+        // status: "active",
+        // location: "",
+        // grade: ""
+      },
+      sort: {
+        field: "userName",
+        order: "asc"
+      }
+    }
+  });
+
+  // const csvUser = [
+  //   ["firstname", "lastname", "email"],
+  //   ["Ahmed", "Tomi", "ah@smthing.co.com"],
+  //   ["Raed", "Labes", "rl@smthing.co.com"],
+  //   ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+  // ];
+  // useEffect(() => {
+  //   dispatch(fetchUsersAsync({ dispatch, params: sort }));
+  //   dispatch(getUserCsvAsync({
+  //     dispatch: dispatch,
+  //     data: {},
+  //     token: token,
+  //     callbackFn: (res) => {
+  //       if (res?.data?.status == 200) {
+  //         console.log(res?.data?.data?.users)
+  //         // setCsvUser(res?.data?.data?.users);
+  //         // setProgressCsv(res?.data?.data?.user_progress)
+  //         setLoading(false);
+  //       } else {
+  //         //toast.error(res?.message);
+  //         setLoading(false);
+  //       }
+  //     },
+  //   }));
+  // }, [dispatch]);
+
+
+  // Extract headers dynamically
+  // const headers = Object.keys(data[0]).map(key => ({ label: key, key }));
+  // useEffect(() => {
+  //   if (!Tdata || !Tdata.length) {
+
+  const flatData = Tdata?.map(item => ({
+    ...item,
+    parent: item.parent ? JSON.stringify(item.parent) : "", // Convert nested object to string
+  }));
+  // setCsvUser(flatData)
+  // }
+  // }, []);
+  console.log('homedata', Tdata, flatData);
+
   // useEffect(() => {
   //   setLoading(true);
-  // const saveData = {
-  //   filter: dashFilter,
-  // }
+  //   const saveData = {
+  //     filter: dashFilter,
+  //   }
   //   userAsync({
   //     dispatch: dispatch,
-  //    data: saveData,
+  //     data: saveData,
   //     token: token,
   //     callbackFn: (res) => {
   //       if (res?.status == 200) {
@@ -44,21 +106,7 @@ const Home = ({ isOpen, toggleSidebar }) => {
   //     },
   //   });
   //   //setLoading(true)
-  //   getUserCsvAsync({
-  //     dispatch: dispatch,
-  //    data: {},
-  //     token: token,
-  //     callbackFn: (res) => {
-  //       if (res?.data?.status == 200) {
-  //         setCsvUser(res?.data?.data?.users);
-  //         setProgressCsv(res?.data?.data?.user_progress)
-  //          setLoading(false);
-  //       } else {
-  //         //toast.error(res?.message);
-  //         setLoading(false);
-  //       }
-  //     },
-  //   });
+  //   
 
   // }, []);
 
@@ -79,12 +127,12 @@ const Home = ({ isOpen, toggleSidebar }) => {
             <TailSpin color="orange" radius={5} />
           </div>
         )}
-              <div className='flex justify-start items-center lg:gap-3'>
+        <div className='flex justify-start items-center lg:gap-3'>
           <FaChevronLeft />
           <div>
-           <div className=' font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home /<span className='text-black font-medium'> Users</span></div>
+            <div className=' font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home /<span className='text-black font-medium'> Users</span></div>
           </div>
-    </div>
+        </div>
         <h2 className=" font-bold text-[22px]  leading-[28px] text-[#2C2E32] mt-10 ">
           Users
         </h2>
@@ -93,50 +141,50 @@ const Home = ({ isOpen, toggleSidebar }) => {
             label="Total User"
             height="h-[153px]"
             backgroundcolor="bg-[#FFFFFF]"
-            value={data?.total_users}
-            value2={data?.total_user_per + "% Since yesterday"}
-            img={arrow_upward}
+            value={userList?.totalUsers}
+            // value2={userList?.totalUsers + "% Since yesterday"}
+            // img={arrow_upward}
             img2={notes}
           />
           <div className="  lg:h-[214px] py-[16px] px-[17px] rounded-xl bg-[#FFFFFF]">
             <div className="flex items-center justify-end mb-[10px] ">
-             {/* <button className=" font-normal text-[14px] leading-[18px] text-[#000000]">
+              {/* <button className=" font-normal text-[14px] leading-[18px] text-[#000000]">
                 Monthly
               </button>
               <img src={frame2} className="w-[22px] h-[22px]" /> */}
-              <select
-                      type="text"
-                      name="dashFilter"
-                       value={dashFilter}
-                      onChange={(e)=>{
-                        setLoading(true);
-                        setDashFilter(e.target.value);
-                        const saveData = {
-                          filter: e.target.value,
-                        }
-                          userAsync({
-                            dispatch: dispatch,
-                           data: saveData,
-                            token: token,
-                            callbackFn: (res) => {
-                              if (res?.status == 200) {
-                                setdata(res?.data?.statistics);
-                                setLoading(false);
-                              } else {
-                                toast.error(res?.message);
-                                setLoading(false);
-                              }
-                            },
-                          });
+              {/* <select
+                type="text"
+                name="dashFilter"
+                value={dashFilter}
+                onChange={(e) => {
+                  setLoading(true);
+                  setDashFilter(e.target.value);
+                  const saveData = {
+                    filter: e.target.value,
+                  }
+                  userAsync({
+                    dispatch: dispatch,
+                    data: saveData,
+                    token: token,
+                    callbackFn: (res) => {
+                      if (res?.status == 200) {
+                        setdata(res?.data?.statistics);
+                        setLoading(false);
+                      } else {
+                        toast.error(res?.message);
+                        setLoading(false);
+                      }
+                    },
+                  });
 
-                      }}
-                      className=" mt-1 text-[14px]  outline-none  border border-[#ECEDEE] ml-auto px-[8px] rounded w-[95px] h-[30px]"
-                    >
-                    <option value="Daily">Daily</option>
-                      <option value="Monthly" >Monthly</option>
-                      <option value="Yearly" >Yearly</option>
-                     
-                    </select>
+                }}
+                className=" mt-1 text-[14px]  outline-none  border border-[#ECEDEE] ml-auto px-[8px] rounded w-[95px] h-[30px]"
+              >
+                <option value="Daily">Daily</option>
+                <option value="Monthly" >Monthly</option>
+                <option value="Yearly" >Yearly</option>
+
+              </select> */}
             </div>
             <div className="lg:flex  block  gap-[10px] ">
               <UserCard
@@ -144,9 +192,9 @@ const Home = ({ isOpen, toggleSidebar }) => {
                 width="lg:w-[50%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={data?.active_users}
-                value2={data?.total_active_user_per + "% Since yesterday"}
-                img={arrow_upward}
+                value={userList?.activeUsers}
+                // value2={userList?.totalUsers + "% Since yesterday"}
+                // img={arrow_upward}
                 img2={notes}
               />
               <UserCard
@@ -154,16 +202,16 @@ const Home = ({ isOpen, toggleSidebar }) => {
                 width="lg:w-[50%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={data?.suspended_users}
-                value2={data?.total_deactive_user_per + "% Since yesterday"}
-                 img={arrow_upward}
-                 img2={notes}
+                value={userList?.deactivatedUsers}
+                // value2={userList?.totalUsers + "% Since yesterday"}
+                // img={arrow_upward}
+                img2={notes}
               />
             </div>
           </div>
         </div>
         <Button value1={"Export CSV"}
-        value2={"Add User"} csvData1={csvUser} csvData2={progressCsv} />
+          value2={"Add User"} csvData1={flatData} csvData2={progressCsv} />
         <StudentList />
       </div>
     </div>
