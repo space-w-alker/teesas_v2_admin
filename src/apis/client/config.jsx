@@ -48,7 +48,7 @@ export const config = {
 
   // logout: "admin/auth/logout",
   RESET_PASSWORD: "auth/reset-password",
-  GET_DASHBOARD: "admin/users/get-dashboard-details",
+  GET_DASHBOARD: "admin/dashboard/users",
   GET_COURSES: "utils/get-admin-courses",
 
   USER: "admin/users/get-statistics",
