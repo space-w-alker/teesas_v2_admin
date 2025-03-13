@@ -54,7 +54,7 @@ export const fetchUsersAsync = ({ dispatch, params, token }) => {
             const URL = `${BASEURL}admin/dashboard/users`;
             const response = await getViaPostAPICall(URL, params, token);
             if (response?.data) {
-                dispatch(listUsersSuccess(response.data));
+                dispatch(listUsersSuccess(response.data.data));
             } else {
                 toast.error("Failed to fetch users.");
             }
