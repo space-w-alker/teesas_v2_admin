@@ -19,6 +19,7 @@ const TestDetails = ({ isOpen }) => {
 
   const topicName = location.state?.name || 'Topic Name';
   const topic = location.state?.topic || {};
+  const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [questionToDelete, setQuestionToDelete] = useState(null);
@@ -47,7 +48,7 @@ const TestDetails = ({ isOpen }) => {
   }
   useEffect(() => {
     dispatch(getSubjectsWithQuestionsAsync({ dispatch, data })).then(() => setLoading(false));
-  }, [dispatch, topic])
+  }, [dispatch, topics])
   console.log('question', id, question?.data?.options);
 
 

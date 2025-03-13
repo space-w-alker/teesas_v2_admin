@@ -36,7 +36,7 @@ const QuestionCard = ({ hasOptions = true, question,
 
     const handleOptionChange = (index, value) => {
         const newOptions = [...formData.options];
-        newOptions[index] = value;
+        newOptions[index].title = value;
         setFormData({
             ...formData,
             options: newOptions

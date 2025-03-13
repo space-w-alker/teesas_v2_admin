@@ -95,7 +95,7 @@ export const getSubjectsWithQuestionsAsync = ({ dispatch, data, token, callbackF
                 callbackFn && callbackFn(response.data);
                 dispatch(subjectsWithQuestionsSuccess(response.data));
             } else {
-                toast.error("Failed to fetch subjects with questions.");
+                // toast.error("Failed to fetch subjects with questions.");
             }
         } catch (error) {
             toast.error("Error fetching subjects with questions.");
