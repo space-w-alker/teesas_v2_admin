@@ -1,6 +1,6 @@
 export const config = {
-  // BASEURL: "http://localhost:3000/v1/",
-  BASEURL: "http://46.202.164.175:3000/v1/",
+  BASEURL: "http://localhost:3000/v1/",
+  // BASEURL: "http://46.202.164.175:3000/v1/",
   MainUrl: "http://46.202.164.175:3000/",
   // MainUrl: "http://localhost:3000/v1/",
 
@@ -33,6 +33,12 @@ export const config = {
   GET_AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",
   RESELLER_LIST: "admin/resellers",
   GET_COURSES_AND_CLASSES: "leaderboard/courses-and-classes",
+
+  GET_PROMOCODES: "promocodes/list-promocodes",
+  ADD_PROMOCODE: "promocodes/create-promocode",
+  UPDATE_PROMOCODE: "promocodes/update-promocode",
+  DELETE_PROMOCODE: "promocodes/delete-promocode",
+  GET_PROMOCODE_DETAILS: "promocodes/promocode-details",
 
   CREATE_ASSESSMENT: "/assessment/create-assessment/",
   GET_ASSESSMENT: "/assessment/get-assessment/",
