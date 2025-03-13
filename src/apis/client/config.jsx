@@ -29,6 +29,7 @@ export const config = {
   DASHBOARD_USERS: "admin/dashboard/users",
   SUBSCRIPTION_WORKFLOW: "admin/dashboard/subscription-workflow",
   ADD_SUBSCRIPTION: "admin/dashboard/add-subscription-to-user",
+  LIST_USERS_FOR_SUBSCRIPTION: "admin/dashboard/users-list",
   AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",
   GET_AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",
   RESELLER_LIST: "admin/resellers",
