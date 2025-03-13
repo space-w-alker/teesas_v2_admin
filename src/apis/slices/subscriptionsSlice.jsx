@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getAPICall, postAPICall } from "../client/methodCalls";
 import { config } from "../client/config";
 
-const { BASEURL, SUBSCRIBED_USERS, SUBSCRIPTION_STATS, DASHBOARD_USERS, ADD_SUBSCRIPTION, SUBSCRIPTION_WORKFLOW, AVAILABLE_SUBSCRIPTIONS } = config;
+const { BASEURL, SUBSCRIBED_USERS, SUBSCRIPTION_STATS, LIST_USERS_FOR_SUBSCRIPTION, ADD_SUBSCRIPTION, SUBSCRIPTION_WORKFLOW, AVAILABLE_SUBSCRIPTIONS } = config;
 
 const initialState = {
     subscribedUsers: {
@@ -167,7 +167,7 @@ export const searchUsersAsync = ({ dispatch, body, token, isPagination = false, 
             dispatch(setSearchUsers({ isLoading: true, data: [], paging: null, error: null }));
         }
 
-        const URL = `${BASEURL}${DASHBOARD_USERS}`;
+        const URL = `${BASEURL}${LIST_USERS_FOR_SUBSCRIPTION}`;
 
         const requestBody = {
             filterList: body.filterList || "active:true",
