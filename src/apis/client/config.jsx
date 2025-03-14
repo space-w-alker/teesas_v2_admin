@@ -1,6 +1,6 @@
 export const config = {
-  // BASEURL: "http://localhost:3000/v1/",
-  BASEURL: "http://46.202.164.175:3000/v1/",
+  BASEURL: "http://localhost:3000/v1/",
+  // BASEURL: "http://46.202.164.175:3000/v1/",
   MainUrl: "http://46.202.164.175:3000/",
   // MainUrl: "http://localhost:3000/v1/",
 
@@ -59,9 +59,9 @@ export const config = {
   UPDATE_USER: "admin/users/update-user",
   ADDUSER: "admin/users/add-user",
   GETUSERSCSV: "admin/users/get-users-csv",
-  GETUSERSFEEDBACK: "admin/users/get-user-feedbacks",
+  GETUSERSFEEDBACK: "admin/feedback/get-all-feedbacks",
   GETUSERFEEDBACK: "admin/users/get-user-feedback",
-  REPLYFEEDBACK: "admin/users/reply-to-feedback",
+  REPLYFEEDBACK: "admin/feedback/add-reply",
   GET_LOCAL_SCHOOLS: "leaderBoard/get-local-schools",
   GET_USER_PROFILE: "leaderboard/user-details",
   GET_PERFORMANCE_HISTORY: "leaderboard/get-performance-history",
