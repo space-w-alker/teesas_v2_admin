@@ -30,7 +30,6 @@ const StudentList = () => {
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
-  const [pageData, setPageData] = useState({});
   const [loading,
     setLoading] = useState(false);
 
@@ -41,6 +40,7 @@ const StudentList = () => {
 
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [activeUsers, setActiveUsers] = useState(true);
+
 
 
   const handleModalClose = () => {
@@ -58,37 +58,6 @@ const StudentList = () => {
     });
   };
 
-  // const handleApply = () => {
-  //   setLoading(true);
-  //   const newData = {
-  //     page: 1,
-  //     page_size: 10,
-  //     sort: sortKey,
-  //     course_id: selectedCourses,
-  //     status: activeUsers ? "Active" : "Inactive",
-  //   };
-  //   getuserAsync({
-  //     dispatch: dispatch,
-  //     body: newData,
-  //     token: token,
-  //     callbackFn: (res) => {
-  //       if (res?.data?.status === 200) {
-  //         setdata(res?.data?.data?.users);
-  //         setPageData(res?.data?.data?.paging);
-  //         setLoading(false);
-  //         handleModalClose();
-  //       } else {
-  //         alert(res?.data?.message);
-  //         setLoading(false);
-  //       }
-  //     },
-  //   });
-  // };
-
-  // const handleFilterByCourse = (course) => {
-  //   setSelectedCourse(course);
-  //   setIsModalOpen(false);
-  // };
 
   const handleFilterByStatus = (status) => {
     setActiveUsers(status);
@@ -121,23 +90,7 @@ const StudentList = () => {
       course_id: selectedCourses,
       status: activeUsers ? "Active" : "Inactive",
     };
-    // getuserAsync({
-    //   dispatch: dispatch,
-    //   body: newData,
-    //   token: token,
-    //   callbackFn: (res) => {
-    //     if (res?.data?.status === 200) {
-    //       setdata(res?.data?.data?.users);
-    //       setPageData(res?.data?.data?.paging);
-    //       setLoading(false);
-    //       setPage(1);
-    //       handleModalClose();
-    //     } else {
-    //       alert(res?.data?.message);
-    //       setLoading(false);
-    //     }
-    //   },
-    // });
+
   };
 
 
@@ -160,7 +113,9 @@ const StudentList = () => {
         field: "userName",
         order: "asc"
       }
-    }
+    },
+    limit: 10,
+    page: 1
   });
 
 
@@ -172,7 +127,7 @@ const StudentList = () => {
   // if (loading) return <p>Loading users...</p>;
   // if (error) return <p>Error fetching users: {error}</p>;
 
-  console.log('data', userList.overview)
+  console.log('data', userList)
 
   const handleSearchChange = (e) => {
     setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
@@ -181,6 +136,22 @@ const StudentList = () => {
 
 
 
+  const pageData = {
+    currentPage: userList?.overview?.page || 1,
+    totalPages: userList?.overview?.totalPages || 1,
+    total: userList?.overview?.totalUsers || 0,
+    limit: userList?.overview?.limit || 10
+  };
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > pageData.totalPages) {
+      return;
+    }
+    setSort((prevSort) => ({ ...prevSort, page: newPage }));
+    setLoading(true);
+
+    dispatch(fetchUsersAsync({ dispatch, params: sort }));
+
+  };
   // ---------------------------------------------NEW STUFF END-------------------------------------------------------------------
 
 
@@ -331,57 +302,45 @@ const StudentList = () => {
         </div>
 
 
-        <div className="user">
+        <div className="flex justify-between items-center mt-6 ml-4 mr-4 mb-4">
           <Custombutton
-            onClick={() => {
-              if (page > 1) {
-                setLoading(true);
-                const newData = {
-                  page: page - 1,
-                  page_size: 10,
-                  course_id: selectedCourses,
-                  status: activeUsers ? "Active" : "Inactive",
-                  sort: sortKey,
-                  ...(searchValue == '' ? {} : { search: searchValue, })
-                };
-                setPage(page - 1);
-
-              }
-            }}
             value="Previous"
-            hidden="hidden"
-            icon={<FaArrowLeft />}
+            icon={
+              pageData.currentPage > 1 ?
+                <FaArrowLeft color="#000000" /> :
+                <FaArrowLeft color="#cccccc" />
+            }
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
+            textcolor={pageData.currentPage > 1 ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="left"
-            width="w-[115px]"
+            onClick={() => handlePageChange(pageData.currentPage - 1)}
+            disabled={pageData.currentPage <= 1}
           />
-          <div className="text-[#667085] text-[12px]">
-            Page {pageData?.currentPage} of {pageData?.total_pages}
-          </div>
-          <Custombutton
-            onClick={() => {
-              if (pageData?.currentPage < pageData.total_pages)
-                setLoading(true);
-              const newData = {
-                page: page + 1,
-                page_size: 10,
-                course_id: selectedCourses,
-                status: activeUsers ? "Active" : "Inactive",
-                sort: sortKey,
-                ...(searchValue == '' ? {} : { search: searchValue, })
-              };
-              setPage(page + 1);
 
-            }}
-            value="Next"
-            hidden="hidden"
-            icon={<FaArrowRight />}
+
+          <Custombutton
+            value={`Page ${pageData.currentPage} of ${pageData.totalPages}`}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
-            imagePosition="right"
           />
+
+
+          <Custombutton
+            value="Next"
+            icon={
+              pageData.currentPage < pageData.totalPages ?
+                <FaArrowRight color="#000000" /> :
+                <FaArrowRight color="#cccccc" />
+            }
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor={pageData.currentPage < pageData.totalPages ? "text-[#000000]" : "text-[#cccccc]"}
+            imagePosition="right"
+            onClick={() => handlePageChange(pageData.currentPage + 1)}
+            disabled={pageData.currentPage >= pageData.totalPages}
+          />
+
         </div>
+
         {isModalOpen && (
           <Modal
             closeModal={handleModalClose}

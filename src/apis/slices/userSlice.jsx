@@ -123,13 +123,17 @@ export const bulkUploadUsersAsync = ({ dispatch, formData, token }) => {
 };
 
 // Thunk to update a user
-export const updateUserAsync = ({ dispatch, userId, data, token }) => {
+export const updateUserAsync = ({ dispatch, userId, data, callbackFn, token }) => {
     return async () => {
         try {
             const URL = `${BASEURL}admin/dashboard/users/${userId}/edit`;
             const response = await patchAPICall(URL, data, true, token);
-            if (response?.data) {
+            console.log('res', response)
+            if (response?.data.data) {
+                callbackFn && callbackFn(response.data);
+
                 dispatch(updateUserSuccess(response.data));
+                toast.success('Updated successfully')
             } else {
                 toast.error("Failed to update user.");
             }
