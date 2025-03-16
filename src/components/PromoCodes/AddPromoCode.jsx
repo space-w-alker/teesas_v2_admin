@@ -1,47 +1,108 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
-import { addPromocodeAsync } from '../../apis/slices/promocodeSlice';
+import { TailSpin } from "react-loader-spinner";
+import {
+  addPromocodeAsync,
+  getClassesByCourseAsync,
+  getPlansByClassAsync,
+  getCoursesAsync,
+  getCountriesAsync,
+  selectAddPromocode,
+  selectClassesByCourse,
+  selectPlansByClass,
+  selectCourses,
+  selectCountries,
+  resetAddPromocode
+} from '../../apis/slices/promocodeSlice';
 
 const AddPromoCode = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const addPromocodeState = useSelector(selectAddPromocode);
+  const classesByCourseState = useSelector(selectClassesByCourse);
+  const plansByClassState = useSelector(selectPlansByClass);
+  const coursesState = useSelector(selectCourses);
+  const countriesState = useSelector(selectCountries);
+
   const [showSuccess, setShowSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedClasses, setSelectedClasses] = useState([]);
+  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [selectedClassIds, setSelectedClassIds] = useState([]);
+  const [selectedPlanIds, setSelectedPlanIds] = useState([]);
 
   const [formData, setFormData] = useState({
     title: '',
     code: '',
     description: '',
-    country_id: 1, // Default to 1 (Nigeria)
-    type: 'percentage', // Default to percentage
-    plan_id: '',
+    country_id: '',
+    type: 'percentage',
+    value: '',
     start_date: '',
     end_date: '',
     is_active: true,
   });
 
-  // Mock data for now - in real implementation, you'd fetch these from your API
   useEffect(() => {
-    // Simulating category and class data fetch
-    setCategories([
-      { id: 4, name: 'Pre School' },
-      { id: 137, name: 'Primary School' }
-    ]);
 
-    setClasses([
-      { id: 21, name: 'Reception' },
-      { id: 27, name: 'Grade 1' }
-    ]);
-  }, []);
+    const token = localStorage.getItem('token');
+
+    getCoursesAsync({
+      dispatch,
+      token,
+      callbackFn: () => { }
+    });
+
+    getCountriesAsync({
+      dispatch,
+      token,
+      callbackFn: () => { }
+    });
+
+
+    return () => {
+      dispatch(resetAddPromocode());
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedCourseId) {
+      const token = localStorage.getItem('token');
+      getClassesByCourseAsync({
+        dispatch,
+        courseId: selectedCourseId,
+        token,
+        callbackFn: () => { }
+      });
+
+
+      setSelectedClassIds([]);
+      setSelectedPlanIds([]);
+    }
+  }, [selectedCourseId, dispatch]);
+
+  useEffect(() => {
+    if (selectedClassIds.length > 0) {
+      const token = localStorage.getItem('token');
+
+      getPlansByClassAsync({
+        dispatch,
+        classId: selectedClassIds[0],
+        token,
+        callbackFn: () => { }
+      });
+    }
+  }, [selectedClassIds, dispatch]);
+
+  useEffect(() => {
+    if (addPromocodeState.success) {
+      setShowSuccess(true);
+    }
+  }, [addPromocodeState.success]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,27 +112,30 @@ const AddPromoCode = ({ isOpen }) => {
     }));
   };
 
-  const handleCheckboxChange = (e, type, id) => {
-    const { checked } = e.target;
+  const handleCourseChange = (e) => {
+    setSelectedCourseId(e.target.value);
+    setSelectedClassIds([]);
+    setSelectedPlanIds([]);
+  };
 
-    if (type === 'category') {
-      if (checked) {
-        setSelectedCategories([...selectedCategories, id]);
-      } else {
-        setSelectedCategories(selectedCategories.filter(catId => catId !== id));
-      }
-    } else if (type === 'class') {
-      if (checked) {
-        setSelectedClasses([...selectedClasses, id]);
-      } else {
-        setSelectedClasses(selectedClasses.filter(classId => classId !== id));
-      }
+  const handleClassCheckboxChange = (e, classId) => {
+    if (e.target.checked) {
+      setSelectedClassIds(prev => [...prev, classId]);
+    } else {
+      setSelectedClassIds(prev => prev.filter(id => id !== classId));
+    }
+  };
+
+  const handlePlanCheckboxChange = (e, planId) => {
+    if (e.target.checked) {
+      setSelectedPlanIds(prev => [...prev, planId]);
+    } else {
+      setSelectedPlanIds(prev => prev.filter(id => id !== planId));
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
 
     const token = localStorage.getItem('token');
 
@@ -84,30 +148,33 @@ const AddPromoCode = ({ isOpen }) => {
       start_date: startDate,
       end_date: endDate,
       country_id: Number(formData.country_id),
-      plan_id: Number(formData.plan_id),
-      category_ids: selectedCategories,
-      class_ids: selectedClasses,
+      value: Number(formData.value),
+      class_ids: selectedClassIds,
+      plan_ids: selectedPlanIds,
     };
 
     addPromocodeAsync({
       dispatch,
       body: payload,
       token,
-      callbackFn: (response) => {
-        setLoading(false);
-        if (response?.data?.status === 200) {
-          setShowSuccess(true);
-        } else {
-          // Handle error (you could use a toast notification here)
-          console.error("Failed to create promo code:", response?.data?.message);
-        }
-      }
+      callbackFn: () => { }
     });
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccess(false);
+    navigate('/promo-codes');
   };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <Headers value1="Home" value2="Add Promo Code" />
+      <Headers value1="Home" value2="Promo Codes" value3="Add Promo Code" />
+
+      {addPromocodeState.isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <TailSpin color="orange" radius={5} />
+        </div>
+      )}
 
       <div className="mt-6 flex flex-col lg:flex-row gap-6">
         <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
@@ -149,9 +216,25 @@ const AddPromoCode = ({ isOpen }) => {
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
                   >
-                    <option value="1">Nigeria</option>
-                    <option value="2">Ghana</option>
+                    <option value="">Select Country</option>
+                    {countriesState.isLoading ? (
+                      <option disabled>Loading countries...</option>
+                    ) : countriesState.error ? (
+                      <option disabled>Error loading countries</option>
+                    ) : countriesState.data && countriesState.data.length > 0 ? (
+                      countriesState.data.map(country => (
+                        <option key={country.id} value={country.id}>
+                          {country.name} ({country.code})
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="1">Nigeria</option>
+                        <option value="2">Ghana</option>
+                      </>
+                    )}
                   </select>
+
                 </div>
               </div>
 
@@ -170,19 +253,17 @@ const AddPromoCode = ({ isOpen }) => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Plan ID*</label>
-                  <select
-                    name="plan_id"
-                    value={formData.plan_id}
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {formData.type === 'percentage' ? 'Percentage (%)' : 'Amount'}*
+                  </label>
+                  <input
+                    type="number"
+                    name="value"
+                    value={formData.value}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
-                  >
-                    <option value="">Select Plan</option>
-                    <option value="1">Basic</option>
-                    <option value="2">Standard</option>
-                    <option value="3">Premium</option>
-                  </select>
+                  />
                 </div>
               </div>
 
@@ -223,37 +304,86 @@ const AddPromoCode = ({ isOpen }) => {
                 ></textarea>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Course*</label>
+                <select
+                  value={selectedCourseId}
+                  onChange={handleCourseChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
+                >
+                  <option value="">Select Course</option>
+                  {coursesState.isLoading ? (
+                    <option disabled>Loading courses...</option>
+                  ) : coursesState.error ? (
+                    <option disabled>Error loading courses</option>
+                  ) : coursesState.data && coursesState.data.length > 0 ? (
+                    coursesState.data.map(course => (
+                      <option key={course.id} value={course.id}>{course.name}</option>
+                    ))
+                  ) : (
+                    <option disabled>No courses available</option>
+                  )}
+                </select>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Categories</label>
-                  <div className="bg-gray-50 p-3 rounded-lg max-h-40 overflow-y-auto">
-                    {categories.map(category => (
-                      <div className="flex items-center mb-2" key={category.id}>
-                        <input
-                          type="checkbox"
-                          id={`cat-${category.id}`}
-                          onChange={(e) => handleCheckboxChange(e, 'category', category.id)}
-                          className="mr-2"
-                        />
-                        <label htmlFor={`cat-${category.id}`}>{category.name}</label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Classes</label>
                   <div className="bg-gray-50 p-3 rounded-lg max-h-40 overflow-y-auto">
-                    {classes.map(classItem => (
-                      <div className="flex items-center mb-2" key={classItem.id}>
-                        <input
-                          type="checkbox"
-                          id={`class-${classItem.id}`}
-                          onChange={(e) => handleCheckboxChange(e, 'class', classItem.id)}
-                          className="mr-2"
-                        />
-                        <label htmlFor={`class-${classItem.id}`}>{classItem.name}</label>
-                      </div>
-                    ))}
+                    {classesByCourseState.isLoading ? (
+                      <div className="text-center py-2">Loading classes...</div>
+                    ) : classesByCourseState.error ? (
+                      <div className="text-center py-2 text-red-500">{classesByCourseState.error}</div>
+                    ) : classesByCourseState.data && classesByCourseState.data.length > 0 ? (
+                      classesByCourseState.data.map(classItem => (
+                        <div className="flex items-center mb-2" key={classItem.id}>
+                          <input
+                            type="checkbox"
+                            id={`class-${classItem.id}`}
+                            checked={selectedClassIds.includes(classItem.id)}
+                            onChange={(e) => handleClassCheckboxChange(e, classItem.id)}
+                            className="mr-2"
+                          />
+                          <label htmlFor={`class-${classItem.id}`}>{classItem.name}</label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-2 text-gray-500">No classes available</div>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Subscription Plans</label>
+                  <div className="bg-gray-50 p-3 rounded-lg max-h-40 overflow-y-auto">
+                    {plansByClassState.isLoading ? (
+                      <div className="text-center py-2">Loading plans...</div>
+                    ) : plansByClassState.error ? (
+                      <div className="text-center py-2 text-red-500">{plansByClassState.error}</div>
+                    ) : plansByClassState.data && plansByClassState.data.length > 0 ? (
+                      plansByClassState.data.map(plan => (
+                        <div className="flex flex-col mb-3 border-b pb-2" key={plan.id}>
+                          <div className="flex items-center">
+                            <input
+                              type="checkbox"
+                              id={`plan-${plan.id}`}
+                              checked={selectedPlanIds.includes(plan.id)}
+                              onChange={(e) => handlePlanCheckboxChange(e, plan.id)}
+                              className="mr-2"
+                            />
+                            <label htmlFor={`plan-${plan.id}`} className="font-medium">
+                              {plan.time} Days - {plan.amount}
+                            </label>
+                          </div>
+                          {plan.description && (
+                            <div className="ml-6 mt-1 text-sm text-gray-600">
+                              {plan.description}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-2 text-gray-500">No plans available</div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -269,16 +399,22 @@ const AddPromoCode = ({ isOpen }) => {
                 />
                 <label htmlFor="is_active">Active</label>
               </div>
+
+              {addPromocodeState.error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                  {addPromocodeState.error}
+                </div>
+              )}
             </div>
 
             <div className="mt-8">
               <Custombutton
-                value={loading ? "Creating..." : "Create Promo Code"}
+                value="Create Promo Code"
                 type="submit"
                 textcolor="text-white"
                 backgroundcolor="bg-[#27AE60]"
                 extraStyle="w-full hover:bg-[#219652]"
-                disabled={loading}
+                disabled={addPromocodeState.isLoading}
               />
             </div>
           </form>
@@ -299,18 +435,20 @@ const AddPromoCode = ({ isOpen }) => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Country:</span>
-                  <span className="font-medium">{formData.country_id === 1 ? 'Nigeria' : 'Ghana'}</span>
+                  <span className="font-medium">
+                    {formData.country_id ?
+                      (countriesState.data?.find(c => c.id === parseInt(formData.country_id))?.name || formData.country_id)
+                      : '_____'}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Discount Type:</span>
                   <span className="font-medium">{formData.type === 'percentage' ? 'Percentage' : 'Fixed Amount'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Plan:</span>
+                  <span className="text-gray-600">Value:</span>
                   <span className="font-medium">
-                    {formData.plan_id === '1' ? 'Basic' :
-                      formData.plan_id === '2' ? 'Standard' :
-                        formData.plan_id === '3' ? 'Premium' : '_____'}
+                    {formData.value ? (formData.type === 'percentage' ? `${formData.value}%` : `₦${formData.value}`) : '_____'}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -318,12 +456,24 @@ const AddPromoCode = ({ isOpen }) => {
                   <span className="font-medium">{formData.is_active ? 'Yes' : 'No'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Categories:</span>
-                  <span className="font-medium">{selectedCategories.length} selected</span>
+                  <span className="text-gray-600">Classes:</span>
+                  <span className="font-medium">{selectedClassIds.length} selected</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Classes:</span>
-                  <span className="font-medium">{selectedClasses.length} selected</span>
+                  <span className="text-gray-600">Plans:</span>
+                  <span className="font-medium">{selectedPlanIds.length} selected</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Start Date:</span>
+                  <span className="font-medium">
+                    {formData.start_date ? new Date(formData.start_date).toLocaleDateString() : '_____'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">End Date:</span>
+                  <span className="font-medium">
+                    {formData.end_date ? new Date(formData.end_date).toLocaleDateString() : '_____'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -333,14 +483,11 @@ const AddPromoCode = ({ isOpen }) => {
 
       <SuccessModal
         isOpen={showSuccess}
-        onClose={() => {
-          setShowSuccess(false);
-          navigate('/promo-codes');
-        }}
+        onClose={handleSuccessClose}
         type="success"
         title="Promo Code Created Successfully"
         message="Your promo code has been created successfully"
-        buttonText="Close"
+        buttonText="Go to Promo Codes"
       />
     </div>
   );

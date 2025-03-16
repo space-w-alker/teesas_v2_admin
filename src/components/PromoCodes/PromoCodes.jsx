@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaPlus, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { FaPlus, FaArrowLeft, FaArrowRight, FaSearch, FaTrash } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
 import Custombutton from '../common/Custombutton';
+import SuccessModal from '../common/SuccessModal';
 import book from '../../assets/images/book.png';
-import { getPromocodesAsync, getPromocodesResponse } from '../../apis/slices/promocodeSlice';
+import { TailSpin } from "react-loader-spinner";
+import {
+  getPromocodesAsync,
+  deletePromocodeAsync,
+  selectPromocodes,
+  selectDeletePromocode,
+  resetDeletePromocode
+} from '../../apis/slices/promocodeSlice';
 
-const PromoCodeItem = ({ code, status, category, onView }) => {
+const PromoCodeItem = ({ code, status, category, id, onView, onDelete }) => {
   return (
     <div className="bg-white rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
       <div
@@ -26,10 +34,20 @@ const PromoCodeItem = ({ code, status, category, onView }) => {
       </div>
       <div className="flex gap-4 items-center">
         <Custombutton
-          value={status ? 'Visible' : 'Hidden'}
-          textcolor={status ? "text-blue-400" : "text-red-400"}
+          value={status ? 'Active' : 'Inactive'}
+          textcolor={status ? "text-green-600" : "text-red-600"}
           backgroundcolor={status ? "bg-green-100" : "bg-red-100"}
           width="w-[100px]"
+        />
+        <Custombutton
+          value={<FaTrash />}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(id);
+          }}
+          textcolor="text-red-600"
+          backgroundcolor="bg-red-100"
+          width="w-[40px]"
         />
       </div>
     </div>
@@ -39,34 +57,44 @@ const PromoCodeItem = ({ code, status, category, onView }) => {
 const PromoCodes = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const promocodesData = useSelector(getPromocodesResponse);
+  const promocodesState = useSelector(selectPromocodes);
+  const deletePromocodeState = useSelector(selectDeletePromocode);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [promocodes, setPromocodes] = useState([]);
-  const [totalActive, setTotalActive] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [promocodeToDelete, setPromocodeToDelete] = useState(null);
+  const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
 
   useEffect(() => {
     fetchPromocodes();
-  }, [currentPage]);
+
+
+    return () => {
+      dispatch(resetDeletePromocode());
+    };
+  }, [currentPage, searchTerm]);
+
+  useEffect(() => {
+    if (deletePromocodeState.success) {
+      setShowDeleteSuccess(true);
+      fetchPromocodes();
+      dispatch(resetDeletePromocode());
+    }
+  }, [deletePromocodeState.success]);
 
   const fetchPromocodes = () => {
-    setLoading(true);
     const token = localStorage.getItem('token');
 
     getPromocodesAsync({
       dispatch,
-      data: {},
+      data: {
+        page: currentPage,
+        limit: 10,
+        search: searchTerm
+      },
       token,
-      callbackFn: (response) => {
-        setLoading(false);
-        if (response?.data?.status === 200) {
-          const data = response.data.data;
-          setPromocodes(data.promocodes || []);
-          setTotalPages(data.totalPages || 1);
-          setTotalActive(data.totalActive || 0);
-        }
-      }
+      callbackFn: () => { }
     });
   };
 
@@ -77,13 +105,41 @@ const PromoCodes = ({ isOpen }) => {
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < (promocodesState.paging?.totalPages || 1)) {
       setCurrentPage(currentPage + 1);
     }
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchTerm(searchInput);
+    setCurrentPage(1); // Reset to first page on new search
+  };
+
   const handleViewPromocode = (id) => {
     navigate(`/promo-code-details/${id}`);
+  };
+
+  const handleDeleteClick = (id) => {
+    setPromocodeToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    const token = localStorage.getItem('token');
+
+    deletePromocodeAsync({
+      dispatch,
+      id: promocodeToDelete,
+      token,
+      callbackFn: () => {
+        setShowDeleteConfirm(false);
+      }
+    });
+  };
+
+  const handleDeleteSuccessClose = () => {
+    setShowDeleteSuccess(false);
   };
 
   return (
@@ -91,7 +147,7 @@ const PromoCodes = ({ isOpen }) => {
       <Headers value1="Home" value2="Promo Codes" />
 
       <div className="mt-6">
-        <StatCard title="Total Active Promo Codes" count={totalActive.toString()} />
+        <StatCard title="Total Active Promo Codes" count={(promocodesState.paging?.total || 0).toString()} />
       </div>
 
       <div className="flex justify-end mb-6">
@@ -110,27 +166,48 @@ const PromoCodes = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="Promo Code List" showSearch={true} />
+          <div className="flex justify-between items-center">
+            <Headcomponent value="Promo Code List" showSearch={false} />
+            <form onSubmit={handleSearch} className="flex">
+              <input
+                type="text"
+                placeholder="Search promocodes..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
+              />
+              <button
+                type="submit"
+                className="bg-[#27AE60] text-white px-4 py-2 rounded-r-lg hover:bg-[#219652]"
+              >
+                <FaSearch />
+              </button>
+            </form>
+          </div>
         </div>
         <div className="p-6">
-          {loading ? (
-            <div className="py-4 text-center">Loading promo codes...</div>
-          ) : (
-            <div className="space-y-4">
-              {promocodes.length > 0 ? (
-                promocodes.map((promo, index) => (
-                  <PromoCodeItem
-                    key={index}
-                    code={promo.code}
-                    status={promo.isActive}
-                    category={promo.category}
-                    onView={() => handleViewPromocode(promo.id)}
-                  />
-                ))
-              ) : (
-                <div className="py-4 text-center">No promo codes found</div>
-              )}
+          {promocodesState.isLoading || deletePromocodeState.isLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <TailSpin color="orange" radius={5} />
             </div>
+          ) : promocodesState.error ? (
+            <div className="text-center py-8 text-red-500">{promocodesState.error}</div>
+          ) : promocodesState.data.length > 0 ? (
+            <div className="space-y-4">
+              {promocodesState.data.map((promo, index) => (
+                <PromoCodeItem
+                  key={promo.id || index}
+                  id={promo.id}
+                  code={promo.code}
+                  status={promo.is_active}
+                  category={promo.title}
+                  onView={() => handleViewPromocode(promo.id)}
+                  onDelete={handleDeleteClick}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">No promo codes found</div>
           )}
         </div>
         <div className="p-6 border-t border-gray-100 flex justify-between items-center">
@@ -148,7 +225,9 @@ const PromoCodes = ({ isOpen }) => {
             width="w-[100px]"
             extraStyle="py-2"
           />
-          <span className="text-gray-600">Page {currentPage} of {totalPages}</span>
+          <span className="text-gray-600">
+            Page {currentPage} of {promocodesState.paging?.totalPages || 1}
+          </span>
           <Custombutton
             value={
               <div className="flex items-center gap-2">
@@ -157,16 +236,37 @@ const PromoCodes = ({ isOpen }) => {
               </div>
             }
             onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            backgroundcolor={currentPage === totalPages ? "bg-gray-50" : "bg-gray-100"}
-            textcolor={currentPage === totalPages ? "text-gray-400" : "text-gray-600"}
+            disabled={currentPage === (promocodesState.paging?.totalPages || 1)}
+            backgroundcolor={currentPage === (promocodesState.paging?.totalPages || 1) ? "bg-gray-50" : "bg-gray-100"}
+            textcolor={currentPage === (promocodesState.paging?.totalPages || 1) ? "text-gray-400" : "text-gray-600"}
             width="w-[80px]"
             extraStyle="py-2"
           />
         </div>
       </div>
+
+
+      <SuccessModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        type="caution"
+        title="Delete Promo Code"
+        message="Are you sure you want to delete this promo code? This action cannot be undone."
+        buttonText="Delete"
+        onConfirm={handleDeleteConfirm}
+      />
+
+      <SuccessModal
+        isOpen={showDeleteSuccess}
+        onClose={handleDeleteSuccessClose}
+        type="success"
+        title="Promo Code Deleted"
+        message="The promo code has been deleted successfully."
+        buttonText="Close"
+      />
     </div>
   );
 };
 
 export default PromoCodes;
+
