@@ -29,6 +29,10 @@ export const config = {
   DASHBOARD_USERS: "admin/dashboard/users",
   SUBSCRIPTION_WORKFLOW: "admin/dashboard/subscription-workflow",
   ADD_SUBSCRIPTION: "admin/dashboard/add-subscription-to-user",
+  GET_ALL_COURSES: "admin/dashboard/all-courses",
+  GET_COURSE_SUBSCRIPTIONS: "admin/dashboard/course/subscriptions",
+  CREATE_SUBSCRIPTION_PLAN: "admin/dashboard/subscription-plans",
+
   LIST_USERS_FOR_SUBSCRIPTION: "admin/dashboard/users-list",
   AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",
   GET_AVAILABLE_SUBSCRIPTIONS: "admin/dashboard/available-subscriptions",

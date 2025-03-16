@@ -1339,7 +1339,7 @@ function App() {
         />
 
 
-        <Route path="/subscription"
+        <Route path="/subscription-plans/:courseId"
           element={
             <ProtectedRoute>
               <SubscriptionPlanDetails isOpen={isSidebarOpen} />

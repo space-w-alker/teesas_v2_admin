@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAPICall, postAPICall } from "../client/methodCalls";
+import { getAPICall, postAPICall, deleteAPICall } from "../client/methodCalls";
 import { config } from "../client/config";
 
-const { BASEURL, SUBSCRIBED_USERS, SUBSCRIPTION_STATS, LIST_USERS_FOR_SUBSCRIPTION, ADD_SUBSCRIPTION, SUBSCRIPTION_WORKFLOW, AVAILABLE_SUBSCRIPTIONS } = config;
+const { BASEURL, CREATE_SUBSCRIPTION_PLAN, GET_ALL_COURSES, GET_COURSE_SUBSCRIPTIONS, SUBSCRIBED_USERS, SUBSCRIPTION_STATS, LIST_USERS_FOR_SUBSCRIPTION, ADD_SUBSCRIPTION, SUBSCRIPTION_WORKFLOW, AVAILABLE_SUBSCRIPTIONS } = config;
 
 const initialState = {
     subscribedUsers: {
@@ -37,7 +37,23 @@ const initialState = {
         data: null,
         error: null,
         success: false
-    }
+    },
+    courses: {
+        isLoading: false,
+        data: [],
+        error: null
+    },
+    courseSubscriptions: {
+        isLoading: false,
+        data: null,
+        error: null
+    },
+    subscriptionPlanCreation: {
+        isLoading: false,
+        data: null,
+        error: null,
+        success: false
+    },
 };
 
 export const subscriptionsSlice = createSlice({
@@ -59,6 +75,28 @@ export const subscriptionsSlice = createSlice({
         setSubscriptionCreation: (state, action) => {
             state.subscriptionCreation = action.payload;
         },
+        setCourseSubscriptions: (state, action) => {
+            state.courseSubscriptions = action.payload;
+        },
+        setCourses: (state, action) => {
+            state.courses = {
+                isLoading: action.payload.isLoading,
+                data: action.payload.response?.data?.data || [],
+                error: null
+            };
+        },
+        setSubscriptionPlanCreation: (state, action) => {
+            state.subscriptionPlanCreation = action.payload;
+        },
+        resetSubscriptionPlanCreation: (state) => {
+            state.subscriptionPlanCreation = {
+                isLoading: false,
+                data: null,
+                error: null,
+                success: false
+            };
+        },
+
         resetSubscriptionCreation: (state) => {
             state.subscriptionCreation = {
                 isLoading: false,
@@ -76,7 +114,11 @@ export const {
     setSearchUsers,
     setSubscriptionWorkflow,
     setSubscriptionCreation,
-    resetSubscriptionCreation
+    resetSubscriptionCreation,
+    setCourses,
+    setCourseSubscriptions,
+    setSubscriptionPlanCreation,
+    resetSubscriptionPlanCreation,
 } = subscriptionsSlice.actions;
 
 export const getSubscribedUsersAsync = ({ dispatch, body, token, callbackFn }) => {
@@ -345,6 +387,69 @@ export const getAvailableSubscriptionsAsync = ({ dispatch, userId, classId, toke
     }
 };
 
+export const getAllCoursesAsync = ({ dispatch, callbackFn, token }) => {
+    try {
+        const URL = `${BASEURL}${GET_ALL_COURSES}`;
+
+        const result = getAPICall(URL, {}, token).then((res) => {
+            callbackFn && callbackFn(res);
+            return res;
+        });
+
+        dispatch(setCourses({ isLoading: false, response: result.data }));
+    } catch (err) {
+        dispatch(setCourses({ isLoading: false }));
+    }
+};
+
+export const getCourseSubscriptionsAsync = ({ dispatch, courseId, token, callbackFn }) => {
+    try {
+        const URL = `${BASEURL}${GET_COURSE_SUBSCRIPTIONS}?id=${courseId}`;
+
+        const result = getAPICall(URL, {}, token).then((res) => {
+            callbackFn && callbackFn(res);
+            return res;
+        });
+
+        dispatch(setCourseSubscriptions({ isLoading: false, response: result.data }));
+    } catch (err) {
+        dispatch(setCourseSubscriptions({ isLoading: false }));
+    }
+};
+
+export const createSubscriptionPlanAsync = ({ dispatch, body, token, callbackFn }) => {
+    try {
+        const URL = `${BASEURL}${CREATE_SUBSCRIPTION_PLAN}`;
+
+        const result = postAPICall(URL, body, token).then((res) => {
+            callbackFn && callbackFn(res);
+            return res;
+        });
+
+        dispatch(setSubscriptionPlanCreation({ isLoading: false, response: result.data }));
+    } catch (err) {
+        dispatch(setSubscriptionPlanCreation({ isLoading: false }));
+    }
+};
+
+export const deleteSubscriptionPlanAsync = ({ dispatch, planId, token, callbackFn }) => {
+    try {
+        const URL = `${BASEURL}admin/dashboard/subscription-plans/${planId}`;
+
+        const result = deleteAPICall(URL, token).then((res) => {
+            callbackFn && callbackFn(res);
+            return res;
+        });
+
+        dispatch(setSubscriptionPlanCreation({ isLoading: false, response: result.data }));
+    } catch (err) {
+        dispatch(setSubscriptionPlanCreation({ isLoading: false }));
+    }
+};
+
+
+
+
 
 
 export const selectSubscribedUsers = (state) => state.subscriptions.subscribedUsers;
@@ -352,6 +457,8 @@ export const selectSearchUsers = (state) => state.subscriptions.searchUsers;
 export const selectSubscriptionStats = (state) => state.subscriptions.subscriptionStats;
 export const selectSubscriptionWorkflow = (state) => state.subscriptions.subscriptionWorkflow;
 export const selectSubscriptionCreation = (state) => state.subscriptions.subscriptionCreation;
+export const selectCourses = (state) => state.subscriptions.courses;
+
 
 
 export default subscriptionsSlice.reducer;
