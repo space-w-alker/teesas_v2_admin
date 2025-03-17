@@ -13,6 +13,7 @@ import notes from "../../assets/images/Group1000001600.png";
 import { TailSpin } from "react-loader-spinner";
 import { fetchUsersAsync } from "../../apis/slices/userSlice";
 import { getUserCsvAsync } from "../../apis/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -26,6 +27,7 @@ const Home = ({ isOpen, toggleSidebar }) => {
   const [progressCsv, setProgressCsv] = useState([]);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const Navigate = useNavigate();
 
   const userList = useSelector((state) => state.users?.userList?.overview);
   const Tdata = useSelector((state) => state.users?.userList?.usersList);
@@ -128,7 +130,7 @@ const Home = ({ isOpen, toggleSidebar }) => {
           </div>
         )}
         <div className='flex justify-start items-center lg:gap-3'>
-          <FaChevronLeft />
+          <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
           <div>
             <div className=' font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home /<span className='text-black font-medium'> Users</span></div>
           </div>

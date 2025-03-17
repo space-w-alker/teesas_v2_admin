@@ -28,7 +28,7 @@ const AddUser = ({ isOpen, togglesidebar }) => {
     email: "",
     password: "",
     parent_name: "",
-    parent_phone: "",
+    parent_email: "",
     parent_address: "",
     parent_relationship: "",
     grade: location.state?.categoryData?.classes || '',
@@ -86,7 +86,7 @@ const AddUser = ({ isOpen, togglesidebar }) => {
         email: formData.email,
         password: formData.password,
         parent_name: formData.parent_name,
-        parent_phone: formData.parent_phone,
+        parent_email: formData.parent_email,
         parent_address: formData.parent_address,
         parent_relationship: formData.parent_relationship,
         grade: parseInt(formData.grade, 10) || 21, // Convert to integer
@@ -109,7 +109,7 @@ const AddUser = ({ isOpen, togglesidebar }) => {
             email: "",
             password: "",
             parent_name: "",
-            parent_phone: "",
+            parent_email: "",
             parent_address: "",
             parent_relationship: "",
             grade: location.state?.categoryData?.classes || '',
@@ -156,7 +156,7 @@ const AddUser = ({ isOpen, togglesidebar }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home / Users/
@@ -368,13 +368,13 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                       />
                     </div>
                     <div>
-                      <label className="font-medium text-[14px]">Parent Phone</label>
+                      <label className="font-medium text-[14px]">Parent Email</label>
                       <input
                         type="text"
-                        name="parent_phone"
-                        value={formData.parent_phone}
+                        name="parent_email"
+                        value={formData.parent_email}
                         className="mt-1 w-full border p-2 rounded-lg"
-                        placeholder="Enter Parent Phone"
+                        placeholder="Enter Parent Email"
                         onChange={onchangeHandler}
                       />
                     </div>

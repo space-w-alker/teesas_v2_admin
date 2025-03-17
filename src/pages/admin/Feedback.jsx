@@ -22,14 +22,15 @@ const Feedback = ({ isOpen }) => {
   const [searchValue, setVearchValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [totalFeedback, setTotalFeedback] = useState("");
+  const [totalResolvedFeedback, setTotalResolvedFeedback] = useState("");
   const [csvUser, setCsvUser] = useState([]);
   const [progressCsv, setProgressCsv] = useState([]);
 
   useEffect(() => {
-    // setLoading(true);
+    setLoading(true);
     const newData = {
-      // page: 1,
-      // page_size: 10,
+      page: 1,
+      limit: 10,
     };
     getUsersFeedbackAsync({
       dispatch: dispatch,
@@ -37,9 +38,11 @@ const Feedback = ({ isOpen }) => {
       token: token,
       callbackFn: (res) => {
         if (res?.data?.status === 200) {
-          setdata(res?.data?.data?.result);
-          setPageData(res?.data?.data?.paging);
-          setTotalFeedback(res?.data?.data?.total_resolved);
+          // console.log('res', res?.data?.data?.data?.overview?.totalFeedback)
+          setdata(res?.data?.data?.data?.feedback);
+          setPageData(res?.data?.data?.data?.overview);
+          setTotalFeedback(res?.data?.data?.data?.overview?.totalFeedback);
+          setTotalResolvedFeedback(res?.data?.data?.data?.overview?.totalResolvedFeedback);
           setLoading(false);
         } else {
           alert(res?.data?.message);
@@ -47,21 +50,23 @@ const Feedback = ({ isOpen }) => {
         }
       },
     });
-    getUserFeedBacksCsvAsync({
-      dispatch: dispatch,
-      data: newData,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setCsvUser(res?.data?.data?.result?.feedbacks);
-          setLoading(false);
-        } else {
-          alert(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
+    // getUserFeedBacksCsvAsync({
+    //   dispatch: dispatch,
+    //   data: newData,
+    //   token: token,
+    //   callbackFn: (res) => {
+    //     if (res?.data?.status === 200) {
+    //       setCsvUser(res?.data?.data?.feedback);
+    //       setLoading(false);
+    //     } else {
+    //       alert(res?.data?.message);
+    //       setLoading(false);
+    //     }
+    //   },
+    // });
   }, []);
+
+
   const [isActive, setIsActive] = useState(false);
   const handleClick = () => {
     setIsActive(!isActive);
@@ -86,7 +91,8 @@ const Feedback = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home /<span className="text-black font-medium"> User Feedback</span>
@@ -106,7 +112,7 @@ const Feedback = ({ isOpen }) => {
             </div>
             <div>
               <p className="font-meduim text-[20px] leading-[20px]">
-                {pageData?.total}
+                {totalFeedback}
               </p>
             </div>
           </div>
@@ -119,7 +125,7 @@ const Feedback = ({ isOpen }) => {
             </div>
             <div>
               <p className="font-meduim text-[20px] leading-[20px]">
-                {totalFeedback}
+                {totalResolvedFeedback}
               </p>
             </div>
           </div>
@@ -129,7 +135,7 @@ const Feedback = ({ isOpen }) => {
         >
           <CSVLink
             style={{ textDecoration: "none", color: "white" }}
-            data={csvUser}
+            data={data}
             separator={";"}
             filename="User_List.csv"
           >

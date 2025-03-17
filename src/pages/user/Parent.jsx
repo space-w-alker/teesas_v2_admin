@@ -7,6 +7,7 @@ import Validation from "../login/Validation";
 import { FaChevronLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
 
 const Parent = ({ isOpen, togglesidebar }) => {
   const [showCustomAddUser, setShowCustomAddUser] = useState(false);
@@ -32,7 +33,7 @@ const Parent = ({ isOpen, togglesidebar }) => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("authToken");
   const onchangeHandler = (event) => {
-
+    const Navigate = useNavigate();
     const { name, value } = event.target;
     setformData((prevFormData) => ({
       ...prevFormData,
@@ -114,7 +115,7 @@ const Parent = ({ isOpen, togglesidebar }) => {
         </div>
       )}
       <div className='flex justify-start  items-center lg:gap-3'>
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
         <div>
           <div className=' font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home / Users/<span className='text-black font-medium'> Edit Parent User</span></div>
         </div>
