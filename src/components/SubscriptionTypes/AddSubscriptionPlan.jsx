@@ -67,7 +67,8 @@ const AddSubscriptionPlan = ({ isOpen }) => {
       token,
       callbackFn: (res) => {
         if (res?.data?.status === 200) {
-          setCountries(res.data.data || []);
+          setCountries(res.data.data?.
+            countries || []);
         } else {
           console.error("Error fetching countries");
         }
