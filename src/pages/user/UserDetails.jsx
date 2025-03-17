@@ -169,6 +169,22 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
   const info = userData?.count?.rows?.map(
     (subject) => subject.lessonMediaCount
   );
+
+
+  const splitName = (fullName) => {
+    if (!fullName) return { first_name: "", middle_name: "", last_name: "" };
+
+    const nameParts = fullName.trim().split(" ");
+    return {
+      first_name: nameParts[0] || "",
+      middle_name: nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "",
+      last_name: nameParts.length > 1 ? nameParts[nameParts.length - 1] : ""
+    };
+  };
+
+  // Extract name parts
+  const nameParts = splitName(userData?.userName);
+
   return (
     <div
       className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
@@ -188,7 +204,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
         </div>
       )} */}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home / Users/
@@ -280,7 +296,6 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                 </div>
               </div>
             </div>
-
             <div className="mt-5 bg-[#F2F2F2] rounded-2xl px-[13px] lg:px-[20px] py-[20px]">
               <div className="flex justify-between items-center ">
                 <div className="">
@@ -295,22 +310,23 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                       state: {
                         isEdit: true,
                         userData: {
-                          first_name: formdata?.first_name,
-                          middle_name: formdata?.middle_name,
-                          last_name: formdata?.last_name,
-                          phone: formdata?.phone,
-                          country_id: formdata?.country_id?.id || 81, // ✅ Extract the ID
-                          date_of_birth: formdata?.date_of_birth,
-                          gender: formdata?.gender?.toUpperCase(),
-                          email: formdata?.email,
-                          password: formdata?.password,
-                          parent_name: formdata?.parent_name,
-                          parent_phone: formdata?.parent_phone,
-                          parent_address: formdata?.parent_address,
-                          parent_relationship: formdata?.parent_relationship,
-                          grade: parseInt(formdata?.grade, 10) || 21, // Convert to integer
-                          course: parseInt(formdata?.course, 10) || 153, // Convert to integer
-                          location: formdata?.location,
+                          id: userData?.id,
+                          first_name: nameParts.first_name,
+                          middle_name: nameParts.middle_name,
+                          last_name: nameParts.last_name,
+                          phone: userData?.phone,
+                          country_id: userData?.country_id?.id || 81, // ✅ Extract the ID
+                          date_of_birth: userData?.dob,
+                          gender: userData?.gender?.toUpperCase(),
+                          email: userData?.email,
+                          password: userData?.password,
+                          parent_name: userData?.parent?.name,
+                          parent_email: userData?.parent?.email,
+                          parent_address: userData?.parent?.address,
+                          parent_relationship: userData?.parent?.relationship,
+                          grade: parseInt(userData?.grade, 10) || 21, // Convert to integer
+                          course: parseInt(userData?.course, 10) || 153, // Convert to integer
+                          location: userData?.location?.name,
                           status: "active",
                         }
                       }

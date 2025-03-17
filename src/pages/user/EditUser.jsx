@@ -9,8 +9,8 @@ import { FaChevronLeft } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify"
 import { useSelector } from "react-redux";
-import { fetchUserDetailsAsync } from "../../apis/slices/userSlice";
-import { useLocation, useParams } from "react-router-dom";
+import { fetchUserDetailsAsync, updateUserAsync } from "../../apis/slices/userSlice";
+import { useLocation, useNavigation, useParams } from "react-router-dom";
 import { addUserAsync } from "../../apis/slices/userSlice";
 import { getCountriesAsync, getCategoriesAsync } from "../../apis/slices/categoriesSlice";
 import { useNavigate } from "react-router-dom";
@@ -24,25 +24,25 @@ const EditUser = ({ isOpen, togglesidebar }) => {
   const data = useSelector((state) => state.users?.userDetails?.usersList || {});
   const addData = useSelector((state) => state?.users?.userDetails || {});
   const [formData, setFormData] = useState({
-    first_name: "",
-    middle_name: "",
-    last_name: "",
-    phone: "",
-    country_id: "",
-    date_of_birth: "",
-    gender: "",
-    email: "",
-    password: "",
-    parent_name: "",
-    parent_phone: "",
-    parent_address: "",
-    parent_relationship: "",
-    grade: '',
-    course: '',
-    location: '',
+    first_name: userData?.first_name,
+    middle_name: userData?.middle_name,
+    last_name: userData?.last_name,
+    phone: userData?.phone || "",
+    country_id: userData?.country_id || "",
+    date_of_birth: userData?.date_of_birth || "",
+    gender: userData?.gender || "",
+    email: userData?.email || "",
+    password: userData?.password || "",
+    parent_name: userData?.parent_name || "",
+    parent_email: userData?.parent_email || "",
+    parent_address: userData?.parent_address || "",
+    parent_relationship: userData?.parent_relationship || "",
+    grade: userData?.grade || '',
+    course: userData?.course || '',
+    location: userData?.location || '',
     status: "active"
   });
-  console.log('thi', formData?.phone);
+  console.log('thi', formData?.location);
 
   const countries = useSelector((state) => state.categories.countries?.data || []);
   const category = useSelector((state) => state.categories.list?.data || []);
@@ -55,6 +55,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
 
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [imageFile, setImageFile] = useState({});
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -73,12 +74,12 @@ const EditUser = ({ isOpen, togglesidebar }) => {
 
   }, [dispatch, id]);
 
-
-  useEffect(() => {
-    if (isEdit && userData) {
-      setFormData(userData);
-    }
-  }, [isEdit, userData]);
+  // console.log('test', userData)
+  // useEffect(() => {
+  //   if (isEdit && userData) {
+  //     setFormData(userData);
+  //   }
+  // }, [isEdit, userData]);
 
   const handleCategoryChange = (event) => {
     const selectedId = event.target.value;
@@ -110,7 +111,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
         email: formData?.email,
         password: formData?.password,
         parent_name: formData?.parent_name,
-        parent_phone: formData?.parent_phone,
+        parent_email: formData?.parent_email,
         parent_address: formData?.parent_address,
         parent_relationship: formData?.parent_relationship,
         grade: parseInt(formData?.grade, 10) || 21, // Convert to integer
@@ -119,8 +120,8 @@ const EditUser = ({ isOpen, togglesidebar }) => {
         status: "active",
       };
 
-      dispatch(addUserAsync({
-        dispatch, data: finaldata, callbackFn: (res) => {
+      dispatch(updateUserAsync({
+        dispatch, userId: userData?.id, data: finaldata, callbackFn: (res) => {
           console.log('callback', res)
           setFormData({
             first_name: "",
@@ -133,7 +134,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
             email: "",
             password: "",
             parent_name: "",
-            parent_phone: "",
+            parent_email: "",
             parent_address: "",
             parent_relationship: "",
             grade: location.state?.categoryData?.classes || '',
@@ -142,7 +143,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
             status: "active"
 
           });
-          Navigate(`/users`);
+          navigate(`/userdetails/${userData?.id}`);
         }
       }))
       // .then((response) => {
@@ -179,7 +180,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
         </div>
       )} */}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => navigate(-1)} className="cursor-pointer" />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home / Users/
@@ -391,13 +392,13 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                       />
                     </div>
                     <div>
-                      <label className="font-medium text-[14px]">Parent Phone</label>
+                      <label className="font-medium text-[14px]">Parent Email</label>
                       <input
                         type="text"
-                        name="parent_phone"
-                        value={formData?.parent_phone}
+                        name="parent_email"
+                        value={formData?.parent_email}
                         className="mt-1 w-full border p-2 rounded-lg"
-                        placeholder="Enter Parent Phone"
+                        placeholder="Enter Parent Email"
                         onChange={onchangeHandler}
                       />
                     </div>
