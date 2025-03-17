@@ -16,6 +16,7 @@ import resellersReducer from "./apis/slices/resellersSlice";
 import questionsSlice from "./apis/slices/questionSlice";
 import userSlice from "./apis/slices/userSlice";
 import promocodeReducer from './apis/slices/promocodeSlice';
+import countryReducer from "./apis/slices/countrySlice";
 
 
 export default configureStore({
@@ -37,5 +38,6 @@ export default configureStore({
     questions: questionsSlice,
     users: userSlice,
     promocode: promocodeReducer,
+    country: countryReducer
   },
 });

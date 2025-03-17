@@ -1,32 +1,20 @@
 import React, { useState, useEffect } from "react"
 import Custombutton from "../../../common/Custombutton"
-import locationIcon from "../../../../assets/images/sharp.png"
- import countryIcon from "../../../../assets/images/Banner-icon.png"
+import countryIcon from "../../../../assets/images/Banner-icon.png"
 import { useNavigate } from "react-router-dom"
 import SearchButton from "../../../../assets/images/Searchbutton.png"
 import Vector from "../../../../assets/images/Vector.png"
 import container from "../../../../assets/images/container.png"
 import { TailSpin } from "react-loader-spinner"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
+import { useDispatch } from "react-redux"
+import { getCountriesAsync } from "../../../../apis/slices/countrySlice"
+import { toast } from "react-toastify"
 
 const CountriesTable = () => {
   const Navigate = useNavigate()
-  const [countryData, setCountryData] = useState([
-    {
-      id: 1,
-      name: "Nigeria",
-      capital: "Abuja",
-      status: "Active",
-      created_at: "2024-01-20"
-    },
-    {
-      id: 2,
-      name: "Ghana",
-      capital: "Accra",
-      status: "Active",
-      created_at: "2024-01-21"
-    }
-  ])
+  const dispatch = useDispatch()
+  const [countryData, setCountryData] = useState([])
   const [page, setPage] = useState(1)
   const [pageData, setPageData] = useState({
     currentPage: 1,
@@ -34,6 +22,61 @@ const CountriesTable = () => {
   })
   const [searchValue, setSearchValue] = useState("")
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    fetchCountries()
+  }, [page])
+
+  const fetchCountries = () => {
+    setLoading(true)
+    getCountriesAsync({
+      dispatch,
+      data: { page, limit: 10, search: searchValue },
+      token: localStorage.getItem("token"),
+      callbackFn: (res) => {
+        if (res?.data?.status === 200) {
+          // Extract countries array from the nested structure
+          setCountryData(res?.data?.data?.countries || [])
+          setPageData({
+            currentPage: res?.data?.data?.pagination?.currentPage || 1,
+            total_pages: res?.data?.data?.pagination?.totalPages || 1
+          })
+        } else {
+          toast.error(res?.data?.message || "Failed to fetch countries")
+        }
+        setLoading(false)
+      }
+    })
+  }
+
+  const handleSearch = () => {
+    setPage(1)
+    fetchCountries()
+  }
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value
+    setSearchValue(value)
+
+    if (value === "") {
+      setPage(1)
+      setTimeout(() => {
+        fetchCountries()
+      }, 50)
+    }
+  }
+
+  const handleNextPage = () => {
+    if (pageData.currentPage < pageData.total_pages) {
+      setPage(page + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (pageData.currentPage > 1) {
+      setPage(page - 1)
+    }
+  }
 
   return (
     <div className="bg-[#FFFFFF] p-4 mt-5 rounded-[18px]">
@@ -65,12 +108,14 @@ const CountriesTable = () => {
                   className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
                   placeholder="Search Country"
                   value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
+                  onChange={handleSearchChange}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <img
                   src={SearchButton}
                   className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer"
                   alt="Search icon"
+                  onClick={handleSearch}
                 />
               </div>
               <div className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2">
@@ -86,7 +131,7 @@ const CountriesTable = () => {
 
       <div className="">
         <ul>
-          {countryData.map((country) => (
+          {Array.isArray(countryData) && countryData.map((country) => (
             <li key={country.id}>
               <div
                 className="flex justify-between gap-4 items-center cursor-pointer hover:bg-gray-50 p-4 rounded-lg transition"
@@ -94,11 +139,19 @@ const CountriesTable = () => {
               >
                 <div className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px]">
                   <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative">
-                    <img
-                      src={countryIcon}
-                      alt=""
-                      className="absolute top-[8px] left-[9px]"
-                    />
+                    {country.image ? (
+                      <img
+                        src={country.image}
+                        alt={`${country.name} flag`}
+                        className="w-full h-full object-cover rounded-[16px]"
+                      />
+                    ) : (
+                      <img
+                        src={countryIcon}
+                        alt=""
+                        className="absolute top-[8px] left-[9px]"
+                      />
+                    )}
                   </div>
                   <div>
                     <div className="flex items-center gap-3 px-[18px]">
@@ -107,40 +160,41 @@ const CountriesTable = () => {
                           {country.name}
                         </p>
                         <p className="text-[12px] text-gray-600">
-                          {country.capital}
+                          {country.region}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-
-               
-                
               </div>
             </li>
           ))}
         </ul>
 
-        <div className="user bg-white mt-6">
+        <div className="user bg-white mt-6 flex justify-between items-center">
           <Custombutton
             value="Previous"
-            hidden="hidden"
+
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="left"
             width="w-[115px]"
+            onClick={handlePrevPage}
+            disabled={pageData.currentPage <= 1}
           />
           <div className="text-[#667085] text-[12px]">
-            Page {pageData?.currentPage} of {pageData?.total_pages}
+            Page {pageData.currentPage} of {pageData.total_pages}
           </div>
           <Custombutton
             value="Next"
-            hidden="hidden"
+
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="right"
+            onClick={handleNextPage}
+            disabled={pageData.currentPage >= pageData.total_pages}
           />
         </div>
       </div>
