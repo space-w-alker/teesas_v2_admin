@@ -102,4 +102,9 @@ export const config = {
   DELETE_USER: "admin/users/delete-user",
 
   GET_TOTAL_SUBSCRIBERS: "admin/users/get-total-subscribers",
+
+  GET_JOBS: "admin/job/list",
+  DELETE_JOB: "admin/job/delete",
+  ADD_JOB: "admin/job/add",
+  UPDATE_JOB: "admin/job/update",
 };

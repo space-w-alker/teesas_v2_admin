@@ -22,7 +22,7 @@ const Modal = ({
   onSelectCourse,
   onSelectStatus,
   selectedCoursesData,
-  selectedStatusData
+  selectedStatusData,
 }) => {
   const [formData, setFormData] = useState({
     Adduser: "",
@@ -47,7 +47,6 @@ const Modal = ({
   //     }
   //   });
   // };
-
 
   const handleOptionClick = (value) => {
     if (onClick) {
@@ -80,7 +79,6 @@ const Modal = ({
       inactiveUsers: false,
     },
   });
-
 
   const handleCourseChange = (course) => {
     setFilters((prevState) => ({
@@ -141,7 +139,6 @@ const Modal = ({
             </div>
           </div>
         );
-
 
       case "Add Job Opening":
         return (
@@ -250,8 +247,6 @@ const Modal = ({
           </div>
         );
 
-
-
       case "Add Class":
         return (
           <div className="px-[20px]">
@@ -280,7 +275,6 @@ const Modal = ({
             </div>
           </div>
         );
-
 
       case "Export":
         return (
@@ -325,7 +319,6 @@ const Modal = ({
           </div>
         );
       case "Filter":
-
         return (
           <div className="filter lg:px-[20px] px-[10px]">
             <div className="lg:px-[20px] px-[10px] py-[20px] bg-[#FFFFFF] mt-4 rounded-[24px]">
@@ -397,7 +390,10 @@ const Modal = ({
               </div>
 
               <div className="flex justify-end items-center">
-                <button className="bg-[#27AE60] text-white text-[14px] px-8 py-3 rounded-lg" onClick={onClick}>
+                <button
+                  className="bg-[#27AE60] text-white text-[14px] px-8 py-3 rounded-lg"
+                  onClick={onClick}
+                >
                   Apply
                 </button>
               </div>
@@ -410,37 +406,37 @@ const Modal = ({
             <div className="py-[16px] px-[10px] bg-[#FFFFFF] flex flex-col gap-4 mt-4 rounded-[24px]">
               <div
                 className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-                onClick={() => handleOptionClick('status')}
+                onClick={() => handleOptionClick("status")}
               >
                 Filter By Status
               </div>
               <div
                 className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-                onClick={() => handleOptionClick('course')}
+                onClick={() => handleOptionClick("course")}
               >
                 Filter By Course
               </div>
               <div
                 className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-                onClick={() => handleOptionClick('primary')}
+                onClick={() => handleOptionClick("primary")}
               >
                 Filter By Primary School Lesson
               </div>
               <div
                 className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-                onClick={() => handleOptionClick('secondary')}
+                onClick={() => handleOptionClick("secondary")}
               >
                 Filter By Secondary School Lesson
               </div>
               <div
                 className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-                onClick={() => handleOptionClick('habit')}
+                onClick={() => handleOptionClick("habit")}
               >
                 Filter By 7 Habit Coaching
               </div>
               <div
                 className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
-                onClick={() => handleOptionClick('animation')}
+                onClick={() => handleOptionClick("animation")}
               >
                 Filter By Animation
               </div>
@@ -476,8 +472,6 @@ const Modal = ({
             </div>
           </div>
         );
-
-
 
       case "Sort By":
         return (
@@ -522,7 +516,6 @@ const Modal = ({
         return <p>No content available</p>;
     }
   };
-
 
   return (
     <div>

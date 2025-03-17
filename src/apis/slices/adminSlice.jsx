@@ -1,10 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAPICall, postAPICall,postFileAPICall } from "../client/methodCalls";
+import {
+  deleteAPICall,
+  getAPICall,
+  postAPICall,
+  postFileAPICall,
+} from "../client/methodCalls";
 import { toast } from "react-toastify";
 
 import { config } from "../client/config";
 
-const {GET_ADMIN_ROLES, GET_ADMIN_ROLE_PERMISSION, UPDATE_ROLE_PERMISSION,BASEURL,ADD_ADMIN_USER,GET_ADMIN_USERS,GET_ADMIN_USER,GET_DASHBOARD  } = config;
+const {
+  GET_ADMIN_ROLES,
+  GET_ADMIN_ROLE_PERMISSION,
+  UPDATE_ROLE_PERMISSION,
+  BASEURL,
+  ADD_ADMIN_USER,
+  GET_ADMIN_USERS,
+  GET_ADMIN_USER,
+  GET_DASHBOARD,
+  GET_JOBS,
+  DELETE_JOB,
+  ADD_JOB,
+  UPDATE_JOB,
+} = config;
 
 export const adminSlice = createSlice({
   name: "admin",
@@ -15,8 +33,8 @@ export const adminSlice = createSlice({
     getAdminRolePermissionResponse: {
       response: {},
     },
-    updateRolePermissionResponse: { 
-      response:{},
+    updateRolePermissionResponse: {
+      response: {},
     },
     addAdminUserResponse: {
       response: {},
@@ -35,6 +53,18 @@ export const adminSlice = createSlice({
       response: {},
     },
     getTotalOrdersResponse: {
+      response: {},
+    },
+    getJobsResponse: {
+      response: {},
+    },
+    deleteJobResponse: {
+      response: {},
+    },
+    addJobResponse: {
+      response: {},
+    },
+    updateJobResponse: {
       response: {},
     },
   },
@@ -69,7 +99,18 @@ export const adminSlice = createSlice({
     getTotalOrders: (state, action) => {
       state.getTotalOrdersResponse = action.payload;
     },
-
+    getJobs: (state, action) => {
+      state.getJobsResponse = action.payload;
+    },
+    deleteJob: (state, action) => {
+      state.deleteJobResponse = action.payload;
+    },
+    addJob: (state, action) => {
+      state.addJobResponse = action.payload;
+    },
+    updateJob: (state, action) => {
+      state.addJobResponse = action.payload;
+    },
 
     reset: (state, action) => {
       state.getAdminRolesResponse = {
@@ -79,8 +120,12 @@ export const adminSlice = createSlice({
   },
 });
 
-
-export const getDashBoardAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getDashBoardAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_DASHBOARD}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -93,7 +138,64 @@ export const getDashBoardAsync = async ({ dispatch, callbackFn, data, token }) =
   }
 };
 
-export const getAdminRolesAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getJobsAsync = async ({ dispatch, callbackFn, data, token }) => {
+  try {
+    const URL = `${BASEURL}${GET_JOBS}`;
+    const result = getAPICall(URL, data, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(getJobs({ isLoading: false, response: result.data }));
+  } catch (err) {
+    dispatch(getJobs({ isLoading: false }));
+  }
+};
+
+export const deleteJobAsync = async ({ dispatch, callbackFn, data, token }) => {
+  try {
+    const URL = `${BASEURL}${DELETE_JOB}/${data}`;
+    const result = deleteAPICall(URL, data, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(deleteJob({ isLoading: false, response: result.data }));
+  } catch (err) {
+    dispatch(deleteJob({ isLoading: false }));
+  }
+};
+export const addJobAsync = async ({ dispatch, body, callbackFn, token }) => {
+  try {
+    // dispatch(UserLogin({ isLoading: true }));
+    const URL = `${BASEURL}${ADD_JOB}`;
+    const result = await postAPICall(URL, body, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(addJob({ isLoading: false, response: result.data }));
+  } catch (error) {
+    dispatch(addJob({ isLoading: false }));
+  }
+};
+export const updateJobAsync = async ({ dispatch, body, callbackFn, token }) => {
+  try {
+    // dispatch(UserLogin({ isLoading: true }));
+    const URL = `${BASEURL}${UPDATE_JOB}`;
+    const result = await postAPICall(URL, body, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(updateJob({ isLoading: false, response: result.data }));
+  } catch (error) {
+    dispatch(updateJob({ isLoading: false }));
+  }
+};
+
+export const getAdminRolesAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_ADMIN_ROLES}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -106,24 +208,36 @@ export const getAdminRolesAsync = async ({ dispatch, callbackFn, data, token }) 
   }
 };
 
-export const getAdminRolePermissionAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getAdminRolePermissionAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_ADMIN_ROLE_PERMISSION}`;
     const result = getAPICall(URL, data, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });
-    dispatch(getAdminRolePermission({ isLoading: false, response: result.data }));
+    dispatch(
+      getAdminRolePermission({ isLoading: false, response: result.data })
+    );
   } catch (err) {
     dispatch(getAdminRolePermission({ isLoading: false }));
   }
 };
 
-export const updateRolePermissionAsync = async ({ dispatch, body, callbackFn,token }) => {
+export const updateRolePermissionAsync = async ({
+  dispatch,
+  body,
+  callbackFn,
+  token,
+}) => {
   try {
     // dispatch(UserLogin({ isLoading: true }));
     const URL = `${BASEURL}${UPDATE_ROLE_PERMISSION}`;
-    const result = await postAPICall(URL, body,true,token).then((res) => {
+    const result = await postAPICall(URL, body, true, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });
@@ -133,19 +247,24 @@ export const updateRolePermissionAsync = async ({ dispatch, body, callbackFn,tok
   }
 };
 
-export const addAdminUserAsync = async ({ dispatch, body, callbackFn,token }) => {
-    try {
-      // dispatch(UserLogin({ isLoading: true }));
-      const URL = `${BASEURL}${ADD_ADMIN_USER}`;
-      const result = await postFileAPICall(URL, body,token).then((res) => {
-        callbackFn && callbackFn(res);
-        return res;
-      });
-      dispatch(addAdminUser({ isLoading: false, response: result.data }));
-    } catch (error) {
-      dispatch(addAdminUser({ isLoading: false }));
-    }
-  };
+export const addAdminUserAsync = async ({
+  dispatch,
+  body,
+  callbackFn,
+  token,
+}) => {
+  try {
+    // dispatch(UserLogin({ isLoading: true }));
+    const URL = `${BASEURL}${ADD_ADMIN_USER}`;
+    const result = await postFileAPICall(URL, body, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(addAdminUser({ isLoading: false, response: result.data }));
+  } catch (error) {
+    dispatch(addAdminUser({ isLoading: false }));
+  }
+};
 export const getAdminUsersAsync = async ({
   dispatch,
   data,
@@ -164,11 +283,9 @@ export const getAdminUsersAsync = async ({
       }
     });
   } catch (error) {
-    console.log( error);
+    console.log(error);
   }
 };
-
-
 
 export const getAdminUserAsync = async ({
   dispatch,
@@ -188,17 +305,20 @@ export const getAdminUserAsync = async ({
       }
     });
   } catch (error) {
-    console.log('error from get mock tests by subscription-->', error);
+    console.log("error from get mock tests by subscription-->", error);
   }
 };
-
-
 
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
 
-export const getTotalSubscribersAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getTotalSubscribersAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_TOTAL_SUBSCRIBERS}`;
     await getAPICall(URL, data, token).then((res) => {
@@ -215,7 +335,12 @@ export const getTotalSubscribersAsync = async ({ dispatch, callbackFn, data, tok
   }
 };
 
-export const getTotalOrdersAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getTotalOrdersAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_TOTAL_ORDERS}`;
     await getAPICall(URL, data, token).then((res) => {
@@ -233,13 +358,26 @@ export const getTotalOrdersAsync = async ({ dispatch, callbackFn, data, token })
   }
 };
 
-
-export const { getAdminRoles, getAdminRolePermission,updateRolePermission, getAdminUsers,
-    addAdminUser,getTotalSubscribers,getTotalOrders,
-  getAdminUser, getDashBoard} =
-  adminSlice.actions;
-export const getAdminRolesResponse = (state) => state.admin.getAdminRolesResponse;
-export const getAdminRolePermissionResponse = (state) => state.admin.getAdminRolePermissionResponse;
-export const updateRolePermissionResponse = (state) => state.admin.updateRolePermissionResponse;
+export const {
+  getAdminRoles,
+  getAdminRolePermission,
+  updateRolePermission,
+  getAdminUsers,
+  addAdminUser,
+  getTotalSubscribers,
+  getTotalOrders,
+  getAdminUser,
+  getDashBoard,
+  getJobs,
+  deleteJob,
+  addJob,
+  updateJob,
+} = adminSlice.actions;
+export const getAdminRolesResponse = (state) =>
+  state.admin.getAdminRolesResponse;
+export const getAdminRolePermissionResponse = (state) =>
+  state.admin.getAdminRolePermissionResponse;
+export const updateRolePermissionResponse = (state) =>
+  state.admin.updateRolePermissionResponse;
 
 export default adminSlice.reducer;
