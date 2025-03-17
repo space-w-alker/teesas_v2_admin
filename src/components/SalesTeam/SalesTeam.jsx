@@ -7,27 +7,32 @@ import { useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
 import BannerList from '../Core/Dashboard/Admin/BannerList'
 import SalesTeamList from '../Core/Dashboard/Admin/SalesTeamList'
+import { useDispatch, useSelector } from 'react-redux'
+import { listSalesTeamAsync, salesTeamList } from '../../apis/slices/salesSlice'
 
 const SalesTeam = ({ isOpen }) => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const salesTeamData = useSelector((state) => state.sales?.salesTeamList?.data) || { data: [] }
   const [bannerData, setBannerData] = useState([])
   const [loading, setLoading] = useState(false)
 
   const dummyBannerStats = {
-    total_banners: 25,
+    total_banners: salesTeamData?.pagination?.totalItems,
     active_banners: 18,
     featured_banners: 7
   }
 
   useEffect(() => {
     setLoading(true)
+    dispatch(listSalesTeamAsync({ dispatch, token: '' }))
     // Simulate API call with dummy data
     setTimeout(() => {
       setBannerData(dummyBannerStats)
       setLoading(false)
     }, 1000)
-  }, [])
-
+  }, [dispatch])
+  // console.log('salesTeamData', salesTeamData);
   return (
     <div className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       {loading && (
@@ -43,7 +48,7 @@ const SalesTeam = ({ isOpen }) => {
       )}
 
       <div className='flex justify-start items-center lg:gap-3'>
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => navigate(-1)} />
         <div>
           <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
             Home / <span className='text-black font-medium'>Sales Team</span>
@@ -75,7 +80,11 @@ const SalesTeam = ({ isOpen }) => {
         </button>
       </div>
 
-      <SalesTeamList />
+      {salesTeamData?.salesTeam?.length > 0 ? (
+        <SalesTeamList />
+      ) : (
+        <div>No data available</div>
+      )}
     </div>
   )
 }

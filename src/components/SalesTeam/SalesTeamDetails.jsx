@@ -1,25 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
+import { FaChevronLeft } from 'react-icons/fa'
 
 const SalesTeamDetails = ({ isOpen }) => {
+  const location = useLocation()
   const navigate = useNavigate()
-  const [salesData, setSalesData] = useState({
-    id: 1,
-    name: "John Sales Team",
-    status: true,
-    email: "john@salesteam.com",
-    phone: "+1234567890",
-    whatsapp: "+1234567890",
-    registration_date: "2024-01-15",
-    address: "123 Sales Street, City",
-    approved_date: "2024-01-20"
-  })
-  const [loading, setLoading] = useState(false)
+  const teamMemberDetails = location.state || {}
+  console.log('teamMemberDetails', teamMemberDetails)
 
   return (
     <div className={`py-[8rem] lg:px-[10rem] px-[10px] ${isOpen ? "ml-[240px]" : ""}`}>
+
       <div className="flex items-center gap-2 text-sm mb-6">
+        <FaChevronLeft onClick={() => navigate('/sales-team')} className="cursor-pointer" />
+
         <span className="text-gray-400">Home</span>
         <span className="text-gray-400">/</span>
         <span className="text-gray-400">Sales Team</span>
@@ -27,7 +22,7 @@ const SalesTeamDetails = ({ isOpen }) => {
         <span className="text-gray-900 font-medium">Team Details</span>
       </div>
 
-      {loading && (
+      {teamMemberDetails.loading && (
         <div style={{
           position: "absolute",
           top: "50%",
@@ -42,13 +37,13 @@ const SalesTeamDetails = ({ isOpen }) => {
       <div className="bg-[#EFF6F1] border rounded-lg mb-[10px] border-[#CAC4D0] h-[80px] p-[8px]">
         <div className="flex items-center gap-4">
           <div className="rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-            {salesData?.name?.charAt(0).toUpperCase()}
+            {teamMemberDetails?.name?.charAt(0).toUpperCase()}
           </div>
           <div className="">
             <p className="font-bold text-[16px] leading-[24px] tracking-wider text-[#1D2026]">
-              {salesData?.name}
+              {teamMemberDetails?.name}
             </p>
-            {salesData?.status ? (
+            {teamMemberDetails?.status == "active" ? (
               <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px] text-white bg-[#08AA58]">
                 Active
               </button>
@@ -61,9 +56,9 @@ const SalesTeamDetails = ({ isOpen }) => {
         </div>
       </div>
       <div className="text-center mb-4">
-        <button className="font-medium text-[14px] leading-[20px] text-[#27AE60] cursor-pointer">
+        {/* <button className="font-medium text-[14px] leading-[20px] text-[#27AE60] cursor-pointer">
           Manage
-        </button>
+        </button> */}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm p-6">
@@ -75,27 +70,27 @@ const SalesTeamDetails = ({ isOpen }) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-600">Email:</p>
-                <p className="font-medium">{salesData.email}</p>
+                <p className="font-medium">{teamMemberDetails?.email}</p>
               </div>
               <div>
                 <p className="text-gray-600">Phone Number:</p>
-                <p className="font-medium">{salesData.phone}</p>
+                <p className="font-medium">{teamMemberDetails?.phone}</p>
               </div>
               <div>
                 <p className="text-gray-600">WhatsApp Number:</p>
-                <p className="font-medium">{salesData.whatsapp}</p>
+                <p className="font-medium">{teamMemberDetails?.whatsapp}</p>
               </div>
               <div>
                 <p className="text-gray-600">Registration Date:</p>
-                <p className="font-medium">{salesData.registration_date}</p>
+                <p className="font-medium">{teamMemberDetails?.registration_date}</p>
               </div>
               <div>
                 <p className="text-gray-600">Address:</p>
-                <p className="font-medium">{salesData.address}</p>
+                <p className="font-medium">{teamMemberDetails?.address}</p>
               </div>
               <div>
                 <p className="text-gray-600">Approved Date:</p>
-                <p className="font-medium">{salesData.approved_date}</p>
+                <p className="font-medium">{teamMemberDetails?.approved_date}</p>
               </div>
             </div>
           </div>
