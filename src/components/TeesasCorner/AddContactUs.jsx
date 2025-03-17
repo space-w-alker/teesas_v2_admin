@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addContactInfoAsync } from '../../apis/slices/cornerSlice';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
@@ -7,6 +9,7 @@ import SuccessModal from '../common/SuccessModal';
 
 const AddContactUs = ({ isOpen }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     address: '',
@@ -26,7 +29,8 @@ const AddContactUs = ({ isOpen }) => {
   };
 
   const handleSave = () => {
-    setShowSuccess(true);
+    const data = { ...formData };
+    dispatch(addContactInfoAsync({ dispatch, data, token: 'your-auth-token', callbackFn: () => setShowSuccess(true) }));
   };
 
   const handleClose = () => {
@@ -36,7 +40,7 @@ const AddContactUs = ({ isOpen }) => {
 
   return (
     <div className={`py-[7rem] px-[5rem] ${isOpen ? "xl:ml-[260px]" : ""}`}>
-      <Headers 
+      <Headers
         value1="Home / Contact Us"
         value2="Add Contact Us"
       />
@@ -142,7 +146,7 @@ const AddContactUs = ({ isOpen }) => {
               </div>
 
               <div className="pt-6 mt-6 border-t flex justify-center">
-                <Custombutton 
+                <Custombutton
                   onClick={handleSave}
                   value="Save Contact Information"
                   backgroundcolor="bg-[#27AE60] hover:bg-[#219652]"

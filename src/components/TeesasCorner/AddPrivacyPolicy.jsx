@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addPrivacyPolicyAsync } from '../../apis/slices/cornerSlice';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
@@ -7,6 +9,7 @@ import SuccessModal from '../common/SuccessModal';
 
 const AddPrivacyPolicy = ({ isOpen }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     description: ''
@@ -21,7 +24,13 @@ const AddPrivacyPolicy = ({ isOpen }) => {
   };
 
   const handleSave = () => {
-    setShowSuccess(true);
+    const data = { content: formData.description };
+    dispatch(addPrivacyPolicyAsync({
+      dispatch,
+      data,
+      token: 'your-auth-token',
+      callbackFn: () => setShowSuccess(true)
+    }));
   };
 
   const handleClose = () => {
@@ -31,7 +40,7 @@ const AddPrivacyPolicy = ({ isOpen }) => {
 
   return (
     <div className={`py-[7rem] px-[5rem] ${isOpen ? "xl:ml-[260px]" : ""}`}>
-      <Headers 
+      <Headers
         value1="Home / Privacy Policy"
         value2="Add Privacy Policy"
       />
@@ -61,9 +70,9 @@ const AddPrivacyPolicy = ({ isOpen }) => {
             <div className="space-y-4">
               <div className="flex justify-between bg-green-100 p-4 rounded-lg">
                 <span className="text-gray-600">Description :</span>
-                <input className='bg-green-100' type="text" />
+                <input className='bg-green-100' type="text" value={formData.description} readOnly />
               </div>
-              
+
               <div className="pt-6 mt-6 border-t flex justify-center">
                 <Custombutton
                   onClick={handleSave}
