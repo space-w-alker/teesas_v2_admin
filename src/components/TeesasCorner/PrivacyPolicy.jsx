@@ -12,9 +12,10 @@ const PrivacyPolicy = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const privacyPolicyData = useSelector(privacyPolicyList);
+  // console.log('privacyPolicyData', privacyPolicyData);
 
   useEffect(() => {
-    dispatch(listPrivacyPolicyAsync({ dispatch, token: 'your-auth-token' }));
+    dispatch(listPrivacyPolicyAsync({ dispatch, token: '' }));
   }, [dispatch]);
 
   return (
@@ -53,11 +54,12 @@ const PrivacyPolicy = ({ isOpen }) => {
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="bg-white rounded-lg p-4">
-            {privacyPolicyData.length > 0 ? (
-              privacyPolicyData.map((item, index) => (
-                <p key={index} className="text-gray-600 leading-relaxed mb-4">
-                  {item.content}
-                </p>
+            {privacyPolicyData?.data?.length > 0 ? (
+              privacyPolicyData?.data?.map((item, index) => (
+                <div key={index} className="mb-4">
+                  <h4 className="text-lg font-bold text-gray-900">{item.title}</h4>
+                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                </div>
               ))
             ) : (
               <p className="text-gray-600 leading-relaxed">

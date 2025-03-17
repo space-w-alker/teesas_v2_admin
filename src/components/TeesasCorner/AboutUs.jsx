@@ -13,9 +13,9 @@ const AboutUs = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const aboutUsData = useSelector(aboutUsList);
-
+  console.log('adat', aboutUsData?.data);
   useEffect(() => {
-    dispatch(listAboutUsAsync({ dispatch, token: 'your-auth-token' }));
+    dispatch(listAboutUsAsync({ dispatch, token: '' }));
   }, [dispatch]);
 
   return (
@@ -54,11 +54,14 @@ const AboutUs = ({ isOpen }) => {
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="bg-white rounded-lg p-4">
-            {aboutUsData.length > 0 ? (
-              aboutUsData.map((item, index) => (
-                <p key={index} className="text-gray-600 leading-relaxed">
-                  {item.content}
-                </p>
+            {aboutUsData?.data?.length > 0 ? (
+              aboutUsData?.data.map((item, index) => (
+                <div key={index} className="mb-4">
+                  <h4 className="text-md font-semibold text-gray-800">{item.title}</h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
               ))
             ) : (
               <p className="text-gray-600 leading-relaxed">
@@ -68,9 +71,9 @@ const AboutUs = ({ isOpen }) => {
           </div>
         </div>
       </div>
-    </div>
-  );
+      </div>
+      );
 };
 
-export default AboutUs;
+      export default AboutUs;
 

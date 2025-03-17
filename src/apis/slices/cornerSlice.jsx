@@ -194,11 +194,12 @@ export const addAboutUsAsync = ({ dispatch, data, token, callbackFn }) => {
     return async () => {
         try {
             const URL = `${BASEURL}corner/about-us/add`;
-            const response = await postAPICall(URL, data, true, token);
-            if (response.status === 200) {
+            const response = await postAPICall(URL, data, token);
+            console.log(response);
+            if (response.data?.status === 200) {
                 dispatch(addAboutUsSuccess(response.data));
                 toast.success("About Us added successfully");
-                callbackFn && callbackFn(response.data);
+                callbackFn && callbackFn(response.data.da);
             } else {
                 toast.error("Failed to add About Us.");
             }
@@ -289,8 +290,8 @@ export const addPrivacyPolicyAsync = ({ dispatch, data, token, callbackFn }) => 
     return async () => {
         try {
             const URL = `${BASEURL}corner/privacy-policy/add`;
-            const response = await postAPICall(URL, data, true, token);
-            if (response.status === 200) {
+            const response = await postAPICall(URL, data, token);
+            if (response?.data?.status === 200) {
                 dispatch(addPrivacyPolicySuccess(response.data));
                 toast.success("Privacy Policy added successfully");
                 callbackFn && callbackFn(response.data);
@@ -309,6 +310,7 @@ export const listPrivacyPolicyAsync = ({ dispatch, token, callbackFn }) => {
         try {
             const URL = `${BASEURL}corner/privacy-policy/list`;
             const response = await getAPICall(URL, {}, token);
+            console.log('response', response);
             if (response?.data?.status === 200) {
                 dispatch(listPrivacyPolicySuccess(response.data));
                 callbackFn && callbackFn(response.data);
@@ -384,7 +386,7 @@ export const addTermsConditionsAsync = ({ dispatch, data, token, callbackFn }) =
     return async () => {
         try {
             const URL = `${BASEURL}corner/terms-conditions/add`;
-            const response = await postAPICall(URL, data, true, token);
+            const response = await postAPICall(URL, data, token);
             if (response.status === 200) {
                 dispatch(addTermsConditionsSuccess(response.data));
                 toast.success("Terms and Conditions added successfully");
@@ -479,8 +481,8 @@ export const addTestimonialAsync = ({ dispatch, data, token, callbackFn }) => {
     return async () => {
         try {
             const URL = `${BASEURL}corner/testimonial/add`;
-            const response = await postAPICall(URL, data, true, token);
-            if (response.status === 200) {
+            const response = await postAPICall(URL, data, token);
+            if (response?.data?.status === 200) {
                 dispatch(addTestimonialSuccess(response.data));
                 toast.success("Testimonial added successfully");
                 callbackFn && callbackFn(response.data);
@@ -574,8 +576,8 @@ export const addContactInfoAsync = ({ dispatch, data, token, callbackFn }) => {
     return async () => {
         try {
             const URL = `${BASEURL}corner/contact-info/add`;
-            const response = await postAPICall(URL, data, true, token);
-            if (response.status === 200) {
+            const response = await postAPICall(URL, data, token);
+            if (response?.data?.status === 200) {
                 dispatch(addContactInfoSuccess(response.data));
                 toast.success("Contact Info added successfully");
                 callbackFn && callbackFn(response.data);

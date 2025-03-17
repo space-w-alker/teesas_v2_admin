@@ -14,7 +14,7 @@ const Testimonials = ({ isOpen }) => {
   const testimonialData = useSelector(testimonialList);
 
   useEffect(() => {
-    dispatch(listTestimonialAsync({ dispatch, token: 'your-auth-token' }));
+    dispatch(listTestimonialAsync({ dispatch, token: '' }));
   }, [dispatch]);
 
   return (
@@ -53,14 +53,15 @@ const Testimonials = ({ isOpen }) => {
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="bg-white rounded-lg p-4">
-            {testimonialData.length > 0 ? (
-              testimonialData.map((item, index) => (
+            {testimonialData?.data.length > 0 ? (
+              testimonialData?.data.map((item, index) => (
                 <div key={index} className="mb-6 pb-6 border-b border-gray-100 last:border-0 last:mb-0 last:pb-0">
-                  <p className="text-gray-600 leading-relaxed">
-                    {item.content}
+                  <h4 className="text-lg font-bold text-gray-900">{item.title}</h4>
+                  <p className="text-gray-600 leading-relaxed mt-2">
+                    {item.description}
                   </p>
-                  {item.author && (
-                    <p className="text-gray-800 font-medium mt-2">- {item.author}</p>
+                  {item.name && (
+                    <p className="text-gray-800 font-medium mt-2">- {item.name}</p>
                   )}
                 </div>
               ))

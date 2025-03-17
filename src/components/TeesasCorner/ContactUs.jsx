@@ -14,11 +14,11 @@ const ContactUs = ({ isOpen }) => {
   const contactInfoData = useSelector(contactInfoList);
 
   useEffect(() => {
-    dispatch(listContactInfoAsync({ dispatch, token: 'your-auth-token' }));
+    dispatch(listContactInfoAsync({ dispatch, token: '' }));
   }, [dispatch]);
 
   // Get the most recent contact info if available
-  const contactInfo = contactInfoData.length > 0 ? contactInfoData[0] : null;
+  const contactInfo = contactInfoData?.data.length > 0 ? contactInfoData?.data[0] : null;
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>

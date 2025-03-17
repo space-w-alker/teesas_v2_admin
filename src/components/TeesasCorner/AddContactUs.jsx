@@ -30,7 +30,7 @@ const AddContactUs = ({ isOpen }) => {
 
   const handleSave = () => {
     const data = { ...formData };
-    dispatch(addContactInfoAsync({ dispatch, data, token: 'your-auth-token', callbackFn: () => setShowSuccess(true) }));
+    dispatch(addContactInfoAsync({ dispatch, data, token: '', callbackFn: () => setShowSuccess(true) }));
   };
 
   const handleClose = () => {

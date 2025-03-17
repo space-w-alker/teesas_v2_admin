@@ -10,6 +10,7 @@ const AddAboutUs = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
+    title: '',
     description: ''
   });
 
@@ -22,8 +23,8 @@ const AddAboutUs = ({ isOpen }) => {
   };
 
   const handleSubmit = () => {
-    const data = { content: formData.description };
-    dispatch(addAboutUsAsync({ dispatch, data, token: 'your-auth-token', callbackFn: () => navigate('/about-us') }));
+    const data = { title: formData.title, description: formData.description };
+    dispatch(addAboutUsAsync({ dispatch, data, token: '', callbackFn: () => navigate('/about-us') }));
   };
 
   return (
@@ -39,6 +40,17 @@ const AddAboutUs = ({ isOpen }) => {
             <h1 className="text-xl  text-gray-900 mb-4">Add About Us</h1>
             <div className="h-[1px] w-full bg-black mb-8"></div>
             <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">Title</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Enter title"
+              />
+            </div>
+            <div className="space-y-2 mt-4">
               <label className="block text-sm font-medium text-gray-700">Description</label>
               <textarea
                 name="description"
@@ -56,6 +68,10 @@ const AddAboutUs = ({ isOpen }) => {
             <h2 className="text-xl  text-gray-900 mb-8">Summary</h2>
             <div className="space-y-4">
               <div className="flex justify-between bg-green-100 p-4 rounded-lg">
+                <span className="text-gray-600">Title :</span>
+                <input className='bg-green-100' type="text" value={formData.title} readOnly />
+              </div>
+              <div className="flex justify-between bg-green-100 p-4 rounded-lg mt-4">
                 <span className="text-gray-600">Description :</span>
                 <input className='bg-green-100' type="text" value={formData.description} readOnly />
               </div>

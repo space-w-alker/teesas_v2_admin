@@ -26,14 +26,14 @@ const AddTestimonial = ({ isOpen }) => {
 
   const handleSave = () => {
     const data = {
-      content: formData.description,
-      author: formData.author
+      description: formData.description,
+      name: formData.author
     };
 
     dispatch(addTestimonialAsync({
       dispatch,
       data,
-      token: 'your-auth-token',
+      token: '',
       callbackFn: () => setShowSuccess(true)
     }));
   };
