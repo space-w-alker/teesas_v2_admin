@@ -153,7 +153,7 @@ const JobOpenings = ({ isOpen }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
