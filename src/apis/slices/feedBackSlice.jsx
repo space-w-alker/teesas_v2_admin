@@ -47,6 +47,9 @@ export const feedBackSlice = createSlice({
     },
     getCoursesAndClassesResponse: {
       response: {},
+    },
+    getFeedbackDetailsResponse: {
+      response: {},
     }
   },
   reducers: {
@@ -80,7 +83,9 @@ export const feedBackSlice = createSlice({
     GetCoursesAndClasses: (state, action) => {
       state.getCoursesAndClassesResponse = action.payload;
     },
-
+    getFeedbackDetails: (state, action) => {
+      state.getFeedbackDetailsResponse = action.payload;
+    },
     reset: (state, action) => {
       state.getUsersFeedbackResponse = {
         isLoading: false,
@@ -133,7 +138,7 @@ export const replyFeedbackAsync = async ({
 }) => {
   try {
     // dispatch(UserLogin({ isLoading: true }));
-    const URL = `${BASEURL}${REPLYFEEDBACK}`;
+    const URL = `${BASEURL}${REPLYFEEDBACK}/${body.feedback_id}`;
     const result = await postAPICall(URL, body, true, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
@@ -291,6 +296,29 @@ export const GetCoursesAndClassesAsync = async ({
   }
 };
 
+export const getFeedbackDetailsAsync = async ({
+  dispatch,
+  data,
+  token,
+  callbackFn,
+}) => {
+  try {
+    const URL = `${BASEURL}admin/feedback/get-feedback/${data.id}`;
+    await getAPICall(URL, data, token).then((res) => {
+      if (res?.data?.status === 200) {
+        const data = res?.data;
+        callbackFn && callbackFn(data);
+        dispatch(getFeedbackDetails(data));
+      } else {
+        toast.error(res?.data?.message);
+      }
+    });
+  } catch (error) {
+    console.log("error fetching feedback details:", error);
+    toast.error("An error occurred while fetching feedback details");
+  }
+};
+
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
@@ -305,6 +333,7 @@ export const {
   getUserFeedBacksCsv,
   GetMonthlyReport,
   GetCoursesAndClasses,
+  getFeedbackDetails,
 } = feedBackSlice.actions;
 export const getUsersFeedbackResponse = (state) =>
   state.feedBack.getUsersFeedbackResponse;
@@ -312,5 +341,7 @@ export const getUserFeedbackResponse = (state) =>
   state.feedBack.getUserFeedbackResponse;
 export const replyFeedbaclResponse = (state) =>
   state.feedBack.replyFeedbaclResponse;
+export const getFeedbackDetailsResponse = (state) =>
+  state.feedBack.getFeedbackDetailsResponse;
 
 export default feedBackSlice.reducer;
