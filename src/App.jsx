@@ -175,6 +175,7 @@ import AddTopic from './components/Categories/AddTopic';
 import TopicDetail from './components/Categories/TopicDetail';
 import UploadQuestions from './components/Test/UploadQuestions';
 import QuestionView from './components/Test/QuestionView';
+import AdminDetails from './pages/admin/AdminRole/AdminDetails';
 
 
 
@@ -451,6 +452,11 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/AdminDetails/:id" element={<ProtectedRoute>
+          <AdminDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        </ProtectedRoute>
+        } />
+
         <Route
           path="/AdminRole"
           element={

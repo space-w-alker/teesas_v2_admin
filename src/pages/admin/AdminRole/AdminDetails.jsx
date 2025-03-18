@@ -1,32 +1,45 @@
-import React from 'react'
-import bookopen from '../../../assets/images/bookopen'
-import RoleDetails from '../../../components/Core/Dashboard/Admin/RoleDetails'
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import bookopen from '../../../assets/images/bookopen.png';
+import RoleDetails from '../../../components/Core/Dashboard/Admin/RoleDetails';
+import { getRoleDetailsAsync, roleDetails } from '../../../apis/slices/rolesSlice';
+import { TailSpin } from "react-loader-spinner";
+import { FaChevronLeft } from 'react-icons/fa';
 
-const AdminDetails = () => {
+const AdminDetails = ({ isOpen }) => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const roleDetail = useSelector(roleDetails);
+  console.log(roleDetail);
+  useEffect(() => {
+    if (id) {
+      dispatch(getRoleDetailsAsync({ dispatch, id, token: '' }));
+    }
+  }, [dispatch, id]);
+
+  if (!roleDetail) {
+    return <TailSpin color="orange" radius={5} />;
+  }
+
   return (
-    <div>
-      <div className="bg-[#EFF6F1] border rounded-lg mb-[8px] border-[#CAC4D0] h-[80px] p-[21px]">
-        <div className="flex items-center gap-4">
-          <div className="w-[43px] h-[38px] rounded-full bg-[#FFFFFF] relative">
-            <img
-              src={bookopen}
-              alt=""
-              className=" absolute top-[13px] left-[9px]"
-            />
-          </div>
-          <div className="">
-            <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
-              Admin
-            </p>
-          </div>
+    <div
+      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "lg:ml-[260px]" : ""}`}>
+      <div className='flex justify-start items-center lg:gap-3'>
+        <FaChevronLeft />
+        <div>
+          <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home / <span className='text-black font-medium'> Admin Role Details</span></div>
         </div>
       </div>
+      <h2 className="font-bold mt-5 text-[22px] leading-[28px] text-[#2C2E32]">
+        Admin Role Details
+      </h2>
       <div className="flex justify-center">
-        {/*<button className=" font-medium text-[14px] leading-[20px] text-[#27AE60] text-center">Manage</button>*/}
+        <button className=" font-medium text-[14px] leading-[20px] text-[#27AE60] text-center">Manage</button>
       </div>
-      <RoleDetails />
+      <RoleDetails roleDetail={roleDetail} />
     </div>
-  )
-}
+  );
+};
 
-export default AdminDetails
+export default AdminDetails;

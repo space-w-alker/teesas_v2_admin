@@ -9,7 +9,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
 
 const AdminRoleList = (adminData) => {
-  const Navigate= useNavigate();
+  const Navigate = useNavigate();
   return (
     <div className="bg-[#FFFFFF] p-4 mt-5 rounded-[18px]">
       {/*<Headcomponent value="Admin Role List" border="Border" />*/}
@@ -23,7 +23,7 @@ const AdminRoleList = (adminData) => {
       <div className="">
         <ul>
           {adminData?.adminData?.map((user) => (
-            <li key={user.id} className=" cursor-pointer" onClick={()=>Navigate(`/Addadminrole?id=${user?.id}`)}>
+            <li key={user.id} className=" cursor-pointer" onClick={() => Navigate(`/AdminDetails/${user?.id}`)}>
               <div className="flex gap-2 items-center">
                 <div className="px-[18px]  mt-5 flex  items-center gap-[2px] ">
                   <img src={tessas} alt="" className="w-[32px] h-[32px] mr-2" />
@@ -34,7 +34,7 @@ const AdminRoleList = (adminData) => {
                 </div> */}
                       <div className="">
                         <p className=" font-bold text-[14px] leading-[16px] text-[#171717] cursor-pointer">
-                          {user.role_name}
+                          {user.name}
                         </p>
                       </div>
                     </div>
@@ -44,7 +44,7 @@ const AdminRoleList = (adminData) => {
             </li>
           ))}
         </ul>
-      {/*  <div className="user">
+        {/*  <div className="user">
           <Custombutton
             value="Previous"
             hidden="hidden"
