@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { listAboutUsAsync, aboutUsList } from '../../apis/slices/cornerSlice';
 import teesasLogo from '../../assets/images/Tessas.png';
 import Headers from '../common/Headers';
 import UserCard from '../common/UserCard';
@@ -9,10 +11,16 @@ import Custombutton from '../common/Custombutton';
 const AboutUs = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const aboutUsData = useSelector(aboutUsList);
+  console.log('adat', aboutUsData?.data);
+  useEffect(() => {
+    dispatch(listAboutUsAsync({ dispatch, token: '' }));
+  }, [dispatch]);
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <Headers 
+      <Headers
         value1="Home"
         value2="About Us"
       />
@@ -23,7 +31,7 @@ const AboutUs = ({ isOpen }) => {
             <img src={teesasLogo} alt="Teesas Logo" className="w-12 h-12 object-contain" />
           </div>
           <div className="flex flex-col">
-            <Headcomponent 
+            <Headcomponent
               value="About Us"
               showSearch={false}
             />
@@ -32,7 +40,7 @@ const AboutUs = ({ isOpen }) => {
       </div>
 
       <div className="flex justify-center mt-4">
-        <Custombutton 
+        <Custombutton
           value="Manage"
           textcolor="text-green-400"
           backgroundcolor="hover:text-green-600"
@@ -41,23 +49,31 @@ const AboutUs = ({ isOpen }) => {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm p-6">
-<div className="border-b border-gray-200 pb-2 mb-4">
-  <h3 className="text-lg font-bold text-gray-900">Our Story</h3>
-</div>
-<div className="bg-gray-50 rounded-lg p-4">
-  <div className="bg-white rounded-lg p-4">
-    <p className="text-gray-600 leading-relaxed">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
-    <p className="text-gray-600 leading-relaxed mt-4">
-      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
-    </p>
-  </div>
-</div>
-</div>
-    </div>
-  );
+        <div className="border-b border-gray-200 pb-2 mb-4">
+          <h3 className="text-lg font-bold text-gray-900">Our Story</h3>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-white rounded-lg p-4">
+            {aboutUsData?.data?.length > 0 ? (
+              aboutUsData?.data.map((item, index) => (
+                <div key={index} className="mb-4">
+                  <h4 className="text-md font-semibold text-gray-800">{item.title}</h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-600 leading-relaxed">
+                No About Us information available.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+      </div>
+      );
 };
 
-export default AboutUs;
+      export default AboutUs;
 
