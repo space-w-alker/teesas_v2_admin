@@ -19,6 +19,7 @@ import promocodeReducer from './apis/slices/promocodeSlice';
 import countryReducer from "./apis/slices/countrySlice";
 
 import cornerSlice from './apis/slices/cornerSlice';
+import salesReducer from './apis/slices/salesSlice';
 
 export default configureStore({
   reducer: {
@@ -41,5 +42,6 @@ export default configureStore({
     promocode: promocodeReducer,
     country: countryReducer,
     corner: cornerSlice,
+    sales: salesReducer,
   },
 });

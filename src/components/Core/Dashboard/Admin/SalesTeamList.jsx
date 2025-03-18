@@ -1,41 +1,35 @@
 import React, { useState, useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import { TailSpin } from "react-loader-spinner"
 
 import Custombutton from "../../../common/Custombutton"
+import { listSalesTeamAsync } from "../../../../apis/slices/salesSlice"
 
-
-import bannerIcon  from "../../../../assets/images/Banner-icon.png"
+import bannerIcon from "../../../../assets/images/Banner-icon.png"
 import sharp from "../../../../assets/images/sharp.png"
-
-import { useNavigate } from "react-router-dom"
 import SearchButton from "../../../../assets/images/Searchbutton.png"
 import Vector from "../../../../assets/images/Vector.png"
 import container from "../../../../assets/images/container.png"
-import { TailSpin } from "react-loader-spinner"
 
 const SalesTeamList = () => {
   const navigate = useNavigate()
-  const [salesTeamData, setSalesTeamData] = useState([
-    {
-      id: 1,
-      name: "John Sales Team",
-      status: "Active",
-      region: "North Region"
-    },
-    {
-      id: 2,
-      name: "Sarah Sales Team",
-      status: "Active",
-      region: "South Region"
-    }
-  ])
+  const dispatch = useDispatch()
+  const salesTeamData = useSelector((state) => state.sales?.salesTeamList?.data || [])
   const [page, setPage] = useState(1)
   const [pageData, setPageData] = useState({
-    currentPage: 1,
-    total_pages: 5
+    currentPage: salesTeamData?.pagination?.currentPage,
+    total_pages: salesTeamData?.pagination?.totalPages
   })
   const [searchValue, setSearchValue] = useState("")
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    setLoading(true)
+    dispatch(listSalesTeamAsync({ dispatch, token: '' }))
+    setLoading(false)
+  }, [dispatch])
+  console.log('data', salesTeamData);
   return (
     <div className="bg-[#FFFFFF] p-4 mt-5 rounded-[18px]">
       {loading && (
@@ -87,11 +81,22 @@ const SalesTeamList = () => {
 
       <div className="">
         <ul>
-          {salesTeamData.map((team) => (
+          {salesTeamData?.salesTeam?.map((team) => (
             <li key={team.id}>
               <div
                 className="flex justify-between gap-4 items-center"
-                onClick={() => navigate(`/SalesTeam/Details?id=${team?.id}`)}
+                onClick={() => navigate(`/SalesTeam/Details`, {
+                  state: {
+                    id: team?.id,
+                    email: team?.email,
+                    phone: team?.phone,
+                    whatsapp: team?.whatsapp,
+                    registration_date: team?.created_at,
+                    address: team?.location,
+                    approved_date: team?.approved_date ?? 'Not Approved',
+                    status: team?.status
+                  }
+                })}
               >
                 <div className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px]">
                   <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative">
@@ -129,7 +134,7 @@ const SalesTeamList = () => {
         <div className="user bg-white">
           <Custombutton
             value="Previous"
-            hidden="hidden"
+            // hidden="hidden"
             icon={<arrowleft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -141,7 +146,7 @@ const SalesTeamList = () => {
           </div>
           <Custombutton
             value="Next"
-            hidden="hidden"
+            // hidden="hidden"
             icon={<arrowright />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -149,7 +154,7 @@ const SalesTeamList = () => {
           />
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

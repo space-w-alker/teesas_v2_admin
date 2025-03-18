@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux"
 import { toast } from "react-toastify"
 import { TailSpin } from "react-loader-spinner"
 import { FaChevronLeft } from "react-icons/fa"
+import { addSalesTeamAsync } from "../../apis/slices/salesSlice"
 
 const AddSalesTeam = ({ isOpen }) => {
   const navigate = useNavigate()
@@ -23,7 +24,8 @@ const AddSalesTeam = ({ isOpen }) => {
     Territory: "",
     Role: "",
     Id: "",
-    Description: ""
+    Description: "",
+    WhatsApp: "" // Added WhatsApp field
   })
 
   const onchangeHandler = (event) => {
@@ -36,25 +38,37 @@ const AddSalesTeam = ({ isOpen }) => {
 
   const submitForm = () => {
     setLoading(true)
-    var form_data = new FormData()
-    form_data.append("name", formData?.Full_Name)
-    form_data.append("gender", formData?.Gender)
-    form_data.append("email", formData?.Email)
-    form_data.append("phone", formData?.Phone_Number)
-    form_data.append("team_code", formData?.Team_Code)
-    form_data.append("description", formData?.Description)
-    form_data.append("id", formData?.Id)
-    form_data.append("region", formData?.Region)
+    const form_data = {
+      name: formData?.Full_Name,
+      gender: formData?.Gender,
+      email: formData?.Email,
+      phone: formData?.Phone_Number,
+      team_code: formData?.Team_Code,
+      description: formData?.Description,
+      region: formData?.Region,
+      team_name: formData?.Team_Name,
+      location: formData?.Location,
+      territory: formData?.Territory,
+      role: formData?.Role,
+      whatsapp: formData?.WhatsApp // Added WhatsApp field
+    }
 
-    // API call would go here
-    setLoading(false)
-    toast.success("Sales team member added successfully")
+    // Dispatch the Redux action
+    dispatch(addSalesTeamAsync({
+      dispatch,
+      data: form_data,
+      token: '',
+      callbackFn: () => {
+        setLoading(false)
+        navigate('/sales-team')
+      }
+    }))
   }
 
   return (
     <div className={`py-[8rem] lg:px-[9rem] px-[10px] ${isOpen ? "ml-[240px]" : ""}`}>
       <div className='flex justify-start items-center lg:gap-3 mb-6'>
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => navigate('/sales-team')} className="cursor-pointer" />
         <div>
           <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
             Home / <span className='text-black font-medium'>Sales Team</span>
@@ -223,6 +237,20 @@ const AddSalesTeam = ({ isOpen }) => {
                     value={formData.Role}
                     className="mt-1 w-full text-[14px] outline-none border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                     placeholder="Enter Role"
+                    onChange={onchangeHandler}
+                  />
+                </div>
+
+                <div>
+                  <label className="font-medium text-[14px] leading-[18px] text-[#3D3D3D]">
+                    WhatsApp
+                  </label>
+                  <input
+                    type="text"
+                    name="WhatsApp"
+                    value={formData.WhatsApp}
+                    className="mt-1 w-full text-[14px] outline-none border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
+                    placeholder="Enter WhatsApp Number"
                     onChange={onchangeHandler}
                   />
                 </div>
