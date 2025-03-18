@@ -45,6 +45,11 @@ export const config = {
   DELETE_PROMOCODE: "promocodes/delete-promocode",
   GET_PROMOCODE_DETAILS: "promocodes/promocode-details",
 
+  GET_BANNERS: "banner/get-list",
+  ADD_BANNER: "banner/add-banner",
+  UPDATE_BANNER: "banner/update-banner",
+  DELETE_BANNER: "banner/delete-banner",
+
   CREATE_ASSESSMENT: "/assessment/create-assessment/",
   GET_ASSESSMENT: "/assessment/get-assessment/",
   GET_PAYMENTS: "admin/payments",

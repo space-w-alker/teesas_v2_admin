@@ -113,12 +113,12 @@ const Sidebardata = [
 
       },
 
-      {
-        name: 'UTME',
-        icon: hashtag,
-        path: "/utme"
+      // {
+      //   name: 'UTME',
+      //   icon: hashtag,
+      //   path: "/utme"
 
-      },
+      // },
 
       {
         name: 'Practice',
@@ -127,7 +127,7 @@ const Sidebardata = [
 
       },
       {
-        name: 'Text',
+        name: 'Mock Test',
         icon: hashtag,
         path: "/test"
 

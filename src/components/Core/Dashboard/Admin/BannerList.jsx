@@ -1,41 +1,133 @@
-import React, { useState, useEffect } from "react"
-import Custombutton from "../../../common/Custombutton"
-import bannerIcon  from "../../../../assets/images/Banner-icon.png"
-import sharp from "../../../../assets/images/sharp.png"
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Custombutton from "../../../common/Custombutton";
+import bannerIcon from "../../../../assets/images/Banner-icon.png";
+import SearchButton from "../../../../assets/images/Searchbutton.png";
+import Vector from "../../../../assets/images/Vector.png";
+import container from "../../../../assets/images/container.png";
+import { TailSpin } from "react-loader-spinner";
+import { getBannersAsync, getBanners, getBannersResponse, deleteBannerAsync, deleteBannerResponse } from "../../../../apis/slices/bannerSlice";
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import SuccessModal from "../../../common/SuccessModal";
 
-import { useNavigate } from "react-router-dom"
-import SearchButton from "../../../../assets/images/Searchbutton.png"
-import Vector from "../../../../assets/images/Vector.png"
-import container from "../../../../assets/images/container.png"
-import { TailSpin } from "react-loader-spinner"
+const BannerList = ({ onRefresh }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { response, isLoading } = useSelector(getBannersResponse);
+  const deleteResponse = useSelector(deleteBannerResponse);
 
-const BannerList = () => {
-  const navigate = useNavigate()
-  const [bannerData, setBannerData] = useState([
-    {
-      id: 1,
-      name: "Summer Sale Banner",
-      status: "Active",
-      position: "Home Page"
-    },
-    {
-      id: 2,
-      name: "New Year Banner",
-      status: "Active",
-      position: "Category Page"
-    }
-  ])
-  const [page, setPage] = useState(1)
+  const [bannerData, setBannerData] = useState([]);
+  const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({
     currentPage: 1,
-    total_pages: 5
-  })
-  const [searchValue, setSearchValue] = useState("")
-  const [loading, setLoading] = useState(false)
+    total_pages: 1
+  });
+  const [searchValue, setSearchValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedBannerId, setSelectedBannerId] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    fetchBanners();
+  }, []);
+
+  const fetchBanners = () => {
+    setLoading(true);
+    dispatch(getBanners({ isLoading: true }));
+
+    getBannersAsync({
+      dispatch,
+      callbackFn: (res) => {
+        setLoading(false);
+        if (res?.data?.status === 200) {
+          setBannerData(res.data.data.Banner || []);
+          setPageData({
+            currentPage: res.data.data.pagination.currentPage,
+            total_pages: res.data.data.pagination.totalPages
+          });
+        }
+      },
+      data: {
+        page,
+        limit: 10,
+        search: searchValue
+      }
+    });
+  };
+
+  const handleSearch = () => {
+    setPage(1);
+    fetchBanners();
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+
+    if (value === "") {
+      setPage(1);
+      setTimeout(() => {
+        fetchBanners();
+      }, 50);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (page > 1) {
+      setPage(prev => prev - 1);
+      setTimeout(() => {
+        fetchBanners();
+      }, 100);
+    }
+  };
+
+  const handleNext = () => {
+    if (page < pageData.total_pages) {
+      setPage(prev => prev + 1);
+      setTimeout(() => {
+        fetchBanners();
+      }, 100);
+    }
+  };
+
+  const handleDeleteClick = (bannerId) => {
+    setSelectedBannerId(bannerId);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedBannerId) return;
+
+    setDeleteLoading(true);
+
+    deleteBannerAsync({
+      dispatch,
+      bannerId: selectedBannerId,
+      callbackFn: (res) => {
+        setDeleteLoading(false);
+        setShowDeleteModal(false);
+
+        if (res?.data?.status === 200) {
+          setSuccessMessage("Banner deleted successfully");
+          setShowSuccessModal(true);
+
+          fetchBanners();
+
+          if (onRefresh) onRefresh();
+        } else {
+          alert(res?.data?.message || "Failed to delete banner");
+        }
+      }
+    });
+  };
 
   return (
     <div className="bg-[#FFFFFF] p-4 mt-5 rounded-[18px]">
-      {loading && (
+      {(loading || deleteLoading) && (
         <div style={{
           position: "fixed",
           top: "50%",
@@ -63,12 +155,14 @@ const BannerList = () => {
                   className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
                   placeholder="Search Banner"
                   value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
+                  onChange={handleSearchChange}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <img
                   src={SearchButton}
                   className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer"
                   alt="Search icon"
+                  onClick={handleSearch}
                 />
               </div>
               <div className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2">
@@ -84,70 +178,111 @@ const BannerList = () => {
 
       <div className="">
         <ul>
-          {bannerData.map((banner) => (
-            <li key={banner.id}>
-              <div
-                className="flex justify-between gap-4 items-center"
-                onClick={() => navigate(`/Banner/BannerDetails?id=${banner?.id}`)}
-              >
-                <div className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px]">
-                  <div className="w-[32px] h-[32px] rounded-[16px]  relative">
-                    <img
-                      src={bannerIcon}
-                      alt=""
-                      className="absolute top-[8px] left-[9px]"
-                    />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-3 px-[18px]">
-                      <div className="flex items-center gap-2">
-                        <p className="font-bold text-[14px] leading-[16px] text-[#171717]">
-                          {banner.name}
-                        </p>
+          {bannerData.length > 0 ? (
+            bannerData.map((banner) => (
+              <li key={banner.id}>
+                <div className="flex justify-between gap-4 items-center">
+                  <div className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px]">
+                    <div className="w-[32px] h-[32px] rounded-[16px] relative">
+                      <img
+                        src={bannerIcon}
+                        alt=""
+                        className="absolute top-[8px] left-[9px]"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-3 px-[18px]">
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-[14px] leading-[16px] text-[#171717]">
+                            {banner.title}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div>
-                  <Custombutton
-                    value={banner.status}
-                    img={sharp}
-                    backgroundcolor="bg-[#E9FDEE]"
-                    textcolor="text-[#2760EA]"
-                    imagePosition="left"
-                  />
+                  <div className="flex gap-2">
+                    <Custombutton
+                      value="View"
+                      onClick={() => navigate(`/Banner/BannerDetails?id=${banner?.id}`)}
+                      backgroundcolor="bg-blue-100"
+                      textcolor="text-blue-600"
+                      width="w-[60px]"
+                    />
+                    <Custombutton
+                      value="Edit"
+                      onClick={() => navigate(`/Banner/AddBanner?id=${banner?.id}`)}
+                      backgroundcolor="bg-green-100"
+                      textcolor="text-green-600"
+                      width="w-[60px]"
+                    />
+                    <Custombutton
+                      value="Delete"
+                      onClick={() => handleDeleteClick(banner.id)}
+                      backgroundcolor="bg-red-100"
+                      textcolor="text-red-600"
+                      width="w-[60px]"
+                    />
+                  </div>
                 </div>
-              </div>
+              </li>
+            ))
+          ) : (
+            <li className="text-center py-8 text-gray-500">
+              {loading ? "Loading banners..." : "No banners found"}
             </li>
-          ))}
+          )}
         </ul>
 
-        <div className="user bg-white">
+        <div className="user bg-white flex justify-between items-center mt-6">
           <Custombutton
             value="Previous"
-            hidden="hidden"
-            icon={<arrowleft />}
+            icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="left"
             width="w-[115px]"
+            onClick={handlePrevious}
+            disabled={page === 1}
           />
           <div className="text-[#667085] text-[12px]">
             Page {pageData?.currentPage} of {pageData?.total_pages}
           </div>
           <Custombutton
             value="Next"
-            hidden="hidden"
-            icon={<arrowright />}
+            icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="right"
+            onClick={handleNext}
+            disabled={page >= pageData.total_pages}
           />
         </div>
       </div>
-    </div>
-  )
-}
 
-export default BannerList
+
+      <SuccessModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        type="caution"
+        title="Delete Banner"
+        message="Are you sure you want to delete this banner?"
+        buttonText="Delete"
+        onConfirm={handleDeleteConfirm}
+      />
+
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        type="success"
+        title="Success"
+        message={successMessage}
+        buttonText="Close"
+        onConfirm={() => setShowSuccessModal(false)}
+      />
+    </div>
+  );
+};
+
+export default BannerList;

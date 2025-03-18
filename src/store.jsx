@@ -20,6 +20,7 @@ import countryReducer from "./apis/slices/countrySlice";
 
 import cornerSlice from './apis/slices/cornerSlice';
 import salesReducer from './apis/slices/salesSlice';
+import bannerReducer from './apis/slices/bannerSlice';
 
 export default configureStore({
   reducer: {
@@ -43,5 +44,6 @@ export default configureStore({
     country: countryReducer,
     corner: cornerSlice,
     sales: salesReducer,
+    banner: bannerReducer,
   },
 });
