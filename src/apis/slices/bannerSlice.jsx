@@ -3,7 +3,7 @@ import { getAPICall, postAPICall, postFileAPICall, deleteAPICall, putAPICall } f
 import { toast } from "react-toastify";
 import { config } from "../client/config";
 
-const { BASEURL, GET_BANNERS, CREATE_BANNER, DELETE_BANNER, UPDATE_BANNER } = config;
+const { BASEURL, GET_BANNERS, ADD_BANNER, DELETE_BANNER, UPDATE_BANNER } = config;
 
 export const bannerSlice = createSlice({
     name: "banner",
@@ -81,7 +81,7 @@ export const getBannerByIdAsync = async ({ dispatch, callbackFn, bannerId, token
 export const createBannerAsync = async ({ dispatch, callbackFn, formData, token }) => {
     try {
         dispatch(createBanner({ isLoading: true }));
-        const URL = `${BASEURL}${CREATE_BANNER}`;
+        const URL = `${BASEURL}${ADD_BANNER}`;
         const result = await postFileAPICall(URL, formData, token).then((res) => {
             callbackFn && callbackFn(res);
             return res;
