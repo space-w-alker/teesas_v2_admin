@@ -112,4 +112,8 @@ export const config = {
   DELETE_JOB: "admin/job/delete",
   ADD_JOB: "admin/job/add",
   UPDATE_JOB: "admin/job/update",
+
+  GET_PUSH_NOTIFICATIONS: "admin/push-notifications",
+  ADD_PUSH_NOTIFICATION: "admin/push-notifications/add",
+  DELETE_PUSH_NOTIFICATION: "admin/push-notifications/delete",
 };

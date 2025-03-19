@@ -22,6 +22,9 @@ const {
   DELETE_JOB,
   ADD_JOB,
   UPDATE_JOB,
+  GET_PUSH_NOTIFICATIONS,
+  DELETE_PUSH_NOTIFICATION,
+  ADD_PUSH_NOTIFICATION,
 } = config;
 
 export const adminSlice = createSlice({
@@ -67,6 +70,15 @@ export const adminSlice = createSlice({
     updateJobResponse: {
       response: {},
     },
+    getPushResponse: {
+      response: {},
+    },
+    deletePushResponse: {
+      response: {},
+    },
+    addPushResponse: {
+      response: {},
+    },
   },
   reducers: {
     getAdminRoles: (state, action) => {
@@ -110,6 +122,15 @@ export const adminSlice = createSlice({
     },
     updateJob: (state, action) => {
       state.addJobResponse = action.payload;
+    },
+    getPush: (state, action) => {
+      state.getPushResponse = action.payload;
+    },
+    deletePush: (state, action) => {
+      state.deletePushResponse = action.payload;
+    },
+    addPush: (state, action) => {
+      state.addPushResponse = action.payload;
     },
 
     reset: (state, action) => {
@@ -187,6 +208,50 @@ export const updateJobAsync = async ({ dispatch, body, callbackFn, token }) => {
     dispatch(updateJob({ isLoading: false, response: result.data }));
   } catch (error) {
     dispatch(updateJob({ isLoading: false }));
+  }
+};
+
+export const getPushAsync = async ({ dispatch, callbackFn, data, token }) => {
+  try {
+    const URL = `${BASEURL}${GET_PUSH_NOTIFICATIONS}`;
+    const result = getAPICall(URL, data, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(getPush({ isLoading: false, response: result.data }));
+  } catch (err) {
+    dispatch(getPush({ isLoading: false }));
+  }
+};
+
+export const deletePushAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
+  try {
+    const URL = `${BASEURL}${DELETE_PUSH_NOTIFICATION}/${data}`;
+    const result = deleteAPICall(URL, data, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(deletePush({ isLoading: false, response: result.data }));
+  } catch (err) {
+    dispatch(deletePush({ isLoading: false }));
+  }
+};
+export const addPushAsync = async ({ dispatch, body, callbackFn, token }) => {
+  try {
+    // dispatch(UserLogin({ isLoading: true }));
+    const URL = `${BASEURL}${ADD_PUSH_NOTIFICATION}`;
+    const result = await postAPICall(URL, body, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(addPush({ isLoading: false, response: result.data }));
+  } catch (error) {
+    dispatch(addPush({ isLoading: false }));
   }
 };
 
@@ -372,6 +437,9 @@ export const {
   deleteJob,
   addJob,
   updateJob,
+  getPush,
+  addPush,
+  deletePush,
 } = adminSlice.actions;
 export const getAdminRolesResponse = (state) =>
   state.admin.getAdminRolesResponse;

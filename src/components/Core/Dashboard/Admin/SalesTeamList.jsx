@@ -1,45 +1,48 @@
-import React, { useState, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import { TailSpin } from "react-loader-spinner"
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
 
-import Custombutton from "../../../common/Custombutton"
-import { listSalesTeamAsync } from "../../../../apis/slices/salesSlice"
+import Custombutton from "../../../common/Custombutton";
+import { listSalesTeamAsync } from "../../../../apis/slices/salesSlice";
 
-import bannerIcon from "../../../../assets/images/Banner-icon.png"
-import sharp from "../../../../assets/images/sharp.png"
-import SearchButton from "../../../../assets/images/Searchbutton.png"
-import Vector from "../../../../assets/images/Vector.png"
-import container from "../../../../assets/images/container.png"
+import bannerIcon from "../../../../assets/images/Banner-icon.png";
+import sharp from "../../../../assets/images/sharp.png";
+import SearchButton from "../../../../assets/images/Searchbutton.png";
+import Vector from "../../../../assets/images/Vector.png";
+import container from "../../../../assets/images/container.png";
 
 const SalesTeamList = () => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const salesTeamData = useSelector((state) => state.sales?.salesTeamList?.data || [])
-  const [page, setPage] = useState(1)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const salesTeamData = useSelector(
+    (state) => state.sales?.salesTeamList?.data || []
+  );
+  const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({
     currentPage: salesTeamData?.pagination?.currentPage,
-    total_pages: salesTeamData?.pagination?.totalPages
-  })
-  const [searchValue, setSearchValue] = useState("")
-  const [loading, setLoading] = useState(false)
+    total_pages: salesTeamData?.pagination?.totalPages,
+  });
+  const [searchValue, setSearchValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
-    dispatch(listSalesTeamAsync({ dispatch, token: '' }))
-    setLoading(false)
-  }, [dispatch])
-  console.log('data', salesTeamData);
+    setLoading(true);
+    dispatch(listSalesTeamAsync({ dispatch, token: "" }));
+    setLoading(false);
+  }, [dispatch]);
   return (
     <div className="bg-[#FFFFFF] p-4 mt-5 rounded-[18px]">
       {loading && (
-        <div style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}>
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
           <TailSpin color="orange" radius={5} />
         </div>
       )}
@@ -85,18 +88,20 @@ const SalesTeamList = () => {
             <li key={team.id}>
               <div
                 className="flex justify-between gap-4 items-center"
-                onClick={() => navigate(`/SalesTeam/Details`, {
-                  state: {
-                    id: team?.id,
-                    email: team?.email,
-                    phone: team?.phone,
-                    whatsapp: team?.whatsapp,
-                    registration_date: team?.created_at,
-                    address: team?.location,
-                    approved_date: team?.approved_date ?? 'Not Approved',
-                    status: team?.status
-                  }
-                })}
+                onClick={() =>
+                  navigate(`/SalesTeam/Details`, {
+                    state: {
+                      id: team?.id,
+                      email: team?.email,
+                      phone: team?.phone,
+                      whatsapp: team?.whatsapp,
+                      registration_date: team?.created_at,
+                      address: team?.location,
+                      approved_date: team?.approved_date ?? "Not Approved",
+                      status: team?.status,
+                    },
+                  })
+                }
               >
                 <div className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px]">
                   <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative">
@@ -154,8 +159,8 @@ const SalesTeamList = () => {
           />
         </div>
       </div>
-    </div >
-  )
-}
+    </div>
+  );
+};
 
-export default SalesTeamList
+export default SalesTeamList;
