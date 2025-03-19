@@ -21,11 +21,11 @@ const AdminUserDetails = ({ isOpen }) => {
     getAdminUserAsync({
       dispatch: dispatch,
       data: {
-        user_id: id,
+        id: id,
       },
       token: token,
       callbackFn: (res) => {
-        setAdminData(res?.data?.admin_user);
+        setAdminData(res?.data?.user || res?.data);
         setLoading(false)
       },
     });
@@ -64,7 +64,7 @@ const AdminUserDetails = ({ isOpen }) => {
           </div>
           <div className="">
             <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
-              {adminData?.first_name} {adminData?.last_name}
+              {adminData?.firstName} {adminData?.middleName} {adminData?.lastName}
             </p>
             {adminData?.status == 1 ? (
               <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
@@ -103,18 +103,18 @@ const AdminUserDetails = ({ isOpen }) => {
                   </div>
                   <div className="flex flex-col mb-4">
                     <p className="font-normal text-[12px] lg:text-[14px] leading-[18px] text-[#1F1F1FB2]">
-                      Whatsapp Number
+                      Name
                     </p>
                     <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                      {adminData?.mobile}
+                      {adminData?.firstName} {adminData?.middleName} {adminData?.lastName}
                     </p>
                   </div>
                   <div className="flex flex-col mb-4">
                     <p className="font-normal text-[12px] lg:text-[14px] leading-[18px] text-[#1F1F1FB2]">
-                      Registration Date
+                      Role
                     </p>
                     <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                      {adminData?.created_at}
+                      {adminData?.role}
                     </p>
                   </div>
                 </div>
@@ -124,7 +124,7 @@ const AdminUserDetails = ({ isOpen }) => {
                       Mobile Number
                     </p>
                     <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                      {adminData?.mobile}
+                      {adminData?.phoneNumber}
                     </p>
                   </div>
                   <div className="flex flex-col mb-4">
@@ -132,7 +132,7 @@ const AdminUserDetails = ({ isOpen }) => {
                       Address
                     </p>
                     <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                      {adminData?.city}
+                      {adminData?.address}
                     </p>
                   </div>
                   <div className="flex flex-col mb-4">

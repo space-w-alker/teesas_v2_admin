@@ -8,12 +8,16 @@ import "react-toastify/dist/ReactToastify.css";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import Validation from "../../../components/validator/adminUserValidator";
+import SuccessModal from "../../../components/common/SuccessModal";
+import { useNavigate } from "react-router-dom";
 
 const AddAdminUser = ({ isOpen }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
   const [errors, setError] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setformData] = useState({
     First_Name: "",
     Last_Name: "",
@@ -24,9 +28,8 @@ const AddAdminUser = ({ isOpen }) => {
     Phone_Contact: "",
     Email: "",
     Address: "",
-    file: "",
   });
-  const [imageFile, setImageFile] = useState({});
+
   const onchangeHandler = (event) => {
     const { name, value } = event.target;
     setformData((prevFormData) => ({
@@ -34,45 +37,33 @@ const AddAdminUser = ({ isOpen }) => {
       [name]: value,
     }));
   };
+
   const submitContactForm = () => {
     const errorData = Validation(formData);
     setError(errorData);
     if (Object.keys(errorData).length < 1) {
       setLoading(true);
-      var form_data = new FormData();
-      form_data.append("first_name", formData?.First_Name);
-      form_data.append("last_name", formData?.Last_Name);
-      form_data.append("middle_name", formData?.Middle_Name);
-      form_data.append("gender", formData?.Gender);
-      form_data.append("birthday", formData?.Date_of_Birth);
-      form_data.append("email", formData?.Email);
-      form_data.append("mobile", formData?.Phone_Contact);
-      form_data.append("address", formData?.Address);
-      form_data.append(
-        "user_type",
-        formData?.Admin_Role == "Sub Admin/Teacher" ? "SUB_ADMIN" : "ADMIN"
-      );
-      form_data.append("file", imageFile);
+
+      const requestData = {
+        firstName: formData?.First_Name,
+        middleName: formData?.Middle_Name,
+        lastName: formData?.Last_Name,
+        gender: formData?.Gender.toLowerCase(),
+        dateOfBirth: formData?.Date_of_Birth,
+        phoneNumber: formData?.Phone_Contact,
+        email: formData?.Email,
+        address: formData?.Address,
+        role: formData?.Admin_Role
+      };
 
       addAdminUserAsync({
         dispatch: dispatch,
-        body: form_data,
+        body: requestData,
         token: token,
         callbackFn: (res) => {
           if (res?.data?.status === 200) {
-            setformData({
-              First_Name: "",
-              Last_Name: "",
-              Middle_Name: "",
-              Admin_Role: "",
-              Gender: "",
-              Date_of_Birth: "",
-              Phone_Contact: "",
-              Email: "",
-              Address: "",
-              file: "",
-            });
             setLoading(false);
+            setShowSuccessModal(true); // Show success modal
           } else {
             toast.error(res?.data?.message);
             setLoading(false);
@@ -84,6 +75,25 @@ const AddAdminUser = ({ isOpen }) => {
       toast.error("Please fill all fields");
     }
   };
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    // Reset form data
+    setformData({
+      First_Name: "",
+      Last_Name: "",
+      Middle_Name: "",
+      Admin_Role: "",
+      Gender: "",
+      Date_of_Birth: "",
+      Phone_Contact: "",
+      Email: "",
+      Address: "",
+    });
+    // Navigate back to admin users list
+    navigate("/AdminUser");
+  };
+
   return (
     <div
       className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
@@ -102,8 +112,8 @@ const AddAdminUser = ({ isOpen }) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+      <div className="flex justify-start items-center lg:gap-3">
+        <FaChevronLeft className="cursor-pointer" onClick={() => navigate(-1)} />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Admin Users/{" "}
@@ -117,51 +127,6 @@ const AddAdminUser = ({ isOpen }) => {
             <h2 className="text-[18px]  leading-[20px] Border  pb-[10px] text-[#000000] font-medium">
               Add Admin Users
             </h2>
-          </div>
-          <div>
-            <p className=" font-medium text-[14px] leading-[18px] mt-5 text-[#3D3D3D] pb-[8px]">
-              Upload User Image
-            </p>
-            <div className="h-[48px] py-[10px] border border-dashed text-[#B9B9B9] bg-[#EFF6F1] rounded-lg">
-              <p className=" font-normal text-center cursor-pointer text-[16px] leading-[24px]  translate-x-0 text-[#49454F]">
-                <div className="text-center relative ">
-                  {" "}
-                  Click to upload Image
-                </div>
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    if (
-                      e.target.files[0] !== null &&
-                      e.target.files[0] !== undefined
-                    ) {
-                      const image_type_data = e.target.files[0].type;
-                      const image_array = image_type_data.split("/");
-                      const image_types = image_array[1].split(" ");
-                      const img_type = image_types[0];
-                      var types = ["jpg", "png", "svg", "jpeg", "gif", "webp"];
-                      if (types.includes(img_type)) {
-                        setImageFile(e.target.files[0]);
-                        setformData((prevFormData) => ({
-                          ...prevFormData,
-                          ["file"]: "Got it",
-                        }));
-
-                      } else {
-                        toast.error("Please Upload Only Images.");
-                      }
-                    }
-                  }}
-                  className="text-[#EFF6F1]   opacity-0 absolute top-0 left-[45%] max-sm:left-0 "
-                  placeholder=""
-                />
-              </p>
-              {errors.file && (
-                <span className=" text-red-500 block p-[8px] mt-2">
-                  Upload file *
-                </span>
-              )}
-            </div>
           </div>
 
           <div className=" ">
@@ -248,10 +213,13 @@ const AddAdminUser = ({ isOpen }) => {
                     className="w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                   >
                     <option value="" disabled>
-                      Please Select
+                      Please Select  {
+                      }
                     </option>
-                    <option value="Super Admin">Super Admin</option>
-                    <option value="Sub Admin/Teacher">Sub Admin/Teacher</option>
+                    <option value="SUPERADMIN">SUPERADMIN</option>
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="SUPPORT_STAFF">SUPPORT_STAFF</option>
+
                   </select>
                   {errors.Admin_Role && (
                     <span className=" text-red-500 block p-[8px]">
@@ -323,23 +291,6 @@ const AddAdminUser = ({ isOpen }) => {
                     Phone Number
                   </label>
                   <div className="flex gap-5">
-                    {/* <div className="flex w-[82px] flex-col gap-5 ">
-                        <select
-                          type="text"
-                          name="countrycode"
-                          className="w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
-                          id={formData.country_id}
-                    
-                        >
-                          {countrycode.map((item, index) => {
-                            return (
-                              <option key={index} value={item.code}>
-                                {item.code} - {item.country}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>*/}
                     <div className="flex w-full  flex-col gap-2">
                       <input
                         type="mobile-input"
@@ -439,6 +390,17 @@ const AddAdminUser = ({ isOpen }) => {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessModalClose}
+        type="success"
+        title="Success!"
+        message="Admin user has been created successfully."
+        buttonText="Go to Admin Users"
+      />
+
       <ToastContainer
         position="top-right"
         autoClose={2000}

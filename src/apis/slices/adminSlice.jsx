@@ -321,7 +321,7 @@ export const addAdminUserAsync = async ({
   try {
     // dispatch(UserLogin({ isLoading: true }));
     const URL = `${BASEURL}${ADD_ADMIN_USER}`;
-    const result = await postFileAPICall(URL, body, token).then((res) => {
+    const result = await postAPICall(URL, body, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });
