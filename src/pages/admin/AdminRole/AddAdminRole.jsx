@@ -10,16 +10,17 @@ import {
   addRoleAsync,
 } from "../../../apis/slices/rolesSlice";
 import { TailSpin } from "react-loader-spinner";
-
+import { useNavigate } from "react-router-dom";
 
 const AddAdminRole = ({ isOpen }) => {
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [adminData, setAdminData] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
-
   const [loading, setLoading] = useState(false);
-
+  const [roleName, setRoleName] = useState("");
+  const [roleDescription, setRoleDescription] = useState("");
+  const navigate = useNavigate();
   useEffect(() => {
     setLoading(true);
     const urlParams = new URLSearchParams(window.location.search);
@@ -31,7 +32,10 @@ const AddAdminRole = ({ isOpen }) => {
         id: id,
         token: token,
         callbackFn: (res) => {
-          setAdminData(res?.data?.data?.admin_permissions);
+          const roleDetails = res?.data?.data;
+          setAdminData(roleDetails?.admin_permissions);
+          setRoleName(roleDetails?.name);
+          setRoleDescription(roleDetails?.description);
           setLoading(false);
         },
       })();
@@ -54,12 +58,8 @@ const AddAdminRole = ({ isOpen }) => {
     const id = urlParams.get("id");
     const action = isEditMode ? updateRoleAsync : addRoleAsync;
     const body = {
-      role_id: id,
-      permissions: adminData.map(item => ({
-        role_permission_id: item?.id,
-        permission_id: item?.adminPermissions?.id,
-        status: item?.status,
-      })),
+      name: roleName,
+      description: roleDescription,
     };
     action({
       dispatch: dispatch,
@@ -70,6 +70,7 @@ const AddAdminRole = ({ isOpen }) => {
         if (res?.data?.status === 200) {
           toast.success(isEditMode ? "Role updated successfully" : "Role added successfully");
           setLoading(false);
+          navigate(-1);
         } else {
           toast.error(res?.data?.message);
           setLoading(false);
@@ -97,7 +98,7 @@ const AddAdminRole = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => navigate(-1)} className="cursor-pointer" />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Admin Role List /{" "}
@@ -114,6 +115,27 @@ const AddAdminRole = ({ isOpen }) => {
           </div>
           <div>
             <div className=" flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="font-medium text-[14px] leading-[20px] text-[#000000]">
+                  Role Name
+                </label>
+                <input
+                  type="text"
+                  value={roleName}
+                  onChange={(e) => setRoleName(e.target.value)}
+                  className="border border-[#D9D9D9] rounded-sm p-[8px]"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="font-medium text-[14px] leading-[20px] text-[#000000]">
+                  Role Description
+                </label>
+                <textarea
+                  value={roleDescription}
+                  onChange={(e) => setRoleDescription(e.target.value)}
+                  className="border border-[#D9D9D9] rounded-sm p-[8px]"
+                />
+              </div>
               {adminData?.map((item, i) => (
                 <div
                   key={i}

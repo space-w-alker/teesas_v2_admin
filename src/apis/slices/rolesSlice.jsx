@@ -25,6 +25,7 @@ export const rolesSlice = createSlice({
 
         // Permissions
         permissionsList: [],
+        addRolePermissionResponse: {}, // Add this line
     },
     reducers: {
         // Role reducers
@@ -48,6 +49,9 @@ export const rolesSlice = createSlice({
         listPermissionsSuccess: (state, action) => {
             state.permissionsList = action.payload;
         },
+        addRolePermissionSuccess: (state, action) => { // Add this reducer
+            state.addRolePermissionResponse = action.payload;
+        },
 
         // Reset state
         resetState: (state) => {
@@ -68,6 +72,7 @@ export const rolesSlice = createSlice({
 
             // Permissions
             state.permissionsList = [];
+            state.addRolePermissionResponse = {}; // Add this line
         },
     },
 });
@@ -185,6 +190,25 @@ export const listPermissionsAsync = ({ dispatch, token, callbackFn }) => {
     };
 };
 
+// Add Role Permissions
+export const addRolePermissionAsync = ({ dispatch, data, token, callbackFn }) => {
+    return async () => {
+        try {
+            const URL = `${BASEURL}admin/roles/permissions/add`;
+            const response = await postAPICall(URL, data, token);
+            if (response.data?.status === 200) {
+                dispatch(addRolePermissionSuccess(response.data));
+                toast.success("Permissions added to role successfully");
+                callbackFn && callbackFn(response.data);
+            } else {
+                toast.error("Failed to add permissions to role.");
+            }
+        } catch (error) {
+            toast.error("Error adding permissions to role: " + error);
+        }
+    };
+};
+
 // Export all actions
 export const {
     // Roles
@@ -196,6 +220,7 @@ export const {
 
     // Permissions
     listPermissionsSuccess,
+    addRolePermissionSuccess, // Add this line
 
     // Reset
     resetState
@@ -219,5 +244,6 @@ export const deleteRoleResponse = (state) => state.roles.deleteRoleResponse;
 // Permissions
 export const permissionsList = (state) => state.roles.permissionsList;
 export const permissionsData = (state) => state.roles.permissionsList.data || [];
+export const addRolePermissionResponse = (state) => state.roles.addRolePermissionResponse; // Add this selector
 
 export default rolesSlice.reducer;
