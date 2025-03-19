@@ -112,19 +112,28 @@ const AdminPermissions = ({ isOpen }) => {
                             <h3 className="text-lg font-semibold mb-4 pb-2 border-b capitalize">
                                 {moduleName.replace(/_/g, ' ')}
                             </h3>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-4 gap-4">
                                 {Object.entries(actions).map(([action, details]) => (
                                     details.id && (
                                         <div key={action} className="flex items-center space-x-3">
-                                            <input
+                                            {/* <input
                                                 type="checkbox"
                                                 checked={details.checked}
                                                 onChange={() => togglePermission(moduleName, action)}
                                                 className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                                            />
+                                            /> */}
                                             <label className="text-sm font-medium text-gray-700 capitalize">
                                                 {action}
                                             </label>
+                                            <label class="inline-flex items-center cursor-pointer">
+                                                <input type="checkbox"
+                                                    checked={details.checked}
+                                                    onChange={() => togglePermission(moduleName, action)}
+                                                    class="sr-only peer" />
+                                                <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-400 peer-checked:bg-green-600 dark:peer-checked:bg-green-600"></div>
+                                                <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">{details.checked ? 'Deactivate' : 'Activate'}</span>
+                                            </label>
+
                                         </div>
                                     )
                                 ))}

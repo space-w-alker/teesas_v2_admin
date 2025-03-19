@@ -43,7 +43,7 @@ const RoleDetails = ({ roleData }) => {
               <h3 className="font-semibold text-[16px] capitalize mb-2">
                 {module.replace(/_/g, ' ')}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {permissions.map((permission, index) => (
                   <div key={index} className="bg-[#F2F2F2] border border-[#D9D9D9] rounded-sm p-[8px] Border">
                     <h6 className="font-medium text-[16px] leading-[24px] text-[#201D23] capitalize">
