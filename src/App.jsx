@@ -175,6 +175,9 @@ import AddTopic from './components/Categories/AddTopic';
 import TopicDetail from './components/Categories/TopicDetail';
 import UploadQuestions from './components/Test/UploadQuestions';
 import QuestionView from './components/Test/QuestionView';
+import AdminDetails from './pages/admin/AdminRole/AdminDetails';
+import AdminPermission from './pages/admin/AdminRole/AdminPermission';
+
 
 
 
@@ -451,11 +454,25 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/AdminDetails/:id" element={<ProtectedRoute>
+          <AdminDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        </ProtectedRoute>
+        } />
+
         <Route
           path="/AdminRole"
           element={
             <ProtectedRoute>
               <AdminRole isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/AdminPermission"
+          element={
+            <ProtectedRoute>
+              <AdminPermission isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </ProtectedRoute>
           }
         />
@@ -1627,6 +1644,15 @@ function App() {
         <Route path='/UploadBulkUser' element={<ProtectedRoute>
           <Customadduser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         </ProtectedRoute>} />
+
+        <Route
+          path="/admin-role/permissions/:id"
+          element={
+            <ProtectedRoute>
+              <AdminPermission isOpen={isSidebarOpen} />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
 

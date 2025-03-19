@@ -4,35 +4,81 @@ import { FaChevronLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
-  getAdminRolePermissionAsync,
-  updateRolePermissionAsync,
-} from "../../../apis/slices/adminSlice";
+  getRoleDetailsAsync,
+  listPermissionsAsync,
+  updateRoleAsync,
+  addRoleAsync,
+} from "../../../apis/slices/rolesSlice";
 import { TailSpin } from "react-loader-spinner";
-
+import { useNavigate } from "react-router-dom";
 
 const AddAdminRole = ({ isOpen }) => {
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [adminData, setAdminData] = useState([]);
-
+  const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [roleName, setRoleName] = useState("");
+  const [roleDescription, setRoleDescription] = useState("");
+  const navigate = useNavigate();
   useEffect(() => {
     setLoading(true);
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
-    getAdminRolePermissionAsync({
+    if (id) {
+      setIsEditMode(true);
+      getRoleDetailsAsync({
+        dispatch: dispatch,
+        id: id,
+        token: token,
+        callbackFn: (res) => {
+          const roleDetails = res?.data?.data;
+          setAdminData(roleDetails?.admin_permissions);
+          setRoleName(roleDetails?.name);
+          setRoleDescription(roleDetails?.description);
+          setLoading(false);
+        },
+      })();
+    } else {
+      setIsEditMode(false);
+      listPermissionsAsync({
+        dispatch: dispatch,
+        token: token,
+        callbackFn: (res) => {
+          setAdminData(res?.data?.data);
+          setLoading(false);
+        },
+      })();
+    }
+  }, [dispatch, token]);
+
+  const handleSave = () => {
+    setLoading(true);
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+    const action = isEditMode ? updateRoleAsync : addRoleAsync;
+    const body = {
+      name: roleName,
+      description: roleDescription,
+    };
+    action({
       dispatch: dispatch,
-      data: {
-        role_id: id,
-      },
+      id: id,
+      data: body,
       token: token,
       callbackFn: (res) => {
-        setAdminData(res?.data?.data?.admin_permissions);
-        setLoading(false);
+        if (res?.data?.status === 200) {
+          toast.success(isEditMode ? "Role updated successfully" : "Role added successfully");
+          setLoading(false);
+          navigate(-1);
+        } else {
+          toast.error(res?.data?.message);
+          setLoading(false);
+        }
       },
-    });
-  }, []);
+    })();
+  };
+
   return (
     <div
       className={`py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
@@ -52,7 +98,7 @@ const AddAdminRole = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => navigate(-1)} className="cursor-pointer" />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Admin Role List /{" "}
@@ -64,11 +110,32 @@ const AddAdminRole = ({ isOpen }) => {
         <div className=" rounded-[24px] py-[20px] mt-5 px-[16px] bg-[#FFFFFF] lg:w-[80%] ">
           <div className="Border">
             <h2 className=" font-medium text-[18px] leading-[20px] pb-[10px] text-[#000000]">
-              Add Admin Role
+              {isEditMode ? "Edit Admin Role" : "Add Admin Role"}
             </h2>
           </div>
           <div>
             <div className=" flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="font-medium text-[14px] leading-[20px] text-[#000000]">
+                  Role Name
+                </label>
+                <input
+                  type="text"
+                  value={roleName}
+                  onChange={(e) => setRoleName(e.target.value)}
+                  className="border border-[#D9D9D9] rounded-sm p-[8px]"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="font-medium text-[14px] leading-[20px] text-[#000000]">
+                  Role Description
+                </label>
+                <textarea
+                  value={roleDescription}
+                  onChange={(e) => setRoleDescription(e.target.value)}
+                  className="border border-[#D9D9D9] rounded-sm p-[8px]"
+                />
+              </div>
               {adminData?.map((item, i) => (
                 <div
                   key={i}
@@ -92,22 +159,20 @@ const AddAdminRole = ({ isOpen }) => {
                           role_permission_id: item?.id,
                           permission_id: item?.adminPermissions?.id,
                         };
-                        updateRolePermissionAsync({
+                        updateRoleAsync({
                           dispatch: dispatch,
-                          body: body,
+                          id: item?.admin_role_id,
+                          data: body,
                           token: token,
-
                           callbackFn: (res) => {
                             if (res?.data?.status === 200) {
                               const urlParams = new URLSearchParams(
                                 window.location.search
                               );
                               const id = urlParams.get("id");
-                              getAdminRolePermissionAsync({
+                              getRoleDetailsAsync({
                                 dispatch: dispatch,
-                                data: {
-                                  role_id: id,
-                                },
+                                id: id,
                                 token: token,
                                 callbackFn: (res) => {
                                   setAdminData(
@@ -115,13 +180,13 @@ const AddAdminRole = ({ isOpen }) => {
                                   );
                                   setLoading(false);
                                 },
-                              });
+                              })();
                             } else {
                               toast.error(res?.data?.message);
                               setLoading(false);
                             }
                           },
-                        });
+                        })();
                       }}
                       className={`toggle-btn ${item?.status ? "toggled" : "off"
                         }`}
@@ -138,26 +203,13 @@ const AddAdminRole = ({ isOpen }) => {
           <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
             Summary
           </h2>
-          {/* <div className=" rounded-2xl bg-[#EFF6F1] p-4 ">
-                {
-                  formData.map((item) => (
-                    <div key={item.id} className=" flex justify-between mt-2 ">
-                      <div className=" font-light text-[14px] leading-[16px] text-[#5A5B5C]">{item.label}</div>
-                      <div className="text-[16px] leading-[24px] text-[#000000]">{item.value}</div>
-                    </div>
-                  ))
-                }
-              </div> */}
-
           <div className="bg-[FFF9FD] m-auto my-10">
             <button
               type="button"
               className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]"
-              onClick={() => {
-                setmodalopen(!modalopen);
-              }}
+              onClick={handleSave}
             >
-              Create User
+              {isEditMode ? "Update Role" : "Create Role"}
             </button>
           </div>
         </div>

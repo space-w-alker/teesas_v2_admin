@@ -15,12 +15,13 @@ import subscriptionsReducer from "./apis/slices/subscriptionsSlice";
 import resellersReducer from "./apis/slices/resellersSlice";
 import questionsSlice from "./apis/slices/questionSlice";
 import userSlice from "./apis/slices/userSlice";
-import promocodeReducer from './apis/slices/promocodeSlice';
+import promocodeReducer from "./apis/slices/promocodeSlice";
 import countryReducer from "./apis/slices/countrySlice";
 
-import cornerSlice from './apis/slices/cornerSlice';
-import salesReducer from './apis/slices/salesSlice';
-import bannerReducer from './apis/slices/bannerSlice';
+import cornerSlice from "./apis/slices/cornerSlice";
+import salesReducer from "./apis/slices/salesSlice";
+import bannerReducer from "./apis/slices/bannerSlice";
+import rolesReducer from "./apis/slices/rolesSlice";
 
 export default configureStore({
   reducer: {
@@ -45,5 +46,6 @@ export default configureStore({
     corner: cornerSlice,
     sales: salesReducer,
     banner: bannerReducer,
+    roles: rolesReducer,
   },
 });
