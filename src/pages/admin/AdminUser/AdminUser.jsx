@@ -45,6 +45,8 @@ const AdminUser = ({ isOpen }) => {
       callbackFn: (res) => {
         setAdminData(res?.data);
         setLoading(false)
+
+        console.log(res?.data);
       },
     });
   }, []);
@@ -140,7 +142,7 @@ const AdminUser = ({ isOpen }) => {
           label="Total Admin Users"
           height="h-[111px]"
           backgroundcolor="bg-[#FFFFFF]"
-          value={adminData?.admin_users?.count}
+          value={adminData?.total}
           imgbg={live}
           imglogo={liveimage}
         />
@@ -210,6 +212,7 @@ const AdminUser = ({ isOpen }) => {
                           page_size: 10,
                           search: searchValue,
                         };
+                        debugger
                         getAdminUsersAsync({
                           dispatch: dispatch,
                           data: newData,
@@ -244,7 +247,7 @@ const AdminUser = ({ isOpen }) => {
         </div>
         <div className="">
           <ul>
-            {adminData?.admin_users?.rows?.map((user) => (
+            {adminData?.users?.map((user) => (
               <li
                 key={user.id}
                 className=" cursor-default"
@@ -269,25 +272,29 @@ const AdminUser = ({ isOpen }) => {
                 </div> */}
                         <div className="flex items-center  gap-2">
                           <p className=" font-bold text-[14px] leading-[16px] text-[#171717] ">
-                            {user?.first_name}
+                            {user?.firstName}
                           </p>
                           <p className=" font-bold text-[14px] leading-[16px] text-[#171717]    ">
-                            {user?.last_name}
+                            {user?.middleName}
+                          </p>
+                          <p className=" font-bold text-[14px] leading-[16px] text-[#171717]    ">
+                            {user?.lastName}
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div>
-                    <Custombutton
-                      value="status"
-                      img={sharp}
-                      backgroundcolor="bg-[#E9FDEE]"
-                      textcolor="text-[#2760EA]"
-                      imagePosition="left"
-                    />
-                  </div>
+                  {user?.status == 1 ? (
+                    <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
+                      Active
+                    </button>
+                  ) : (
+                    <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#aa0808]">
+                      Inactive
+                    </button>
+                  )}
+                  
                 </div>
               </li>
             ))}
@@ -296,7 +303,7 @@ const AdminUser = ({ isOpen }) => {
         <div className="user">
           <Custombutton
             value="Previous"
-            hidden="hidden"
+            // hidden="hidden"
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -329,11 +336,11 @@ const AdminUser = ({ isOpen }) => {
             }}
           />
           <div className="text-[#667085] text-[12px]">
-            Page {adminData?.paging?.currentPage} of {adminData?.paging?.total_pages}
+            Page {adminData?.page} of {adminData?.totalPages}
           </div>
           <Custombutton
             value="Next"
-            hidden="hidden"
+            // hidden="hidden"
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -360,6 +367,7 @@ const AdminUser = ({ isOpen }) => {
                       setLoading(false);
                     }
                   },
+                  
                 });
               }
             }}
@@ -374,3 +382,4 @@ const AdminUser = ({ isOpen }) => {
 };
 
 export default AdminUser;
+
