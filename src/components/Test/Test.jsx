@@ -29,14 +29,25 @@ const CategoryItem = ({ name, onNext }) => (
 const Test = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const category = useSelector((state) => state.categories.list || []);
   console.log(category);
 
   useEffect(() => {
-    dispatch(getCategoriesAsync({ dispatch })).then(() => setLoading(false));
-  }, [dispatch]);
+    dispatch(getCategoriesAsync(page, 10, search)).then(() => setLoading(false));
+  }, [dispatch, page, search]);
 
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1); // Reset to first page on new search
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -57,7 +68,14 @@ const Test = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="Categories" showSearch={true} />
+          <Headcomponent value="Categories" showSearch={true} onSearch={setSearch} />
+          {/* <input
+            type="text"
+            placeholder="Search categories..."
+            value={search}
+            onChange={handleSearchChange}
+            className="mt-2 p-2 border rounded"
+          /> */}
         </div>
 
         <div className="p-6">
@@ -69,6 +87,23 @@ const Test = ({ isOpen }) => {
                 onNext={() => navigate('/test-class', { state: { name: category.name, classes: category.classes } })}
               />
             ))}
+          </div>
+          <div className="flex justify-between mt-4">
+            <Custombutton
+              value="Previous"
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page <= 1}
+              textcolor="text-[#000000]"
+              backgroundcolor="bg-[#F2F2F2]"
+            />
+            <span className="text-gray-600">Page {page} of {Math.ceil((category?.stats?.totalCourses || 0) / 10)}</span>
+            <Custombutton
+              value="Next"
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page >= (category?.stats?.totalPages || 1)}
+              textcolor="text-[#000000]"
+              backgroundcolor="bg-[#F2F2F2]"
+            />
           </div>
         </div>
       </div>
