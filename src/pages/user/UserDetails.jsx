@@ -145,24 +145,26 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
     {
       id: 1,
       label: "Full Name",
-      value: userData?.parent?.name || 'NA',
+      value: userData?.parentInfo?.name || 'NA',
     },
     {
       id: 2,
       label: "Email",
-      value: userData?.parent?.email || 'NA',
+      value: userData?.parentInfo?.email || 'NA',
     },
     {
       id: 3,
       label: "Relationship",
-      value: userData?.parent?.relationship || 'NA',
+      value: userData?.parentInfo?.relationship || 'NA',
     },
     {
       id: 4,
       label: "Address",
-      value: userData?.location?.name || 'NA',
+      value: userData?.parentInfo?.name || 'NA',
     },
   ];
+
+  console.log(parentformdata);
   const labels = userData?.count?.rows?.map(
     (data) => data.name
   );
