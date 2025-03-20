@@ -392,12 +392,12 @@ export const deleteClassAsync = (classId) => async (dispatch) => {
   }
 };
 
-export const getSubjectDetailsAsync = (classId, page = 1) => async (dispatch) => {
+export const getSubjectDetailsAsync = (classId, page = 1, limit = 10, searchTerm = '') => async (dispatch) => {
   try {
     dispatch(setSubjectDetails({ isLoading: true, data: null, error: null }));
     const URL = `${BASEURL}${GET_CLASS_DETAILS}/${classId}/details`;
 
-    const result = await getAPICall(URL, { page, limit: 10 });
+    const result = await getAPICall(URL, { page, limit, search: searchTerm });
 
     if (result?.data?.status === 200) {
       dispatch(setSubjectDetails({
