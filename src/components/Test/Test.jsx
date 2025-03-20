@@ -84,7 +84,13 @@ const Test = ({ isOpen }) => {
               <CategoryItem
                 key={index}
                 name={category.name}
-                onNext={() => navigate('/test-class', { state: { name: category.name, classes: category.classes } })}
+                onNext={() => navigate('/test-class', { state: { 
+                  name: category.name, 
+                  classes: category.classes, 
+                  totalChapters: category.totalChapters, 
+                  totalLessons: category.totalLessons, 
+                  totalSubjects: category.totalSubjects 
+                } })}
               />
             ))}
           </div>
