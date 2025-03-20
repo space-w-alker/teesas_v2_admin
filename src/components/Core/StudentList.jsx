@@ -5,11 +5,7 @@ import Custombutton from "../common/Custombutton";
 import frame2 from "../../assets/images/Frame2.png";
 import check from "../../assets/images/check.png";
 import Modal from "../common/Modal";
-import {
-  getuserAsync,
-  userAsync,
-  getCoursesAsync,
-} from "../../apis/slices/authSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
@@ -30,8 +26,7 @@ const StudentList = () => {
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
-  const [loading,
-    setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [isModalFilterOpen, setIsModalFilterOpen] = useState(false);
   const [searchValue, setVearchValue] = useState("");
@@ -41,7 +36,12 @@ const StudentList = () => {
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [activeUsers, setActiveUsers] = useState(true);
 
-
+  const [pageData, setPageData] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    total: 0,
+    limit: 10,
+  });
 
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -57,7 +57,6 @@ const StudentList = () => {
       }
     });
   };
-
 
   const handleFilterByStatus = (status) => {
     setActiveUsers(status);
@@ -77,7 +76,6 @@ const StudentList = () => {
       course_id: selectedCourses,
       status: activeUsers ? "Active" : "Inactive",
     };
-
   };
 
   const oldestOnClick = () => {
@@ -90,14 +88,9 @@ const StudentList = () => {
       course_id: selectedCourses,
       status: activeUsers ? "Active" : "Inactive",
     };
-
   };
 
-
-
   // ---------------------------------------------NEW STUFF START-------------------------------------------------------------------
-
-
 
   const navigate = useNavigate();
   const userList = useSelector((state) => state.users?.userList);
@@ -111,49 +104,54 @@ const StudentList = () => {
       },
       sort: {
         field: "userName",
-        order: "asc"
-      }
+        order: "asc",
+      },
     },
     limit: 10,
-    page: 1
+    page: 1,
   });
 
-
   useEffect(() => {
+    setLoading(true);
     dispatch(fetchUsersAsync({ dispatch, params: sort }));
-  }, [dispatch]);
-
+    setLoading(false);
+  }, [dispatch, sort]);
 
   // if (loading) return <p>Loading users...</p>;
   // if (error) return <p>Error fetching users: {error}</p>;
 
-  console.log('data', userList)
+  // console.log('data', userList)
 
   const handleSearchChange = (e) => {
     setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
   };
 
+  useEffect(() => {
+    if (userList?.overview) {
+      setPageData({
+        currentPage: userList.overview.page || 1,
+        totalPages: userList.overview.totalPages || 1,
+        total: userList.overview.totalUsers || 0,
+        limit: userList.overview.limit || 10,
+      });
+    }
+  }, [userList]);
 
-
-
-  const pageData = {
-    currentPage: userList?.overview?.page || 1,
-    totalPages: userList?.overview?.totalPages || 1,
-    total: userList?.overview?.totalUsers || 0,
-    limit: userList?.overview?.limit || 10
-  };
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > pageData.totalPages) {
       return;
     }
-    setSort((prevSort) => ({ ...prevSort, page: newPage }));
+    // setPage(newPage);
+    setSort((prevSort) => ({
+      ...prevSort,
+      page: newPage,
+    }));
+
     setLoading(true);
-
-    dispatch(fetchUsersAsync({ dispatch, params: sort }));
-
+    console.log("sort real", sort);
+    // dispatch(fetchUsersAsync({ dispatch, params: sort }));
   };
   // ---------------------------------------------NEW STUFF END-------------------------------------------------------------------
-
 
   return (
     <>
@@ -173,7 +171,7 @@ const StudentList = () => {
       <div className={`flex justify-end items-center relative mt-3`}>
         <div className="flex items-center relative">
           <div className="h-[60px] lg:px-[8px] flex items-center mt-[5px]">
-            <div className="flex items-center relative lg:w-[204px]">
+            {/* <div className="flex items-center relative lg:w-[204px]">
               <input
                 type="text"
                 name="search"
@@ -216,7 +214,7 @@ const StudentList = () => {
                   }
                 }}
               />
-            </div>
+            </div> */}
             <div
               className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
               onClick={() => setIsModalFilterOpen(true)}
@@ -266,7 +264,6 @@ const StudentList = () => {
                     <div>
                       <div className="flex pl-[20px] items-center  gap-2">
                         <p>{user.userName}</p>
-
                       </div>
                       <div className="pl-[20px]  flex flex-col gap-[10px]">
                         <p className=" font-normal text-[#555555] text-[12px] leading-[15px]">
@@ -279,8 +276,7 @@ const StudentList = () => {
                       alt="Icon 2"
                     /> */}
                           <p className=" font-bold w-full text-[12px] leading-[15px] text-[#555555]">
-                            {user?.grade} /{" "}
-                            {user?.course}
+                            {user?.grade} / {user?.course}
                           </p>
                         </div>
                       </div>
@@ -301,44 +297,53 @@ const StudentList = () => {
           </ul>
         </div>
 
-
         <div className="flex justify-between items-center mt-6 ml-4 mr-4 mb-4">
           <Custombutton
             value="Previous"
             icon={
-              pageData.currentPage > 1 ?
-                <FaArrowLeft color="#000000" /> :
+              pageData.currentPage > 1 ? (
+                <FaArrowLeft color="#000000" />
+              ) : (
                 <FaArrowLeft color="#cccccc" />
+              )
             }
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor={pageData.currentPage > 1 ? "text-[#000000]" : "text-[#cccccc]"}
+            textcolor={
+              pageData.currentPage > 1 ? "text-[#000000]" : "text-[#cccccc]"
+            }
             imagePosition="left"
-            onClick={() => handlePageChange(pageData.currentPage - 1)}
+            onClick={() => handlePageChange(pageData?.currentPage - 1)}
             disabled={pageData.currentPage <= 1}
           />
 
-
           <Custombutton
-            value={`Page ${pageData.currentPage} of ${pageData.totalPages}`}
+            value={`Page ${pageData?.currentPage} of ${pageData?.totalPages}`}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
           />
 
-
           <Custombutton
             value="Next"
             icon={
-              pageData.currentPage < pageData.totalPages ?
-                <FaArrowRight color="#000000" /> :
+              pageData.currentPage < pageData.totalPages ? (
+                <FaArrowRight color="#000000" />
+              ) : (
                 <FaArrowRight color="#cccccc" />
+              )
             }
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor={pageData.currentPage < pageData.totalPages ? "text-[#000000]" : "text-[#cccccc]"}
+            textcolor={
+              pageData.currentPage < pageData.totalPages
+                ? "text-[#000000]"
+                : "text-[#cccccc]"
+            }
             imagePosition="right"
-            onClick={() => handlePageChange(pageData.currentPage + 1)}
+            onClick={() => {
+              // setPageData({ ...pageData, currentPage: pageData?.currentPage + 1 });
+              handlePageChange(pageData?.currentPage + 1);
+            }}
             disabled={pageData.currentPage >= pageData.totalPages}
           />
-
         </div>
 
         {isModalOpen && (
