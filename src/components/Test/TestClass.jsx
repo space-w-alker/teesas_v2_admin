@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
 import Custombutton from '../common/Custombutton';
 import bookopen from '../../assets/images/bookopen.png';
+import { getCategoryDetailsAsync } from '../../apis/slices/categoriesSlice';
 
 const ClassItem = ({ name, id }) => {
   const navigate = useNavigate();
@@ -31,31 +33,37 @@ const ClassItem = ({ name, id }) => {
 const TestClass = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const name = location.state?.name || "N/A";
-  const classes = location.state?.classes || [];
-  const totalSubjects = location.state?.totalSubjects || 0;
-  const totalChapters = location.state?.totalChapters || 0;
-  const totalLessons = location.state?.totalLessons || 0;
+  const dispatch = useDispatch();
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const limit = 10;
-  const totalPages = Math.ceil(classes.length / limit);
+  const classId = location.state?.id || null;
+  const classes = useSelector((state) => state.categories?.details?.data?.classes || []);
+
+  const { data: data, totalSubjects, totalChapters, totalLessons, pagination } = useSelector(
+    (state) => state.categories?.details?.data || { totalSubjects: 0, totalChapters: 0, totalLessons: 0, pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
+  );
+
+  useEffect(() => {
+    if (classId) {
+      dispatch(getCategoryDetailsAsync(classId, page, limit, searchTerm));
+    }
+  }, [dispatch, classId, page, limit, searchTerm]);
 
   const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) return;
+    if (newPage < 1 || newPage > pagination.totalPages) return;
     setPage(newPage);
   };
 
-  const paginatedClasses = classes.slice((page - 1) * limit, page * limit);
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="Test" value3="Classes" />
 
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex justify-between items-center">
-          <Headcomponent value="Test Classes" showSearch={false} />
-        </div>
-      </div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
         <StatCard title="Total Subjects" count={totalSubjects} />
@@ -65,13 +73,13 @@ const TestClass = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="Classes" showSearch={false} />
+          <Headcomponent value="Classes" showSearch={true} onSearch={setSearchTerm} />
         </div>
 
         <div className="p-6">
           <div className="space-y-4">
-            {paginatedClasses.length > 0 ? (
-              paginatedClasses.map((className, index) => (
+            {classes?.length > 0 ? (
+              classes?.map((className, index) => (
                 <ClassItem
                   key={index}
                   name={className.name}
@@ -90,11 +98,11 @@ const TestClass = ({ isOpen }) => {
               textcolor="text-[#000000]"
               backgroundcolor="bg-[#F2F2F2]"
             />
-            <span className="text-gray-600">Page {page} of {totalPages}</span>
+            <span className="text-gray-600">Page {page} of {pagination.totalPages}</span>
             <Custombutton
               value="Next"
               onClick={() => handlePageChange(page + 1)}
-              disabled={page >= totalPages}
+              disabled={page >= pagination.totalPages}
               textcolor="text-[#000000]"
               backgroundcolor="bg-[#F2F2F2]"
             />
