@@ -101,10 +101,10 @@ export const addSalesTeamAsync = ({ dispatch, data, token, callbackFn }) => {
 };
 
 // List Sales Team
-export const listSalesTeamAsync = ({ dispatch, page = 1, limit = 10, token, callbackFn }) => {
+export const listSalesTeamAsync = ({ dispatch, page = 1, limit = 10, search = "", token, callbackFn }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}sales-team/list?page=${page}&limit=${limit}`;
+            const URL = `${BASEURL}sales-team/list?page=${page}&limit=${limit}&search=${search}`;
             const response = await getAPICall(URL, {}, token);
             // console.log(response?.data?.status);
             if (response?.data?.status == 200) {

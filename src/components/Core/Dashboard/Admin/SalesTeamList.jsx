@@ -26,11 +26,36 @@ const SalesTeamList = () => {
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const fetchSalesTeam = () => {
     setLoading(true);
-    dispatch(listSalesTeamAsync({ dispatch, token: "" }));
-    setLoading(false);
-  }, [dispatch]);
+    dispatch(listSalesTeamAsync({
+      dispatch,
+      page,
+      limit: 10,
+      search: searchValue,
+      token: ""
+    }))
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchSalesTeam();
+  }, [page, searchValue]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > pageData.total_pages) {
+      return;
+    }
+    setPage(newPage);
+  };
+
+  const handleSearch = (e) => {
+    setSearchValue(e.target.value);
+    setPage(1);
+  };
+
   return (
     <div className="bg-[#FFFFFF] p-4 mt-5 rounded-[18px]">
       {loading && (
@@ -63,7 +88,7 @@ const SalesTeamList = () => {
                   className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
                   placeholder="Search Sales Team"
                   value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
+                  onChange={handleSearch}
                 />
                 <img
                   src={SearchButton}
@@ -139,23 +164,25 @@ const SalesTeamList = () => {
         <div className="user bg-white">
           <Custombutton
             value="Previous"
-            // hidden="hidden"
             icon={<arrowleft />}
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
+            textcolor={page > 1 ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="left"
             width="w-[115px]"
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page <= 1}
           />
           <div className="text-[#667085] text-[12px]">
-            Page {pageData?.currentPage} of {pageData?.total_pages}
+            Page {page} of {pageData?.total_pages || 1}
           </div>
           <Custombutton
             value="Next"
-            // hidden="hidden"
             icon={<arrowright />}
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
+            textcolor={page < (pageData?.total_pages || 1) ? "text-[#000000]" : "text-[#cccccc]"}
             imagePosition="right"
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page >= (pageData?.total_pages || 1)}
           />
         </div>
       </div>
