@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation, useParams } from "react-router-dom";
 
-// import { deleteUserAsync } from "../../apis/slices/authSlice"
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import { TailSpin } from "react-loader-spinner";
@@ -41,17 +40,12 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
-  // const [userData, setUserData] = useState({});
-  // const urlParams = new URLSearchParams(window.location.search);
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
   const userData = useSelector((state) => state.users?.userDetails?.usersList || {});
-  const userDelete = useSelector((state) => state.users?.userDetails?.usersList || {});
 
-
-  console.log(userData)
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -61,37 +55,52 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
   };
 
   const onRefresh = () => {
-    setLoading(true)
+    setLoading(true);
     dispatch(fetchUserDetailsAsync({
       dispatch: dispatch,
       userId: id,
-    }));
-    closeModal();
-    toast.success('User details refreshed')
-  }
+    })).then(() => {
+      setLoading(false);
+      closeModal();
+      toast.success('User details refreshed');
+    }).catch((error) => {
+      setLoading(false);
+      closeModal();
+      toast.error('Failed to refresh user details');
+    });
+  };
+
   const onDeleteUser = () => {
-    setLoading(true)
+    setLoading(true);
     dispatch(deleteUserAsync({
       dispatch: dispatch,
       userId: id,
-    }));
-    closeModal();
-    Navigate(`/users`);
-
-  }
+    })).then((response) => {
+      setLoading(false);
+      closeModal();
+      toast.success('User deleted successfully');
+      setTimeout(() => {
+        Navigate('/users');
+      }, 1000);
+    }).catch((error) => {
+      setLoading(false);
+      closeModal();
+    });
+  };
 
   useEffect(() => {
-    console.log('git her 2');
-
-    setLoading(true)
+    setLoading(true);
     dispatch(fetchUserDetailsAsync({
       dispatch: dispatch,
       userId: id,
-    }));
+    })).then(() => {
+      setLoading(false);
+    }).catch((error) => {
+      setLoading(false);
+      toast.error('Failed to fetch user details');
+    });
   }, []);
-  console.log({ userData });
-  // const info = [300, 50, 100, 40, 120];
-  // const labels = ["Red", "Blue", "Yellow", "Green", "Purple"];
+
   const data = [
     {
       id: 1,
@@ -109,6 +118,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
       value: "Google",
     },
   ];
+
   const formdata = [
     {
       id: 1,
@@ -141,6 +151,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
       value: userData?.location?.name || 'NA',
     },
   ];
+
   const parentformdata = [
     {
       id: 1,
@@ -160,18 +171,16 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
     {
       id: 4,
       label: "Address",
-      value: userData?.parentInfo?.name || 'NA',
+      value: userData?.parentInfo?.address || userData?.location?.name || 'NA',
     },
   ];
 
-  console.log(parentformdata);
   const labels = userData?.count?.rows?.map(
     (data) => data.name
   );
   const info = userData?.count?.rows?.map(
     (subject) => subject.lessonMediaCount
   );
-
 
   const splitName = (fullName) => {
     if (!fullName) return { first_name: "", middle_name: "", last_name: "" };
@@ -192,7 +201,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
       className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
         }`}
     >
-      {/* {loading && (
+      {loading && (
         <div
           style={{
             position: "absolute",
@@ -204,7 +213,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
         >
           <TailSpin color="orange" radius={5} />
         </div>
-      )} */}
+      )}
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
         <div>
@@ -253,9 +262,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                     />
                     <img src={SearchButton} className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer" alt="Search icon" />
                   </div>
-                  <div className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2 hidden"
-                  // onClick={() => setIsModalOpen(true)}
-                  >
+                  <div className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2 hidden">
                     <img src={Vector} alt="Vector" />
                   </div>
                   <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2" onClick={() => setIsModalOpen(true)}>
@@ -269,11 +276,9 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                   label="User Details"
                   value1="Refresh"
                   value2="Delete User"
-                  //  onClick={handleClick}
                   closeModalWithClick1={onRefresh}
                   closeModalWithClick2={onDeleteUser}
                 />
-
               )}
             </div>
             <div className="rounded-2xl p-[8px] bg-[#F2F2F2] pb-[20px] mt-5">
@@ -308,7 +313,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                 <div
                   className="text-green-500 cursor-pointer"
                   onClick={() => {
-                    Navigate(`/EditUser/${id}`, {  // ✅ Use navigate() instead of Navigate()
+                    Navigate(`/EditUser/${id}`, {
                       state: {
                         isEdit: true,
                         userData: {
@@ -317,17 +322,17 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                           middle_name: nameParts.middle_name,
                           last_name: nameParts.last_name,
                           phone: userData?.phone,
-                          country_id: userData?.country_id?.id || 81, // ✅ Extract the ID
+                          country_id: userData?.country_id?.id || 81,
                           date_of_birth: userData?.dob,
                           gender: userData?.gender?.toUpperCase(),
                           email: userData?.email,
                           password: userData?.password,
-                          parent_name: userData?.parent?.name,
-                          parent_email: userData?.parent?.email,
-                          parent_address: userData?.parent?.address,
-                          parent_relationship: userData?.parent?.relationship,
-                          grade: parseInt(userData?.grade, 10) || 21, // Convert to integer
-                          course: parseInt(userData?.course, 10) || 153, // Convert to integer
+                          parent_name: userData?.parentInfo?.name,
+                          parent_email: userData?.parentInfo?.email,
+                          parent_address: userData?.parentInfo?.address,
+                          parent_relationship: userData?.parentInfo?.relationship,
+                          grade: parseInt(userData?.grade, 10) || 21,
+                          course: parseInt(userData?.course, 10) || 153,
                           location: userData?.location?.name,
                           status: "active",
                         }
@@ -443,3 +448,4 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
 };
 
 export default UserDetails;
+

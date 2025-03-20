@@ -153,11 +153,9 @@ export const deleteUserAsync = ({ dispatch, userId, token, callbackFn }) => {
             if (response?.data.message) {
                 dispatch(deleteUserSuccess(response));
                 toast.success("delete user success.");
-            } else {
-                toast.error("Failed to delete user.");
             }
         } catch (error) {
-            toast.error("Error deleting user.");
+
         }
     };
 };
