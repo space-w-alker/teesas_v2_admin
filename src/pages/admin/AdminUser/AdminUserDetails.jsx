@@ -3,19 +3,41 @@ import letter from "../../..//assets/images/bookopen.png";
 import { FaChevronLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { getAdminUserAsync } from "../../../apis/slices/adminSlice";
+import { getAdminUserAsync, getAdminRolesAsync } from "../../../apis/slices/adminSlice";
 import { TailSpin } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
 
 const AdminUserDetails = ({ isOpen }) => {
 
   const token = localStorage.getItem("authToken");
+  const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [adminData, setAdminData] = useState({});
 
   const [loading, setLoading] = useState(false);
+  const [roles, setRoles] = useState([]);
+
+  const getRoleName = (roleId) => {
+    const role = roles.find(role => role.id === roleId);
+    return role ? role.name : roleId; 
+  };
+
+
+
 
   useEffect(() => {
     setLoading(true);
+
+    getAdminRolesAsync({
+      dispatch: dispatch,
+      token: token,
+      callbackFn: (res) => {
+        if (res?.data?.status === 200) {
+          setRoles(res.data.data || []);
+        }
+      }
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
     getAdminUserAsync({
@@ -49,7 +71,7 @@ const AdminUserDetails = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home / Admin Users /{" "}
@@ -114,7 +136,7 @@ const AdminUserDetails = ({ isOpen }) => {
                       Role
                     </p>
                     <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                      {adminData?.role}
+                      {getRoleName(adminData?.roleId)}
                     </p>
                   </div>
                 </div>

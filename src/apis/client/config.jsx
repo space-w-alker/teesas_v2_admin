@@ -81,7 +81,7 @@ export const config = {
   GET_USER_PROFILE: "leaderboard/user-details",
   GET_PERFORMANCE_HISTORY: "leaderboard/get-performance-history",
   GET_MONTHLY_POINTS: "leaderboard/get-monthly-points",
-  GET_ADMIN_ROLES: "admin/users/get-admin-roles",
+  GET_ADMIN_ROLES: "admin/auth/roles",
   GET_ADMIN_ROLE_PERMISSION: "admin/users/get-admin-role-permission",
   UPDATE_ROLE_PERMISSION: "admin/users/update-role-permission",
   ADD_ADMIN_USER: "admin/auth/add/adminUser",

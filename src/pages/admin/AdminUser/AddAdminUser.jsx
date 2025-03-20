@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import countrycode from "../../../components/data/Countrycode.json";
 import { FaChevronLeft } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { addAdminUserAsync } from "../../../apis/slices/adminSlice";
+import { addAdminUserAsync, getAdminRolesAsync } from "../../../apis/slices/adminSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TailSpin } from "react-loader-spinner";
@@ -18,6 +18,7 @@ const AddAdminUser = ({ isOpen }) => {
   const [errors, setError] = useState({});
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [adminRoles, setAdminRoles] = useState([]);
   const [formData, setformData] = useState({
     First_Name: "",
     Last_Name: "",
@@ -29,6 +30,25 @@ const AddAdminUser = ({ isOpen }) => {
     Email: "",
     Address: "",
   });
+
+  useEffect(() => {
+
+    fetchAdminRoles();
+  }, []);
+
+  const fetchAdminRoles = () => {
+    getAdminRolesAsync({
+      dispatch: dispatch,
+      token: token,
+      callbackFn: (res) => {
+        if (res?.data?.status === 200) {
+          setAdminRoles(res.data.data || []);
+        } else {
+          toast.error("Failed to fetch admin roles");
+        }
+      }
+    });
+  };
 
   const onchangeHandler = (event) => {
     const { name, value } = event.target;
@@ -53,7 +73,7 @@ const AddAdminUser = ({ isOpen }) => {
         phoneNumber: formData?.Phone_Contact,
         email: formData?.Email,
         address: formData?.Address,
-        role: formData?.Admin_Role
+        roleId: formData?.Admin_Role
       };
 
       addAdminUserAsync({
@@ -78,7 +98,6 @@ const AddAdminUser = ({ isOpen }) => {
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
-    // Reset form data
     setformData({
       First_Name: "",
       Last_Name: "",
@@ -213,13 +232,21 @@ const AddAdminUser = ({ isOpen }) => {
                     className="w-full mt-1 text-[14px]  outline-none  border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
                   >
                     <option value="" disabled>
-                      Please Select  {
-                      }
+                      Please Select
                     </option>
-                    <option value="SUPERADMIN">SUPERADMIN</option>
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="SUPPORT_STAFF">SUPPORT_STAFF</option>
-
+                    {adminRoles.length > 0 ? (
+                      adminRoles.map((role) => (
+                        <option key={role.id} value={role.id}>
+                          {role.name}
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="SUPERADMIN">SUPERADMIN</option>
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="SUPPORT_STAFF">SUPPORT_STAFF</option>
+                      </>
+                    )}
                   </select>
                   {errors.Admin_Role && (
                     <span className=" text-red-500 block p-[8px]">
