@@ -481,10 +481,10 @@ export const deleteSubjectAsync = (classId, subjectId) => async (dispatch) => {
   }
 };
 
-export const getChapterDetailsAsync = (subjectId) => async (dispatch) => {
+export const getChapterDetailsAsync = (subjectId, page = 1, limit = 10, searchTerm = '') => async (dispatch) => {
   try {
     dispatch(setChapterDetails({ isLoading: true, data: null, error: null }));
-    const URL = `${BASEURL}admin/chapter/${subjectId}/list`;
+    const URL = `${BASEURL}admin/chapter/${subjectId}/list?page=${page}&limit=${limit}&search=${searchTerm}`;
 
     const result = await getAPICall(URL);
 
