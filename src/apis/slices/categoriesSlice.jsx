@@ -521,17 +521,25 @@ export const createChapterAsync = (subjectId, chapterData) => async (dispatch) =
   }
 };
 
-export const getTopicsListAsync = (chapterId, page = 1) => async (dispatch) => {
+export const getTopicsListAsync = (chapterId, page = 1, limit = 10, search = '') => async (dispatch) => {
   try {
     dispatch(setTopicsList({ isLoading: true, data: null, error: null }));
-    const URL = `${BASEURL}admin/lesson/list/${chapterId}`;
+    let URL = `${BASEURL}admin/lesson/list/${chapterId}?page=${page}&limit=${limit}`;
 
-    const result = await getAPICall(URL, { page, limit: 10 });
+    if (search) {
+      URL += `&search=${encodeURIComponent(search)}`;
+    }
+
+    const result = await getAPICall(URL);
 
     if (result?.data?.status === 200) {
       dispatch(setTopicsList({
         isLoading: false,
-        data: result.data.data,
+        data: {
+          ...result.data.data,
+          currentPage: page,
+          totalPages: Math.ceil(result.data.data.total / limit)
+        },
         error: null
       }));
     } else {
