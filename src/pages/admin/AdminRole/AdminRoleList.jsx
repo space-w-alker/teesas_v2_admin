@@ -1,5 +1,5 @@
 import React from "react";
-import tessas from "../../../assets/images/new_admin.png";
+import tessas from "../../../assets/images/Banner-icon.png";
 import arrowleft from "../../../assets/images/arrowleft.png";
 import arrowright from "../../../assets/images/arrowright.png";
 import Headcomponent from "../../../components/common/Headcomponent";

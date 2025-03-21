@@ -34,7 +34,7 @@ const SubscriptionTypes = ({ isOpen }) => {
   }, [dispatch]);
 
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[40px]" : ""} transition-all duration-300`}>
+    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="Subscription Categories" />
       <div className="mt-6 p-6 mb-4">
         <h2 className="text-2xl font-bold text-gray-900">Subscription Categories</h2>
