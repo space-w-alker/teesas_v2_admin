@@ -24,33 +24,35 @@ const TestDetails = ({ isOpen }) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [questionToDelete, setQuestionToDelete] = useState(null);
 
-  const id = location.state.id || {};
+  const id = location?.state.id || {};
   const question = useSelector((state) => state.questions?.subjectsWithQuestions || {});
-
-  const topics = useSelector((state) => state.categories?.topicDetail?.data || []);
-  console.log('topic', id, topics);
-
-
+  const topicDetail = useSelector((state) => state.categories?.topicDetail?.data || []);
+  console.log(question, topicDetail)
+  // First fetch topic details
   useEffect(() => {
-    dispatch(getTopicDetailAsync(id)).then(() => setLoading(false));
-  }, [dispatch]);
+    setLoading(true);
+    dispatch(getTopicDetailAsync(id))
+      .then(() => setLoading(false))
+      .catch(() => setLoading(false));
+  }, [dispatch, id]);
 
-
-  const data = {
-    "class_id": topics[0]?.lesson?.chapters?.subjects?.classes?.id,
-    "type": "all",
-    "selectedSubject": [
-      {
-        "year": "all",
-        "subject_id": topics[0]?.lesson?.chapters.subjects.id
-      }
-    ]
-  }
+  // Then fetch questions once we have the class_id
   useEffect(() => {
-    dispatch(getSubjectsWithQuestionsAsync({ dispatch, data })).then(() => setLoading(false));
-  }, [dispatch, topics])
-  console.log('question', id, question?.data?.options);
+    if (topicDetail[0]?.lesson?.chapters?.subjects?.classes?.id) {
+      const data = {
+        class_id: topicDetail[0]?.lesson.chapters.subjects.classes.id,
+        type: "all",
+        selectedSubject: [{
+          year: "18",
+          subject_id: topicDetail[0]?.lesson.chapters.subjects.id
+        }]
+      };
 
+      dispatch(getSubjectsWithQuestionsAsync({ dispatch, data }))
+        .then(() => setLoading(false))
+        .catch(() => setLoading(false));
+    }
+  }, [dispatch, topicDetail]);
 
 
 
@@ -102,11 +104,6 @@ const TestDetails = ({ isOpen }) => {
         </div>
       </div>
 
-      <div className="flex justify-center mb-6">
-        <button className="px-8 py-2 text-[#27AE60] font-medium">
-          Manage
-        </button>
-      </div>
 
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
         <div className="border-b border-gray-100 pb-4 mb-4">
@@ -118,19 +115,19 @@ const TestDetails = ({ isOpen }) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-600">Category:</p>
-                <p className="font-medium">{topics[0]?.lesson?.chapters?.subjects?.classes?.course?.name || '-'}</p>
+                <p className="font-medium">{topicDetail[0]?.lesson?.chapters?.subjects?.classes?.course?.name || '-'}</p>
               </div>
               <div>
                 <p className="text-gray-600">Grade:</p>
-                <p className="font-medium">{topics[0]?.lesson?.chapters?.subjects?.classes?.name || '-'}</p>
+                <p className="font-medium">{topicDetail[0]?.lesson?.chapters?.subjects?.classes?.name || '-'}</p>
               </div>
               <div>
                 <p className="text-gray-600">Chapter:</p>
-                <p className="font-medium">{topics[0]?.lesson?.chapters?.name || '-'}</p>
+                <p className="font-medium">{topicDetail[0]?.lesson?.chapters?.name || '-'}</p>
               </div>
               <div>
                 <p className="text-gray-600">Status:</p>
-                <p className="font-medium text-[#27AE60]">{topics[0]?.lesson?.active ? "Active" : "In-Active"}</p>
+                <p className="font-medium text-[#27AE60]">{topicDetail[0]?.lesson?.active ? "Active" : "In-Active"}</p>
               </div>
             </div>
           </div>
@@ -140,7 +137,7 @@ const TestDetails = ({ isOpen }) => {
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="border-b border-gray-100 pb-4 mb-4">
 
-          <Headcomponent value="Uploaded Practice And Mock Test List" showSearch={true} />
+          <Headcomponent value="Uploaded Practice And Mock Test List" showSearch={false} />
         </div>
         <div className="space-y-4">
           {question?.data?.options.map((question) => (
@@ -208,6 +205,7 @@ const TestDetails = ({ isOpen }) => {
         message="Are you sure you want to delete this question? This action cannot be undone."
         buttonText="Delete"
         onConfirm={confirmDelete}
+        closeButtonText="Close"
       />
 
 

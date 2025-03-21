@@ -22,7 +22,13 @@ const SuccessModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-8 w-[400px] text-center">
+      <div className="bg-white rounded-xl p-8 w-[400px] text-center relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        >
+          &times;
+        </button>
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
           <img
             src={type === 'success' ? success : caution}
