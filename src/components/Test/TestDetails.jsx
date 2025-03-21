@@ -82,6 +82,18 @@ const TestDetails = ({ isOpen }) => {
         callbackFn: () => {
           setShowDeleteModal(false);
           setShowSuccessModal(true);
+          dispatch(getSubjectsWithQuestionsAsync(
+            {
+              dispatch,
+              data: {
+                class_id: topicDetail[0]?.lesson.chapters.subjects.classes.id,
+                type: "all",
+                selectedSubject: [{
+                  year: "all",
+                  subject_id: topicDetail[0]?.lesson.chapters.subjects.id
+                }]
+              }
+            }));
         },
       })
     );
