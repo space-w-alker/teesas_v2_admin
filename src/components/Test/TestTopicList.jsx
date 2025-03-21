@@ -107,19 +107,23 @@ const TestTopicList = ({ isOpen }) => {
     sort: "",
     search: "",
     page: 1,
-    limit: 100
+    limit: 10
   });
+  const [loading, setLoading] = useState(true);
   const handleSearchChange = (e) => {
-    setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
+    setSort((prevSort) => ({ ...prevSort, search: e }));
   };
 
-  const id = location.state.id || {};
+  const id = location?.state.id || {};
   const topics = useSelector((state) => state.categories?.topics?.data?.lessons || []);
+  const totalTopics = useSelector((state) => state.categories?.topics?.data?.pagination?.total || 0);
+  const totalPages = useSelector((state) => state.categories?.topics?.data?.pagination?.totalPages || 0);
   console.log('topic', id, useSelector((state) => state.categories?.topics));
 
   useEffect(() => {
-    dispatch(getTopicsListAsync(id)).then(() => setLoading(false));
-  }, [dispatch])
+    setLoading(true);
+    dispatch(getTopicsListAsync(id, sort.page, sort.limit, sort.search)).then(() => setLoading(false));
+  }, [dispatch, sort])
 
 
   return (
@@ -133,10 +137,10 @@ const TestTopicList = ({ isOpen }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-        <StatCard title="Total Topics" count={topics.length.toString()} />
-        <StatCard title="Total Lessons" count="25" />
-        <StatCard title="Total Questions" count="100" />
-        <StatCard title="Total Resources" count="50" />
+        {/* <StatCard title="Total Topics" count={topics.length.toString()} /> */}
+        <StatCard title="Total Lessons" count={topics.length.toString()} />
+        {/* <StatCard title="Total Questions" count="100" />
+        <StatCard title="Total Resources" count="50" /> */}
       </div>
 
       <div className="flex justify-end mb-6">
@@ -145,7 +149,7 @@ const TestTopicList = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="Topic List" showSearch={true} onSearchChange={handleSearchChange} />
+          <Headcomponent value="Topic List" showSearch={true} onSearch={handleSearchChange} />
         </div>
 
         <div className="p-6">
@@ -174,8 +178,10 @@ const TestTopicList = ({ isOpen }) => {
             textcolor="text-gray-600"
             width="w-[100px]"
             extraStyle="py-2"
+            onClick={() => setSort((prevSort) => ({ ...prevSort, page: Math.max(prevSort.page - 1, 1) }))}
+            disabled={sort.page === 1}
           />
-          <span className="text-gray-600">Page 1 of 5</span>
+          <span className="text-gray-600">Page {sort.page} of {totalPages}</span>
           <Custombutton
             value={
               <div className="flex items-center gap-2">
@@ -187,6 +193,8 @@ const TestTopicList = ({ isOpen }) => {
             textcolor="text-gray-600"
             width="w-[80px]"
             extraStyle="py-2"
+            onClick={() => setSort((prevSort) => ({ ...prevSort, page: Math.min(prevSort.page + 1, totalPages) }))}
+            disabled={sort.page === totalPages}
           />
         </div>
       </div>
