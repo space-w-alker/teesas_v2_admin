@@ -63,7 +63,6 @@ const Classes = ({ isOpen }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
         <StatCard title="Total Classes" count={data?.classes?.length || 0} />
-        <StatCard title="Total Grade" count={data?.totalGrades || 0} />
         <StatCard title="Total subject" count={data?.totalSubjects || 0} />
         <StatCard title="Total Chapter" count={data?.totalChapters || 0} />
       </div>
