@@ -35,7 +35,7 @@ const UniAdd = ({ isOpen }) => {
   const [previewImage, setPreviewImage] = useState(() => {
     if (uniData.icon) {
       // Use the same URL construction as shown in your example
-      return `${config.MainUrl}public/${uniData.icon}`;
+      return `${config.MainUrl}${uniData.icon}`;
     }
     return bookopen; // Default image
   });

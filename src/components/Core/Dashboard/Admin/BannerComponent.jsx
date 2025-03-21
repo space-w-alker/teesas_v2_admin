@@ -68,9 +68,9 @@ const BannerComponent = ({ bannerData }) => {
           <h3 className="text-lg font-bold text-gray-900">Uploaded Image</h3>
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
-          <div className="w-full h-48 rounded-lg overflow-hidden">
+          <div className="w-full h-100 rounded-lg overflow-hidden">
             <img
-              src={`${config.MainUrl}public/${bannerData.image_url}`}
+              src={`${config.MainUrl}${bannerData.image}`}
               alt={bannerData.title || "Banner Preview"}
               className="w-full h-full object-cover"
             />

@@ -5,7 +5,7 @@ import { FaVideo } from 'react-icons/fa';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
-import { getTopicDetailAsync , deleteTopicMediaAsync } from '../../apis/slices/categoriesSlice';
+import { getTopicDetailAsync, deleteTopicMediaAsync } from '../../apis/slices/categoriesSlice';
 import { config } from '../../apis/client/config';
 
 
@@ -32,10 +32,10 @@ const TopicDetail = ({ isOpen }) => {
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
-      <Headers 
-        value1="Home" 
-        value2="Topics" 
-        value3={lessonData?.name} 
+      <Headers
+        value1="Home"
+        value2="Topics"
+        value3={lessonData?.name}
       />
 
       <div className="mt-6 bg-[#E9FDEE] rounded-xl p-6 mb-6">
@@ -90,11 +90,12 @@ const TopicDetail = ({ isOpen }) => {
         <div className="space-y-4">
           {mediaData && (
             <div className="p-4 border border-gray-200 rounded-lg">
-            <img 
-  src={`${config.MainUrl}public/${mediaData.thumbnail}`}
-  alt={mediaData.title}
-  className="w-full h-[400px] object-cover rounded"
-/>
+              <img
+                
+                src={`${config.MainUrl}${mediaData.thumbnail}`}
+                alt={mediaData.title}
+                className="w-full h-[600px] object-cover rounded"
+              />
 
 
               <div className="mt-4 space-y-2">
@@ -104,13 +105,13 @@ const TopicDetail = ({ isOpen }) => {
                 <p className="text-sm text-gray-500">Created: {new Date(mediaData.created_at).toLocaleDateString()}</p>
 
                 <div className="flex justify-end mt-4">
-  <button
-    onClick={handleDeleteMedia}
-    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-  >
-    Delete Media
-  </button>
-</div>
+                  <button
+                    onClick={handleDeleteMedia}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Delete Media
+                  </button>
+                </div>
               </div>
             </div>
           )}

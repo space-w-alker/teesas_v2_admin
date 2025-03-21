@@ -217,7 +217,7 @@ const ResellerFormDetails = ({ isOpen }) => {
           <div className="p-4 border border-gray-200 rounded-lg">
             {resellerData?.id_proof ? (
               <img
-                src={`${config.MainUrl}public/${resellerData.id_proof}`}
+                src={`${config.MainUrl}${resellerData.id_proof}`}
                 alt="ID Proof"
                 className="w-full h-[400px] object-contain rounded"
                 onError={(e) => {

@@ -19,7 +19,7 @@ const PaymentDetails = ({ isOpen }) => {
   if (isLoading || !paymentData) return <div>Loading...</div>;
 
   const { payment_info, user_info, transaction_details } = paymentData;
-  const imageUrl = `${config.MainUrl}public/${transaction_details.proof_image}`;
+  const imageUrl = `${config.MainUrl}${transaction_details.proof_image}`;
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>

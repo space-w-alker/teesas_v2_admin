@@ -20,7 +20,7 @@ const PDFItem = ({ pdf, onDelete }) => {
   const uploadDate = new Date(pdf.created_at).toLocaleDateString();
 
 
-  const pdfUrl = `${config.MainUrl}public/subjects/${fileName}`;
+  const pdfUrl = `${config.MainUrl}subjects/${fileName}`;
   return (
     <>
       <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">

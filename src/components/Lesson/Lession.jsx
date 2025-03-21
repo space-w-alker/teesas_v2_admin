@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import bookopen from '../../assets/images/bookopen.png';
 import StatCard from '../common/StatCard';
+import Custombutton from '../common/Custombutton';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { getCategoriesAsync, selectCategories } from '../../apis/slices/categoriesSlice';
 
 const CategoryItem = ({ name, onNext }) => (
@@ -28,12 +30,67 @@ const Lession = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { data: categories, stats, isLoading, error } = useSelector(selectCategories);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const isInitialMount = useRef(true);
+  const limit = 10;
 
+  // Initial mount fetch
   useEffect(() => {
-    dispatch(getCategoriesAsync());
-  }, [dispatch]);
+    if (isInitialMount.current) {
+      dispatch(getCategoriesAsync(1, limit, ''));
+      isInitialMount.current = false;
+    }
+  }, []);
 
-  if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  // Pagination effect
+  useEffect(() => {
+    if (!isInitialMount.current && currentPage > 1) {
+      dispatch(getCategoriesAsync(currentPage, limit, searchTerm));
+    }
+  }, [currentPage]);
+
+  // Search effect
+  useEffect(() => {
+    if (!isInitialMount.current && searchTerm !== '') {
+      const delayDebounceFn = setTimeout(() => {
+        setCurrentPage(1);
+        dispatch(getCategoriesAsync(1, limit, searchTerm));
+      }, 800);
+      return () => clearTimeout(delayDebounceFn);
+    }
+  }, [searchTerm]);
+
+  const handleReload = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
+    dispatch(getCategoriesAsync(1, limit, ''));
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+      dispatch(getCategoriesAsync(currentPage - 1, limit, searchTerm));
+    }
+  };
+
+  const handleNextPage = () => {
+    if (categories?.length === limit) {
+      setCurrentPage(prev => prev + 1);
+      dispatch(getCategoriesAsync(currentPage + 1, limit, searchTerm));
+    }
+  };
+
+  const handleSearch = (value) => {
+    const sanitizedValue = value.trim().replace(/[^a-zA-Z\s]/g, '');
+    setSearchTerm(sanitizedValue);
+    if (!sanitizedValue) {
+      setCurrentPage(1);
+      dispatch(getCategoriesAsync(1, limit, ''));
+    }
+  };
+
+  if (isLoading && isInitialMount.current) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (error) return <div className="text-red-500 p-4">{error}</div>;
 
   return (
@@ -42,7 +99,9 @@ const Lession = ({ isOpen }) => {
 
       <div className="p-6 border-b border-gray-100">
         <div className="flex justify-between items-center">
-          <Headcomponent value="Lessons" showSearch={false} />
+          <h1 className="text-xl text-gray-900 cursor-pointer hover:text-[#27AE60] transition-colors"
+            onClick={handleReload}
+          >Lessons</h1>
         </div>
       </div>
 
@@ -54,19 +113,68 @@ const Lession = ({ isOpen }) => {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm">
-        <div className="p-6 border-b ">
-          <Headcomponent value="Categories" showSearch={false} />
+        <div className="p-6 border-b">
+          <Headcomponent
+            value="Categories"
+            showSearch={true}
+            onSearch={handleSearch}
+            searchValue={searchTerm}
+            onClear={() => {
+              setSearchTerm('');
+              setCurrentPage(1);
+              dispatch(getCategoriesAsync(1, limit, ''));
+            }}
+          />
         </div>
         <div className="p-6">
-          <div className="space-y-4">
-            {categories?.map((category) => (
-              <CategoryItem
-                key={category.id}
-                name={category.name}
-                onNext={() => navigate('/classes', { state: { category } })}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center min-h-[200px]">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#27AE60]"></div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {categories?.map((category) => (
+                <CategoryItem
+                  key={category.id}
+                  name={category.name}
+                  onNext={() => navigate('/classes', { state: { category } })}
+                />
+              ))}
+              {!isLoading && (!categories || categories.length === 0) && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No categories found</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-between items-center p-6 border-t">
+          <Custombutton
+            value="Previous"
+            icon={<FaArrowLeft />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="left"
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+          />
+
+          <Custombutton
+            value={`Page ${currentPage}`}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+          />
+
+          <Custombutton
+            value="Next"
+            icon={<FaArrowRight />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="right"
+            onClick={handleNextPage}
+            disabled={!categories || categories.length < limit}
+          />
         </div>
       </div>
     </div>

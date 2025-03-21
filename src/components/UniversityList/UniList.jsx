@@ -17,7 +17,7 @@ const UniversityItem = ({ university, navigate, onDelete }) => {
 
   // Use the icon from backend if available, otherwise use default
   const iconSrc = university.icon
-    ? `${config.MainUrl}public/${university.icon}`
+    ? `${config.MainUrl}${university.icon}`
     : bookopen;
 
   return (
