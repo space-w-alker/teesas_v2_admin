@@ -31,9 +31,7 @@ export const getViaPostAPICall = async (endPoint, params, access_token) => {
   //     url.searchParams.append(key, params[key])
   //   );
   // }
-  const accessToken = access_token
-    ? localStorage.getItem("authToken")
-    : access_token;
+  const accessToken = localStorage.getItem("authToken");
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -82,9 +80,12 @@ export const postAPICall = async (url, params, token) => {
     ? localStorage.getItem("authToken")
     : token;
   const myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append('api-key', 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR');
-  myHeaders.append('Authorization', "Bearer " + accessToken);
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append(
+    "api-key",
+    "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR"
+  );
+  myHeaders.append("Authorization", "Bearer " + accessToken);
 
   const requestOptions = {
     method: "POST",
@@ -141,15 +142,14 @@ export const putAPICall = async (url, body, auth = false, token = null) => {
   };
 };
 
-
 export const patchAPICall = async (url, body, auth = false, token = null) => {
-  const accessToken = localStorage.getItem('authToken') || access_token;
-  const API_KEY = 'V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR';
+  const accessToken = localStorage.getItem("authToken") || access_token;
+  const API_KEY =
+    "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR";
   const headers = {
-    'Content-Type': 'application/json',
-    'api-key': API_KEY,
-    'Authorization': `Bearer ${accessToken}`,
-
+    "Content-Type": "application/json",
+    "api-key": API_KEY,
+    Authorization: `Bearer ${accessToken}`,
   };
 
   // if (auth && token) {
@@ -157,7 +157,7 @@ export const patchAPICall = async (url, body, auth = false, token = null) => {
   // }
 
   const response = await fetch(url, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: headers,
     body: JSON.stringify(body),
   });

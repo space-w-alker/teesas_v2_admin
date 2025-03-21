@@ -91,11 +91,11 @@ const SalesTeam = ({ isOpen }) => {
         </button>
       </div>
 
-      {salesTeamData?.salesTeam?.length > 0 ? (
-        <SalesTeamList />
-      ) : (
+      {/* {salesTeamData?.salesTeam?.length > 0 ? ( */}
+      <SalesTeamList />
+      {/* ) : (
         <div>No data available</div>
-      )}
+      )} */}
     </div>
   );
 };
