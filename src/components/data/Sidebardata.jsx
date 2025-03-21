@@ -120,14 +120,14 @@ const Sidebardata = [
 
       // },
 
-      {
-        name: 'Practice',
-        icon: hashtag,
-        path: "/practice"
+      // {
+      //   name: 'Practice',
+      //   icon: hashtag,
+      //   path: "/practice"
 
-      },
+      // },
       {
-        name: 'Mock Test',
+        name: ' Test',
         icon: hashtag,
         path: "/test"
 
@@ -250,11 +250,11 @@ const Sidebardata = [
     id: 10,
     heading: "Marketing",
     items: [
-      {
-        name: "Parents",
-        icon: hashtag,
-        path: "/parentsReportType"
-      },
+      // {
+      //   name: "Parents",
+      //   icon: hashtag,
+      //   path: "/parentsReportType"
+      // },
       {
         name: "Banner",
         icon: hashtag,
@@ -276,16 +276,16 @@ const Sidebardata = [
         icon: hashtag,
         path: "/country-list"
       },
-      {
-        name: "Badges",
-        icon: hashtag,
-        path: "/badges"
-      },
-      {
-        name: "User Report",
-        icon: hashtag,
-        path: "/user-report"
-      },
+      // {
+      //   name: "Badges",
+      //   icon: hashtag,
+      //   path: "/badges"
+      // },
+      // {
+      //   name: "User Report",
+      //   icon: hashtag,
+      //   path: "/user-report"
+      // },
 
 
     ]
@@ -346,31 +346,31 @@ const Sidebardata = [
       }
     ]
   },
-  {
-    id: 9,
-    heading: "Other",
-    items: [
-      {
-        name: "Donation Enquiry",
-        icon: hashtag,
-        path: "/donation-enquiry"
-      },
+  // {
+  //   id: 9,
+  //   heading: "Other",
+  //   items: [
+  //     {
+  //       name: "Donation Enquiry",
+  //       icon: hashtag,
+  //       path: "/donation-enquiry"
+  //     },
 
-    ]
-  },
+  //   ]
+  // },
 
-  {
-    id: 5,
-    heading: "Data Analytics",
-    items: [
-      {
-        name: "Data Analytics",
-        icon: hashtag,
-        path: "/DataAnalytics"
+  // {
+  //   id: 5,
+  //   heading: "Data Analytics",
+  //   items: [
+  //     {
+  //       name: "Data Analytics",
+  //       icon: hashtag,
+  //       path: "/DataAnalytics"
 
-      }
-    ]
-  },
+  //     }
+  //   ]
+  // },
 
 
 
