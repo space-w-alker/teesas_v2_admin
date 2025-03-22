@@ -5,23 +5,20 @@ import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
-import { FaPlus } from 'react-icons/fa';
-import { FaBook } from 'react-icons/fa';
 import Modal from '../common/Modal';
+import { FaBook, FaPlus } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { listEbooksAsync, listDownloadedEbooksAsync, addEbookAsync, ebookList, deleteEbookAsync, updateEbookAsync } from "../../apis/slices/ebookSlice";
-
-
+import { listEbooksAsync, listDownloadedEbooksAsync, addEbookAsync, ebookList, deleteEbookAsync, updateEbookAsync, ebookdownloadedList } from "../../apis/slices/ebookSlice";
 
 const BookItem = ({ key, ebook }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // console.log('bookitem', ebooks);
+
   const handleDelete = (ebookId) => {
-    // console.log(ebookId);
     dispatch(deleteEbookAsync({
       dispatch, id: ebookId,
     }));
@@ -64,7 +61,6 @@ const BookItem = ({ key, ebook }) => {
                       price: ebook.price,
                       icon: ebook.icon,
                       pdf: ebook.source
-
                     },
                   },
                 })
@@ -124,54 +120,94 @@ const EBook = ({ isOpen }) => {
     setShowModal(false);
   };
 
-
-
   const bookOrders = [
     {
       date: '2024-01-15',
-      orders: [
-        { bookName: 'Advanced Calculus', price: '$45.99' },
-        { bookName: 'Organic Chemistry', price: '$39.99' }
-      ]
+      orders: []
     }
   ];
 
-
   const dispatch = useDispatch();
   const ebooks = useSelector((state) => state.ebook.ebookList || []);
-  const bookOrder = useSelector((state) => state.ebook);
+  const bookOrder = useSelector(ebookdownloadedList);
   const token = localStorage.getItem("authToken");
+
   const [sort, setSort] = useState({
     data: "",
-    filterList: "",  // Filters applied
+    filterList: "",
     sort: "",
     search: "",
     page: 1,
-    limit: 100
+    limit: 10,
   });
+
+  const [sort2, setSort2] = useState({
+    data: "",
+    filterList: "",
+    sort: "",
+    search: "",
+    page: 1,
+    limit: 10,
+    isDownloaded: true
+  });
+
   const handleSearchChange = (e) => {
-    setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
+    setSort(prev => ({
+      ...prev,
+      search: e,
+      page: 1 // Reset to first page on new search
+    }));
+  };
+  const handleSearchChange2 = (e) => {
+    setSort2(prev => ({
+      ...prev,
+      search: e,
+      page: 1 // Reset to first page on new search
+    }));
   };
 
-  console.log("ebooks heres", ebooks);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= Math.ceil(ebooks.totalEbooks / sort.limit)) {
+      setSort(prev => ({
+        ...prev,
+        page: newPage
+      }));
+    }
+  };
 
+  const handleDownloadedPageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= Math.ceil(bookOrder?.totalEbooks / sort2.limit)) {
+      setSort2(prev => ({
+        ...prev,
+        page: newPage
+      }));
+    }
+  };
 
   useEffect(() => {
-    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
-  }, [sort]);
+    dispatch(listEbooksAsync({
+      dispatch,
+      data: sort,
+      token,
+      callbackFn: (data) => {
+        console.log("Ebooks data received:", data);
+      }
+    }));
 
-
-  useEffect(() => {
     dispatch(
       listDownloadedEbooksAsync({
-        data: { isDownloaded: true, ...sort }, // Ensure correct data structure
-        token
+        dispatch,
+        data: sort2,
+        token,
+        callbackFn: (data) => {
+          console.log("Downloaded ebooks data received:", data);
+        }
       })
     );
-  }, [sort, dispatch, token]);
+  }, [dispatch, sort, sort2]);
 
-  console.log('order', bookOrder);
-  // const bookOrders = bookOrder.data?.all_ebook[0]?.ebook;
+  const totalPages = Math.ceil(ebooks.totalEbooks / sort.limit);
+  const totalDownloadedPages = Math.ceil(bookOrder?.totalEbooks / sort2.limit);
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -204,7 +240,7 @@ const EBook = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm mb-8">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="E-Book List" showSearch={true} onSearchChange={handleSearchChange} />
+          <Headcomponent value="E-Book List" showSearch={true} onSearch={handleSearchChange} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
@@ -213,49 +249,90 @@ const EBook = ({ isOpen }) => {
                 <BookItem key={`${index}-${bookIndex}`} ebook={book} />
               ))
             )}
-
           </div>
         </div>
-        <div className="p-4 border-t border-gray-100 flex justify-center">
+
+        <div className="p-6 border-t border-gray-100 flex justify-between items-center">
           <Custombutton
-            value="View All"
-            onClick={() => navigate('/ebook-list')}
-            textcolor="text-gray-500"
-            backgroundcolor="bg-gray-100"
-            extraStyle="rounded-full px-6 py-2 hover:bg-gray-200"
+            value={
+              <div className="flex items-center gap-2">
+                <FaArrowLeft />
+                <span>Previous</span>
+              </div>
+            }
+            onClick={() => handlePageChange(sort.page - 1)}
+            disabled={sort.page === 1}
+            backgroundcolor={sort.page === 1 ? "bg-gray-200" : "bg-gray-100"}
+            textcolor="text-gray-600"
+            width="w-[100px]"
+            extraStyle="py-2"
+          />
+          <span className="text-gray-600">Page {sort.page} of {totalPages || 1}</span>
+          <Custombutton
+            value={
+              <div className="flex items-center gap-2">
+                <span>Next</span>
+                <FaArrowRight />
+              </div>
+            }
+            onClick={() => handlePageChange(sort.page + 1)}
+            disabled={sort.page === totalPages}
+            backgroundcolor={sort.page === totalPages ? "bg-gray-200" : "bg-gray-100"}
+            textcolor="text-gray-600"
+            width="w-[80px]"
+            extraStyle="py-2"
           />
         </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="Book Order" showSearch={true} />
+          <Headcomponent value="Book Order" showSearch={true} onSearch={handleSearchChange2} />
         </div>
         <div className="p-6">
           {bookOrders.map((orderGroup, groupIndex) => (
             <div key={groupIndex} className="space-y-6">
               <div className="text-gray-400 text-sm">{orderGroup.date}</div>
               <div className="space-y-4">
-                {orderGroup.orders.map((order, index) => (
-                  <OrderItem
-                    key={index}
-                    bookName={order.bookName}
-                    price={order.price}
-                  />
-                ))}
+                {bookOrder.data?.all_ebook?.map((ebookItem, index) =>
+                  ebookItem.ebook.map((book, bookIndex) => (
+                    <OrderItem key={`${index}-${bookIndex}`} bookName={book.title} price={book.price} />
+                  ))
+                )}
               </div>
             </div>
           ))}
         </div>
-        <div className="p-4 border-t border-gray-100 flex justify-center">
+        <div className="p-6 border-t border-gray-100 flex justify-between items-center">
           <Custombutton
-            value="View All"
-            onClick={() => navigate('/ebook-orders')}
-            textcolor="text-gray-500"
-            backgroundcolor="bg-gray-100"
-            extraStyle="rounded-full px-6 py-2 hover:bg-gray-200"
+            value={
+              <div className="flex items-center gap-2">
+                <FaArrowLeft />
+                <span>Previous</span>
+              </div>
+            }
+            onClick={() => handleDownloadedPageChange(sort2.page - 1)}
+            disabled={sort2.page === 1}
+            backgroundcolor={sort2.page === 1 ? "bg-gray-200" : "bg-gray-100"}
+            textcolor="text-gray-600"
+            width="w-[100px]"
+            extraStyle="py-2"
           />
-
+          <span className="text-gray-600">Page {sort2.page} of {totalDownloadedPages || 1}</span>
+          <Custombutton
+            value={
+              <div className="flex items-center gap-2">
+                <span>Next</span>
+                <FaArrowRight />
+              </div>
+            }
+            onClick={() => handleDownloadedPageChange(sort2.page + 1)}
+            disabled={sort2.page === totalDownloadedPages}
+            backgroundcolor={sort2.page === totalDownloadedPages ? "bg-gray-200" : "bg-gray-100"}
+            textcolor="text-gray-600"
+            width="w-[80px]"
+            extraStyle="py-2"
+          />
         </div>
       </div>
 

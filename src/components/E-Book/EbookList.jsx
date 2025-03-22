@@ -166,7 +166,7 @@ const EbookList = ({ isOpen }) => {
       <div className="bg-white rounded-xl shadow-sm mb-8">
 
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="E-Book List" showSearch={true} onSearchChange={handleSearchChange} />
+          <Headcomponent value="E-Book List" showSearch={true} onSearch={handleSearchChange} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
