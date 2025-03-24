@@ -95,16 +95,16 @@ export const getStoreDetailsAsync = ({ dispatch, id, token, callbackFn }) => {
 export const createStoreAsync = ({ dispatch, data, token, callbackFn }) => {
   return async () => {
     try {
-      const URL = `${BASEURL}omotab/admin-store`;
-      const response = await postFileAPICall(URL, data, token);
-      console.log('response', response);
-      if (response?.data?.data?.status === 200) {
-        callbackFn && callbackFn(response);
-        dispatch(addStoreSuccess(response));
-        toast.success("Store created successfully.")
-      } else {
-        toast.error("Failed to create store.");
-      }
+    const URL = `${BASEURL}omotab/admin-store`;
+    const response = await postFileAPICall(URL, data, token);
+    // console.log('response', response?.data?.status);
+    if (response?.data?.status == 200) {
+      callbackFn && callbackFn(response);
+      // dispatch(addStoreSuccess(response));
+      toast.success("Store created successfully.")
+    } else {
+      toast.error("Failed to create store.");
+    }
     } catch (error) {
       toast.error("Error creating store.");
     }

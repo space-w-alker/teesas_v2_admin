@@ -80,7 +80,7 @@ const AddStoreItem = () => {
   const handleSubmit = () => {
     const payload = {
       title: formData.productName,
-      descriptions: formData.description,
+      plan: formData.plan,
       short_description: formData.shortDescription,
       production_description: formData.productionDescription,
       quantity: formData.quantity,
@@ -108,7 +108,7 @@ const AddStoreItem = () => {
     if (formData.image) formDataToSend.append("files", formData.image);
 
     if (isEditing) {
-      dispatch(updateStoreAsync({ dispatch, id: itemId, data: formDataToSend }));
+      dispatch(updateStoreAsync({ dispatch, id: itemId, data: payload }));
     } else {
       dispatch(createStoreAsync({ data: formDataToSend }));
     }
