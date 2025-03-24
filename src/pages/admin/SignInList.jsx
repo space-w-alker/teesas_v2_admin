@@ -251,7 +251,7 @@ const SignInList = ({ isOpen }) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      <div className="flex justify-start items-center lg:gap-3">
+      {/* <div className="flex justify-start items-center lg:gap-3">
         <FaChevronLeft />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
@@ -259,9 +259,9 @@ const SignInList = ({ isOpen }) => {
             <span className="text-black font-medium">Sign In Lists</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <h2 className=" pt-[20px] font-bold text-[22px] lg:pl-[16px] xl:pl-0 pl-[8px] leading-[24px] text-[#49454F]">
+      <h2 className=" pt-[0px] font-bold text-[22px] lg:pl-[16px] xl:pl-0 pl-[8px] leading-[24px] text-[#49454F]">
         Dashboard
       </h2>
       <div>

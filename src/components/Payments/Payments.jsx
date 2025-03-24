@@ -7,7 +7,7 @@ import Headers from '../common/Headers';
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 
-const PaymentCard = ({ id, account_holder, subscription_type, date, status, subscription_amount, payment_type }) => {
+const PaymentCard = ({ id, user_name, subscription_type, date, status, subscription_amount, payment_type }) => {
   const navigate = useNavigate();
   const formattedDate = new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -15,25 +15,28 @@ const PaymentCard = ({ id, account_holder, subscription_type, date, status, subs
     day: 'numeric'
   });
 
+  // Use first letter of subscription_type as fallback for account holder initial
+  const initial = subscription_type ? subscription_type[0].toUpperCase() : 'U';
+
   return (
     <>
       <div className="text-sm text-gray-400 mb-2">{formattedDate}</div>
       <div className="flex items-center justify-between py-4 border-b">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-[#E9FDEE] flex items-center justify-center">
-            <span className="text-[#27AE60] font-medium">{account_holder[0]}</span>
+            <span className="text-[#27AE60] font-medium">{initial}</span>
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">{account_holder}</h3>
+            <h3 className="font-medium text-gray-900"> {user_name}</h3>
             <p className="text-sm text-gray-500">{subscription_type}</p>
             <div className="flex gap-2 mt-1">
               <span className="text-sm text-gray-500">{payment_type}</span>
-              <span className={`text-sm px-2 py-0.5 rounded ${status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
-                status === 'completed' ? 'bg-green-100 text-green-800' :
+              {/* <span className={`text-sm px-2 py-0.5 rounded ${status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
+                status === 'active' ? 'bg-green-100 text-green-800' :
                   'bg-red-100 text-red-800'
                 }`}>
                 {status}
-              </span>
+              </span> */}
             </div>
           </div>
         </div>
@@ -55,7 +58,7 @@ const PaymentCard = ({ id, account_holder, subscription_type, date, status, subs
 
 const Payments = ({ isOpen }) => {
   const dispatch = useDispatch();
-  const { data: payments, statistics, pagination, isLoading } = useSelector(selectPayments);
+  const { isLoading, data } = useSelector(selectPayments);
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 5;
 
@@ -63,8 +66,25 @@ const Payments = ({ isOpen }) => {
     dispatch(getPaymentsAsync(currentPage, limit));
   }, [dispatch, currentPage]);
 
-  // Add console.log to verify data
-  console.log('Payments Data:', payments);
+  // Extract data from the response
+  const payments = data?.payments || [];
+  const statistics = data?.statistics || {};
+  const pagination = data?.pagination || {};
+
+  console.log("Payments data:", data);
+  console.log("Payments:", payments);
+
+  const handleNextPage = () => {
+    if (pagination.pages && currentPage < pagination.pages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
@@ -81,23 +101,23 @@ const Payments = ({ isOpen }) => {
           <h3 className="text-lg font-semibold text-gray-900">Total Amount</h3>
           <div className="flex items-center gap-4 mt-2">
             <span className="text-2xl font-bold">
-              ₦ {statistics?.total_amount?.value}
+              ₦ {statistics?.total_amount?.value || 0}
             </span>
             <div className="flex items-center text-green-600">
-              <span className="text-sm">+{statistics?.total_amount?.percentage_increase}%</span>
-              <span className="text-xs ml-1">vs {statistics?.total_amount?.comparison_period}</span>
+              <span className="text-sm">+{statistics?.total_amount?.percentage_increase || 0}%</span>
+              <span className="text-xs ml-1">vs {statistics?.total_amount?.comparison_period || 'Last Period'}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div className="bg-white rounded-xl p-6 mt-6">
-        <Headcomponent value="Payments History" border="Border" />
+        <Headcomponent value="Payments History" border="Border" showSearch={false} />
         <div className="p-6">
           <div className="space-y-2">
             {isLoading ? (
               <div>Loading...</div>
-            ) : payments && Array.isArray(payments) ? (
+            ) : payments && Array.isArray(payments) && payments.length > 0 ? (
               payments.map((payment) => (
                 <PaymentCard
                   key={payment.id}
@@ -111,31 +131,26 @@ const Payments = ({ isOpen }) => {
           <div className="flex justify-between items-center mt-6">
             <Custombutton
               value="Previous"
-              hidden="hidden"
+              // hidden={currentPage === 1 ? "hidden" : ""}
               icon={<FaArrowLeft />}
               backgroundcolor="bg-[#F2F2F2]"
               textcolor="text-[#000000]"
               imagePosition="left"
-              onClick={() => setCurrentPage(prev => prev - 1)}
-              disabled={!pagination?.has_prev}
+              onClick={handlePrevPage}
             />
 
-            <Custombutton
-              value="View All"
-              hidden="hidden"
-              backgroundcolor="bg-[#F2F2F2]"
-              textcolor="text-[#000000]"
-            />
+            <div className="text-sm text-gray-600">
+              Page {currentPage} of {pagination.pages || 1}
+            </div>
 
             <Custombutton
               value="Next"
-              hidden="hidden"
+              // hidden={currentPage >= (pagination.pages || 1) ? "hidden" : ""}
               icon={<FaArrowRight />}
               backgroundcolor="bg-[#F2F2F2]"
               textcolor="text-[#000000]"
               imagePosition="right"
-              onClick={() => setCurrentPage(prev => prev + 1)}
-              disabled={!pagination?.has_next}
+              onClick={handleNextPage}
             />
           </div>
         </div>

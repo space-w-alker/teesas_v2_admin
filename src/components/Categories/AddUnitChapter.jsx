@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FiTrash2, FiPlus } from 'react-icons/fi';
 import Headers from '../common/Headers';
-import { createChapterAsync } from '../../apis/slices/categoriesSlice';
+import { createChapterAsync, getChapterDetailsAsync, updateChapterAsync } from '../../apis/slices/categoriesSlice';
 
 const AddUnitChapter = ({ isOpen }) => {
-  const { id } = useParams();
+  const { id, chapterId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [chapterName, setChapterName] = useState('');
   const [topics, setTopics] = useState([{ name: '', active: true }]);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const chapterDetails = useSelector(state => state.categories.chapterDetails?.data);
+  const isLoading = useSelector(state => state.categories.chapterDetails?.isLoading);
+
+  useEffect(() => {
+    if (chapterId) {
+      setIsEdit(true);
+      dispatch(getChapterDetailsAsync(chapterId));
+    }
+  }, [dispatch, chapterId]);
+
+  useEffect(() => {
+    if (isEdit && chapterDetails) {
+      setChapterName(chapterDetails.name || '');
+      if (chapterDetails.topics && chapterDetails.topics.length > 0) {
+        setTopics(chapterDetails.topics.map(topic => ({ name: topic.name, active: topic.active })));
+      }
+    }
+  }, [chapterDetails, isEdit]);
 
   const addTopic = () => {
     setTopics([...topics, { name: '', active: true }]);
@@ -34,25 +54,33 @@ const AddUnitChapter = ({ isOpen }) => {
       topics: topics.filter(topic => topic.name.trim() !== '')
     };
 
-    const success = await dispatch(createChapterAsync(id, chapterData));
+    let success;
+    if (isEdit) {
+      success = await dispatch(updateChapterAsync(chapterId, chapterData));
+    } else {
+      success = await dispatch(createChapterAsync(id, chapterData));
+    }
+
     if (success) {
-      navigate(`/subjects/${id}/chapters`);
+      navigate(`/subjects/${isEdit ? id : id}/chapters`);
     }
   };
+
+  if (isEdit && isLoading) return <div>Loading...</div>;
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <div className="mb-8">
-        <Headers 
-          value1="Chapters" 
-          value2="Add Chapter" 
+        <Headers
+          value1="Chapters"
+          value2={isEdit ? "Edit Chapter" : "Add Chapter"}
         />
       </div>
 
       <div className="flex gap-6">
         <div className="flex-[2] bg-white rounded-xl p-6">
-          <h2 className="text-2xl font-bold mb-6">Add Chapter</h2>
-          
+          <h2 className="text-2xl font-bold mb-6">{isEdit ? "Edit Chapter" : "Add Chapter"}</h2>
+
           <div className="space-y-6">
             <div>
               <label className="block text-gray-700 font-medium mb-2">Chapter Name</label>
@@ -77,7 +105,7 @@ const AddUnitChapter = ({ isOpen }) => {
                     placeholder="Enter topic name"
                   />
                   {topics.length > 1 && (
-                    <button 
+                    <button
                       onClick={() => removeTopic(index)}
                       className="text-red-500 hover:text-red-600"
                     >
@@ -86,7 +114,7 @@ const AddUnitChapter = ({ isOpen }) => {
                   )}
                 </div>
               ))}
-              <button 
+              <button
                 onClick={addTopic}
                 className="flex items-center gap-2 text-[#27AE60] hover:text-[#219652] font-medium"
               >
@@ -99,7 +127,7 @@ const AddUnitChapter = ({ isOpen }) => {
 
         <div className="flex-1 bg-white rounded-xl p-6 h-fit">
           <h3 className="text-xl font-bold mb-6">Summary</h3>
-          
+
           <div className="space-y-4">
             <div>
               <p className="text-gray-600 mb-1">Chapter Name</p>
@@ -111,12 +139,12 @@ const AddUnitChapter = ({ isOpen }) => {
               <p className="font-medium">{topics.filter(t => t.name.trim()).length} Topics</p>
             </div>
 
-            <button 
+            <button
               onClick={handleSubmit}
               disabled={!chapterName || topics.every(t => !t.name.trim())}
               className="w-full py-3 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Chapter
+              {isEdit ? "Update Chapter" : "Create Chapter"}
             </button>
           </div>
         </div>

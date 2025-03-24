@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { FiEdit, FiTrash2, FiMoreVertical} from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiMoreVertical } from 'react-icons/fi';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import book from '../../assets/images/book.png';
 import Headers from '../common/Headers';
@@ -22,13 +22,13 @@ const SubjectDetails = ({ isOpen }) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const { data, isLoading } = useSelector(state => state.categories.subjects);
 
   useEffect(() => {
     dispatch(getSubjectDetailsAsync(id, currentPage));
   }, [dispatch, id, currentPage]);
-  
+
 
   const SubjectCard = ({ subject }) => {
     const dispatch = useDispatch();
@@ -49,7 +49,7 @@ const SubjectDetails = ({ isOpen }) => {
           <div className="flex items-center gap-4">
             <div className="p-3 bg-gray-50 rounded-lg">
               {subject.media_path ? (
-                <img 
+                <img
                   src={book}
                   alt={subject.name}
                   className="w-8 h-8 object-cover rounded-lg"
@@ -60,9 +60,8 @@ const SubjectDetails = ({ isOpen }) => {
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-900">{subject.name}</h3>
-              <button className={`mt-2 px-4 py-1 rounded-full text-sm font-medium ${
-                subject.active ? 'bg-[#27AE60] text-white' : 'bg-red-500 text-white'
-              }`}>
+              <button className={`mt-2 px-4 py-1 rounded-full text-sm font-medium ${subject.active ? 'bg-[#27AE60] text-white' : 'bg-red-500 text-white'
+                }`}>
                 {subject.active ? 'Published' : 'Inactive'}
               </button>
             </div>
@@ -128,9 +127,9 @@ const SubjectDetails = ({ isOpen }) => {
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <div className="mb-8">
-        <Headers 
-          value1="Home" 
-          value2={"Subject Details"} 
+        <Headers
+          value1="Home"
+          value2={"Subject Details"}
         />
       </div>
 
@@ -141,9 +140,8 @@ const SubjectDetails = ({ isOpen }) => {
           </div>
           <div>
             <h1 className="text-xl font-bold">{data?.name}</h1>
-            <button className={`mt-2 px-6 py-1 rounded-full text-sm font-medium ${
-              data?.active ? 'bg-[#27AE60] text-white' : 'bg-red-500 text-white'
-            }`}>
+            <button className={`mt-2 px-6 py-1 rounded-full text-sm font-medium ${data?.active ? 'bg-[#27AE60] text-white' : 'bg-red-500 text-white'
+              }`}>
               {data?.active ? 'Published' : 'Inactive'}
             </button>
           </div>
@@ -153,11 +151,11 @@ const SubjectDetails = ({ isOpen }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard title="Total Subjects" count={data?.totalSubjects} />
         <StatCard title="Total Chapters" count={data?.totalChapters} />
-        <StatCard title="Total Lessons" count={data?.subjects?.reduce((acc, subject) => acc + subject.totalLessons, 0)} />
+        <StatCard title="Total Lessons" count={data?.totalLessons || 0} />
       </div>
 
       <div className="flex justify-end mb-6">
-        <button 
+        <button
           onClick={() => setShowModal(true)}
           className="px-6 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
         >
@@ -172,29 +170,39 @@ const SubjectDetails = ({ isOpen }) => {
             <SubjectCard key={subject.id} subject={subject} />
           ))}
         </div>
+
         <div className="flex justify-between items-center mt-6">
-          <Custombutton
-            value="Previous"
-            hidden={currentPage === 1}
-            icon={<FaArrowLeft />}
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
-            
-            onClick={handlePrevPage}
-          />
+          <div>
+            <Custombutton
+              value="Previous"
+              icon={<FaArrowLeft />}
+              backgroundcolor={currentPage === 1 ? "bg-gray-100" : "bg-[#F2F2F2]"}
+              textcolor={currentPage === 1 ? "text-gray-400" : "text-[#000000]"}
+              imagePosition="left"
+              width="w-[115px]"
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            />
+          </div>
+
           <span className="text-gray-600">
-            Page {currentPage} of {data?.pagination?.totalPages}
+            Page {currentPage} of {data?.pagination?.totalPages || 1}
           </span>
-          <Custombutton
-            value="Next"
-            hidden={currentPage === data?.pagination?.totalPages}
-            icon={<FaArrowRight />}
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
-            
-            onClick={handleNextPage}
-          />
+
+          <div>
+            <Custombutton
+              value="Next"
+              icon={<FaArrowRight />}
+              backgroundcolor={currentPage === (data?.pagination?.totalPages || 1) ? "bg-gray-100" : "bg-[#F2F2F2]"}
+              textcolor={currentPage === (data?.pagination?.totalPages || 1) ? "text-gray-400" : "text-[#000000]"}
+              imagePosition="right"
+              width="w-[115px]"
+              onClick={handleNextPage}
+              disabled={currentPage === (data?.pagination?.totalPages || 1)}
+            />
+          </div>
         </div>
+
       </div>
 
       {showModal && (
@@ -208,7 +216,7 @@ const SubjectDetails = ({ isOpen }) => {
         />
       )}
 
-      <SuccessModal 
+      <SuccessModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         type="caution"
@@ -221,7 +229,7 @@ const SubjectDetails = ({ isOpen }) => {
         }}
       />
 
-      <SuccessModal 
+      <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => {
           setShowSuccessModal(false);

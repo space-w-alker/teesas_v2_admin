@@ -800,6 +800,17 @@ function App() {
         />
 
         <Route
+          path="/add-unit-chapter/:id/:chapterId"
+          element={
+            <ProtectedRoute>
+              <AddUnitChapter isOpen={isSidebarOpen} />
+            </ProtectedRoute>
+          }
+        />
+
+
+
+        <Route
           path="/bulk-upload-chapter"
           element={
             <ProtectedRoute>

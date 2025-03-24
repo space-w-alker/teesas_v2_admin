@@ -88,6 +88,12 @@ const initialState = {
     success: false,
     error: null
   },
+  deleteChapter: {
+    isLoading: false,
+    success: false,
+    error: null
+  },
+
   topics: {
     isLoading: false,
     data: null,
@@ -180,6 +186,9 @@ export const categoriesSlice = createSlice({
     },
     setChapterDetails: (state, action) => {
       state.chapters = action.payload;
+    },
+    setDeleteChapter: (state, action) => {
+      state.deleteChapter = action.payload;
     },
     setCreateChapter: (state, action) => {
       state.createChapter = action.payload;
@@ -503,6 +512,45 @@ export const getChapterDetailsAsync = (subjectId) => async (dispatch) => {
 };
 
 
+export const deleteChapterAsync = (chapterId) => async (dispatch) => {
+  try {
+    dispatch(setDeleteChapter({ isLoading: true, success: false, error: null }));
+    const URL = `${BASEURL}admin/chapter/${chapterId}`;
+
+    const result = await deleteAPICall(URL);
+
+    if (result?.data?.status === 200) {
+      dispatch(setDeleteChapter({ isLoading: false, success: true, error: null }));
+      return true;
+    }
+    throw new Error(result?.data?.message || 'Failed to delete chapter');
+  } catch (error) {
+    dispatch(setDeleteChapter({ isLoading: false, success: false, error: error.message }));
+    return false;
+  }
+};
+
+// Add this function to the categoriesSlice.jsx file, near the other chapter-related functions
+
+export const updateChapterAsync = (chapterId, chapterData) => async (dispatch) => {
+  try {
+    dispatch(setCreateChapter({ isLoading: true, success: false, error: null }));
+    const URL = `${BASEURL}admin/chapter/${chapterId}`;
+
+    const result = await putAPICall(URL, chapterData);
+
+    if (result?.data?.status === 200) {
+      dispatch(setCreateChapter({ isLoading: false, success: true, error: null }));
+      return true;
+    }
+    throw new Error(result?.data?.message || 'Failed to update chapter');
+  } catch (error) {
+    dispatch(setCreateChapter({ isLoading: false, success: false, error: error.message }));
+    return false;
+  }
+};
+
+
 export const createChapterAsync = (subjectId, chapterData) => async (dispatch) => {
   try {
     dispatch(setCreateChapter({ isLoading: true, success: false, error: null }));
@@ -719,7 +767,8 @@ export const { setCategoryList,
   setTopicDetail,
   setDeleteTopicMedia,
   setUniversities,
-  setCountries
+  setCountries,
+  setDeleteChapter
 
 
 } = categoriesSlice.actions;

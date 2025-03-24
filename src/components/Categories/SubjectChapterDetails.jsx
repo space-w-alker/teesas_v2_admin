@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FiEdit, FiTrash2, FiMoreVertical } from 'react-icons/fi';
 import Headers from '../common/Headers';
 import bookopen from '../../assets/images/bookopen.png';
-import { getChapterDetailsAsync } from '../../apis/slices/categoriesSlice';
+import { getChapterDetailsAsync, deleteChapterAsync } from '../../apis/slices/categoriesSlice';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import SuccessModal from '../common/SuccessModal';
 import StatCard from '../common/StatCard';
@@ -15,10 +15,13 @@ const SubjectChapterDetails = ({ isOpen }) => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   const { data, isLoading } = useSelector(state => state.categories.chapters);
 
@@ -56,13 +59,16 @@ const SubjectChapterDetails = ({ isOpen }) => {
                 <button
                   className="w-full px-4 py-2 text-left hover:bg-gray-50"
                   onClick={() => navigate(`/chapters/${chapter.id}/topics`)}
-
                 >
                   View Lessons
                 </button>
                 <button
                   className="w-full px-4 py-2 text-left hover:bg-gray-50"
-                  onClick={() => navigate(`/edit-chapter/${chapter.id}`)}
+                  onClick={() => navigate(`/add-unit-chapter/${id}/${chapter.id}`)}
+
+
+
+
                 >
                   Edit Chapter
                 </button>
@@ -78,6 +84,32 @@ const SubjectChapterDetails = ({ isOpen }) => {
         </div>
       </div>
     );
+  };
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentChapters = data?.chapters ? data.chapters.slice(indexOfFirstItem, indexOfLastItem) : [];
+  const totalPages = data?.chapters ? Math.ceil(data.chapters.length / itemsPerPage) : 0;
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (selectedChapter) {
+      await dispatch(deleteChapterAsync(selectedChapter.id));
+      setShowDeleteModal(false);
+      setShowSuccessModal(true);
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -120,44 +152,39 @@ const SubjectChapterDetails = ({ isOpen }) => {
         </button>
       </div>
 
-
       <div className="bg-white rounded-xl p-6">
         <Headcomponent value="Chapters" showSearch={false} />
         <div className="grid grid-cols-1 gap-4">
-          {data?.chapters?.map((chapter) => (
+          {currentChapters.map((chapter) => (
             <ChapterCard key={chapter.id} chapter={chapter} />
           ))}
         </div>
         <div className="flex justify-between items-center mt-6">
           <Custombutton
             value="Previous"
-            hidden="hidden"
+
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="left"
+            onClick={handlePrevPage}
           />
 
-          <Custombutton
-            value="View All"
-            hidden="hidden"
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
-          />
+          <div className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </div>
 
           <Custombutton
             value="Next"
-            hidden="hidden"
+
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="right"
+            onClick={handleNextPage}
           />
         </div>
-
       </div>
-
-
 
       <SuccessModal
         isOpen={showDeleteModal}
@@ -166,10 +193,7 @@ const SubjectChapterDetails = ({ isOpen }) => {
         title="Delete Chapter"
         message="Are you sure you want to delete this chapter?"
         buttonText="Delete"
-        onConfirm={() => {
-          setShowDeleteModal(false);
-          setShowSuccessModal(true);
-        }}
+        onConfirm={handleDeleteConfirm}
       />
 
       <SuccessModal
