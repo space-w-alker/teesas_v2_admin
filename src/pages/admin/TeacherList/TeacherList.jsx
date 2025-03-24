@@ -44,8 +44,9 @@ const TeacherList = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -64,7 +65,10 @@ const TeacherList = ({ isOpen }) => {
         <FaChevronLeft />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
-            Home / <span className="text-black font-medium">Live Classes</span>
+            Home /{" "}
+            <span className="text-black font-medium">
+              Live Classes Mangement
+            </span>
           </div>
         </div>
       </div>

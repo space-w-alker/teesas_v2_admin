@@ -30,7 +30,7 @@ const TeacherLists = () => {
       dispatch: dispatch,
       data: {
         page: 1,
-        page_size: 10,
+        limit: 10,
       },
       token: token,
       callbackFn: (res) => {
@@ -68,7 +68,7 @@ const TeacherLists = () => {
         <div className={`flex justify-between items-center relative mt-3`}>
           <div>
             <h2 className="font-medium text-[16px] lg:text-[18px] leading-[25px] text-[#2C2E32]">
-              Teachers List
+              Teachers List 
             </h2>
           </div>
           <div className="flex items-center relative">
@@ -86,7 +86,7 @@ const TeacherLists = () => {
                       setLoading(true);
                       const newData = {
                         page: 1,
-                        page_size: 10,
+                        limit: 10,
                       };
                       getTeachersAsync({
                         dispatch: dispatch,
@@ -120,7 +120,7 @@ const TeacherLists = () => {
                       setLoading(true);
                       const newData = {
                         page: 1,
-                        page_size: 10,
+                        limit: 10,
                         search: searchValue,
                       };
                       getTeachersAsync({
@@ -149,7 +149,7 @@ const TeacherLists = () => {
               </div>
               <div
                 className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
-              //onClick={() => setIsModalFilterOpen(true)}
+                //onClick={() => setIsModalFilterOpen(true)}
               >
                 <img src={Vector} alt="Vector" />
               </div>
@@ -213,7 +213,7 @@ const TeacherLists = () => {
                 setLoading(true);
                 const newData = {
                   page: page - 1,
-                  page_size: 10,
+                  limit: 10,
                 };
                 setPage(page - 1);
                 getTeachersAsync({
@@ -250,12 +250,14 @@ const TeacherLists = () => {
           </div>
           <Custombutton
             onClick={() => {
-              if (pageData?.page < Math.ceil(pageData?.total / pageData?.limit)) {
+              if (
+                pageData?.page < Math.ceil(pageData?.total / pageData?.limit)
+              ) {
                 setLoading(true);
                 setLoading(true);
                 const newData = {
                   page: page + 1,
-                  page_size: 10,
+                  limit: 10,
                 };
                 setPage(page + 1);
                 getTeachersAsync({

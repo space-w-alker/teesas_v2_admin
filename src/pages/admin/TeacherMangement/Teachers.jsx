@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react"; import UserCard from '../../../components/common/UserCard'
-import TeacherList from '../../../components/Core/Dashboard/Admin/TeacherList'
+import React, { useState, useEffect } from "react";
+import UserCard from "../../../components/common/UserCard";
+import TeacherList from "../../../components/Core/Dashboard/Admin/TeacherList";
 import { FaChevronLeft } from "react-icons/fa";
 
 import Custombutton from "../../../components/common/Custombutton";
@@ -15,8 +16,6 @@ import SearchButton from "../../../assets/images/Searchbutton.png";
 import Vector from "../../../assets/images/Vector.png";
 import container from "../../../assets/images/container.png";
 import { TailSpin } from "react-loader-spinner";
-
-
 
 const Teachers = ({ isOpen }) => {
   const Navigate = useNavigate();
@@ -50,7 +49,11 @@ const Teachers = ({ isOpen }) => {
     });
   }, []);
   return (
-    <div className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "lg:ml-[260px]" : ""}`}>
+    <div
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
+        isOpen ? "lg:ml-[260px]" : ""
+      }`}
+    >
       {loading && (
         <div
           style={{
@@ -64,10 +67,12 @@ const Teachers = ({ isOpen }) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      <div className='flex justify-start  items-center lg:gap-3'>
+      <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft />
         <div>
-          <div className=' font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home / <span className='text-black font-medium'>Live Classes</span></div>
+          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+            Home / <span className="text-black font-medium">Live Classes </span>
+          </div>
         </div>
       </div>
       <h2 className=" font-bold text-[22px]   leading-[28px] text-[#2C2E32]  mt-6">
@@ -82,7 +87,10 @@ const Teachers = ({ isOpen }) => {
         />
       </div>
       <div className=" flex  justify-end mt-4 ">
-        <button className="text-[14px] leading-[20px] text-center font-bold  w-[170px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white" onClick={() => Navigate('/AddLiveClass')}>
+        <button
+          className="text-[14px] leading-[20px] text-center font-bold  w-[170px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
+          onClick={() => Navigate("/AddLiveClass")}
+        >
           + Add Class
         </button>
       </div>
@@ -164,7 +172,7 @@ const Teachers = ({ isOpen }) => {
                 </div>
                 <div
                   className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
-                // onClick={() => setIsModalFilterOpen(true)}
+                  // onClick={() => setIsModalFilterOpen(true)}
                 >
                   <img src={Vector} alt="Vector" />
                 </div>
@@ -199,8 +207,7 @@ const Teachers = ({ isOpen }) => {
                         </p>
                         <div className="flex  items-center   h-[16px]  bg-[#F2F2F2] ">
                           <p className=" font-bold w-full text-[12px] leading-[15px] text-[#555555]">
-                            {user?.course?.name} /{" "}
-                            {user?.subject?.name}
+                            {user?.course?.name} / {user?.subject?.name}
                           </p>
                         </div>
                       </div>
@@ -223,7 +230,6 @@ const Teachers = ({ isOpen }) => {
             <Custombutton
               onClick={() => {
                 if (page > 1) {
-
                   setLoading(true);
                   const newData = {
                     page: page - 1,
@@ -294,7 +300,7 @@ const Teachers = ({ isOpen }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Teachers
+export default Teachers;

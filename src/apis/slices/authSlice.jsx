@@ -200,7 +200,7 @@ export const changePasswordAsync = async ({
 }) => {
   try {
     const URL = `${BASEURL}${ChangeNewPassword}`;
-    const result = await putAPICall(URL, body, true, token).then((res) => {
+    const result = await postAPICall(URL, body, true, token).then((res) => {
       callbackFn && callbackFn(res);
       return res;
     });

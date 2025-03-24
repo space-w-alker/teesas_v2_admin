@@ -5,6 +5,7 @@ import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getTeacherDetailsAsync } from "../../../apis/slices/teacherSlice";
 import { TailSpin } from "react-loader-spinner";
+import { FaChevronLeft } from "react-icons/fa";
 
 const TeacherDetails = ({ isOpen }) => {
   const Navigate = useNavigate();
@@ -20,8 +21,9 @@ const TeacherDetails = ({ isOpen }) => {
   }, []);
   return (
     <div
-      className={` py-[8rem] lg:px-[10rem] px-[10px]  ${isOpen ? "ml-[240px]" : ""
-        }`}
+      className={` py-[8rem] lg:px-[10rem] px-[10px]  ${
+        isOpen ? "ml-[240px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -36,7 +38,18 @@ const TeacherDetails = ({ isOpen }) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      <div className="bg-[#EFF6F1] border rounded-lg mb-[10px] border-[#CAC4D0] h-[60px] p-[8px]">
+      <div
+        onClick={() => Navigate(-1)}
+        className="flex justify-start  items-center lg:gap-3"
+      >
+        <FaChevronLeft />
+        <div>
+          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+            Home / <span className="text-black font-medium">Teacher List</span>
+          </div>
+        </div>
+      </div>
+      <div className="bg-[#EFF6F1] border mt-3 rounded-lg mb-[10px] border-[#CAC4D0] h-[60px] p-[8px]">
         <div className="flex items-center gap-4">
           <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#FFFFFF]">
             {adminData?.first_name?.charAt(0).toUpperCase()}

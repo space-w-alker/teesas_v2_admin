@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
 import Validation from "../../../components/validator/addTeacherValidator";
 import { getCoursesAsync } from "../../../apis/slices/authSlice";
-import { FaChevronLeft } from "react-icons/fa"
+import { FaChevronLeft } from "react-icons/fa";
 const AddTeacher = ({ isOpen }) => {
   const Navigate = useNavigate();
   const token = localStorage.getItem("authToken");
@@ -105,8 +105,8 @@ const AddTeacher = ({ isOpen }) => {
         date_of_birth: formData?.Date_of_Birth,
         phone_number: formData?.Phone_Number,
         email: formData?.Email,
-        address: formData?.Address
-      }
+        address: formData?.Address,
+      };
 
       addTeacherAsync({
         dispatch: dispatch,
@@ -133,8 +133,10 @@ const AddTeacher = ({ isOpen }) => {
               // file: "",
               // Course: "",
             });
+
             setLoading(false);
             toast.success(res?.data?.message);
+            Navigate(-1);
           } else {
             toast.error(res?.data?.message);
             setLoading(false);
@@ -148,23 +150,28 @@ const AddTeacher = ({ isOpen }) => {
 
   return (
     <>
-
-      <div onClick={() => {
-        Navigate(-1);
-      }} className='flex justify-start items-center pt-[8rem] lg:pt-[8rem] lg:px-[9rem]  px-[10px]'>
+      <div
+        onClick={() => {
+          Navigate(-1);
+        }}
+        className={`flex justify-start items-center pt-[8rem] lg:pt-[8rem] lg:px-[9rem] mt-3  px-[10px] ${
+          isOpen ? "ml-[240px]" : ""
+        }`}
+      >
         <FaChevronLeft />
         <div>
-          <div className='font-normal text-[14px] lg:text-[16px] leading-[20px]  text-[#B6B6B6]'>
-            Teachers / <span className='text-black font-medium'>Add Teacher</span>
+          <div className="font-normal text-[14px] lg:text-[16px] leading-[20px]  text-[#B6B6B6]">
+            Teachers /{" "}
+            <span className="text-black font-medium">Add Teacher</span>
           </div>
         </div>
       </div>
 
       <div
-        className={` block lg:flex justify-center gap-10 py-[8rem] lg:py-[1rem] lg:px-[9rem] mt-3 px-[10px] ${isOpen ? "ml-[240px]" : ""
-          }`}
+        className={` block lg:flex justify-center gap-10 py-[8rem] lg:py-[1rem] lg:px-[9rem] mt-3 px-[10px] ${
+          isOpen ? "ml-[240px]" : ""
+        }`}
       >
-
         {loading && (
           <div
             style={{
@@ -206,7 +213,14 @@ const AddTeacher = ({ isOpen }) => {
                         const image_array = image_type_data.split("/");
                         const image_types = image_array[1].split(" ");
                         const img_type = image_types[0];
-                        var types = ["jpg", "png", "svg", "jpeg", "gif", "webp"];
+                        var types = [
+                          "jpg",
+                          "png",
+                          "svg",
+                          "jpeg",
+                          "gif",
+                          "webp",
+                        ];
                         if (types.includes(img_type)) {
                           setImageFile(e.target.files[0]);
                           setformData((prevFormData) => ({
