@@ -1,40 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaPlus, FaArrowLeft, FaArrowRight, FaSearch, FaTrash } from 'react-icons/fa';
-import { useDispatch, useSelector } from 'react-redux';
-import Headers from '../common/Headers';
-import Headcomponent from '../common/Headcomponent';
-import StatCard from '../common/StatCard';
-import Custombutton from '../common/Custombutton';
-import SuccessModal from '../common/SuccessModal';
-import book from '../../assets/images/book.png';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  FaPlus,
+  FaArrowLeft,
+  FaArrowRight,
+  FaSearch,
+  FaTrash,
+} from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import Headers from "../common/Headers";
+import Headcomponent from "../common/Headcomponent";
+import StatCard from "../common/StatCard";
+import Custombutton from "../common/Custombutton";
+import SuccessModal from "../common/SuccessModal";
+import book from "../../assets/images/book.png";
 import { TailSpin } from "react-loader-spinner";
 import {
   getPromocodesAsync,
   deletePromocodeAsync,
   selectPromocodes,
   selectDeletePromocode,
-  resetDeletePromocode
-} from '../../apis/slices/promocodeSlice';
+  resetDeletePromocode,
+} from "../../apis/slices/promocodeSlice";
 
 const PromoCodeItem = ({ code, status, category, id, onView, onDelete }) => {
   return (
     <div className="bg-white rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
-      <div
-        className="flex items-center gap-4 cursor-pointer"
-        onClick={onView}
-      >
+      <div className="flex items-center gap-4 cursor-pointer" onClick={onView}>
         <div className="p-3 bg-gray-50 rounded-lg">
           <img src={book} alt="book" className="w-6 h-6" />
         </div>
         <div className="flex flex-col">
           <span className="font-medium text-gray-800">{code}</span>
-          <span className="text-blue-500 text-sm">{category || 'Coupon Categories'}</span>
+          <span className="text-blue-500 text-sm">
+            {category || "Coupon Categories"}
+          </span>
         </div>
       </div>
       <div className="flex gap-4 items-center">
         <Custombutton
-          value={status ? 'Active' : 'Inactive'}
+          value={status ? "Active" : "Inactive"}
           textcolor={status ? "text-green-600" : "text-red-600"}
           backgroundcolor={status ? "bg-green-100" : "bg-red-100"}
           width="w-[100px]"
@@ -60,15 +65,14 @@ const PromoCodes = ({ isOpen }) => {
   const promocodesState = useSelector(selectPromocodes);
   const deletePromocodeState = useSelector(selectDeletePromocode);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchInput, setSearchInput] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [promocodeToDelete, setPromocodeToDelete] = useState(null);
   const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
 
   useEffect(() => {
     fetchPromocodes();
-
 
     return () => {
       dispatch(resetDeletePromocode());
@@ -84,17 +88,17 @@ const PromoCodes = ({ isOpen }) => {
   }, [deletePromocodeState.success]);
 
   const fetchPromocodes = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     getPromocodesAsync({
       dispatch,
       data: {
         page: currentPage,
         limit: 10,
-        search: searchTerm
+        search: searchTerm,
       },
       token,
-      callbackFn: () => { }
+      callbackFn: () => {},
     });
   };
 
@@ -116,8 +120,9 @@ const PromoCodes = ({ isOpen }) => {
     setCurrentPage(1); // Reset to first page on new search
   };
 
-  const handleViewPromocode = (id) => {
-    navigate(`/promo-code-details/${id}`);
+  const handleViewPromocode = (data) => {
+    console.log(data);
+    navigate("/promo-code-details", { state: { data } });
   };
 
   const handleDeleteClick = (id) => {
@@ -126,7 +131,7 @@ const PromoCodes = ({ isOpen }) => {
   };
 
   const handleDeleteConfirm = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     deletePromocodeAsync({
       dispatch,
@@ -134,7 +139,7 @@ const PromoCodes = ({ isOpen }) => {
       token,
       callbackFn: () => {
         setShowDeleteConfirm(false);
-      }
+      },
     });
   };
 
@@ -143,11 +148,18 @@ const PromoCodes = ({ isOpen }) => {
   };
 
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
+    <div
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      } transition-all duration-300`}
+    >
       <Headers value1="Home" value2="Promo Codes" />
 
       <div className="mt-6">
-        <StatCard title="Total Active Promo Codes" count={(promocodesState.paging?.total || 0).toString()} />
+        <StatCard
+          title="Total Active Promo Codes"
+          count={(promocodesState.paging?.total || 0).toString()}
+        />
       </div>
 
       <div className="flex justify-end mb-6">
@@ -158,7 +170,7 @@ const PromoCodes = ({ isOpen }) => {
               <span>Add Promo Code</span>
             </div>
           }
-          onClick={() => navigate('/add-promo-code')}
+          onClick={() => navigate("/add-promo-code")}
           textcolor="text-white"
           backgroundcolor="bg-[#27AE60]"
         />
@@ -191,7 +203,9 @@ const PromoCodes = ({ isOpen }) => {
               <TailSpin color="orange" radius={5} />
             </div>
           ) : promocodesState.error ? (
-            <div className="text-center py-8 text-red-500">{promocodesState.error}</div>
+            <div className="text-center py-8 text-red-500">
+              {promocodesState.error}
+            </div>
           ) : promocodesState.data.length > 0 ? (
             <div className="space-y-4">
               {promocodesState.data.map((promo, index) => (
@@ -201,13 +215,15 @@ const PromoCodes = ({ isOpen }) => {
                   code={promo.code}
                   status={promo.is_active}
                   category={promo.title}
-                  onView={() => handleViewPromocode(promo.id)}
+                  onView={() => handleViewPromocode(promo)}
                   onDelete={handleDeleteClick}
                 />
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">No promo codes found</div>
+            <div className="text-center py-8 text-gray-500">
+              No promo codes found
+            </div>
           )}
         </div>
         <div className="p-6 border-t border-gray-100 flex justify-between items-center">
@@ -237,14 +253,21 @@ const PromoCodes = ({ isOpen }) => {
             }
             onClick={handleNextPage}
             disabled={currentPage === (promocodesState.paging?.totalPages || 1)}
-            backgroundcolor={currentPage === (promocodesState.paging?.totalPages || 1) ? "bg-gray-50" : "bg-gray-100"}
-            textcolor={currentPage === (promocodesState.paging?.totalPages || 1) ? "text-gray-400" : "text-gray-600"}
+            backgroundcolor={
+              currentPage === (promocodesState.paging?.totalPages || 1)
+                ? "bg-gray-50"
+                : "bg-gray-100"
+            }
+            textcolor={
+              currentPage === (promocodesState.paging?.totalPages || 1)
+                ? "text-gray-400"
+                : "text-gray-600"
+            }
             width="w-[80px]"
             extraStyle="py-2"
           />
         </div>
       </div>
-
 
       <SuccessModal
         isOpen={showDeleteConfirm}
@@ -269,4 +292,3 @@ const PromoCodes = ({ isOpen }) => {
 };
 
 export default PromoCodes;
-
