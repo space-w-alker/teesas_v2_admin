@@ -8,6 +8,10 @@ import Modal from '../common/Modal';
 import { FaBook, FaPlus } from 'react-icons/fa';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { listEbooksAsync, addEbookAsync, ebookList } from "../../apis/slices/ebookSlice";
+
 const OrderItem = ({ bookName, price }) => (
   <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
     <div className="flex items-center gap-4">
@@ -23,25 +27,26 @@ const OrderItem = ({ bookName, price }) => (
 );
 
 const EbookOrderList = ({ isOpen }) => {
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  const bookOrders = [
-    {
-      date: '2024-01-15',
-      orders: [
-        { bookName: 'Advanced Calculus', price: '$45.99' },
-        { bookName: 'Organic Chemistry', price: '$39.99' },
-        { bookName: 'Modern Physics', price: '$52.99' }
-      ]
-    },
-    {
-      date: '2024-01-14',
-      orders: [
-        { bookName: 'Biology Basics', price: '$35.99' },
-        { bookName: 'Chemistry Guide', price: '$42.99' }
-      ]
-    }
-  ];
+  const dispatch = useDispatch();
+  const ebooks = useSelector((state) => state.ebook.ebookList || []);
+  const token = localStorage.getItem("authToken");
+  const [sort, setSort] = useState({
+    data: "",
+    filterList: "",  // Filters applied
+    sort: "",
+    search: "",
+    page: 1,
+    limit: 10,
+    isDownloaded: true
+  });
+
+  useEffect(() => {
+    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
+  }, [sort]);
+
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -67,21 +72,19 @@ const EbookOrderList = ({ isOpen }) => {
               <div key={groupIndex}>
                 <div className="text-gray-400 text-sm mb-3">{orderGroup.date}</div>
                 <div className="space-y-4">
-                  {orderGroup.orders.map((order, index) => (
-                    <OrderItem
-                      key={index}
-                      bookName={order.bookName}
-                      price={order.price}
-                    />
-                  ))}
+                  {ebooks.data?.all_ebook?.map((ebookItem, index) =>
+                    ebookItem.ebook.map((book, bookIndex) => (
+                      <OrderItem key={`${index}-${bookIndex}`} ebook={book} />
+                    ))
+                  )}
                 </div>
               </div>
             ))}
           </div>
         </div>
-        
-          
-          <div className="p-6 border-t border-gray-100 flex justify-between items-center">
+
+
+        <div className="p-6 border-t border-gray-100 flex justify-between items-center">
           <Custombutton
             value={
               <div className="flex items-center gap-2">
@@ -107,10 +110,10 @@ const EbookOrderList = ({ isOpen }) => {
             width="w-[80px]"
             extraStyle="py-2"
           />
-        </div>  
         </div>
       </div>
-      
+    </div>
+
   );
 };
 

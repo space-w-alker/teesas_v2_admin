@@ -25,8 +25,11 @@ export const ebookSlice = createSlice({
     },
     listEbooksSuccess: (state, action) => {
       state.ebookList = action.payload;
+
     },
     listDownloadedEbooksSuccess: (state, action) => {
+      console.log('ebook download slice', state.ebookdownloadedList);
+
       state.ebookdownloadedList = action.payload;
     },
     markDownloadSuccess: (state, action) => {
@@ -112,11 +115,13 @@ export const addEbookAsync = ({ dispatch, data, token, callbackFn }) => {
     try {
       const URL = `${BASEURL}ebook/add`;
       const response = await postFileAPICall(URL, data, true, token);
-      if (response.status == 200) {
+      console.log('addebbok', response)
+      if (response?.data?.status == 200) {
         callbackFn && callbackFn(response.data);
         dispatch(addEbookSuccess(response.data));
+        toast.success("Ebook created successfully");
       } else {
-        toast.error("Failed to add eBook.");
+        toast.error("Failed to add eBook." + response.data.error);
       }
     } catch (error) {
       toast.error("Error adding eBook.");
@@ -128,7 +133,7 @@ export const addEbookAsync = ({ dispatch, data, token, callbackFn }) => {
 export const listEbooksAsync = ({ dispatch, data, token, callbackFn }) => {
   return async () => {
     try {
-      const URL = `${BASEURL}ebook/list`;
+      const URL = `${BASEURL}ebook/admin-list`;
       console.log('t', data);
       const response = await getViaPostAPICall(URL, data, token);
       // console.log('ebook', response.data.data);
@@ -146,13 +151,12 @@ export const listEbooksAsync = ({ dispatch, data, token, callbackFn }) => {
 export const listDownloadedEbooksAsync = ({ dispatch, data, token, callbackFn }) => {
   return async () => {
     try {
-      const URL = `${BASEURL}ebook/list`;
-      // console.log('t', data);
+      const URL = `${BASEURL}ebook/admin-list`;
       const response = await getViaPostAPICall(URL, data, token);
-      // console.log('ebook download', response.data);
-      if (response?.data?.status == 200) {
+      if (response.data.status == 200) {
         callbackFn && callbackFn(response.data);
         dispatch(listDownloadedEbooksSuccess(response.data));
+        // console.log()
       } else {
         toast.error("Failed to fetch eBooks.");
       }
