@@ -12,6 +12,8 @@ import Reactangle from '../../assets/images/Rectangle copy.png'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteStoreAsync, listStoresAsync, getOrdersAsync } from '../../apis/slices/omotabSlice'
 import Headcomponent from '../common/Headcomponent';
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+
 
 const StatCard = ({ title, count }) => (
   <div className="bg-white rounded-xl shadow-sm p-4">
@@ -40,11 +42,26 @@ const ProductList = ({ isOpen }) => {
     limit: 10
   });
 
+  const [orderFilters, setOrderFilters] = useState({
+    search: '',
+    page: 1,
+    limit: 10,
+    status: ''
+  });
+
   const handleSearchChange = (e) => {
     setSort((prevSort) => ({
       ...prevSort,
       search: e.target.value,
       page: 1 // Reset to first page on new search
+    }));
+  };
+
+  const handleOrderSearchChange = (e) => {
+    setOrderFilters(prev => ({
+      ...prev,
+      search: e.target.value,
+      page: 1
     }));
   };
 
@@ -55,8 +72,17 @@ const ProductList = ({ isOpen }) => {
       data: sort,
       callbackFn: () => setLoading(false)
     }));
-    dispatch(getOrdersAsync({ dispatch }));
   }, [sort]);
+
+  useEffect(() => {
+    dispatch(getOrdersAsync({
+      dispatch,
+      page: orderFilters.page,
+      limit: orderFilters.limit,
+      search: orderFilters.search,
+      status: orderFilters.status
+    }));
+  }, [orderFilters]);
 
   const statsData = orders?.data?.statistics || {
     totalProducts: 0,
@@ -111,10 +137,17 @@ const ProductList = ({ isOpen }) => {
   };
 
   const totalPages = Math.ceil((listStore?.pagination?.total || 0) / sort.limit);
+  const totalOrderPages = Math.ceil((orders?.data?.pagination?.total || 0) / orderFilters.limit);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setSort(prev => ({ ...prev, page: newPage }));
+    }
+  };
+
+  const handleOrderPageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalOrderPages) {
+      setOrderFilters(prev => ({ ...prev, page: newPage }));
     }
   };
 
@@ -127,7 +160,7 @@ const ProductList = ({ isOpen }) => {
       )}
 
       <div className='flex justify-start items-center lg:gap-3'>
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => navigate(-1)} className="cursor-pointer" />
         <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
           Home / <span className='text-black font-medium'>Store Overview</span>
         </div>
@@ -165,11 +198,21 @@ const ProductList = ({ isOpen }) => {
                 type="text"
                 placeholder="Search orders..."
                 className="pl-10 pr-4 py-2 border rounded-lg"
-                value={sort.search}
-                onChange={handleSearchChange}
+                value={orderFilters.search}
+                onChange={handleOrderSearchChange}
               />
               <img src={SearchButton} className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" alt="search" />
             </div>
+            <select
+              className="border rounded-lg px-4 py-2"
+              value={orderFilters.status}
+              onChange={(e) => setOrderFilters(prev => ({ ...prev, status: e.target.value, page: 1 }))}
+            >
+              <option value="">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="success">Success</option>
+              <option value="failed">Failed</option>
+            </select>
             <img src={Vector} className="w-6 h-6 cursor-pointer" alt="filter" />
             <img src={container} className="w-6 h-6 cursor-pointer" alt="menu" />
           </div>
@@ -212,6 +255,35 @@ const ProductList = ({ isOpen }) => {
               ))}
             </div>
           ))}
+        </div>
+
+        {/* Orders Pagination Controls */}
+        <div className="user bg-white">
+
+          <Custombutton
+            className={`px-3 py-1 rounded border ${orderFilters.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => handleOrderPageChange(orderFilters.page - 1)}
+            disabled={orderFilters.page === 1}
+            value="Previous"
+            icon={<FaArrowLeft />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="left"
+            width="w-[115px]"
+          />
+          <div className="text-sm text-gray-600">
+            Showing {((orderFilters.page - 1) * orderFilters.limit) + 1} to {Math.min(orderFilters.page * orderFilters.limit, orders?.data?.pagination?.total || 0)} of {orders?.data?.pagination?.total || 0} orders
+          </div>
+          <Custombutton
+            className={`px-3 py-1 rounded border ${orderFilters.page >= totalOrderPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => handleOrderPageChange(orderFilters.page + 1)}
+            disabled={orderFilters.page >= totalOrderPages}
+            value="Next"
+            icon={<FaArrowRight />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="right"
+          />
         </div>
 
         <div className="flex justify-center mt-6">
@@ -286,31 +358,37 @@ const ProductList = ({ isOpen }) => {
           ))}
         </div>
 
-        {/* Pagination Controls */}
-        <div className="flex justify-between items-center mt-6">
-          <div className="flex gap-3">
-            <button
-              className={`px-3 py-1 rounded border ${sort.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
-              onClick={() => handlePageChange(sort.page - 1)}
-              disabled={sort.page === 1}
-            >
-              Previous
-            </button>
-            <div className="text-sm text-gray-600">
-              Showing {((sort.page - 1) * sort.limit) + 1} to {Math.min(sort.page * sort.limit, listStore?.pagination?.total || 0)} of {listStore?.pagination?.total || 0} entries
-            </div>
-            <button
-              className={`px-3 py-1 rounded border ${sort.page >= totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
-              onClick={() => handlePageChange(sort.page + 1)}
-              disabled={sort.page >= totalPages}
-            >
-              Next
-            </button>
-          </div>
-        </div>
+        {/* Store Items Pagination Controls */}
+        <div className="user bg-white">
 
+          <Custombutton
+            className={`px-3 py-1 rounded border ${sort.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => handlePageChange(sort.page - 1)}
+            disabled={sort.page === 1}
+            value="Previous"
+            icon={<FaArrowLeft />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="left"
+            width="w-[115px]"
+          />
+          <div className="text-sm text-gray-600">
+            Showing {((sort.page - 1) * sort.limit) + 1} to {Math.min(sort.page * sort.limit, listStore?.pagination?.total || 0)} of {listStore?.pagination?.total || 0} entries
+          </div>
+          <Custombutton
+            className={`px-3 py-1 rounded border ${sort.page >= totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => handlePageChange(sort.page + 1)}
+            disabled={sort.page >= totalPages}
+            value="Next"
+            icon={<FaArrowRight />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="right"
+          />
+        </div>
       </div>
-    </div>
+
+    </div >
   )
 }
 
