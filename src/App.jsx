@@ -177,6 +177,8 @@ import UploadQuestions from './components/Test/UploadQuestions';
 import QuestionView from './components/Test/QuestionView';
 import AdminDetails from './pages/admin/AdminRole/AdminDetails';
 import AdminPermission from './pages/admin/AdminRole/AdminPermission';
+import PermissionGuard from './components/common/PermissionGuard';
+import UnauthorizedPage from './pages/UnauthorizedPage';
 
 
 
@@ -1660,11 +1662,18 @@ function App() {
           path="/admin-role/permissions/:id"
           element={
             <ProtectedRoute>
+
+              {/* <PermissionGuard requiredPermissions={["admin_roles:read"]}> */}
               <AdminPermission isOpen={isSidebarOpen} />
+              {/* </PermissionGuard> */}
             </ProtectedRoute>
           }
         />
-      </Routes>
+
+
+        {/* Unauthorized access page */}
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      </Routes >
 
 
       <ToastContainer position="top-right"

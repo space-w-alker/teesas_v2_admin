@@ -10,28 +10,26 @@ const Sidebardata = [
       {
         name: "Users",
         icon: home,
-        path: "/users"
+        path: "/users",
+        permissions: ["users:read"]
       },
       {
-        name: "Subscribed Users",
+        name: "Subscribed Users", 
         icon: hashtag,
-        path: "/subscribed-users"
+        path: "/subscribed-users",
+        permissions: ["subscribed_users:read"]
       },
-
-      // {
-      //   name: "Active Users",
-      //   icon: hashtag,
-      //   path:"/activeusers"
-      // },
       {
         name: "Feedback",
         icon: feedback,
-        path: "/feedback"
+        path: "/feedback",
+        permissions: ["feedback:read"]
       },
       {
         name: "Leader Board",
         icon: feedback,
-        path: "/leaderboard"
+        path: "/leaderboard",
+        permissions: ["leader_board:read"]
       }
     ]
   },
@@ -42,36 +40,33 @@ const Sidebardata = [
       {
         name: "Reseller Form",
         icon: hashtag,
-        path: "/resellerform"
-      },
-
-
-
+        path: "/resellerform",
+        permissions: ["reseller_forms:read"]
+      }
     ]
   },
   {
     id: 3,
     heading: "Learning Center",
     items: [
-
       {
         name: "JAMB and SSCE Tutorial",
         icon: hashtag,
-        path: "/jamb-ssce"
+        path: "/jamb-ssce",
+        permissions: ["jamb_ssce_tutorial:read"]
       },
       {
         name: "7 Habits Bootcamp",
         icon: hashtag,
-        path: "/7habitsbootcamp"
+        path: "/7habitsbootcamp",
+        permissions: ["habits_bootcamps:read"]
       },
       {
         name: "Summer Camp",
         icon: hashtag,
-        path: "/summercamp"
-      },
-
-
-
+        path: "/summercamp",
+        permissions: ["summer_camp:read"]
+      }
     ]
   },
   {
@@ -81,20 +76,17 @@ const Sidebardata = [
       {
         name: "Payment History",
         icon: hashtag,
-        path: "/payments"
+        path: "/payments",
+        permissions: ["bank_transfer_history:read"]
       },
       {
         name: "Bank Details",
         icon: hashtag,
-        path: "/payments/bank-details"
+        path: "/payments/bank-details",
+        permissions: ["bank_account_details:read"]
       }
-
-
-
     ]
   },
-
-
   {
     id: 5,
     heading: "Product/App Management",
@@ -102,57 +94,39 @@ const Sidebardata = [
       {
         name: "Categories",
         icon: hashtag,
-        path: "/Categories"
-
-
+        path: "/Categories",
+        permissions: ["categories:read"]
       },
       {
         name: 'Lesson',
         icon: hashtag,
-        path: "/lesson"
-
+        path: "/lesson",
+        permissions: ["lessons:read"]
       },
-
-      // {
-      //   name: 'UTME',
-      //   icon: hashtag,
-      //   path: "/utme"
-
-      // },
-
-      // {
-      //   name: 'Practice',
-      //   icon: hashtag,
-      //   path: "/practice"
-
-      // },
       {
         name: ' Test',
         icon: hashtag,
-        path: "/test"
-
+        path: "/test",
+        permissions: ["test:read"]
       },
       {
         name: 'Question Bank',
         icon: hashtag,
-        path: "/question-bank"
-
+        path: "/question-bank",
+        permissions: ["question_bank:read"]
       },
-
       {
         name: 'University List',
         icon: hashtag,
-        path: "/uni-list"
-
+        path: "/uni-list",
+        permissions: ["university_list:read"]
       },
       {
         name: 'E-Book',
         icon: hashtag,
-        path: "/e-book"
-
-      },
-
-
+        path: "/e-book",
+        permissions: ["ebook_list:read"]
+      }
     ]
   },
   {
@@ -162,17 +136,15 @@ const Sidebardata = [
       {
         name: "Subsription Types",
         icon: hashtag,
-        path: "/subscription-types"
+        path: "/subscription-types",
+        permissions: ["subscription_types:read"]
       },
       {
         name: "Promo Codes",
         icon: hashtag,
-        path: "/promo-codes"
-      },
-
-
-
-
+        path: "/promo-codes",
+        permissions: ["promocodes:read"]
+      }
     ]
   },
   {
@@ -182,27 +154,20 @@ const Sidebardata = [
       {
         name: "Teacher List",
         icon: hashtag,
-        path: "/teacherlistmanagement"
+        path: "/teacherlistmanagement",
+        permissions: ["staff:read"]
       },
-      // {
-      //   name: "Teacher List/Management",
-      //   icon: hashtag,
-      //   path:"/Teacher"
-      // },
-      // {
-      //   name: "Student List/Management",
-      //   icon: hashtag,
-      //   path:"/studentlistmanagement"
-      // },
       {
         name: "Schedule Live Classes",
         icon: hashtag,
-        path: "/scheduleliveclasses"
+        path: "/scheduleliveclasses",
+        permissions: ["schedule_live_classes:read"]
       },
       {
         name: "One-on-One Class Management",
         icon: hashtag,
-        path: "/one-on-oneclassmanagement"
+        path: "/one-on-oneclassmanagement",
+        permissions: ["one_on_one_class:read"]
       }
     ]
   },
@@ -213,8 +178,8 @@ const Sidebardata = [
       {
         name: "Support Ticket",
         icon: hashtag,
-        path: "/supportmanagement"
-
+        path: "/supportmanagement",
+        permissions: ["support_ticket:read"]
       }
     ]
   },
@@ -225,72 +190,59 @@ const Sidebardata = [
       {
         name: "About Us",
         icon: hashtag,
-        path: "/about-us"
+        path: "/about-us",
+        permissions: ["about_us:read"]
       },
       {
         name: "Privacy Policy",
         icon: hashtag,
-        path: "/privacy-policy"
+        path: "/privacy-policy",
+        permissions: ["privacy_policy:read"]
       },
       {
         name: "Testimonials",
         icon: hashtag,
-        path: "/testimonials"
+        path: "/testimonials",
+        permissions: ["testimonials:read"]
       },
       {
         name: "Contact Us",
         icon: hashtag,
-        path: "/contact-us"
-      },
-
-
+        path: "/contact-us",
+        permissions: ["contact_info:read"]
+      }
     ]
   },
   {
     id: 10,
     heading: "Marketing",
     items: [
-      // {
-      //   name: "Parents",
-      //   icon: hashtag,
-      //   path: "/parentsReportType"
-      // },
       {
         name: "Banner",
         icon: hashtag,
-        path: "/banner"
+        path: "/banner",
+        permissions: ["home_banner:read"]
       },
-
       {
         name: "Sales Team",
         icon: hashtag,
-        path: "/sales-team"
+        path: "/sales-team",
+        permissions: ["sales_team:read"]
       },
       {
         name: "Push Notification",
         icon: hashtag,
-        path: "/push-notification"
+        path: "/push-notification",
+        permissions: ["push_notifications:read"]
       },
       {
         name: "Country",
         icon: hashtag,
-        path: "/country-list"
-      },
-      // {
-      //   name: "Badges",
-      //   icon: hashtag,
-      //   path: "/badges"
-      // },
-      // {
-      //   name: "User Report",
-      //   icon: hashtag,
-      //   path: "/user-report"
-      // },
-
-
+        path: "/country-list",
+        permissions: ["country_list:read"]
+      }
     ]
   },
-
   {
     id: 11,
     heading: "Human Resource Center",
@@ -298,12 +250,9 @@ const Sidebardata = [
       {
         name: "Job Openings",
         icon: hashtag,
-        path: "/job-opening"
-      },
-
-
-
-
+        path: "/job-opening",
+        permissions: ["job_openings:read"]
+      }
     ]
   },
   {
@@ -313,7 +262,8 @@ const Sidebardata = [
       {
         name: "Change Password",
         icon: hashtag,
-        path: "/ChangePassword"
+        path: "/ChangePassword",
+        permissions: ["change_password:read"]
       }
     ]
   },
@@ -324,9 +274,9 @@ const Sidebardata = [
       {
         name: "Overview & Product List",
         icon: hashtag,
-        path: "/produuct-list"
-      },
-
+        path: "/produuct-list",
+        permissions: ["store_product_list:read"]
+      }
     ]
   },
   {
@@ -336,47 +286,17 @@ const Sidebardata = [
       {
         name: "Admin Role",
         icon: hashtag,
-        path: "/AdminRole"
-
+        path: "/AdminRole",
+        permissions: ["admin_roles:read"]
       },
       {
         name: "Admin Users",
         icon: hashtag,
-        path: "/AdminUser"
+        path: "/AdminUser",
+        permissions: ["admin_users:read"]
       }
     ]
-  },
-  // {
-  //   id: 9,
-  //   heading: "Other",
-  //   items: [
-  //     {
-  //       name: "Donation Enquiry",
-  //       icon: hashtag,
-  //       path: "/donation-enquiry"
-  //     },
-
-  //   ]
-  // },
-
-  // {
-  //   id: 5,
-  //   heading: "Data Analytics",
-  //   items: [
-  //     {
-  //       name: "Data Analytics",
-  //       icon: hashtag,
-  //       path: "/DataAnalytics"
-
-  //     }
-  //   ]
-  // },
-
-
-
-
-
-
-
+  }
 ];
-export default Sidebardata
+
+export default Sidebardata;
