@@ -4,7 +4,7 @@ import menu from "../../assets/images/menu.svg";
 import bell from "../../assets/images/bell.svg";
 import frame2 from "../../assets/images/Frame2.png";
 import Avatar from "../../assets/images/Avatar.png";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navigation = ({ isOpen, toggleSidebar }) => {
   const Navigate = useNavigate();
@@ -27,16 +27,18 @@ const Navigation = ({ isOpen, toggleSidebar }) => {
 
             </Link>
           </div>
-          <div className="flex items-center gap-4">
-            <img src={bell} className="w-[25px] h-[24px]" alt="Bell icon" />
-            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center" onClick={() => Navigate('/Profile')}>
-            <span className="text-blue-600 font-medium">
-              {admin?.user?.firstName ? admin?.user?.firstName[0].toUpperCase() : "S"}
-            </span>
-          </div>
- 
-            {/* <img src={Avatar} className="w-[32px] h-[32px]" alt="Avatar" onClick={() => Navigate('/Profile')} /> */}
+          <div className="flex items-center gap-4" onClick={() => Navigate('/Profile')} >
+            {/* <img src={bell} className="w-[25px] h-[24px]" alt="Bell icon" /> */}
+            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-600 font-medium">
+                {admin?.user?.firstName ? admin?.user?.firstName[0].toUpperCase() : "S"}
+
+              </span>
+
+            </div>
             <img src={frame2} className="w-[16px] h-[16px]" alt="Frame 2" />
+            {/* <img src={Avatar} className="w-[32px] h-[32px]" alt="Avatar" onClick={() => Navigate('/Profile')} /> */}
+
           </div>
         </div>
       </div>

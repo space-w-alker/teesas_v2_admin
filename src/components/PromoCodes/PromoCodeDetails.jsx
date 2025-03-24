@@ -17,7 +17,7 @@ const PromoCodeDetails = ({ isOpen }) => {
     >
       <Headers value1="Home" value2="Promo Codes" value3={data?.title} />
 
-      <div className="mt-6  bg-[#E9FDEE] rounded-xl p-6 mb-6">
+      <div className="mt-6 bg-[#E9FDEE] rounded-xl p-6 mb-6">
         <div className="flex items-center gap-4">
           <img src={book} alt="book" className="w-6 h-6" />
           <div className="flex flex-col">
@@ -41,7 +41,7 @@ const PromoCodeDetails = ({ isOpen }) => {
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex justify-end"></div>
           <div className="bg-white rounded-lg p-4">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <p className="text-gray-600">Promo Code:</p>
                 <p className="font-medium">{data?.title}</p>
@@ -69,6 +69,19 @@ const PromoCodeDetails = ({ isOpen }) => {
                 </p>
               </div>
             </div>
+
+            {data.applicable_courses && data.applicable_courses.length > 0 && (
+              <div className="mt-6">
+                <p className="text-gray-600 mb-2">Applicable Courses:</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {data.applicable_courses.map((course, index) => (
+                    <div key={index} className="bg-gray-50 p-2 rounded">
+                      {course.name || course}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
