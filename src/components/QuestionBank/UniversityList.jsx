@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getUniversitiesAsync } from '../../apis/slices/universitySlice';
+import { getUniversityStatisticsAsync } from '../../apis/slices/questionBankSlice';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
@@ -23,13 +24,6 @@ const UniversityItem = ({ name, id, navigate }) => (
       <span className="font-medium text-gray-800">{name}</span>
     </div>
     <div className="flex gap-4 items-center" onClick={(e) => e.stopPropagation()}>
-      {/* <Custombutton
-        value="Add Subject"
-        onClick={() => navigate('/university-subjects', { state: { universityId: id, universityName: name } })}
-        textcolor="text-[#27AE60]"
-        backgroundcolor="bg-transparent"
-        extraStyle="font-medium"
-      /> */}
       <Custombutton
         value="Delete"
         onClick={() => { }}
@@ -41,7 +35,6 @@ const UniversityItem = ({ name, id, navigate }) => (
     </div>
   </div>
 );
-
 
 const UniversityList = ({ isOpen }) => {
   const navigate = useNavigate();
@@ -55,12 +48,41 @@ const UniversityList = ({ isOpen }) => {
     total: 0,
     totalPages: 1
   });
+  const [statistics, setStatistics] = useState({
+    totalUniversities: 0,
+    totalSubjects: 0,
+    totalPdfs: 0
+  });
+  const [statsLoading, setStatsLoading] = useState(false);
 
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     fetchUniversities();
+    fetchStatistics();
   }, [currentPage]);
+
+  const fetchStatistics = () => {
+    setStatsLoading(true);
+
+    getUniversityStatisticsAsync({
+      dispatch,
+      token,
+      callbackFn: (result) => {
+        setStatsLoading(false);
+
+        if (result?.data?.status === 200) {
+          setStatistics(result.data.data || {
+            totalUniversities: 0,
+            totalSubjects: 0,
+            totalPdfs: 0
+          });
+        } else {
+          toast.error(result?.data?.message || "Failed to fetch statistics");
+        }
+      }
+    });
+  };
 
   const fetchUniversities = () => {
     setIsLoading(true);
@@ -122,9 +144,25 @@ const UniversityList = ({ isOpen }) => {
       </div>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-        <StatCard title="Total Universities" count={pagination.total.toString()} />
-        <StatCard title="Total Subjects" count="20" />
-        <StatCard title="Total PDF Uploaded" count="150" />
+        {statsLoading ? (
+          <>
+            <div className="bg-white rounded-xl p-6 shadow-sm flex items-center justify-center h-24">
+              <TailSpin color="#27AE60" radius={5} height={40} width={40} />
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm flex items-center justify-center h-24">
+              <TailSpin color="#27AE60" radius={5} height={40} width={40} />
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm flex items-center justify-center h-24">
+              <TailSpin color="#27AE60" radius={5} height={40} width={40} />
+            </div>
+          </>
+        ) : (
+          <>
+            <StatCard title="Total Universities" count={statistics.totalUniversities?.toString() || "0"} />
+            <StatCard title="Total Subjects" count={statistics.totalSubjects?.toString() || "0"} />
+            <StatCard title="Total PDF Uploaded" count={statistics.totalPdfs?.toString() || "0"} />
+          </>
+        )}
       </div>
 
       <div className="flex justify-end mb-6">
