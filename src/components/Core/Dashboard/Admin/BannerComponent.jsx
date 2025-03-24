@@ -1,5 +1,5 @@
-import React from 'react'
-import defaultBanner from "../../../../assets/images/Screenshot.png"
+import React from "react";
+import defaultBanner from "../../../../assets/images/Screenshot.png";
 import { config } from "../../../../apis/client/config";
 
 const BannerComponent = ({ bannerData }) => {
@@ -9,17 +9,17 @@ const BannerComponent = ({ bannerData }) => {
       <div className="bg-white rounded-xl shadow-sm p-6 text-center">
         <p className="text-gray-500">Loading banner details...</p>
       </div>
-    )
+    );
   }
 
   return (
     <div>
       {/* Manage Button */}
-      <div className="text-center mb-6">
+      {/* <div className="text-center mb-6">
         <button className="font-medium text-[14px] leading-[20px] text-[#27AE60]">
           Manage
         </button>
-      </div>
+      </div> */}
 
       {/* Details Section */}
       <div className="bg-white rounded-xl shadow-sm p-6">
@@ -46,7 +46,9 @@ const BannerComponent = ({ bannerData }) => {
               <div>
                 <p className="text-gray-600">Created At:</p>
                 <p className="font-medium">
-                  {bannerData.created_at ? new Date(bannerData.created_at).toLocaleString() : "N/A"}
+                  {bannerData.created_at
+                    ? new Date(bannerData.created_at).toLocaleString()
+                    : "N/A"}
                 </p>
               </div>
               <div>
@@ -78,7 +80,7 @@ const BannerComponent = ({ bannerData }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BannerComponent
+export default BannerComponent;
