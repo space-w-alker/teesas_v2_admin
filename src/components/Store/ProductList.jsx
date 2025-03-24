@@ -10,16 +10,13 @@ import book from '../../assets/images/receip.png'
 import Custombutton from '../common/Custombutton'
 import Reactangle from '../../assets/images/Rectangle copy.png'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteStoreAsync, listStoresAsync } from '../../apis/slices/omotabSlice'
+import { deleteStoreAsync, listStoresAsync, getOrdersAsync } from '../../apis/slices/omotabSlice'
 import Headcomponent from '../common/Headcomponent';
-
 
 const StatCard = ({ title, count }) => (
   <div className="bg-white rounded-xl shadow-sm p-4">
     <div className="flex items-start gap-4">
-
       <div className="flex flex-col">
-
         <p className="text-gray-600 text-sm font-medium">{title}</p>
         <p className=" text-2xl mt-2 text-gray-900">{count}</p>
       </div>
@@ -31,6 +28,7 @@ const ProductList = ({ isOpen }) => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const listStore = useSelector((state) => state.omotab.storeList || []);
+  const orders = useSelector((state) => state.omotab.orders || {});
 
   const dispatch = useDispatch();
   const [sort, setSort] = useState({
@@ -57,34 +55,46 @@ const ProductList = ({ isOpen }) => {
       data: sort,
       callbackFn: () => setLoading(false)
     }));
+    dispatch(getOrdersAsync({ dispatch }));
   }, [sort]);
 
-  const statsData = {
-    total_products: 150,
-    total_sales: "45,000",
-    pending_orders: 12,
-    delivered_orders: 89
+  const statsData = orders?.data?.statistics || {
+    totalProducts: 0,
+    totalSales: 0,
+    pendingOrders: 0,
+    completedOrders: 0
   }
 
-  const recentOrders = [
-    {
-      date: "2024-01-20",
-      orders: [
-        {
-          id: 1,
-          orderNumber: "ORD001",
-          amount: "₦5,000",
-          status: "pending"
-        },
-        {
-          id: 2,
-          orderNumber: "ORD002",
-          amount: "₦3,500",
-          status: "success"
-        }
-      ]
-    }
-  ]
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  const groupOrdersByDate = (orders) => {
+    const grouped = {};
+    orders?.forEach(order => {
+      const date = formatDate(order.createdAt);
+      if (!grouped[date]) {
+        grouped[date] = [];
+      }
+      grouped[date].push({
+        id: order.id,
+        orderNumber: order.id,
+        amount: `₦${order.amount}`,
+        status: order.status,
+        image: order.omotab?.image
+      });
+    });
+    return Object.entries(grouped).map(([date, orders]) => ({
+      date,
+      orders
+    }));
+  };
+
+  const recentOrders = groupOrdersByDate(orders?.data?.orders || []);
 
   const storeItems = listStore?.data?.map(item => ({
     id: item.id,
@@ -129,10 +139,10 @@ const ProductList = ({ isOpen }) => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-2">
-        <StatCard title="Total Products" count={statsData.total_products} />
-        <StatCard title="Total Sales" count={statsData.total_sales} />
-        <StatCard title="Pending Orders" count={statsData.pending_orders} />
-        <StatCard title="Delivered Orders" count={statsData.delivered_orders} />
+        <StatCard title="Total Products" count={statsData?.totalProducts} />
+        <StatCard title="Total Sales" count={`₦${statsData?.totalSales}`} />
+        <StatCard title="Pending Orders" count={statsData?.pendingOrders} />
+        <StatCard title="Delivered Orders" count={statsData?.completedOrders} />
       </div>
 
       {/* Add Store Button */}
@@ -183,7 +193,7 @@ const ProductList = ({ isOpen }) => {
                 >
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-green-50 rounded-full">
-                      <img src={book} className="w-8 h-8" alt="book" />
+                      <img src={order.image || book} className="w-8 h-8" alt="book" />
                     </div>
                     <div>
                       <p className="font-medium">Order #{order.orderNumber}</p>
