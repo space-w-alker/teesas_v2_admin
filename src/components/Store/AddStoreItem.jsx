@@ -70,6 +70,7 @@ const AddStoreItem = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0]
+    console.log(file)
     setFormData(prev => ({
       ...prev,
       image: file
@@ -87,7 +88,7 @@ const AddStoreItem = () => {
       color: formData.color,
       overview: formData.overview,
       shipping_policy: formData.shippingPolicy,
-      image: formData.image,
+      image: formData.image.name,
       currency_code: formData.currency_code,
       price: parseFloat(formData.price) || 0,
       status: formData.status || '1',
@@ -95,10 +96,21 @@ const AddStoreItem = () => {
       feature: typeof formData.feature === "string" ? formData.feature.split(",") : formData.feature || []
     };
 
+
+    const formDataToSend = new FormData();
+
+    // Append all request data (if not null/undefined)
+    Object.keys(payload).forEach((key) => {
+      if (payload[key] !== undefined && payload[key] !== null) {
+        formDataToSend.append(key, payload[key]);
+      }
+    });
+    if (formData.image) formDataToSend.append("files", formData.image);
+
     if (isEditing) {
-      dispatch(updateStoreAsync({ dispatch, id: itemId, data: payload }));
+      dispatch(updateStoreAsync({ dispatch, id: itemId, data: formDataToSend }));
     } else {
-      dispatch(createStoreAsync({ data: payload }));
+      dispatch(createStoreAsync({ data: formDataToSend }));
     }
 
     setShowSuccess(true);

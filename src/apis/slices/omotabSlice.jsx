@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { postAPICall, getAPICall, getViaPostAPICall, deleteAPICall, putAPICall } from "../client/methodCalls";
+import { postAPICall, getAPICall, getViaPostAPICall, deleteAPICall, putAPICall, postFileAPICall } from "../client/methodCalls";
 import { toast } from "react-toastify";
 import { config } from "../client/config";
 
@@ -13,6 +13,7 @@ export const omotabSlice = createSlice({
   },
   reducers: {
     getStoreListSuccess: (state, action) => {
+      // Fix: Properly handle payload instead of ignoring first argument
       state.storeList = action.payload;
     },
     getStoreDetailsSuccess: (state, action) => {
@@ -39,15 +40,33 @@ export const listStoresAsync = ({ dispatch, data, token, callbackFn }) => {
   return async () => {
     try {
       const URL = `${BASEURL}omotab/store-list`;
-      const response = await getViaPostAPICall(URL, data, true, token);
-      // console.log('thunk', response);
+
+      // Build query params for pagination and search
+      const queryParams = {
+        page: data.page || 1,
+        limit: data.limit || 10,
+        search: data.search || '',
+        ...data
+      };
+
+      const response = await getViaPostAPICall(URL, queryParams, true, token);
+
       if (response?.data?.status === 200) {
-        callbackFn && callbackFn(response.data);
-        dispatch(getStoreListSuccess(response.data));
+        // Fix: Get correct data path and dispatch only the data
+        const storeData = response.data.data.omotabStore;
+        console.log('Store data:', storeData); // Debug log
+
+        if (callbackFn) {
+          callbackFn(storeData);
+        }
+
+        // Fix: Remove empty first argument
+        dispatch(getStoreListSuccess(storeData));
       } else {
         toast.error("Failed to fetch store list.");
       }
     } catch (error) {
+      console.error('Store list fetch error:', error); // Debug log
       toast.error("Error fetching store list.");
     }
   };
@@ -76,10 +95,10 @@ export const getStoreDetailsAsync = ({ dispatch, id, token, callbackFn }) => {
 export const createStoreAsync = ({ dispatch, data, token, callbackFn }) => {
   return async () => {
     try {
-      const URL = `${BASEURL}omotab/store`;
-      const response = await postAPICall(URL, data, token);
+      const URL = `${BASEURL}omotab/admin-store`;
+      const response = await postFileAPICall(URL, data, token);
       console.log('response', response);
-      if (response?.data?.status === 200) {
+      if (response?.data?.data?.status === 200) {
         callbackFn && callbackFn(response);
         dispatch(addStoreSuccess(response));
         toast.success("Store created successfully.")

@@ -30,7 +30,7 @@ const StatCard = ({ title, count }) => (
 const ProductList = ({ isOpen }) => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const listStore = useSelector((state) => state.omotab.storeList?.data?.omotabStore || []);
+  const listStore = useSelector((state) => state.omotab.storeList || []);
 
   const dispatch = useDispatch();
   const [sort, setSort] = useState({
@@ -41,15 +41,24 @@ const ProductList = ({ isOpen }) => {
     page: 1,
     limit: 10
   });
+
   const handleSearchChange = (e) => {
-    setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
+    setSort((prevSort) => ({
+      ...prevSort,
+      search: e.target.value,
+      page: 1 // Reset to first page on new search
+    }));
   };
 
   useEffect(() => {
-    dispatch(listStoresAsync({ dispatch, data: sort }));
+    setLoading(true);
+    dispatch(listStoresAsync({
+      dispatch,
+      data: sort,
+      callbackFn: () => setLoading(false)
+    }));
   }, [sort]);
 
-  console.log(listStore);
   const statsData = {
     total_products: 150,
     total_sales: "45,000",
@@ -64,14 +73,12 @@ const ProductList = ({ isOpen }) => {
         {
           id: 1,
           orderNumber: "ORD001",
-
           amount: "₦5,000",
           status: "pending"
         },
         {
           id: 2,
           orderNumber: "ORD002",
-
           amount: "₦3,500",
           status: "success"
         }
@@ -79,7 +86,7 @@ const ProductList = ({ isOpen }) => {
     }
   ]
 
-  const storeItems = listStore.map(item => ({
+  const storeItems = listStore?.data?.map(item => ({
     id: item.id,
     name: item.title,
     image: item.image,
@@ -87,8 +94,18 @@ const ProductList = ({ isOpen }) => {
   }));
 
   const handleDelete = async (id) => {
+    setLoading(true);
     await dispatch(deleteStoreAsync({ dispatch, id }));
     await dispatch(listStoresAsync({ dispatch, data: sort }));
+    setLoading(false);
+  };
+
+  const totalPages = Math.ceil((listStore?.pagination?.total || 0) / sort.limit);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setSort(prev => ({ ...prev, page: newPage }));
+    }
   };
 
   return (
@@ -110,16 +127,14 @@ const ProductList = ({ isOpen }) => {
         Store Overview
       </h2>
 
-
-
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-2">
         <StatCard title="Total Products" count={statsData.total_products} />
         <StatCard title="Total Sales" count={statsData.total_sales} />
         <StatCard title="Pending Orders" count={statsData.pending_orders} />
         <StatCard title="Delivered Orders" count={statsData.delivered_orders} />
-
       </div>
+
       {/* Add Store Button */}
       <div className="flex justify-end mt-2">
         <button
@@ -140,6 +155,8 @@ const ProductList = ({ isOpen }) => {
                 type="text"
                 placeholder="Search orders..."
                 className="pl-10 pr-4 py-2 border rounded-lg"
+                value={sort.search}
+                onChange={handleSearchChange}
               />
               <img src={SearchButton} className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" alt="search" />
             </div>
@@ -200,24 +217,13 @@ const ProductList = ({ isOpen }) => {
 
       {/* Store Items */}
       <div className="bg-white rounded-xl p-6 mt-6">
+        <Headcomponent value="Store items" showSearch={true} onSearch={(e) => setSort((prevSort) => ({ ...prevSort, search: e }))} />
 
-        <Headcomponent value="Store items" showSearch={true} onSearchChange={handleSearchChange} />
-
-
-        <div className="border-t pt-4 ">
-          {storeItems.map(item => (
+        <div className="border-t pt-4">
+          {storeItems?.map(item => (
             <div
               key={item.id}
               className="flex items-center justify-between p-4 hover:shadow-lg hover:bg-green-50 transition-all duration-300 cursor-pointer"
-            // onClick={() => navigate(`/store/item-details/${item.id}`, {
-            //   state: {
-            //     id: item.id,
-            //     name: item.name,
-            //     price: item.price,
-            //     feauture: item.extra,
-
-            //   }
-            // })}
             >
               <div className="flex items-center gap-4">
                 <div className="p-2 bg-green-50 rounded-full">
@@ -228,7 +234,6 @@ const ProductList = ({ isOpen }) => {
                   <p className="text-green-400 font-bold mt-2">{item.price}</p>
                 </div>
               </div>
-              {/* custon buttons */}
               <div className="flex gap-4 items-center mb-6">
                 <Custombutton
                   value="View"
@@ -238,7 +243,6 @@ const ProductList = ({ isOpen }) => {
                       name: item.name,
                       price: item.price,
                       feauture: item.extra,
-
                     }
                   })}
                   textcolor="text-[#27AE60]"
@@ -271,18 +275,32 @@ const ProductList = ({ isOpen }) => {
             </div>
           ))}
         </div>
-        <div className="flex justify-center mt-6">
-          <Custombutton
-            value="View All"
-            hidden="hidden"
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
-            imagePosition="center"
-          />
+
+        {/* Pagination Controls */}
+        <div className="flex justify-between items-center mt-6">
+          <div className="flex gap-3">
+            <button
+              className={`px-3 py-1 rounded border ${sort.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+              onClick={() => handlePageChange(sort.page - 1)}
+              disabled={sort.page === 1}
+            >
+              Previous
+            </button>
+            <div className="text-sm text-gray-600">
+              Showing {((sort.page - 1) * sort.limit) + 1} to {Math.min(sort.page * sort.limit, listStore?.pagination?.total || 0)} of {listStore?.pagination?.total || 0} entries
+            </div>
+            <button
+              className={`px-3 py-1 rounded border ${sort.page >= totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+              onClick={() => handlePageChange(sort.page + 1)}
+              disabled={sort.page >= totalPages}
+            >
+              Next
+            </button>
+          </div>
         </div>
 
       </div>
-    </div >
+    </div>
   )
 }
 
