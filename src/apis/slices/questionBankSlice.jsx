@@ -228,7 +228,8 @@ export const getUniversityStatisticsAsync = async ({ dispatch, token, callbackFn
     } catch (err) {
         dispatch(getUniversityStatistics({ isLoading: false }));
     }
-}; export const { getUniversitySubjects, addUniversitySubject, updateUniversitySubject,
+};
+export const { getUniversitySubjects, addUniversitySubject, updateUniversitySubject,
     deleteUniversitySubject, getSubjectPdfs, getUniversityStatistics } = questionBankSlice.actions;
 
 export const getUniversitySubjectsResponse = (state) => state.questionBank.universitySubjectsResponse;

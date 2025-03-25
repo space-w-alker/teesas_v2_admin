@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPaymentsAsync, selectPayments } from '../../apis/slices/paymentSlice';
+import { getPaymentsAsync, selectPayments, getBankTransfersAsync, selectBankTransfers } from '../../apis/slices/paymentSlice';
 import Custombutton from '../common/Custombutton';
 import Headcomponent from '../common/Headcomponent';
 import Headers from '../common/Headers';
@@ -29,15 +29,9 @@ const PaymentCard = ({ id, user_name, subscription_type, date, status, subscript
           <div>
             <h3 className="font-medium text-gray-900"> {user_name}</h3>
             <p className="text-sm text-gray-500">{subscription_type}</p>
-            <div className="flex gap-2 mt-1">
+            {/* <div className="flex gap-2 mt-1">
               <span className="text-sm text-gray-500">{payment_type}</span>
-              {/* <span className={`text-sm px-2 py-0.5 rounded ${status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
-                status === 'active' ? 'bg-green-100 text-green-800' :
-                  'bg-red-100 text-red-800'
-                }`}>
-                {status}
-              </span> */}
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -56,23 +50,69 @@ const PaymentCard = ({ id, user_name, subscription_type, date, status, subscript
   );
 };
 
+const BankTransferCard = ({ id, accountHolderName, status, createdAt, proofImage }) => {
+  const navigate = useNavigate();
+  const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  // Use first letter of account holder name as initial
+  const initial = accountHolderName ? accountHolderName[0].toUpperCase() : 'U';
+
+  return (
+    <div className="flex items-center justify-between py-4 border-b">
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 rounded-full bg-[#E6F7FF] flex items-center justify-center">
+          <span className="text-[#1890FF] font-medium">{initial}</span>
+        </div>
+        <div>
+          <h3 className="font-medium text-gray-900">{accountHolderName}</h3>
+          <p className="text-sm text-gray-500">{formattedDate}</p>
+          <div className="flex gap-2 mt-1">
+            <span className={`text-sm px-2 py-0.5 rounded ${status === 'confirmed' ? 'bg-green-100 text-green-800' :
+              'bg-yellow-100 text-yellow-800'
+              }`}>
+              {status === 'confirmed' ? 'Confirmed' : 'In Progress'}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate(`/payments/${id}/details`)}
+          className="px-4 py-2 hover:text-[#219652] transition-colors font-medium"
+        >
+          View Details
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const Payments = ({ isOpen }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isLoading, data } = useSelector(selectPayments);
+  const bankTransfersState = useSelector(selectBankTransfers);
   const [currentPage, setCurrentPage] = useState(1);
+  const [bankTransferPage, setBankTransferPage] = useState(1);
   const limit = 5;
+  const bankTransferLimit = 10;
 
   useEffect(() => {
     dispatch(getPaymentsAsync(currentPage, limit));
-  }, [dispatch, currentPage]);
+    dispatch(getBankTransfersAsync(bankTransferPage, bankTransferLimit));
+  }, [dispatch, currentPage, bankTransferPage]);
 
   // Extract data from the response
   const payments = data?.payments || [];
   const statistics = data?.statistics || {};
   const pagination = data?.pagination || {};
 
-  console.log("Payments data:", data);
-  console.log("Payments:", payments);
+  const bankTransfers = bankTransfersState?.data?.payments || [];
+  const bankTransferPagination = bankTransfersState?.data?.pagination || {};
 
   const handleNextPage = () => {
     if (pagination.pages && currentPage < pagination.pages) {
@@ -83,6 +123,18 @@ const Payments = ({ isOpen }) => {
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleBankTransferNextPage = () => {
+    if (bankTransferPagination.pages && bankTransferPage < bankTransferPagination.pages) {
+      setBankTransferPage(bankTransferPage + 1);
+    }
+  };
+
+  const handleBankTransferPrevPage = () => {
+    if (bankTransferPage > 1) {
+      setBankTransferPage(bankTransferPage - 1);
     }
   };
 
@@ -111,6 +163,7 @@ const Payments = ({ isOpen }) => {
         </div>
       </div>
 
+      {/* Regular Payments Section */}
       <div className="bg-white rounded-xl p-6 mt-6">
         <Headcomponent value="Payments History" border="Border" showSearch={false} />
         <div className="p-6">
@@ -131,12 +184,12 @@ const Payments = ({ isOpen }) => {
           <div className="flex justify-between items-center mt-6">
             <Custombutton
               value="Previous"
-              // hidden={currentPage === 1 ? "hidden" : ""}
               icon={<FaArrowLeft />}
               backgroundcolor="bg-[#F2F2F2]"
               textcolor="text-[#000000]"
               imagePosition="left"
               onClick={handlePrevPage}
+              disabled={currentPage === 1}
             />
 
             <div className="text-sm text-gray-600">
@@ -145,14 +198,62 @@ const Payments = ({ isOpen }) => {
 
             <Custombutton
               value="Next"
-              // hidden={currentPage >= (pagination.pages || 1) ? "hidden" : ""}
               icon={<FaArrowRight />}
               backgroundcolor="bg-[#F2F2F2]"
               textcolor="text-[#000000]"
               imagePosition="right"
               onClick={handleNextPage}
+              disabled={currentPage >= (pagination.pages || 1)}
             />
           </div>
+        </div>
+      </div>
+
+      {/* Bank Transfer Payments Section */}
+      <div className="bg-white rounded-xl p-6 mt-6">
+        <Headcomponent value="Bank Transfer Payments" border="Border" showSearch={false} />
+        <div className="p-6">
+          <div className="space-y-2">
+            {bankTransfersState.isLoading ? (
+              <div>Loading...</div>
+            ) : bankTransfers && Array.isArray(bankTransfers) && bankTransfers.length > 0 ? (
+              bankTransfers.map((transfer) => (
+                <BankTransferCard
+                  key={transfer.id}
+                  {...transfer}
+                />
+              ))
+            ) : (
+              <div>No bank transfers found</div>
+            )}
+          </div>
+          {bankTransferPagination && bankTransferPagination.pages > 0 && (
+            <div className="flex justify-between items-center mt-6">
+              <Custombutton
+                value="Previous"
+                icon={<FaArrowLeft />}
+                backgroundcolor="bg-[#F2F2F2]"
+                textcolor="text-[#000000]"
+                imagePosition="left"
+                onClick={handleBankTransferPrevPage}
+                disabled={bankTransferPage === 1}
+              />
+
+              <div className="text-sm text-gray-600">
+                Page {bankTransferPage} of {bankTransferPagination.pages || 1}
+              </div>
+
+              <Custombutton
+                value="Next"
+                icon={<FaArrowRight />}
+                backgroundcolor="bg-[#F2F2F2]"
+                textcolor="text-[#000000]"
+                imagePosition="right"
+                onClick={handleBankTransferNextPage}
+                disabled={bankTransferPage >= (bankTransferPagination.pages || 1)}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

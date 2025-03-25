@@ -235,11 +235,8 @@ const UniversitySubjects = ({ isOpen }) => {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-        <StatCard
-          title="Total Subjects"
-          count={(universityData.totalSubjects || statistics.totalSubjects || 0).toString()}
-        />
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-8">
+
         <StatCard
           title="Total Subjects"
           count={(universityData.totalSubjects || statistics.totalSubjects || 0).toString()}
