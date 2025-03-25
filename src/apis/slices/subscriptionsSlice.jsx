@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAPICall, postAPICall, deleteAPICall } from "../client/methodCalls";
+import { getAPICall, postAPICall, deleteAPICall, postFileAPICall } from "../client/methodCalls";
 import { config } from "../client/config";
 
 const { BASEURL, CREATE_SUBSCRIPTION_PLAN, GET_ALL_COURSES, GET_COURSE_SUBSCRIPTIONS, SUBSCRIBED_USERS, SUBSCRIPTION_STATS, LIST_USERS_FOR_SUBSCRIPTION, ADD_SUBSCRIPTION, SUBSCRIPTION_WORKFLOW, AVAILABLE_SUBSCRIPTIONS } = config;
@@ -54,6 +54,12 @@ const initialState = {
         error: null,
         success: false
     },
+    bulkSubscriptionUpload: {
+        isLoading: false,
+        data: null,
+        error: null,
+        success: false
+    },
 };
 
 export const subscriptionsSlice = createSlice({
@@ -88,6 +94,17 @@ export const subscriptionsSlice = createSlice({
         setSubscriptionPlanCreation: (state, action) => {
             state.subscriptionPlanCreation = action.payload;
         },
+        setBulkSubscriptionUpload: (state, action) => {
+            state.bulkSubscriptionUpload = action.payload;
+        },
+        resetBulkSubscriptionUpload: (state) => {
+            state.bulkSubscriptionUpload = {
+                isLoading: false,
+                data: null,
+                error: null,
+                success: false
+            };
+        },
         resetSubscriptionPlanCreation: (state) => {
             state.subscriptionPlanCreation = {
                 isLoading: false,
@@ -119,6 +136,8 @@ export const {
     setCourseSubscriptions,
     setSubscriptionPlanCreation,
     resetSubscriptionPlanCreation,
+    resetBulkSubscriptionUpload,
+    setBulkSubscriptionUpload
 } = subscriptionsSlice.actions;
 
 export const getSubscribedUsersAsync = ({ dispatch, body, token, callbackFn }) => {
@@ -449,6 +468,48 @@ export const deleteSubscriptionPlanAsync = ({ dispatch, planId, token, callbackF
 
 
 
+export const uploadBulkSubscriptionsAsync = ({ file, token, callbackFn }) => async (dispatch) => {
+    try {
+        dispatch(setBulkSubscriptionUpload({ isLoading: true, data: null, error: null, success: false }));
+        const URL = `${BASEURL}admin/dashboard/bulk-upload-subscriptions`;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        const result = await postFileAPICall(URL, formData, token, true); // Add a parameter to indicate FormData
+
+        if (result?.data?.status === 200 || result?.data?.data?.success) {
+            dispatch(setBulkSubscriptionUpload({
+                isLoading: false,
+                data: result.data.data,
+                error: null,
+                success: true
+            }));
+        } else {
+            dispatch(setBulkSubscriptionUpload({
+                isLoading: false,
+                data: result.data.data, // Still include data for validation errors
+                error: result?.data?.message || "Failed to upload bulk subscriptions",
+                success: false
+            }));
+        }
+
+        if (callbackFn) callbackFn(result);
+        return result;
+    } catch (error) {
+        dispatch(setBulkSubscriptionUpload({
+            isLoading: false,
+            data: null,
+            error: error.message,
+            success: false
+        }));
+        if (callbackFn) callbackFn({ error });
+        return { error };
+    }
+};
+
+
+
+
 
 
 
@@ -457,6 +518,7 @@ export const selectSearchUsers = (state) => state.subscriptions.searchUsers;
 export const selectSubscriptionStats = (state) => state.subscriptions.subscriptionStats;
 export const selectSubscriptionWorkflow = (state) => state.subscriptions.subscriptionWorkflow;
 export const selectSubscriptionCreation = (state) => state.subscriptions.subscriptionCreation;
+export const selectBulkSubscriptionUpload = (state) => state.subscriptions.bulkSubscriptionUpload;
 export const selectCourses = (state) => state.subscriptions.courses;
 
 
