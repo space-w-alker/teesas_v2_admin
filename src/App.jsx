@@ -204,6 +204,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         {/* Protected Routes */}
         <Route
@@ -250,7 +251,9 @@ function App() {
           path="/users"
           element={
             <ProtectedRoute>
-              <Home isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard requiredPermissions={["users:read"]}>
+                <Home isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              </PermissionGuard>
             </ProtectedRoute>
           }
         />
@@ -462,10 +465,12 @@ function App() {
         } />
 
         <Route
-          path="/AdminRole"
+          path="/admin-role"
           element={
             <ProtectedRoute>
-              <AdminRole isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard requiredPermissions={["admin_roles:read"]}>
+                <AdminRole isOpen={isSidebarOpen} />
+              </PermissionGuard>
             </ProtectedRoute>
           }
         />
@@ -694,10 +699,12 @@ function App() {
 
 
         <Route
-          path="/categories"
+          path="/Categories"
           element={
             <ProtectedRoute>
-              <Categories isOpen={isSidebarOpen} />
+              <PermissionGuard requiredPermissions={["categories:read"]}>
+                <Categories isOpen={isSidebarOpen} />
+              </PermissionGuard>
             </ProtectedRoute>
           }
         />
@@ -715,7 +722,9 @@ function App() {
           path="/categories/add-category"
           element={
             <ProtectedRoute>
-              <AddCategory isOpen={isSidebarOpen} />
+              <PermissionGuard requiredPermissions={["categories:create"]}>
+                <AddCategory isOpen={isSidebarOpen} />
+              </PermissionGuard>
             </ProtectedRoute>
           }
         />
@@ -1010,7 +1019,9 @@ function App() {
           path="/test"
           element={
             <ProtectedRoute>
-              <Test isOpen={isSidebarOpen} />
+              <PermissionGuard requiredPermissions={["test:read"]}>
+                <Test isOpen={isSidebarOpen} />
+              </PermissionGuard>
             </ProtectedRoute>
           }
         />
@@ -1662,17 +1673,12 @@ function App() {
           path="/admin-role/permissions/:id"
           element={
             <ProtectedRoute>
-
-              {/* <PermissionGuard requiredPermissions={["admin_roles:read"]}> */}
-              <AdminPermission isOpen={isSidebarOpen} />
-              {/* </PermissionGuard> */}
+              <PermissionGuard requiredPermissions={["admin_roles:read", "admin_roles:update"]}>
+                <AdminPermission isOpen={isSidebarOpen} />
+              </PermissionGuard>
             </ProtectedRoute>
           }
         />
-
-
-        {/* Unauthorized access page */}
-        <Route path="/unauthorized" element={<UnauthorizedPage />} />
       </Routes >
 
 

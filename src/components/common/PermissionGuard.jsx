@@ -37,10 +37,9 @@ const PermissionGuard = ({ children, requiredPermissions = [] }) => {
             }
 
             // Check if user has all required permissions
-            // Format: "resource:action" e.g. "admin_roles:read"
             return requiredPermissions.every(permission => {
                 const [resource, action] = permission.split(':');
-                return userPermissions[resource]?.[action] === true;
+                return userPermissions[resource]?.[action]?.checked === true;
             });
 
         } catch {
