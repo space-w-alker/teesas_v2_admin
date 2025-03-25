@@ -1,12 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaChevronLeft, FaCloudUploadAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { uploadBulkSubscriptionsAsync, selectBulkSubscriptionUpload, resetBulkSubscriptionUpload } from '../../apis/slices/subscriptionsSlice';
+import SuccessModal from '../../components/common/SuccessModal';
 
 const UploadBulkSubscription = ({ isOpen }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [file, setFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    type: 'success',
+    title: '',
+    message: '',
+    buttonText: 'Close'
+  });
+
+  const bulkUploadState = useSelector(selectBulkSubscriptionUpload);
+  const { isLoading, data, error, success } = bulkUploadState;
+
+
+  const token = localStorage.getItem('token') || '';
+
+  useEffect(() => {
+
+    if (success && data) {
+      const successCount = data.data?.filter(item => item.status === 'success').length || 0;
+      const failCount = data.data?.filter(item => item.status !== 'success').length || 0;
+
+      setModalConfig({
+        isOpen: true,
+        type: 'success',
+        title: 'Upload Successful',
+        message: `${data.message || `Processed ${successCount + failCount} subscriptions: ${successCount} successful, ${failCount} failed`}`,
+        buttonText: 'Back to Subscriptions'
+      });
+    }
+
+
+    if (error) {
+      setModalConfig({
+        isOpen: true,
+        type: 'caution',
+        title: 'Upload Failed',
+        message: error,
+        buttonText: 'Try Again'
+      });
+    }
+
+
+    return () => {
+      dispatch(resetBulkSubscriptionUpload());
+    };
+  }, [success, data, error, dispatch]);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -34,8 +82,58 @@ const UploadBulkSubscription = ({ isOpen }) => {
     }
   };
 
-  const handleClose = () => {
-    setShowSuccessModal(false);
+  const handleCloseModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+    // Check the modal type instead of the success state
+    if (modalConfig.type === 'success') {
+      navigate('/subscribed-users');
+    }
+  };
+
+
+  const handleUpload = () => {
+    if (!file) {
+      setModalConfig({
+        isOpen: true,
+        type: 'caution',
+        title: 'No File Selected',
+        message: 'Please select a file to upload',
+        buttonText: 'OK'
+      });
+      return;
+    }
+
+    dispatch(uploadBulkSubscriptionsAsync({
+      file,
+      token,
+      callbackFn: (result) => {
+        console.log('Upload result:', result);
+        // Check for validation errors
+        if (result?.data?.data?.errors && result.data.data.errors.length > 0) {
+          setModalConfig({
+            isOpen: true,
+            type: 'caution',
+            title: 'Validation Errors',
+            message: result.data.data.errors.join('\n'),
+            buttonText: 'OK'
+          });
+        }
+      }
+    }));
+  };
+
+  const downloadTemplate = () => {
+    // Create a simple Excel template
+    const csvContent = "user_id,subscription_plan_id,start_date\n289,1,2025-03-17";
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'subscription_template.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -49,12 +147,12 @@ const UploadBulkSubscription = ({ isOpen }) => {
         </div>
       </div>
 
-      <div className="mt-8 bg-white rounded-xl p-6 flex">
+      <div className="mt-8 bg-white rounded-xl p-6 flex flex-col md:flex-row">
         <div className="flex-1">
-          <h2 className="text-2xl font-bold mb-6">Add Multiple  Subscription</h2>
-          
-          <div 
-            className="border-2 border-dashed rounded-lg p-8 text-center bg-[#E9FDEE] border-[#27AE60]"
+          <h2 className="text-2xl font-bold mb-6">Add Multiple Subscription</h2>
+
+          <div
+            className={`border-2 border-dashed rounded-lg p-8 text-center ${dragActive ? 'bg-[#E9FDEE] border-[#27AE60]' : 'bg-gray-50 border-gray-300'}`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -68,20 +166,20 @@ const UploadBulkSubscription = ({ isOpen }) => {
                 <input
                   type="file"
                   className="hidden"
-                  accept=".csv,.xlsx,.xls"
+                  accept=".xlsx,.xls"
                   onChange={handleChange}
                 />
               </label>
             </p>
-            <p className="text-sm text-gray-500">Supported formats: CSV, Excel</p>
+            <p className="text-sm text-gray-500">Supported formats: Excel (.xlsx, .xls)</p>
             {file && (
               <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                 <p className="font-medium">Selected file:</p>
                 <p className="text-gray-600">{file.name}</p>
               </div>
             )}
-            <button 
-              onClick={() => window.open('/template.csv')}
+            <button
+              onClick={downloadTemplate}
               className="mt-4 text-[#27AE60] font-medium"
             >
               Download Sample File
@@ -89,58 +187,42 @@ const UploadBulkSubscription = ({ isOpen }) => {
           </div>
         </div>
 
-        <div className="ml-8 w-1/3 bg-[#E9FDEE] rounded-xl p-6">
+        <div className="md:ml-8 mt-6 md:mt-0 md:w-1/3 bg-[#E9FDEE] rounded-xl p-6">
           <h3 className="font-bold text-[18px] leading-[24px] text-[#2C2E32] mb-6">Summary</h3>
           <div className="space-y-4">
             <div>
-              <p className="text-gray-600 text-sm">User Name</p>
-              <p className="font-medium">Esther Obianuju</p>
+              <p className="text-gray-600 text-sm">File Selected</p>
+              <p className="font-medium">{file ? file.name : '-'}</p>
             </div>
             <div>
-              <p className="text-gray-600 text-sm">Category</p>
-              <p className="font-medium">-</p>
+              <p className="text-gray-600 text-sm">File Size</p>
+              <p className="font-medium">{file ? `${(file.size / 1024).toFixed(2)} KB` : '-'}</p>
             </div>
             <div>
-              <p className="text-gray-600 text-sm">Class</p>
-              <p className="font-medium">-</p>
-            </div>
-            <div>
-              <p className="text-gray-600 text-sm">Duration</p>
-              <p className="font-medium">-</p>
-            </div>
-            <div>
-              <p className="text-gray-600 text-sm">Start Date</p>
-              <p className="font-medium">-</p>
+              <p className="text-gray-600 text-sm">File Type</p>
+              <p className="font-medium">{file ? file.type : '-'}</p>
             </div>
           </div>
-          <button 
-            onClick={() => setShowSuccessModal(true)}
-            className="w-full py-3 rounded-lg text-white bg-[#27AE60] hover:bg-[#219652] mt-6"
+          <button
+            onClick={handleUpload}
+            disabled={!file || isLoading}
+            className={`w-full py-3 rounded-lg text-white ${!file || isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#27AE60] hover:bg-[#219652]'} mt-6`}
           >
-            Add Subscription
+            {isLoading ? 'Uploading...' : 'Add Subscription'}
           </button>
         </div>
       </div>
 
-      {showSuccessModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 w-[400px] text-center">
-            <div className="w-24 h-24 rounded-full bg-[#27AE60] flex items-center justify-center mx-auto mb-6">
-              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold mb-4">Success!</h3>
-            <p className="text-gray-600 mb-8">Your action is successful</p>
-            <button 
-              onClick={handleClose}
-              className="w-full py-3 bg-[#27AE60] text-white rounded-lg hover:bg-[#219652]"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Use the SuccessModal component for both success and error states */}
+      <SuccessModal
+        isOpen={modalConfig.isOpen}
+        onClose={handleCloseModal}
+        type={modalConfig.type}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        buttonText={modalConfig.buttonText}
+        onConfirm={handleCloseModal}
+      />
     </div>
   );
 };

@@ -127,7 +127,7 @@ const Modal = ({
                   {value1}
                 </label>
               </div>
-              {/* <div className="flex items-center gap-[20px] px-[10px]">
+              <div className="flex items-center gap-[20px] px-[10px]">
                 <div
                   className="w-[24px] h-[24px]  bg-[#CCCCCC] rounded-full"
                   onClick={addMutipleButton}
@@ -135,7 +135,7 @@ const Modal = ({
                 <label className="font-bold text-[16px] leading-[16px] text-[#162D3A] ">
                   {value2}
                 </label>
-              </div> */}
+              </div>
             </div>
           </div>
         );

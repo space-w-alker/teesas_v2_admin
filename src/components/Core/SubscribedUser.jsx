@@ -126,14 +126,15 @@ const SubscribedUser = ({ isOpen }) => {
           <div
             className={`border rounded-lg ${activeButton === 'Add Subscription' ? 'bg-[#27AE60] text-white' : 'border-[#27AE60] text-[#27AE60]'
               }`}
-            onClick={() => navigate("/addSingleSubscription")}
+            onClick={() => setIsModalOpen(true)}
           >
             <button className='text-[14px] leading-[20px] pt-[2px] text-center w-[123px] h-[40px] rounded-lg cursor-pointer'>
               Add Subscription
             </button>
           </div>
 
-          {/* {isModalOpen && (
+
+          {isModalOpen && (
             <Modal
               closeModal={closeModal}
               label="ADD USER"
@@ -142,7 +143,7 @@ const SubscribedUser = ({ isOpen }) => {
               addSingleButton={() => { navigate("/addSingleSubscription") }}
               addMutipleButton={() => { navigate("/UploadBulkSubscription") }}
             />
-          )} */}
+          )}
         </div>
 
         <SubscribedUserList />
