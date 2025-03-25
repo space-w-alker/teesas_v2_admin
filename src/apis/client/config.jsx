@@ -53,7 +53,7 @@ export const config = {
   CREATE_ASSESSMENT: "/assessment/create-assessment/",
   GET_ASSESSMENT: "/assessment/get-assessment/",
   GET_PAYMENTS: "admin/payments",
-  GET_PAYMENTS_DETAILS: "admin/payments",
+  GET_PAYMENTS_DETAILS: "admin/payments/details",
   GET_UNIVERSITY: "admin-universities/list",
   ADD_UNIVERSITY: "admin-universities/add",
   UPDATE_UNIVERSITY: "admin-universities",

@@ -1,14 +1,30 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPaymentDetailsAsync, selectPaymentDetails } from '../../apis/slices/paymentSlice';
+import {
+  getPaymentDetailsAsync,
+  selectPaymentDetails,
+  confirmBankTransferAsync,
+  rejectBankTransferAsync
+} from '../../apis/slices/paymentSlice';
 import Headers from '../common/Headers';
+import Custombutton from '../common/Custombutton';
+import SuccessModal from '../common/SuccessModal';
 import banklogo from "../../assets/images/banklogo.png";
 import { config } from "../../apis/client/config";
+import { TailSpin } from "react-loader-spinner";
+
 const PaymentDetails = ({ isOpen }) => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { data: paymentData, isLoading } = useSelector(selectPaymentDetails);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -16,9 +32,54 @@ const PaymentDetails = ({ isOpen }) => {
     }
   }, [dispatch, id]);
 
-  if (isLoading || !paymentData) return <div>Loading...</div>;
+  const handleConfirmClick = () => {
+    setShowConfirmModal(true);
+  };
+
+  const handleRejectClick = () => {
+    setShowRejectModal(true);
+  };
+
+  const handleConfirm = async () => {
+    setShowConfirmModal(false);
+    setIsConfirming(true);
+    const success = await dispatch(confirmBankTransferAsync(id));
+    setIsConfirming(false);
+
+    if (success) {
+      setSuccessMessage("Payment confirmed successfully!");
+      setShowSuccessModal(true);
+
+      dispatch(getPaymentDetailsAsync(id));
+    }
+  };
+
+  const handleReject = async () => {
+    setShowRejectModal(false);
+    setIsRejecting(true);
+    const success = await dispatch(rejectBankTransferAsync(id));
+    setIsRejecting(false);
+
+    if (success) {
+      setSuccessMessage("Payment rejected successfully!");
+      setShowSuccessModal(true);
+
+      dispatch(getPaymentDetailsAsync(id));
+    }
+  };
+
+  if (isLoading || !paymentData) {
+    return (
+      <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
+        <div className="flex justify-center items-center h-[50vh]">
+          <TailSpin color="#27AE60" height={80} width={80} />
+        </div>
+      </div>
+    );
+  }
 
   const { payment_info, user_info, transaction_details } = paymentData;
+  const isBankTransfer = payment_info.payment_type === 'Bank Transfer';
   const imageUrl = `${config.MainUrl}${transaction_details.proof_image}`;
 
   return (
@@ -53,26 +114,45 @@ const PaymentDetails = ({ isOpen }) => {
           </div>
         </div>
       </div>
+
       <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-        <div className="border-b border-gray-200 pb-2 mb-4">
+        <div className="border-b border-gray-200 pb-2 mb-4 flex justify-between items-center">
           <h3 className="text-lg font-bold text-gray-900">Payment Proof</h3>
+
+          {isBankTransfer && payment_info.status === 'in-progress' && (
+            <div className="flex gap-3">
+              <Custombutton
+                value={isConfirming ? "Confirming..." : "Confirm Payment"}
+                onClick={handleConfirmClick}
+                backgroundcolor="bg-[#27AE60]"
+                textcolor="text-white"
+                disabled={isConfirming}
+              />
+              <Custombutton
+                value={isRejecting ? "Rejecting..." : "Reject Payment"}
+                onClick={handleRejectClick}
+                backgroundcolor="bg-[#FF4D4F]"
+                textcolor="text-white"
+                disabled={isRejecting}
+              />
+            </div>
+          )}
         </div>
         <div className="p-4 border border-gray-200 rounded-lg">
           {transaction_details.proof_image && (
-            <>
-              <img
-                src={imageUrl}
-                alt="Payment Proof"
-                className="w-full h-[400px] object-cover rounded"
-                onError={(e) => {
-                  console.log("Image load error:", e);
-                  e.target.style.display = 'none';
-                }}
-              />
-            </>
+            <img
+              src={imageUrl}
+              alt="Payment Proof"
+              className="w-full h-[600px] object-cover rounded"
+              onError={(e) => {
+                console.log("Image load error:", e);
+                e.target.style.display = 'none';
+              }}
+            />
           )}
         </div>
       </div>
+
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="border-b border-gray-200 pb-2 mb-4">
           <h3 className="text-lg font-bold text-gray-900">Transaction Details</h3>
@@ -99,10 +179,52 @@ const PaymentDetails = ({ isOpen }) => {
               <p className="text-gray-600">Device ID:</p>
               <p className="font-medium">{transaction_details.device_id}</p>
             </div>
+            <div>
+              <p className="text-gray-600">Status:</p>
+              <p className={`font-medium ${payment_info.status === 'completed' ? 'text-green-600' :
+                payment_info.status === 'in-progress' ? 'text-yellow-600' :
+                  'text-red-600'
+                }`}>
+                {payment_info.status}
+              </p>
+            </div>
           </div>
         </div>
       </div>
+
+
+      <SuccessModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        type="caution"
+        title="CONFIRM PAYMENT"
+        message="Are you sure you want to confirm this bank transfer payment?"
+        buttonText="Confirm"
+        onConfirm={handleConfirm}
+      />
+
+
+      <SuccessModal
+        isOpen={showRejectModal}
+        onClose={() => setShowRejectModal(false)}
+        type="caution"
+        title="REJECT PAYMENT"
+        message="Are you sure you want to reject this bank transfer payment?"
+        buttonText="Reject"
+        onConfirm={handleReject}
+      />
+
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        type="success"
+        title="SUCCESS!"
+        message={successMessage}
+        buttonText="Close"
+      />
     </div>
   );
 };
+
 export default PaymentDetails;
