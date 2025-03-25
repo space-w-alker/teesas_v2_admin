@@ -10,16 +10,15 @@ import book from '../../assets/images/receip.png'
 import Custombutton from '../common/Custombutton'
 import Reactangle from '../../assets/images/Rectangle copy.png'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteStoreAsync, listStoresAsync } from '../../apis/slices/omotabSlice'
+import { deleteStoreAsync, listStoresAsync, getOrdersAsync } from '../../apis/slices/omotabSlice'
 import Headcomponent from '../common/Headcomponent';
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 
 const StatCard = ({ title, count }) => (
   <div className="bg-white rounded-xl shadow-sm p-4">
     <div className="flex items-start gap-4">
-
       <div className="flex flex-col">
-
         <p className="text-gray-600 text-sm font-medium">{title}</p>
         <p className=" text-2xl mt-2 text-gray-900">{count}</p>
       </div>
@@ -30,7 +29,8 @@ const StatCard = ({ title, count }) => (
 const ProductList = ({ isOpen }) => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const listStore = useSelector((state) => state.omotab.storeList?.data?.omotabStore || []);
+  const listStore = useSelector((state) => state.omotab.storeList || []);
+  const orders = useSelector((state) => state.omotab.orders || {});
 
   const dispatch = useDispatch();
   const [sort, setSort] = useState({
@@ -41,45 +41,88 @@ const ProductList = ({ isOpen }) => {
     page: 1,
     limit: 10
   });
+
+  const [orderFilters, setOrderFilters] = useState({
+    search: '',
+    page: 1,
+    limit: 10,
+    status: ''
+  });
+
   const handleSearchChange = (e) => {
-    setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
+    setSort((prevSort) => ({
+      ...prevSort,
+      search: e.target.value,
+      page: 1 // Reset to first page on new search
+    }));
+  };
+
+  const handleOrderSearchChange = (e) => {
+    setOrderFilters(prev => ({
+      ...prev,
+      search: e.target.value,
+      page: 1
+    }));
   };
 
   useEffect(() => {
-    dispatch(listStoresAsync({ dispatch, data: sort }));
+    setLoading(true);
+    dispatch(listStoresAsync({
+      dispatch,
+      data: sort,
+      callbackFn: () => setLoading(false)
+    }));
   }, [sort]);
 
-  console.log(listStore);
-  const statsData = {
-    total_products: 150,
-    total_sales: "45,000",
-    pending_orders: 12,
-    delivered_orders: 89
+  useEffect(() => {
+    dispatch(getOrdersAsync({
+      dispatch,
+      page: orderFilters.page,
+      limit: orderFilters.limit,
+      search: orderFilters.search,
+      status: orderFilters.status
+    }));
+  }, [orderFilters]);
+
+  const statsData = orders?.data?.statistics || {
+    totalProducts: 0,
+    totalSales: 0,
+    pendingOrders: 0,
+    completedOrders: 0
   }
 
-  const recentOrders = [
-    {
-      date: "2024-01-20",
-      orders: [
-        {
-          id: 1,
-          orderNumber: "ORD001",
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
 
-          amount: "₦5,000",
-          status: "pending"
-        },
-        {
-          id: 2,
-          orderNumber: "ORD002",
+  const groupOrdersByDate = (orders) => {
+    const grouped = {};
+    orders?.forEach(order => {
+      const date = formatDate(order.createdAt);
+      if (!grouped[date]) {
+        grouped[date] = [];
+      }
+      grouped[date].push({
+        id: order.id,
+        orderNumber: order.id,
+        amount: `₦${order.amount}`,
+        status: order.status,
+        image: order.omotab?.image
+      });
+    });
+    return Object.entries(grouped).map(([date, orders]) => ({
+      date,
+      orders
+    }));
+  };
 
-          amount: "₦3,500",
-          status: "success"
-        }
-      ]
-    }
-  ]
+  const recentOrders = groupOrdersByDate(orders?.data?.orders || []);
 
-  const storeItems = listStore.map(item => ({
+  const storeItems = listStore?.data?.map(item => ({
     id: item.id,
     name: item.title,
     image: item.image,
@@ -87,8 +130,25 @@ const ProductList = ({ isOpen }) => {
   }));
 
   const handleDelete = async (id) => {
+    setLoading(true);
     await dispatch(deleteStoreAsync({ dispatch, id }));
     await dispatch(listStoresAsync({ dispatch, data: sort }));
+    setLoading(false);
+  };
+
+  const totalPages = Math.ceil((listStore?.pagination?.total || 0) / sort.limit);
+  const totalOrderPages = Math.ceil((orders?.data?.pagination?.total || 0) / orderFilters.limit);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setSort(prev => ({ ...prev, page: newPage }));
+    }
+  };
+
+  const handleOrderPageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalOrderPages) {
+      setOrderFilters(prev => ({ ...prev, page: newPage }));
+    }
   };
 
   return (
@@ -100,7 +160,7 @@ const ProductList = ({ isOpen }) => {
       )}
 
       <div className='flex justify-start items-center lg:gap-3'>
-        <FaChevronLeft />
+        <FaChevronLeft onClick={() => navigate(-1)} className="cursor-pointer" />
         <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
           Home / <span className='text-black font-medium'>Store Overview</span>
         </div>
@@ -110,16 +170,14 @@ const ProductList = ({ isOpen }) => {
         Store Overview
       </h2>
 
-
-
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-2">
-        <StatCard title="Total Products" count={statsData.total_products} />
-        <StatCard title="Total Sales" count={statsData.total_sales} />
-        <StatCard title="Pending Orders" count={statsData.pending_orders} />
-        <StatCard title="Delivered Orders" count={statsData.delivered_orders} />
-
+        <StatCard title="Total Products" count={statsData?.totalProducts} />
+        <StatCard title="Total Sales" count={`₦${statsData?.totalSales}`} />
+        <StatCard title="Pending Orders" count={statsData?.pendingOrders} />
+        <StatCard title="Delivered Orders" count={statsData?.completedOrders} />
       </div>
+
       {/* Add Store Button */}
       <div className="flex justify-end mt-2">
         <button
@@ -140,9 +198,21 @@ const ProductList = ({ isOpen }) => {
                 type="text"
                 placeholder="Search orders..."
                 className="pl-10 pr-4 py-2 border rounded-lg"
+                value={orderFilters.search}
+                onChange={handleOrderSearchChange}
               />
               <img src={SearchButton} className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" alt="search" />
             </div>
+            <select
+              className="border rounded-lg px-4 py-2"
+              value={orderFilters.status}
+              onChange={(e) => setOrderFilters(prev => ({ ...prev, status: e.target.value, page: 1 }))}
+            >
+              <option value="">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="success">Success</option>
+              <option value="failed">Failed</option>
+            </select>
             <img src={Vector} className="w-6 h-6 cursor-pointer" alt="filter" />
             <img src={container} className="w-6 h-6 cursor-pointer" alt="menu" />
           </div>
@@ -166,7 +236,7 @@ const ProductList = ({ isOpen }) => {
                 >
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-green-50 rounded-full">
-                      <img src={book} className="w-8 h-8" alt="book" />
+                      <img src={order.image || book} className="w-8 h-8" alt="book" />
                     </div>
                     <div>
                       <p className="font-medium">Order #{order.orderNumber}</p>
@@ -187,6 +257,35 @@ const ProductList = ({ isOpen }) => {
           ))}
         </div>
 
+        {/* Orders Pagination Controls */}
+        <div className="user bg-white">
+
+          <Custombutton
+            className={`px-3 py-1 rounded border ${orderFilters.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => handleOrderPageChange(orderFilters.page - 1)}
+            disabled={orderFilters.page === 1}
+            value="Previous"
+            icon={<FaArrowLeft />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="left"
+            width="w-[115px]"
+          />
+          <div className="text-sm text-gray-600">
+            Showing {((orderFilters.page - 1) * orderFilters.limit) + 1} to {Math.min(orderFilters.page * orderFilters.limit, orders?.data?.pagination?.total || 0)} of {orders?.data?.pagination?.total || 0} orders
+          </div>
+          <Custombutton
+            className={`px-3 py-1 rounded border ${orderFilters.page >= totalOrderPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => handleOrderPageChange(orderFilters.page + 1)}
+            disabled={orderFilters.page >= totalOrderPages}
+            value="Next"
+            icon={<FaArrowRight />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="right"
+          />
+        </div>
+
         <div className="flex justify-center mt-6">
           <Custombutton
             value="View All"
@@ -200,24 +299,13 @@ const ProductList = ({ isOpen }) => {
 
       {/* Store Items */}
       <div className="bg-white rounded-xl p-6 mt-6">
+        <Headcomponent value="Store items" showSearch={true} onSearch={(e) => setSort((prevSort) => ({ ...prevSort, search: e }))} />
 
-        <Headcomponent value="Store items" showSearch={true} onSearchChange={handleSearchChange} />
-
-
-        <div className="border-t pt-4 ">
-          {storeItems.map(item => (
+        <div className="border-t pt-4">
+          {storeItems?.map(item => (
             <div
               key={item.id}
               className="flex items-center justify-between p-4 hover:shadow-lg hover:bg-green-50 transition-all duration-300 cursor-pointer"
-            // onClick={() => navigate(`/store/item-details/${item.id}`, {
-            //   state: {
-            //     id: item.id,
-            //     name: item.name,
-            //     price: item.price,
-            //     feauture: item.extra,
-
-            //   }
-            // })}
             >
               <div className="flex items-center gap-4">
                 <div className="p-2 bg-green-50 rounded-full">
@@ -228,7 +316,6 @@ const ProductList = ({ isOpen }) => {
                   <p className="text-green-400 font-bold mt-2">{item.price}</p>
                 </div>
               </div>
-              {/* custon buttons */}
               <div className="flex gap-4 items-center mb-6">
                 <Custombutton
                   value="View"
@@ -238,7 +325,6 @@ const ProductList = ({ isOpen }) => {
                       name: item.name,
                       price: item.price,
                       feauture: item.extra,
-
                     }
                   })}
                   textcolor="text-[#27AE60]"
@@ -271,17 +357,37 @@ const ProductList = ({ isOpen }) => {
             </div>
           ))}
         </div>
-        <div className="flex justify-center mt-6">
+
+        {/* Store Items Pagination Controls */}
+        <div className="user bg-white">
+
           <Custombutton
-            value="View All"
-            hidden="hidden"
+            className={`px-3 py-1 rounded border ${sort.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => handlePageChange(sort.page - 1)}
+            disabled={sort.page === 1}
+            value="Previous"
+            icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
-            imagePosition="center"
+            imagePosition="left"
+            width="w-[115px]"
+          />
+          <div className="text-sm text-gray-600">
+            Showing {((sort.page - 1) * sort.limit) + 1} to {Math.min(sort.page * sort.limit, listStore?.pagination?.total || 0)} of {listStore?.pagination?.total || 0} entries
+          </div>
+          <Custombutton
+            className={`px-3 py-1 rounded border ${sort.page >= totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => handlePageChange(sort.page + 1)}
+            disabled={sort.page >= totalPages}
+            value="Next"
+            icon={<FaArrowRight />}
+            backgroundcolor="bg-[#F2F2F2]"
+            textcolor="text-[#000000]"
+            imagePosition="right"
           />
         </div>
-
       </div>
+
     </div >
   )
 }

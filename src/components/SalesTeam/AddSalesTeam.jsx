@@ -1,16 +1,17 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useDispatch } from "react-redux"
-import { toast } from "react-toastify"
-import { TailSpin } from "react-loader-spinner"
-import { FaChevronLeft } from "react-icons/fa"
-import { addSalesTeamAsync } from "../../apis/slices/salesSlice"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { TailSpin } from "react-loader-spinner";
+import { FaChevronLeft } from "react-icons/fa";
+import { addSalesTeamAsync } from "../../apis/slices/salesSlice";
+import validateSalesTeamForm from "../../components/validator/addSalesTeamValidator";
 
 const AddSalesTeam = ({ isOpen }) => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const [loading, setLoading] = useState(false)
-  const [errors, setError] = useState({})
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [errors, setError] = useState({});
 
   const [formData, setFormData] = useState({
     Full_Name: "",
@@ -23,68 +24,84 @@ const AddSalesTeam = ({ isOpen }) => {
     Location: "",
     Territory: "",
     Role: "",
-    Id: "",
     Description: "",
-    WhatsApp: "" // Added WhatsApp field
-  })
+    WhatsApp: "",
+  });
 
   const onchangeHandler = (event) => {
-    const { name, value } = event.target
-    setFormData(prev => ({
+    const { name, value } = event.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const submitForm = () => {
-    setLoading(true)
-    const form_data = {
-      name: formData?.Full_Name,
-      gender: formData?.Gender,
-      email: formData?.Email,
-      phone: formData?.Phone_Number,
-      team_code: formData?.Team_Code,
-      description: formData?.Description,
-      region: formData?.Region,
-      team_name: formData?.Team_Name,
-      location: formData?.Location,
-      territory: formData?.Territory,
-      role: formData?.Role,
-      whatsapp: formData?.WhatsApp // Added WhatsApp field
-    }
+    const errorData = validateSalesTeamForm(formData);
+    setError(errorData);
+    if (Object.keys(errorData).length < 1) {
+      setLoading(true);
+      const form_data = {
+        name: formData?.Full_Name,
+        gender: formData?.Gender,
+        email: formData?.Email,
+        phone: formData?.Phone_Number,
+        team_code: formData?.Team_Code,
+        description: formData?.Description,
+        region: formData?.Region,
+        team_name: formData?.Team_Name,
+        location: formData?.Location,
+        territory: formData?.Territory,
+        role: formData?.Role,
+        whatsapp: formData?.WhatsApp, // Added WhatsApp field
+      };
 
-    // Dispatch the Redux action
-    dispatch(addSalesTeamAsync({
-      dispatch,
-      data: form_data,
-      token: '',
-      callbackFn: () => {
-        setLoading(false)
-        navigate('/sales-team')
-      }
-    }))
-  }
+      // Dispatch the Redux action
+      dispatch(
+        addSalesTeamAsync({
+          dispatch,
+          data: form_data,
+          token: "",
+          callbackFn: () => {
+            setLoading(false);
+            navigate("/sales-team");
+          },
+        })
+      );
+    } else {
+      toast.error("Please fill all fields");
+    }
+  };
 
   return (
-    <div className={`py-[8rem] lg:px-[9rem] px-[10px] ${isOpen ? "ml-[240px]" : ""}`}>
-      <div className='flex justify-start items-center lg:gap-3 mb-6'>
-        <FaChevronLeft onClick={() => navigate('/sales-team')} className="cursor-pointer" />
+    <div
+      className={`py-[8rem] lg:px-[9rem] px-[10px] ${
+        isOpen ? "ml-[240px]" : ""
+      }`}
+    >
+      <div className="flex justify-start items-center lg:gap-3 mb-6">
+        <FaChevronLeft
+          onClick={() => navigate("/sales-team")}
+          className="cursor-pointer"
+        />
         <div>
-          <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
-            Home / <span className='text-black font-medium'>Sales Team</span>
+          <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+            Home / <span className="text-black font-medium">Sales Team</span>
           </div>
         </div>
       </div>
 
       <div className="block lg:flex justify-center gap-10">
         {loading && (
-          <div style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 9999,
-          }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 9999,
+            }}
+          >
             <TailSpin color="orange" radius={5} />
           </div>
         )}
@@ -278,10 +295,7 @@ const AddSalesTeam = ({ isOpen }) => {
           </h2>
           <div className="rounded-2xl bg-[#EFF6F1] p-2">
             {Object.entries(formData).map(([key, value]) => (
-              <div
-                key={key}
-                className="flex justify-between mt-2"
-              >
+              <div key={key} className="flex justify-between mt-2">
                 <div className="font-light mt-3 text-[14px] leading-[16px] text-[#5A5B5C]">
                   {key.replace(/_/g, " ")}
                 </div>
@@ -304,7 +318,7 @@ const AddSalesTeam = ({ isOpen }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AddSalesTeam
+export default AddSalesTeam;

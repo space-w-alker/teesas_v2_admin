@@ -4,11 +4,12 @@ import book from '../../assets/images/receip.png';
 import productImage from '../../assets/images/productImage.png';
 import { getStoreDetailsAsync } from '../../apis/slices/omotabSlice';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
 const StoreItemDetails = ({ isOpen }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // Get item details from location state
   const itemName = location.state?.name || 'Item Name';
@@ -52,7 +53,15 @@ const StoreItemDetails = ({ isOpen }) => {
       </div>
 
       <div className="flex justify-center mb-6">
-        <button className="px-8 py-2 text-[#27AE60] font-medium">Edit Item</button>
+        <button className="px-8 py-2 text-[#27AE60] font-medium" onClick={() =>
+          navigate('/store/add', {
+            state: {
+              isEdit: true,
+              isOpen: true,
+              itemId: itemId,
+            },
+          })
+        }>Edit Item</button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">

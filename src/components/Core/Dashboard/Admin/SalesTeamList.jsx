@@ -28,16 +28,17 @@ const SalesTeamList = () => {
 
   const fetchSalesTeam = () => {
     setLoading(true);
-    dispatch(listSalesTeamAsync({
-      dispatch,
-      page,
-      limit: 10,
-      search: searchValue,
-      token: ""
-    }))
-      .finally(() => {
-        setLoading(false);
-      });
+    dispatch(
+      listSalesTeamAsync({
+        dispatch,
+        page,
+        limit: 10,
+        search: searchValue,
+        token: "",
+      })
+    ).finally(() => {
+      setLoading(false);
+    });
   };
 
   useEffect(() => {
@@ -179,7 +180,11 @@ const SalesTeamList = () => {
             value="Next"
             icon={<arrowright />}
             backgroundcolor="bg-[#F2F2F2]"
-            textcolor={page < (pageData?.total_pages || 1) ? "text-[#000000]" : "text-[#cccccc]"}
+            textcolor={
+              page < (pageData?.total_pages || 1)
+                ? "text-[#000000]"
+                : "text-[#cccccc]"
+            }
             imagePosition="right"
             onClick={() => handlePageChange(page + 1)}
             disabled={page >= (pageData?.total_pages || 1)}

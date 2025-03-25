@@ -44,7 +44,7 @@ const AdminUser = ({ isOpen }) => {
       token: token,
       callbackFn: (res) => {
         setAdminData(res?.data);
-        setLoading(false)
+        setLoading(false);
 
         console.log(res?.data);
       },
@@ -57,12 +57,12 @@ const AdminUser = ({ isOpen }) => {
   };
 
   const latestOnClick = () => {
-    setLoading(true)
-    setSortKey('Latest')
+    setLoading(true);
+    setSortKey("Latest");
     const newData = {
       page: 1,
       page_size: 10,
-      filter: 'Latest'
+      filter: "Latest",
     };
     getAdminUsersAsync({
       dispatch: dispatch,
@@ -72,23 +72,23 @@ const AdminUser = ({ isOpen }) => {
         if (res?.status === 200) {
           setAdminData(res?.data);
           setLoading(false);
-          handleModalClose()
-          setPage(1)
+          handleModalClose();
+          setPage(1);
         } else {
           alert(res?.message);
           setLoading(false);
         }
       },
     });
-  }
+  };
 
   const oldestOnClick = () => {
-    setLoading(true)
-    setSortKey('Oldest');
+    setLoading(true);
+    setSortKey("Oldest");
     const newData = {
       page: 1,
       page_size: 10,
-      filter: 'Oldest'
+      filter: "Oldest",
     };
     getAdminUsersAsync({
       dispatch: dispatch,
@@ -97,21 +97,22 @@ const AdminUser = ({ isOpen }) => {
       callbackFn: (res) => {
         if (res?.status === 200) {
           setAdminData(res?.data);
-          setPage(1)
+          setPage(1);
           setLoading(false);
-          handleModalClose()
+          handleModalClose();
         } else {
           alert(res?.message);
           setLoading(false);
         }
       },
     });
-  }
+  };
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${
+        isOpen ? "lg:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -177,7 +178,7 @@ const AdminUser = ({ isOpen }) => {
                     onChange={(e) => {
                       setVearchValue(e.target.value);
                       if (e.target.value == "") {
-                        setLoading(false)
+                        setLoading(false);
                         const newData = {
                           page: 1,
                           page_size: 10,
@@ -206,13 +207,12 @@ const AdminUser = ({ isOpen }) => {
                     alt="Search icon"
                     onClick={() => {
                       if (searchValue != "") {
-                        setLoading(true)
+                        setLoading(true);
                         const newData = {
                           page: 1,
                           page_size: 10,
                           search: searchValue,
                         };
-                        debugger
                         getAdminUsersAsync({
                           dispatch: dispatch,
                           data: newData,
@@ -263,10 +263,7 @@ const AdminUser = ({ isOpen }) => {
                       />
                     </div>
                     <div>
-                      <div
-                        className="flex items-center gap-3 px-[18px] cursor-pointer"
-
-                      >
+                      <div className="flex items-center gap-3 px-[18px] cursor-pointer">
                         {/* <div>
                   <img src={item.icon1} alt="Icon 1" />
                 </div> */}
@@ -294,7 +291,6 @@ const AdminUser = ({ isOpen }) => {
                       Inactive
                     </button>
                   )}
-                  
                 </div>
               </li>
             ))}
@@ -315,7 +311,7 @@ const AdminUser = ({ isOpen }) => {
                 const newData = {
                   page: page + 1,
                   page_size: 10,
-                  filter: sortKey
+                  filter: sortKey,
                 };
                 setPage(page - 1);
                 getAdminUsersAsync({
@@ -347,11 +343,11 @@ const AdminUser = ({ isOpen }) => {
             imagePosition="right"
             onClick={() => {
               if (page < adminData?.paging?.total_pages) {
-                setLoading(true)
+                setLoading(true);
                 const newData = {
                   page: page - 1,
                   page_size: 10,
-                  filter: sortKey
+                  filter: sortKey,
                 };
                 setPage(page + 1);
                 getAdminUsersAsync({
@@ -367,7 +363,6 @@ const AdminUser = ({ isOpen }) => {
                       setLoading(false);
                     }
                   },
-                  
                 });
               }
             }}
@@ -375,11 +370,15 @@ const AdminUser = ({ isOpen }) => {
         </div>
       </div>
       {isModalFilterOpen && (
-        <Modal closeModal={handleModalClose} closeModalWithClick2={oldestOnClick} closeModalWithClick1={latestOnClick} label="Sort By" />
+        <Modal
+          closeModal={handleModalClose}
+          closeModalWithClick2={oldestOnClick}
+          closeModalWithClick1={latestOnClick}
+          label="Sort By"
+        />
       )}
     </div>
   );
 };
 
 export default AdminUser;
-

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import UserCard from "../../../components/common/UserCard";
 import { useNavigate } from "react-router-dom";
-import live from '../../../assets/images/live.png';
-import liveimage from '../../../assets/images/liveimage.png';
+import live from "../../../assets/images/live.png";
+import liveimage from "../../../assets/images/liveimage.png";
 import { FaChevronLeft } from "react-icons/fa";
 import bookopen from "../../../assets/images/bookopen.png";
 import Custombutton from "../../../components/common/Custombutton";
@@ -13,7 +13,10 @@ import { FaArrowLeft } from "react-icons/fa";
 import Modal2 from "../../../components/common/Modal2";
 import SearchButton from "../../../assets/images/Searchbutton.png";
 import Vector from "../../../assets/images/Vector.png";
-import { getLiveClassesAsync, deleteLiveClassAsync } from "../../../apis/slices/liveClassSlice";
+import {
+  getLiveClassesAsync,
+  deleteLiveClassAsync,
+} from "../../../apis/slices/liveClassSlice";
 import { TailSpin } from "react-loader-spinner";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -45,13 +48,12 @@ const OneOnclass = ({ isOpen }) => {
       token: token,
       callbackFn: (res) => {
         if (res?.data?.status === 200) {
-
           setAdminData(res?.data?.data?.classes);
 
           setPageData({
             currentPage: res?.data?.data?.currentPage,
             total: res?.data?.data?.total,
-            total_pages: res?.data?.data?.totalPages
+            total_pages: res?.data?.data?.totalPages,
           });
           setLoading(false);
         } else {
@@ -60,7 +62,6 @@ const OneOnclass = ({ isOpen }) => {
         }
       },
     });
-
   }, []);
 
   const openModal = () => {
@@ -75,7 +76,7 @@ const OneOnclass = ({ isOpen }) => {
     deleteLiveClassAsync({
       dispatch: dispatch,
       data: {
-        id: value
+        id: value,
       },
       token: token,
       callbackFn: (res) => {
@@ -91,13 +92,12 @@ const OneOnclass = ({ isOpen }) => {
             token: token,
             callbackFn: (res) => {
               if (res?.data?.status === 200) {
-
                 setAdminData(res?.data?.data?.classes);
 
                 setPageData({
                   total: res?.data?.data?.total,
                   currentPage: res?.data?.data?.currentPage,
-                  total_pages: res?.data?.data?.totalPages
+                  total_pages: res?.data?.data?.totalPages,
                 });
                 setLoading(false);
                 closeModal();
@@ -112,11 +112,11 @@ const OneOnclass = ({ isOpen }) => {
     });
   };
 
-
-
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}
+      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -132,11 +132,15 @@ const OneOnclass = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start items-center lg:gap-3">
-        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+        <FaChevronLeft
+          onClick={() => Navigate(-1)}
+          className="cursor-pointer"
+        />
 
         <div>
           <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
-            Home / <span className="text-black font-medium">One-on-One Classes</span>
+            Home /{" "}
+            <span className="text-black font-medium">One-on-One Classes</span>
           </div>
         </div>
       </div>
@@ -192,8 +196,12 @@ const OneOnclass = ({ isOpen }) => {
                           token: token,
                           callbackFn: (res) => {
                             if (res?.data?.status === 200) {
-                              setAdminData(res?.data?.data?.live_classes);
-                              setPageData(res?.data?.data?.paging);
+                              setAdminData(res?.data?.data?.classes);
+                              setPageData({
+                                total: res?.data?.data?.total,
+                                currentPage: res?.data?.data?.currentPage,
+                                total_pages: res?.data?.data?.totalPages,
+                              });
                               setPage(1);
                               setLoading(false);
                             } else {
@@ -223,8 +231,12 @@ const OneOnclass = ({ isOpen }) => {
                           token: token,
                           callbackFn: (res) => {
                             if (res?.data?.status === 200) {
-                              setAdminData(res?.data?.data?.live_classes);
-                              setPageData(res?.data?.data?.paging);
+                              setAdminData(res?.data?.data?.classes);
+                              setPageData({
+                                total: res?.data?.data?.total,
+                                currentPage: res?.data?.data?.currentPage,
+                                total_pages: res?.data?.data?.totalPages,
+                              });
                               setPage(1);
                               setLoading(false);
                             } else {
@@ -237,9 +249,7 @@ const OneOnclass = ({ isOpen }) => {
                     }}
                   />
                 </div>
-                <div
-                  className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
-                >
+                <div className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2">
                   <img src={Vector} alt="Vector" />
                 </div>
                 <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2">
@@ -251,49 +261,50 @@ const OneOnclass = ({ isOpen }) => {
         </div>
         <div className="">
           <ul>
-            {adminData && adminData.map((user, i) => (
-              <li key={i}>
-                <div className="md:flex lg:flex justify-between items-center gap-4">
-                  <div className="lg:px-[18px] py-[10px] mt-5 flex gap-[10px] pr-[15px]">
-                    <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative">
-                      <img
-                        src={bookopen}
-                        alt=""
-                        className="absolute top-[8px] left-[9px]"
-                      />
-                    </div>
-                    <div>
-                      <h6
-                        className=" font-bold text-[14px] leading-[24px] text-[#1D2026] cursor-pointer "
-                        onClick={() => {
-                          Navigate("/LiveClassDetails", {
-                            state: { user },
-                          });
-                        }}
-                      >
-                        {user?.topic} - {user?.subject?.name}
-                      </h6>
-                      {/* <span className=" font-normal text-[12px] leading-[24px] text-[#0F62FE]">
+            {adminData &&
+              adminData.map((user, i) => (
+                <li key={i}>
+                  <div className="md:flex lg:flex justify-between items-center gap-4">
+                    <div className="lg:px-[18px] py-[10px] mt-5 flex gap-[10px] pr-[15px]">
+                      <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative">
+                        <img
+                          src={bookopen}
+                          alt=""
+                          className="absolute top-[8px] left-[9px]"
+                        />
+                      </div>
+                      <div>
+                        <h6
+                          className=" font-bold text-[14px] leading-[24px] text-[#1D2026] cursor-pointer "
+                          onClick={() => {
+                            Navigate("/LiveClassDetails", {
+                              state: { user },
+                            });
+                          }}
+                        >
+                          {user?.topic} - {user?.subject?.name}
+                        </h6>
+                        {/* <span className=" font-normal text-[12px] leading-[24px] text-[#0F62FE]">
                         {moment(user?.date)?.format("DD.MM.YYYY")}
                       </span> */}
-                      <span className=" font-normal text-[12px] ml-1 leading-[24px] text-[#0F62FE]">
-                        {user?.class_time}
-                      </span>
-                      <div className="flex items-center gap-3 px-[18px]">
-                        {/* <div>
+                        <span className=" font-normal text-[12px] ml-1 leading-[24px] text-[#0F62FE]">
+                          {user?.class_time}
+                        </span>
+                        <div className="flex items-center gap-3 px-[18px]">
+                          {/* <div>
                        <img src={item.icon1} alt="Icon 1" />
                        </div> */}
-                        <div className="flex items-center  gap-2  cursor-pointer">
-                          <p className=" font-normal text-[12px] leading-[15px] text-[#000000] ">
-                            {user?.teacher?.name}
-                          </p>
+                          <div className="flex items-center  gap-2  cursor-pointer">
+                            <p className=" font-normal text-[12px] leading-[15px] text-[#000000] ">
+                              {user?.teacher?.name}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center">
-                    {/* <Custombutton
+                    <div className="flex items-center">
+                      {/* <Custombutton
                       value={user?.active ? "Visible" : "Hidden"}
                       img={sharp}
                       backgroundcolor={
@@ -304,19 +315,19 @@ const OneOnclass = ({ isOpen }) => {
                       }
                       imagePosition="left"
                     /> */}
-                    <img
-                      src={container}
-                      alt="Actions"
-                      className="cursor-pointer"
-                      onClick={() => {
-                        setClassData(user);
-                        openModal();
-                      }}
-                    />
+                      <img
+                        src={container}
+                        alt="Actions"
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setClassData(user);
+                          openModal();
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              ))}
           </ul>
         </div>
         <div className="user">
@@ -377,7 +388,6 @@ const OneOnclass = ({ isOpen }) => {
                   token: token,
                   callbackFn: (res) => {
                     if (res?.data?.status === 200) {
-
                       setAdminData(res?.data?.data?.live_classes);
                       setPageData(res?.data?.data?.paging);
                       setLoading(false);
@@ -389,10 +399,15 @@ const OneOnclass = ({ isOpen }) => {
           />
         </div>
 
-        <Modal2 isOpen={isModalOpen} onDelete={onDeleteClass} data={classData} onClose={closeModal} />
+        <Modal2
+          isOpen={isModalOpen}
+          onDelete={onDeleteClass}
+          data={classData}
+          onClose={closeModal}
+        />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default OneOnclass
+export default OneOnclass;

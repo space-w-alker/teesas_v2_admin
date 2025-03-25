@@ -1,54 +1,58 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { addTestimonialAsync } from '../../apis/slices/cornerSlice';
-import Headers from '../common/Headers';
-import Headcomponent from '../common/Headcomponent';
-import Custombutton from '../common/Custombutton';
-import SuccessModal from '../common/SuccessModal';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addTestimonialAsync } from "../../apis/slices/cornerSlice";
+import Headers from "../common/Headers";
+import Headcomponent from "../common/Headcomponent";
+import Custombutton from "../common/Custombutton";
+import SuccessModal from "../common/SuccessModal";
+import { toast } from "react-toastify";
 
 const AddTestimonial = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
-    description: '',
-    author: ''
+    description: "",
+    author: "",
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSave = () => {
-    const data = {
-      description: formData.description,
-      name: formData.author
-    };
+    if (formData.description == "") {
+      toast.error("Please Enter Testimonial Content");
+    } else {
+      const data = {
+        description: formData.description,
+        name: formData.author,
+      };
 
-    dispatch(addTestimonialAsync({
-      dispatch,
-      data,
-      token: '',
-      callbackFn: () => setShowSuccess(true)
-    }));
+      dispatch(
+        addTestimonialAsync({
+          dispatch,
+          data,
+          token: "",
+          callbackFn: () => setShowSuccess(true),
+        })
+      );
+    }
   };
 
   const handleClose = () => {
     setShowSuccess(false);
-    navigate('/testimonials');
+    navigate("/testimonials");
   };
 
   return (
     <div className={`py-[7rem] px-[5rem] ${isOpen ? "xl:ml-[260px]" : ""}`}>
-      <Headers
-        value1="Home / Testimonials"
-        value2="Add Testimonial"
-      />
+      <Headers value1="Home / Testimonials" value2="Add Testimonial" />
 
       <div className="grid grid-cols-3 gap-8 mt-8">
         <div className="col-span-2">
@@ -58,7 +62,9 @@ const AddTestimonial = ({ isOpen }) => {
 
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Testimonial Content</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Testimonial Content
+                </label>
                 <textarea
                   name="description"
                   value={formData.description}
@@ -69,7 +75,9 @@ const AddTestimonial = ({ isOpen }) => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Author (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Author (Optional)
+                </label>
                 <input
                   name="author"
                   type="text"
@@ -89,12 +97,22 @@ const AddTestimonial = ({ isOpen }) => {
             <div className="space-y-4">
               <div className="flex justify-between bg-green-100 p-4 rounded-lg">
                 <span className="text-gray-600">Content:</span>
-                <input className='bg-green-100' type="text" value={formData.description} readOnly />
+                <input
+                  className="bg-green-100"
+                  type="text"
+                  value={formData.description}
+                  readOnly
+                />
               </div>
 
               <div className="flex justify-between bg-green-100 p-4 rounded-lg">
                 <span className="text-gray-600">Author:</span>
-                <input className='bg-green-100' type="text" value={formData.author} readOnly />
+                <input
+                  className="bg-green-100"
+                  type="text"
+                  value={formData.author}
+                  readOnly
+                />
               </div>
 
               <div className="pt-6 mt-6 border-t flex justify-center">

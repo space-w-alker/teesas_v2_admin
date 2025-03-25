@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { FaChevronLeft } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { changePasswordAsync } from "../../../apis/slices/authSlice";
@@ -13,7 +13,7 @@ const ChangePassword = ({ isOpen }) => {
   const [formData, setformData] = useState({
     Old_Password: "",
     Password: "",
-    Confirm_Password: ""
+    Confirm_Password: "",
   });
 
   const onchangeHandler = (event) => {
@@ -25,60 +25,77 @@ const ChangePassword = ({ isOpen }) => {
   };
 
   const handleChangePassword = () => {
-    setLoading(true);
-    const body = {
-      currentPassword: formData.Old_Password,
-      newPassword: formData.Password,
-      confirmPassword: formData.Confirm_Password
-    };
+    if (
+      formData?.Old_Password == "" ||
+      formData.Password == "" ||
+      formData.Confirm_Password == ""
+    ) {
+      toast.error("Please fill all fields");
+      return;
+    } else if (formData.Password !== formData.Confirm_Password) {
+      toast.error("New password and confirm password should be the same");
+      return;
+    } else {
+      setLoading(true);
+      const body = {
+        currentPassword: formData.Old_Password,
+        newPassword: formData.Password,
+        confirmPassword: formData.Confirm_Password,
+      };
 
-    changePasswordAsync({
-      dispatch: dispatch,
-      body: body,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          setformData({
-            Old_Password: "",
-            Password: "",
-            Confirm_Password: ""
-          });
-          toast.success("Password changed successfully");
-          setLoading(false);
-        } else {
-          toast.error(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    });
+      changePasswordAsync({
+        dispatch: dispatch,
+        body: body,
+        token: token,
+        callbackFn: (res) => {
+          if (res?.data?.status === 200) {
+            setformData({
+              Old_Password: "",
+              Password: "",
+              Confirm_Password: "",
+            });
+            toast.success("Password changed successfully");
+            setLoading(false);
+          } else {
+            toast.error(res?.data?.message);
+            setLoading(false);
+          }
+        },
+      });
+    }
   };
 
-
-
   return (
-    <div className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "lg:ml-[260px]" : ""}`}>
+    <div
+      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${
+        isOpen ? "lg:ml-[260px]" : ""
+      }`}
+    >
       {loading && (
-        <div style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      <div className='flex justify-start items-center lg:gap-3'>
+      <div className="flex justify-start items-center lg:gap-3">
         <FaChevronLeft />
         <div>
-          <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
-            Home / <span className='text-black font-medium'>Change Password</span>
+          <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+            Home /{" "}
+            <span className="text-black font-medium">Change Password</span>
           </div>
         </div>
       </div>
-      <div className='block lg:flex justify-center gap-10'>
+      <div className="block lg:flex justify-center gap-10">
         <div className="users bg-[#FFFFFF] rounded-xl lg:w-[80%]">
-          <div className='Border'>
+          <div className="Border">
             <h2 className="text-[18px] leading-[20px] Border pb-[16px] text-[#000000] font-medium">
               Change Password
             </h2>

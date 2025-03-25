@@ -53,36 +53,49 @@ const AddAdminRole = ({ isOpen }) => {
   }, [dispatch, token]);
 
   const handleSave = () => {
-    setLoading(true);
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get("id");
-    const action = isEditMode ? updateRoleAsync : addRoleAsync;
-    const body = {
-      name: roleName,
-      description: roleDescription,
-    };
-    action({
-      dispatch: dispatch,
-      id: id,
-      data: body,
-      token: token,
-      callbackFn: (res) => {
-        if (res?.data?.status === 200) {
-          toast.success(isEditMode ? "Role updated successfully" : "Role added successfully");
-          setLoading(false);
-          navigate(-1);
-        } else {
-          toast.error(res?.data?.message);
-          setLoading(false);
-        }
-      },
-    })();
+    if (roleName == "") {
+      toast.error("Please Enter Role Name");
+      return;
+    } else if (roleDescription == "") {
+      toast.error("Please Enter Role Description");
+      return;
+    } else {
+      setLoading(true);
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get("id");
+      const action = isEditMode ? updateRoleAsync : addRoleAsync;
+      const body = {
+        name: roleName,
+        description: roleDescription,
+      };
+      action({
+        dispatch: dispatch,
+        id: id,
+        data: body,
+        token: token,
+        callbackFn: (res) => {
+          if (res?.status === 200) {
+            toast.success(
+              isEditMode
+                ? "Role updated successfully"
+                : "Role added successfully"
+            );
+            setLoading(false);
+            navigate(-1);
+          } else {
+            toast.error(res?.data?.message);
+            setLoading(false);
+          }
+        },
+      })();
+    }
   };
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${
+        isOpen ? "lg:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -98,7 +111,10 @@ const AddAdminRole = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft onClick={() => navigate(-1)} className="cursor-pointer" />
+        <FaChevronLeft
+          onClick={() => navigate(-1)}
+          className="cursor-pointer"
+        />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Admin Role List /{" "}
@@ -188,8 +204,9 @@ const AddAdminRole = ({ isOpen }) => {
                           },
                         })();
                       }}
-                      className={`toggle-btn ${item?.status ? "toggled" : "off"
-                        }`}
+                      className={`toggle-btn ${
+                        item?.status ? "toggled" : "off"
+                      }`}
                     >
                       <div className="thumb"></div>
                     </button>
