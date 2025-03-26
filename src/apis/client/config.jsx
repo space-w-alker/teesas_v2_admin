@@ -23,7 +23,7 @@ export const config = {
   CREATE_SUBJECT: "admin/class",
   UPDATE_SUBJECT: "admin/class/",
   GET_ADMIN_Subjects: "admin/class/get-subject",
-
+  UPLOAD_BULK_CATEGORIES: "admin/category/create-bulk",
   SUBSCRIBED_USERS: "admin/dashboard/subscribed-users",
   SUBSCRIPTION_STATS: "admin/dashboard/subscription-stats",
   DASHBOARD_USERS: "admin/dashboard/users",
@@ -116,4 +116,5 @@ export const config = {
   GET_PUSH_NOTIFICATIONS: "admin/push-notifications",
   ADD_PUSH_NOTIFICATION: "admin/push-notifications/add",
   DELETE_PUSH_NOTIFICATION: "admin/push-notifications/delete",
+  CREATE_BULK_LIVE_CLASS: "live/create-bulk-live-class",
 };

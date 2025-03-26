@@ -13,7 +13,8 @@ const { BASEURL,
   DELETE_CLASS,
   GET_CLASS_DETAILS,
   CREATE_SUBJECT,
-  UPDATE_SUBJECT
+  UPDATE_SUBJECT,
+  UPLOAD_BULK_CATEGORIES 
 } = config;
 
 const initialState = {
@@ -140,6 +141,12 @@ const initialState = {
     isLoading: false,
     data: null,
     error: null
+  },
+  bulkUpload: { 
+    isLoading: false,
+    data: null,
+    success: false,
+    error: null
   }
 
 };
@@ -219,11 +226,47 @@ export const categoriesSlice = createSlice({
     },
     setCountries: (state, action) => {
       state.countries = action.payload;
+    },
+    setBulkCategoryUpload: (state, action) => {  
+      state.bulkUpload = action.payload;
     }
 
   }
 });
 
+
+export const uploadBulkCategoriesAsync = ({ file }) => async (dispatch) => {
+  try {
+    dispatch(setBulkCategoryUpload({ isLoading: true, data: null, success: false, error: null }));
+    const URL = `${BASEURL}${UPLOAD_BULK_CATEGORIES}`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const result = await postFileAPICall(URL, formData);
+
+    if (result?.data) {
+      dispatch(setBulkCategoryUpload({
+        isLoading: false,
+        data: result.data,
+        success: true,
+        error: null
+      })); // Refresh categories list
+      dispatch(getCategoriesAsync());
+      return true;
+    } else {
+      throw new Error(result?.data?.message || 'Failed to upload categories');
+    }
+  } catch (error) {
+    dispatch(setBulkCategoryUpload({
+      isLoading: false,
+      data: null,
+      success: false,
+      error: error.message || 'Failed to upload categories'
+    }));
+    return false;
+  }
+};
 
 export const getCategoriesAsync = (page = 1, limit = 10, search = '') => async (dispatch) => {
   try {
@@ -776,11 +819,13 @@ export const { setCategoryList,
   setDeleteTopicMedia,
   setUniversities,
   setCountries,
-  setDeleteChapter
+  setDeleteChapter,
+  setBulkCategoryUpload
 
 
 } = categoriesSlice.actions;
 
+export const selectBulkCategoryUpload = (state) => state.categories.bulkUpload;
 export const selectCategories = (state) => state.categories.list;
 export const selectCategoryCreate = (state) => state.categories.create;
 export const selectCategoryDelete = (state) => state.categories.delete;

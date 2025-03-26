@@ -156,7 +156,7 @@ const SubjectDetails = ({ isOpen }) => {
 
       <div className="flex justify-end mb-6">
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => navigate(`/add-subject/${id}`)}
           className="px-6 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652] transition-colors"
         >
           Add Subject

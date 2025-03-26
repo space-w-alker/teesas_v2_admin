@@ -79,7 +79,7 @@ const AddSubject = ({ isOpen }) => {
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <div className="mb-8">
         <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
-          Home / Categories / Primary 1 / <span className="text-black font-medium">
+          Home / <span className="text-black font-medium">
             {isEdit ? 'Edit Subject' : 'Add Subject'}
           </span>
         </div>

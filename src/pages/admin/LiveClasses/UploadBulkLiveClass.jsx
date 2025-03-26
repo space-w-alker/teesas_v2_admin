@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { FaChevronLeft, FaCloudUploadAlt } from "react-icons/fa";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { uploadBulkCategoriesAsync, selectBulkCategoryUpload } from '../../apis/slices/categoriesSlice';
-import SuccessModal from '../common/SuccessModal';
+import { uploadBulkLiveClassesAsync, selectBulkLiveClassUpload, resetBulkLiveClassUpload } from '../../../apis/slices/liveClassSlice';
+import SuccessModal from '../../../components/common/SuccessModal';
 
-const UploadBulkCategory = ({ isOpen }) => {
+const UploadBulkLiveClass = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { classType } = location.state || { classType: 'group' }; 
+
   const [file, setFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [modalConfig, setModalConfig] = useState({
@@ -18,8 +21,12 @@ const UploadBulkCategory = ({ isOpen }) => {
     buttonText: 'Close'
   });
 
-  const bulkUploadState = useSelector(selectBulkCategoryUpload);
+  const bulkUploadState = useSelector(selectBulkLiveClassUpload);
   const { isLoading, data, error, success } = bulkUploadState;
+  const token = localStorage.getItem('authToken') || '';
+
+  const pageTitle = classType === 'one_on_one' ? 'One-on-One Classes' : 'Live Classes';
+  const returnPath = classType === 'one_on_one' ? '/one-on-oneclassmanagement' : '/scheduleliveclasses';
 
   useEffect(() => {
     if (success && data) {
@@ -29,8 +36,8 @@ const UploadBulkCategory = ({ isOpen }) => {
         isOpen: true,
         type: 'success',
         title: 'Upload Successful',
-        message: `${data.message || `Processed ${successCount} categories successfully`}`,
-        buttonText: 'Back to Categories'
+        message: `${data.message || `Processed ${successCount} classes successfully`}`,
+        buttonText: `Back to ${pageTitle}`
       });
     }
 
@@ -43,7 +50,12 @@ const UploadBulkCategory = ({ isOpen }) => {
         buttonText: 'Try Again'
       });
     }
-  }, [success, data, error]);
+
+    // Cleanup function to reset state when component unmounts
+    return () => {
+      dispatch(resetBulkLiveClassUpload());
+    };
+  }, [success, data, error, pageTitle, dispatch]);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -74,7 +86,7 @@ const UploadBulkCategory = ({ isOpen }) => {
   const handleCloseModal = () => {
     setModalConfig(prev => ({ ...prev, isOpen: false }));
     if (modalConfig.type === 'success') {
-      navigate('/categories');
+      navigate(returnPath);
     }
   };
 
@@ -90,17 +102,36 @@ const UploadBulkCategory = ({ isOpen }) => {
       return;
     }
 
-    dispatch(uploadBulkCategoriesAsync({ file }));
+    dispatch(uploadBulkLiveClassesAsync({
+      file,
+      classType,
+      token,
+      callbackFn: (result) => {
+        // Optional callback handling if needed
+        console.log('Upload result:', result);
+      }
+    }));
   };
 
   const downloadTemplate = () => {
-    // Create a simple Excel template
-    const csvContent = "name,country_id,classes\nCategory 1,1,\"Class 1,Class 2\"\nCategory 2,2,\"Class 3,Class 4\"";
+    // Create a simple Excel template for live classes
+    let csvContent;
+
+    if (classType === 'one_on_one') {
+      csvContent = "topic,subject_id,teacher_id,class_time,date,duration,description,meeting_link\n" +
+        "One-on-One Math Class,1,1,10:00 AM,2023-12-25,60,One-on-one math tutoring,https://zoom.us/j/123456789\n" +
+        "One-on-One Science Class,2,2,02:00 PM,2023-12-26,45,One-on-one science tutoring,https://zoom.us/j/987654321";
+    } else {
+      csvContent = "topic,subject_id,teacher_id,class_time,date,duration,description,meeting_link\n" +
+        "Group Math Class,1,1,10:00 AM,2023-12-25,60,Group math session,https://zoom.us/j/123456789\n" +
+        "Group Science Class,2,2,02:00 PM,2023-12-26,45,Group science session,https://zoom.us/j/987654321";
+    }
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'category_template.csv';
+    a.download = `${classType === 'one_on_one' ? 'one_on_one' : 'live'}_class_template.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -113,14 +144,14 @@ const UploadBulkCategory = ({ isOpen }) => {
         <FaChevronLeft onClick={() => navigate(-1)} className="cursor-pointer" />
         <div>
           <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
-            Categories /<span className='text-black font-medium'> Upload Bulk Categories</span>
+            {pageTitle} /<span className='text-black font-medium'> Upload Bulk {pageTitle}</span>
           </div>
         </div>
       </div>
 
       <div className="mt-8 bg-white rounded-xl p-6 flex flex-col md:flex-row">
         <div className="flex-1">
-          <h2 className="text-2xl font-bold mb-6">Upload Bulk Categories</h2>
+          <h2 className="text-2xl font-bold mb-6">Upload Bulk {pageTitle}</h2>
 
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center ${dragActive ? 'bg-[#E9FDEE] border-[#27AE60]' : 'bg-gray-50 border-gray-300'}`}
@@ -173,13 +204,17 @@ const UploadBulkCategory = ({ isOpen }) => {
               <p className="text-gray-600 text-sm">File Type</p>
               <p className="font-medium">{file ? file.type : '-'}</p>
             </div>
+            <div>
+              <p className="text-gray-600 text-sm">Class Type</p>
+              <p className="font-medium">{classType === 'one_on_one' ? 'One-on-One Class' : 'Group Live Class'}</p>
+            </div>
           </div>
           <button
             onClick={handleUpload}
             disabled={!file || isLoading}
             className={`w-full py-3 rounded-lg text-white ${!file || isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#27AE60] hover:bg-[#219652]'} mt-6`}
           >
-            {isLoading ? 'Uploading...' : 'Upload Categories'}
+            {isLoading ? 'Uploading...' : `Upload ${pageTitle}`}
           </button>
         </div>
       </div>
@@ -197,4 +232,4 @@ const UploadBulkCategory = ({ isOpen }) => {
   );
 };
 
-export default UploadBulkCategory;
+export default UploadBulkLiveClass;

@@ -158,20 +158,31 @@ const Categories = ({ isOpen }) => {
   const [showModal, setShowModal] = useState(false);
   const isInitialMount = useRef(true);
   const limit = 10;
+  const [totalPages, setTotalPages] = useState(1);
 
 
   // Initial mount fetch
   useEffect(() => {
     if (isInitialMount.current) {
-      dispatch(getCategoriesAsync(1, limit, ''));
+      dispatch(getCategoriesAsync(1, limit, ''))
+        .then(response => {
+          if (response?.data?.stats?.totalPages) {
+            setTotalPages(response.data.stats.totalPages);
+          }
+        });
       isInitialMount.current = false;
     }
   }, []);
 
   // Pagination effect
   useEffect(() => {
-    if (!isInitialMount.current && currentPage > 1) {
-      dispatch(getCategoriesAsync(currentPage, limit, searchTerm));
+    if (!isInitialMount.current) {
+      dispatch(getCategoriesAsync(currentPage, limit, searchTerm))
+        .then(response => {
+          if (response?.data?.stats?.totalPages) {
+            setTotalPages(response.data.stats.totalPages);
+          }
+        });
     }
   }, [currentPage]);
 

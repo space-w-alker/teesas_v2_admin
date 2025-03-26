@@ -11,6 +11,7 @@ import container from "../../../assets/images/container.png";
 import { FaArrowRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 import Modal2 from "../../../components/common/Modal2";
+import Modal from "../../../components/common/Modal";
 import SearchButton from "../../../assets/images/Searchbutton.png";
 import Vector from "../../../assets/images/Vector.png";
 import {
@@ -32,6 +33,7 @@ const OneOnclass = ({ isOpen }) => {
   const [isModalFilterOpen, setIsModalFilterOpen] = useState(false);
   const [searchValue, setVearchValue] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({});
   const [classData, setClassData] = useState("");
@@ -114,9 +116,8 @@ const OneOnclass = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -160,7 +161,7 @@ const OneOnclass = ({ isOpen }) => {
       <div className="flex justify-end">
         <button
           className="text-[14px] leading-[20px] text-center font-bold w-[200px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
-          onClick={() => Navigate("/Addone-on-oneClass")}
+          onClick={() => setShowModal(true)}
         >
           + Add One-on-One Class
         </button>
@@ -405,9 +406,30 @@ const OneOnclass = ({ isOpen }) => {
           data={classData}
           onClose={closeModal}
         />
+
+        {showModal && (
+          <Modal
+            closeModal={() => setShowModal(false)}
+            label="ADD USER"
+            value1="Add Single One-on-One Class"
+            value2="Upload Bulk One-on-One Classes"
+            addSingleButton={() => {
+              Navigate('/Addone-on-oneClass');
+              setShowModal(false);
+            }}
+            addMutipleButton={() => {
+              Navigate('/upload-bulk-live-classes', {
+                state: { classType: 'one_on_one' }
+              });
+              setShowModal(false);
+            }}
+          />
+        )}
       </div>
     </div>
   );
 };
 
 export default OneOnclass;
+
+                  

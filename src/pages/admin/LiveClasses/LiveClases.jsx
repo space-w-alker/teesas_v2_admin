@@ -12,6 +12,7 @@ import container from "../../../assets/images/container.png";
 import { FaArrowRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 import Modal2 from "../../../components/common/Modal2";
+import Modal from "../../../components/common/Modal";
 import SearchButton from "../../../assets/images/Searchbutton.png";
 import Vector from "../../../assets/images/Vector.png";
 import {
@@ -39,6 +40,7 @@ const LiveClases = ({ isOpen }) => {
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({});
   const [classData, setClassData] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -48,7 +50,6 @@ const LiveClases = ({ isOpen }) => {
         page: 1,
         page_size: 10,
         class_type: "group",
-        // class_type: "LIVE",
       },
       token: token,
       callbackFn: (res) => {
@@ -70,6 +71,7 @@ const LiveClases = ({ isOpen }) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
   const onDeleteClass = (value) => {
     deleteLiveClassAsync({
       dispatch: dispatch,
@@ -108,7 +110,7 @@ const LiveClases = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
         }`}
     >
       {loading && (
@@ -124,19 +126,19 @@ const LiveClases = ({ isOpen }) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
-      <div className="flex justify-start  items-center lg:gap-3">
+      <div className="flex justify-start items-center lg:gap-3">
         <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
 
         <div>
-          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+          <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home /<span className="text-black font-medium">Live Classes</span>
           </div>
         </div>
       </div>
-      <h2 className=" mt-5 font-bold text-[22px]  leading-[28px] text-[#2C2E32] ">
+      <h2 className="mt-5 font-bold text-[22px] leading-[28px] text-[#2C2E32]">
         Live Classes
       </h2>
-      <div className=" mt-5 ">
+      <div className="mt-5">
         <UserCard
           label="Total Live Classes"
           height="h-[120px]"
@@ -145,17 +147,15 @@ const LiveClases = ({ isOpen }) => {
           img2={Ynotes}
         />
       </div>
-      <div className=" flex  justify-end ">
+      <div className="flex justify-end">
         <button
-          className="text-[14px] leading-[20px] text-center font-bold  w-[166px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
-          onClick={() => Navigate("/AddLiveClass")}
+          className="text-[14px] leading-[20px] text-center font-bold w-[166px] h-[40px] rounded-lg py-[7px] px-[12px] bg-[#27AE60] text-white"
+          onClick={() => setShowModal(true)}
         >
           + Add Live Class
         </button>
       </div>
-      {/* <LiveclasesList/>*/}
       <div className="bg-[#FFFFFF] lg:p-4 mt-5 lg:pl-[8px] pl-[8px] rounded-[18px] pb-[20px]">
-        {/* <Headcomponent value="Live Classes List" border="Border" /> */}
         <div className="Border">
           <div className={`flex justify-between items-center relative mt-3`}>
             <div>
@@ -205,7 +205,7 @@ const LiveClases = ({ isOpen }) => {
                   />
                   <img
                     src={SearchButton}
-                    className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer"
+                    className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer"
                     alt="Search icon"
                     onClick={() => {
                       if (searchValue != "") {
@@ -241,7 +241,6 @@ const LiveClases = ({ isOpen }) => {
                 </div>
                 <div
                   className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
-                //onClick={() => setIsModalFilterOpen(true)}
                 >
                   <img src={Vector} alt="Vector" />
                 </div>
@@ -256,18 +255,18 @@ const LiveClases = ({ isOpen }) => {
           <ul>
             {adminData?.map((user, i) => (
               <li key={i}>
-                <div className=" md:flex lg:flex justify-between  items-center gap-4">
-                  <div className="lg:px-[18px] py-[10px] mt-5 flex  gap-[10px] pr-[15px]">
+                <div className="md:flex lg:flex justify-between items-center gap-4">
+                  <div className="lg:px-[18px] py-[10px] mt-5 flex gap-[10px] pr-[15px]">
                     <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative">
                       <img
                         src={bookopen}
                         alt=""
-                        className=" absolute top-[8px] left-[9px]"
+                        className="absolute top-[8px] left-[9px]"
                       />
                     </div>
                     <div>
                       <h6
-                        className=" font-bold text-[14px] leading-[24px] text-[#1D2026] cursor-pointer "
+                        className="font-bold text-[14px] leading-[24px] text-[#1D2026] cursor-pointer"
                         onClick={() => {
                           Navigate("/LiveClassDetails", {
                             state: { user },
@@ -276,18 +275,12 @@ const LiveClases = ({ isOpen }) => {
                       >
                         {user?.topic} - {user?.subject?.name}
                       </h6>
-                      {/* <span className=" font-normal text-[12px] leading-[24px] text-[#0F62FE]">
-                        {moment(user?.date)?.format("DD.MM.YYYY")}
-                      </span> */}
-                      <span className=" font-normal text-[12px] ml-1 leading-[24px] text-[#0F62FE]">
+                      <span className="font-normal text-[12px] ml-1 leading-[24px] text-[#0F62FE]">
                         {user?.class_time}
                       </span>
                       <div className="flex items-center gap-3 px-[18px]">
-                        {/* <div>
-                    <img src={item.icon1} alt="Icon 1" />
-                  </div> */}
-                        <div className="flex items-center  gap-2  cursor-pointer">
-                          <p className=" font-normal text-[12px] leading-[15px] text-[#000000] ">
+                        <div className="flex items-center gap-2 cursor-pointer">
+                          <p className="font-normal text-[12px] leading-[15px] text-[#000000]">
                             {user?.teacher?.name}
                           </p>
                         </div>
@@ -296,19 +289,10 @@ const LiveClases = ({ isOpen }) => {
                   </div>
 
                   <div className="flex items-center">
-                    {/* <Custombutton
-                      value={user?.active ? "Visible" : "Hidden"}
-                      img={sharp}
-                      backgroundcolor={
-                        user?.active ? "bg-[#E9FDEE]" : "bg-[#565656]"
-                      }
-                      textcolor={
-                        user?.active ? "text-[#2760EA]" : "text-[#707070]"
-                      }
-                      imagePosition="left"
-                    /> */}
                     <img
                       src={container}
+                      alt="Actions"
+                      className="cursor-pointer"
                       onClick={() => {
                         setClassData(user);
                         openModal();
@@ -323,7 +307,6 @@ const LiveClases = ({ isOpen }) => {
         <div className="user">
           <Custombutton
             value="Previous"
-            // hidden="hidden"
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -335,7 +318,6 @@ const LiveClases = ({ isOpen }) => {
                 const newData = {
                   page: page - 1,
                   page_size: 10,
-                  // class_type: "LIVE",
                 };
                 setPage(page - 1);
                 getLiveClassesAsync({
@@ -360,7 +342,6 @@ const LiveClases = ({ isOpen }) => {
           </div>
           <Custombutton
             value="Next"
-            // hidden="hidden"
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -371,7 +352,6 @@ const LiveClases = ({ isOpen }) => {
                 const newData = {
                   page: page + 1,
                   page_size: 10,
-                  // class_type: "LIVE",
                 };
                 setPage(page + 1);
                 getLiveClassesAsync({
@@ -399,16 +379,27 @@ const LiveClases = ({ isOpen }) => {
           data={classData}
           onClose={closeModal}
         />
-        {/* <ToastContainer
-          position="top-right"
-          autoClose={2000}
-          ProgressBar={true}
-          newestOnTop={false}
-          closeOnClick={false}
-          rtl={false}
-          pauseOnHover={false}
-        /> */}
       </div>
+
+      {/* Modal for adding live class */}
+      {showModal && (
+        <Modal
+          closeModal={() => setShowModal(false)}
+          label="ADD USER"
+          value1="Add Single Live Class"
+          value2="Upload Bulk Live Classes"
+          addSingleButton={() => {
+            Navigate('/AddLiveClass');
+            setShowModal(false);
+          }}
+          addMutipleButton={() => {
+            Navigate('/upload-bulk-live-classes', {
+              state: { classType: 'group' }
+            });
+            setShowModal(false);
+          }}
+        />
+      )}
     </div>
   );
 };

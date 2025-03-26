@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAPICall, postAPICall, deleteAPICall } from "../client/methodCalls";
+import { getAPICall, postAPICall, deleteAPICall, postFileAPICall } from "../client/methodCalls";
 import { toast } from "react-toastify";
 
 import { config } from "../client/config";
@@ -43,6 +43,12 @@ export const liveClassSlice = createSlice({
     getSubjectsResponse: {
       response: {},
     },
+    bulkUpload: {
+      isLoading: false,
+      data: null,
+      success: false,
+      error: null
+    },
   },
   reducers: {
     getLiveClasses: (state, action) => {
@@ -74,6 +80,9 @@ export const liveClassSlice = createSlice({
       state.getLiveClassesResponse = {
         reaponse: {},
       };
+    },
+    setBulkLiveClassUpload: (state, action) => {
+      state.bulkUpload = action.payload;
     },
   },
 });
@@ -231,6 +240,52 @@ export const getStudentsLiveClassesAsync = async ({
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
+
+export const uploadBulkLiveClassesAsync = ({ file, classType, token, callbackFn }) => async (dispatch) => {
+  try {
+    dispatch(setBulkLiveClassUpload({ isLoading: true, data: null, success: false, error: null }));
+
+    const formData = new FormData();
+    formData.append('file', file);
+    if (classType) {
+      formData.append('class_type', classType);
+    }
+
+    const URL = `${BASEURL}live/create-live-classes-bulk`;
+    const result = await postFileAPICall(URL, formData, token);
+
+    if (result?.data?.status === 201 || result?.data?.status === 200) {
+      dispatch(setBulkLiveClassUpload({
+        isLoading: false,
+        data: result.data,
+        success: true,
+        error: null
+      }));
+      callbackFn && callbackFn(result);
+    } else {
+      throw new Error(result?.data?.message || 'Failed to upload bulk live classes');
+    }
+  } catch (error) {
+    dispatch(setBulkLiveClassUpload({
+      isLoading: false,
+      data: null,
+      success: false,
+      error: error.message || 'An error occurred during upload'
+    }));
+    callbackFn && callbackFn({ error });
+  }
+};
+
+// Also add a reset function for the bulk upload state
+export const resetBulkLiveClassUpload = () => (dispatch) => {
+  dispatch(setBulkLiveClassUpload({
+    isLoading: false,
+    data: null,
+    success: false,
+    error: null
+  }));
+};
+
 export const {
   getLiveClasses,
   getLiveClass,
@@ -240,6 +295,7 @@ export const {
   reserveLiveClass,
   getStudentsLiveClasses,
   getSubjectsResponse,
+  setBulkLiveClassUpload,
 } = liveClassSlice.actions;
 export const getLiveClassesResponse = (state) =>
   state.liveClass.getLiveClassesResponse;
@@ -247,5 +303,7 @@ export const getLiveClassResponse = (state) =>
   state.liveClass.getLiveClassResponse;
 export const addLiveClassResponse = (state) =>
   state.liveClass.addLiveClassResponse;
+export const selectBulkLiveClassUpload = (state) => state.liveClass.bulkUpload;
+
 
 export default liveClassSlice.reducer;

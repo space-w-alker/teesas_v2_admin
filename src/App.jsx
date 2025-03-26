@@ -179,6 +179,7 @@ import AdminDetails from './pages/admin/AdminRole/AdminDetails';
 import AdminPermission from './pages/admin/AdminRole/AdminPermission';
 import PermissionGuard from './components/common/PermissionGuard';
 import UnauthorizedPage from './pages/UnauthorizedPage';
+import UploadBulkLiveClass from './pages/admin/LiveClasses/UploadBulkLiveClass';
 
 function App() {
 
@@ -406,6 +407,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/upload-bulk-live-classes"
+          element={
+            <ProtectedRoute>
+              <UploadBulkLiveClass isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+
+
         <Route
           path="/teacherlistmanagement"
           element={
