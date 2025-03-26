@@ -3,13 +3,15 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-const LogoutModal = ({closeModal}) => {
-    const token= localStorage.getItem('authToken')
-    const navigate=useNavigate();
-    const handleclick=()=>{
-        localStorage.removeItem("authToken");
-        navigate('/')
-    }
+const LogoutModal = ({ closeModal }) => {
+  const token = localStorage.getItem('authToken')
+  const navigate = useNavigate();
+  const handleclick = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    localStorage.clear();
+    navigate('/')
+  }
   return (
     <div>
       <Popup
