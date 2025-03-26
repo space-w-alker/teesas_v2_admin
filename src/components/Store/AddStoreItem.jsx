@@ -5,9 +5,9 @@ import { createStoreAsync, updateStoreAsync, getStoreDetailsAsync } from "../../
 import { useLocation } from 'react-router-dom';
 
 
-const AddStoreItem = () => {
+const AddStoreItem = ({ isOpen }) => {
   const location = useLocation();
-  const { isOpen, isEdit, itemId } = location.state || {}; // Handle undefined state
+  const { isEdit, itemId } = location.state || {}; // Handle undefined state
 
   const navigate = useNavigate()
   const dispatch = useDispatch();
