@@ -286,7 +286,7 @@ function App() {
           path="/LeaderBoard"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["leaderboard:read"]}>
+              <PermissionGuard requiredPermissions={["leader_board:read"]}>
                 <LeaderBoard isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -296,7 +296,7 @@ function App() {
           path="/LeaderBoardProfile"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["leaderboard:read"]}>
+              <PermissionGuard requiredPermissions={["leader_board:read"]}>
                 <LeaderboardProfile isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -306,7 +306,7 @@ function App() {
           path="/scheduleliveclasses"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["liveclasses:read", "liveclasses:create"]}>
+              <PermissionGuard requiredPermissions={["lessons:read", "lessons:create"]}>
                 <LiveClases isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -316,7 +316,7 @@ function App() {
           path="/AddLiveClass"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["liveclasses:create"]}>
+              <PermissionGuard requiredPermissions={["lessons:create"]}>
                 <AddLiveClass isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -326,7 +326,7 @@ function App() {
           path="/LiveClassDetails"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["liveclasses:read"]}>
+              <PermissionGuard requiredPermissions={["lessons:read"]}>
                 <LiveClassDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
               </PermissionGuard >
             </ProtectedRoute>
@@ -336,7 +336,7 @@ function App() {
           path="/ManageLiveClass"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["liveclasses:read", "liveclasses:update"]}>
+              <PermissionGuard requiredPermissions={["lessons:read", "lessons:update"]}>
                 <ManageLiveClass isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1203,7 +1203,7 @@ function App() {
           path="/test-detail"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:read"]}>
+              <PermissionGuard requiredPermissions={["university_list:read"]}>
                 <TestDetail isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1214,7 +1214,7 @@ function App() {
           path="/question-bank"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:read"]}>
+              <PermissionGuard requiredPermissions={["question_bank:read"]}>
                 <UniversityList isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1224,7 +1224,7 @@ function App() {
           path="/university-subjects"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:read"]}>
+              <PermissionGuard requiredPermissions={["university_list:read"]}>
                 <UniversitySubjects isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1234,7 +1234,7 @@ function App() {
           path="/university-add-subject"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:create"]}>
+              <PermissionGuard requiredPermissions={["university_list:create"]}>
                 <UniversityAddSubject isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1245,7 +1245,7 @@ function App() {
           path="/university-add-pdf"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:create"]}>
+              <PermissionGuard requiredPermissions={["university_list:create"]}>
                 <UniversityAddPdf isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1255,7 +1255,7 @@ function App() {
           path="/university-view-pdf"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:read"]}>
+              <PermissionGuard requiredPermissions={["university_list:read"]}>
                 <UniversityViewPdf isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1266,7 +1266,7 @@ function App() {
           path="/university-subject-detail"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:read"]}>
+              <PermissionGuard requiredPermissions={["university_list:read"]}>
                 <UniversitySubjectDetail isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1277,7 +1277,7 @@ function App() {
           path="/uni-list"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:read"]}>
+              <PermissionGuard requiredPermissions={["university_list:read"]}>
                 <UniList isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1287,7 +1287,7 @@ function App() {
           path="/uni-add"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university:create"]}>
+              <PermissionGuard requiredPermissions={["university_list:create"]}>
                 <UniAdd isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1298,7 +1298,7 @@ function App() {
           path="/e-book"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["ebook:read"]}>
+              <PermissionGuard requiredPermissions={["ebook_list:read"]}>
                 <EBook isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1309,7 +1309,7 @@ function App() {
           path="/add-single-ebook"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["ebook:create"]}>
+              <PermissionGuard requiredPermissions={["ebook_list:create"]}>
                 <AddSingleEbook isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1319,7 +1319,7 @@ function App() {
           path="/add-bulk-ebook"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["ebook:create"]}>
+              <PermissionGuard requiredPermissions={["ebook_list:create"]}>
                 <AddBulkEbook isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1330,7 +1330,7 @@ function App() {
           path="/ebook-details/:id"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["ebook:read"]}>
+              <PermissionGuard requiredPermissions={["ebook_list:read"]}>
                 <EBookDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1341,7 +1341,7 @@ function App() {
           path="/ebook-list"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["ebook:read"]}>
+              <PermissionGuard requiredPermissions={["ebook_list:read"]}>
                 <EbookList isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1351,7 +1351,7 @@ function App() {
           path="/ebook-orders"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["ebook:read"]}>
+              <PermissionGuard requiredPermissions={["ebook_list:read"]}>
                 <EbookOrderList isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1361,7 +1361,7 @@ function App() {
           path="/resellerform"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["reseller:create"]}>
+              <PermissionGuard requiredPermissions={["reseller_forms:create"]}>
                 <ResellerForm isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1372,7 +1372,7 @@ function App() {
           path="/reseller-form-details"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["reseller:read"]}>
+              <PermissionGuard requiredPermissions={["reseller_forms:read"]}>
                 <ResellerFormDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1383,7 +1383,7 @@ function App() {
           path="/7habitsbootcamp"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["habits:read"]}>
+              <PermissionGuard requiredPermissions={["habits_bootcamps:read"]}>
                 <SevenHabitsBootcamp isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1394,7 +1394,7 @@ function App() {
           path="/registration-details"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["habits:read"]}>
+              <PermissionGuard requiredPermissions={["habits_bootcamps:read"]}>
                 <RegistrationDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1404,7 +1404,7 @@ function App() {
           path="/bulk-upload"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["habits:create"]}>
+              <PermissionGuard requiredPermissions={["habits_bootcamps:create"]}>
                 <AddBulk7HabitBootcamp isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1414,7 +1414,7 @@ function App() {
           path="/add-participant"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["habits:create"]}>
+              <PermissionGuard requiredPermissions={["habits_bootcamps:create"]}>
                 <AddParticipant isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1511,7 +1511,7 @@ function App() {
           path="/job-opening"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["job_opening:read"]}>
+              <PermissionGuard requiredPermissions={["job_openings:read"]}>
                 <JobOpenings isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1522,7 +1522,7 @@ function App() {
           path="/add-unit-job"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["job_opening:create"]}>
+              <PermissionGuard requiredPermissions={["job_openings:create"]}>
                 <AddJobForm isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1533,7 +1533,7 @@ function App() {
           path="/job-details"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["job_opening:read"]}>
+              <PermissionGuard requiredPermissions={["job_openings:read"]}>
                 <JobDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1543,7 +1543,7 @@ function App() {
           path="/subscription-types"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscription:read"]}>
+              <PermissionGuard requiredPermissions={["subscription_types:read"]}>
                 <SubscriptionTypes isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1553,7 +1553,7 @@ function App() {
         <Route path="/subscription-plans/:courseId"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscription:read"]}>
+              <PermissionGuard requiredPermissions={["subscription_types:read"]}>
                 <SubscriptionPlanDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1563,7 +1563,7 @@ function App() {
         <Route path="/add-subscription-plan"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscription:create"]}>
+              <PermissionGuard requiredPermissions={["subscription_types:create"]}>
                 <AddSubscriptionPlan isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1572,7 +1572,7 @@ function App() {
         <Route path="/promo-codes"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["promo_code:read"]}>
+              <PermissionGuard requiredPermissions={["promocodes:read"]}>
                 <PromoCodes isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1581,7 +1581,7 @@ function App() {
         <Route path="/add-promo-code"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["promo_code:create"]}>
+              <PermissionGuard requiredPermissions={["promocodes:create"]}>
                 <AddPromoCode isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1590,7 +1590,7 @@ function App() {
         <Route path="/promo-code-details"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["promo_code:read"]}>
+              <PermissionGuard requiredPermissions={["promocodes:read"]}>
                 <PromoCodeDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1599,7 +1599,7 @@ function App() {
         <Route path="/about-us"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["about:read"]}>
+              <PermissionGuard requiredPermissions={["about_us:read"]}>
                 <AboutUs isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1608,7 +1608,7 @@ function App() {
         <Route path="/add-about-us"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["about:create"]}>
+              <PermissionGuard requiredPermissions={["about_us:create"]}>
                 <AddAboutUs isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1617,7 +1617,7 @@ function App() {
         <Route path="/privacy-policy"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["privacy:read"]}>
+              <PermissionGuard requiredPermissions={["privacy_policy:read"]}>
                 <PrivacyPolicy isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1626,7 +1626,7 @@ function App() {
         <Route path="/add-privacy-policy"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["privacy:create"]}>
+              <PermissionGuard requiredPermissions={["privacy_policy:create"]}>
                 <AddPrivacyPolicy isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1653,7 +1653,7 @@ function App() {
         <Route path="/contact-us"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["contact:read"]}>
+              <PermissionGuard requiredPermissions={["contact_info:read"]}>
                 <ContactUs isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1662,7 +1662,7 @@ function App() {
         <Route path="/add-contact-us"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["contact:create"]}>
+              <PermissionGuard requiredPermissions={["contact_info:create"]}>
                 <AddContactUs isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1689,7 +1689,7 @@ function App() {
         <Route path="/banner"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["banner:read"]}>
+              <PermissionGuard requiredPermissions={["home_banner:read"]}>
                 <Banner isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1698,7 +1698,7 @@ function App() {
         <Route path="/Banner/AddBanner"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["banner:create"]}>
+              <PermissionGuard requiredPermissions={["home_banner:create"]}>
                 <AddBanner isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1707,7 +1707,7 @@ function App() {
         <Route path="/Banner/BannerDetails"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["banner:read"]}>
+              <PermissionGuard requiredPermissions={["home_banner:read"]}>
                 <BannerDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1716,7 +1716,7 @@ function App() {
         <Route path="/sales-team"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["sales:read"]}>
+              <PermissionGuard requiredPermissions={["sales_team:read"]}>
                 <SalesTeam isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1726,7 +1726,7 @@ function App() {
         <Route path="/SalesTeam/Details"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["sales:read"]}>
+              <PermissionGuard requiredPermissions={["sales_team:read"]}>
                 <SalesTeamDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1736,7 +1736,7 @@ function App() {
         <Route path="/SalesTeam/AddsalesTeamMember"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["sales:create"]}>
+              <PermissionGuard requiredPermissions={["sales_team:create"]}>
                 <AddSalesTeam isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1745,7 +1745,7 @@ function App() {
         <Route path="/push-notification"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["notification:read"]}>
+              <PermissionGuard requiredPermissions={["push_notifications:read"]}>
                 <PushNotification isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1755,7 +1755,7 @@ function App() {
         <Route path="PushNotification/AddNotification"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["notification:create"]}>
+              <PermissionGuard requiredPermissions={["push_notifications:create"]}>
                 <AddNotification isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1765,7 +1765,7 @@ function App() {
         <Route path="/PushNotification/NotificationDetails"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["notification:read"]}>
+              <PermissionGuard requiredPermissions={["push_notifications:read"]}>
                 <NotificationDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1775,7 +1775,7 @@ function App() {
         <Route path="/country-list"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["country:read"]}>
+              <PermissionGuard requiredPermissions={["country_list:read"]}>
                 <CountryList isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1785,7 +1785,7 @@ function App() {
         <Route path="/Countries/AddCountry"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["country:create"]}>
+              <PermissionGuard requiredPermissions={["country_list:create"]}>
                 <AddCountry isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1794,7 +1794,7 @@ function App() {
         <Route path="/Countries/Details"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["country:read"]}>
+              <PermissionGuard requiredPermissions={["country_list:read"]}>
                 <CountryDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>

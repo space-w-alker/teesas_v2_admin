@@ -17,17 +17,17 @@ const UnauthorizedPage = () => {
                 </p>
                 <div className="space-y-4">
                     <button
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate('/Dashboard')}
                         className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
                     >
                         Go to Home
                     </button>
-                    <button
+                    {/* <button
                         onClick={() => navigate(-1)}
                         className="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300"
                     >
                         Go Back
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>

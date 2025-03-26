@@ -10,7 +10,7 @@ const PermissionGuard = ({ children, requiredPermissions = [] }) => {
     const validatePermissions = () => {
         const token = localStorage.getItem('authToken');
         const userData = localStorage.getItem('userData');
-
+        console.log(requiredPermissions, "requiredPermissions");
         // Return false if token or userData don't exist
         if (!token || !userData) {
             clearSession();
@@ -35,11 +35,11 @@ const PermissionGuard = ({ children, requiredPermissions = [] }) => {
             if (requiredPermissions.length === 0) {
                 return true;
             }
-
             // Check if user has all required permissions
             return requiredPermissions.every(permission => {
                 const [resource, action] = permission.split(':');
-                return userPermissions[resource]?.[action]?.checked === true;
+                const hasPermission = userPermissions[resource]?.[action] == true;
+                return hasPermission;
             });
 
         } catch {
@@ -57,7 +57,7 @@ const PermissionGuard = ({ children, requiredPermissions = [] }) => {
 
     // If permission validation fails, redirect to unauthorized page or home
     if (!validatePermissions()) {
-        clearSession();
+        // clearSession();
         return <Navigate to="/unauthorized" replace state={{ from: location }} />;
     }
 
