@@ -18,6 +18,9 @@ import SearchButton from "./../../../assets/images/Searchbutton.png";
 import Vector from "../../../assets/images/Vector.png";
 import container from "../../../assets/images/container.png";
 import { TailSpin } from "react-loader-spinner";
+import SuccessModal from "../../../components/common/SuccessModal";
+import { deleteAPICall } from "../../../apis/client/methodCalls";
+import { config } from "../../../apis/client/config";
 
 const AdminUser = ({ isOpen }) => {
   const Navigate = useNavigate();
@@ -32,6 +35,8 @@ const AdminUser = ({ isOpen }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -108,11 +113,54 @@ const AdminUser = ({ isOpen }) => {
     });
   };
 
+  // Add delete function
+  const deleteAdminUser = async (userId) => {
+    try {
+      setLoading(true);
+      const URL = `${config.BASEURL}admin/auth/users/${userId}`;
+      const result = await deleteAPICall(URL, null, token);
+
+      if (result?.data?.status === 200) {
+        toast.success("Admin user deleted successfully");
+        // Refresh the list
+        getAdminUsersAsync({
+          dispatch: dispatch,
+          data: {
+            page: 1,
+            page_size: 10,
+          },
+          token: token,
+          callbackFn: (res) => {
+            setAdminData(res?.data);
+            setLoading(false);
+          },
+        });
+      } else {
+        toast.error(result?.data?.message || "Failed to delete admin user");
+        setLoading(false);
+      }
+    } catch (error) {
+      toast.error("Error deleting admin user");
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (user) => {
+    setUserToDelete(user);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    if (userToDelete) {
+      deleteAdminUser(userToDelete.id);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${
-        isOpen ? "lg:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -250,11 +298,13 @@ const AdminUser = ({ isOpen }) => {
             {adminData?.users?.map((user) => (
               <li
                 key={user.id}
-                className=" cursor-default"
-                onClick={() => Navigate(`/AdminUserDetails?id=${user?.id}`)}
+                className="cursor-default"
               >
-                <div className="flex justify-between gap-4 items-center cursor-pointer">
-                  <div className="px-[18px] py-[10px] mt-5 flex  items-center gap-[10px] pr-[15px]">
+                <div className="flex justify-between gap-4 items-center">
+                  <div
+                    className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px] cursor-pointer"
+                    onClick={() => Navigate(`/AdminUserDetails?id=${user?.id}`)}
+                  >
                     <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative">
                       <img
                         src={bookopen}
@@ -263,18 +313,15 @@ const AdminUser = ({ isOpen }) => {
                       />
                     </div>
                     <div>
-                      <div className="flex items-center gap-3 px-[18px] cursor-pointer">
-                        {/* <div>
-                  <img src={item.icon1} alt="Icon 1" />
-                </div> */}
-                        <div className="flex items-center  gap-2">
-                          <p className=" font-bold text-[14px] leading-[16px] text-[#171717] ">
+                      <div className="flex items-center gap-3 px-[18px]">
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-[14px] leading-[16px] text-[#171717]">
                             {user?.firstName}
                           </p>
-                          <p className=" font-bold text-[14px] leading-[16px] text-[#171717]    ">
+                          <p className="font-bold text-[14px] leading-[16px] text-[#171717]">
                             {user?.middleName}
                           </p>
-                          <p className=" font-bold text-[14px] leading-[16px] text-[#171717]    ">
+                          <p className="font-bold text-[14px] leading-[16px] text-[#171717]">
                             {user?.lastName}
                           </p>
                         </div>
@@ -282,15 +329,25 @@ const AdminUser = ({ isOpen }) => {
                     </div>
                   </div>
 
-                  {user?.status == 1 ? (
-                    <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
-                      Active
+                  <div className="flex items-center gap-3">
+                    {user?.status == 1 ? (
+                      <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px] text-white bg-[#08AA58]">
+                        Active
+                      </button>
+                    ) : (
+                      <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px] text-white bg-[#aa0808]">
+                        Inactive
+                      </button>
+                    )}
+
+                    {/* Add Delete Button */}
+                    <button
+                      onClick={() => handleDeleteClick(user)}
+                      className="px-3 py-1 bg-red-500 text-white rounded-md text-sm hover:bg-red-600"
+                    >
+                      Delete
                     </button>
-                  ) : (
-                    <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#aa0808]">
-                      Inactive
-                    </button>
-                  )}
+                  </div>
                 </div>
               </li>
             ))}
@@ -342,10 +399,10 @@ const AdminUser = ({ isOpen }) => {
             textcolor="text-[#000000]"
             imagePosition="right"
             onClick={() => {
-              if (page < adminData?.paging?.total_pages) {
+              if (page < adminData?.totalPages) {
                 setLoading(true);
                 const newData = {
-                  page: page - 1,
+                  page: page + 1,
                   page_size: 10,
                   filter: sortKey,
                 };
@@ -369,12 +426,26 @@ const AdminUser = ({ isOpen }) => {
           />
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <SuccessModal
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          type="caution"
+          title="Delete Admin User"
+          message="Are you sure you want to delete this admin user?"
+          buttonText="Delete"
+          onConfirm={confirmDelete}
+        />
+      )}
+
       {isModalFilterOpen && (
         <Modal
           closeModal={handleModalClose}
-          closeModalWithClick2={oldestOnClick}
-          closeModalWithClick1={latestOnClick}
           label="Sort By"
+          closeModalWithClick1={latestOnClick}
+          closeModalWithClick2={oldestOnClick}
         />
       )}
     </div>
@@ -382,3 +453,4 @@ const AdminUser = ({ isOpen }) => {
 };
 
 export default AdminUser;
+

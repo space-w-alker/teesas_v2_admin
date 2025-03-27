@@ -1,20 +1,42 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { addPrivacyPolicyAsync } from '../../apis/slices/cornerSlice';
+import { addPrivacyPolicyAsync, updatePrivacyPolicyAsync } from '../../apis/slices/cornerSlice';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
+import { toast } from 'react-toastify';
 
 const AddPrivacyPolicy = ({ isOpen }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const token = localStorage.getItem('authToken') || '';
+
+  // Check if we're in edit mode
+  const isEditMode = location.state?.isEdit || false;
+  const existingData = location.state?.privacyPolicyData || null;
+
   const [showSuccess, setShowSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
+    id: '',
     title: '',
     description: ''
   });
+  const [errors, setErrors] = useState({});
+
+  // Load existing data if in edit mode
+  useEffect(() => {
+    if (isEditMode && existingData) {
+      setFormData({
+        id: existingData.id || '',
+        title: existingData.title || '',
+        description: existingData.description || ''
+      });
+    }
+  }, [isEditMode, existingData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,15 +44,61 @@ const AddPrivacyPolicy = ({ isOpen }) => {
       ...prev,
       [name]: value
     }));
+
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = () => {
-    const data = { title: formData.title, description: formData.description };
-    dispatch(addPrivacyPolicyAsync({
+    if (!validateForm()) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+
+    setLoading(true);
+
+    const data = {
+      title: formData.title.trim(),
+      description: formData.description.trim()
+    };
+
+    // If editing, include the ID
+    if (isEditMode) {
+      data.id = formData.id;
+    }
+
+    const action = isEditMode ? updatePrivacyPolicyAsync : addPrivacyPolicyAsync;
+
+    dispatch(action({
       dispatch,
       data,
-      token: '',
-      callbackFn: () => setShowSuccess(true)
+      token,
+      callbackFn: (response) => {
+        setLoading(false);
+        if (response?.data?.status === 200) {
+          setShowSuccess(true);
+        }
+      }
     }));
   };
 
@@ -43,60 +111,66 @@ const AddPrivacyPolicy = ({ isOpen }) => {
     <div className={`py-[7rem] px-[5rem] ${isOpen ? "xl:ml-[260px]" : ""}`}>
       <Headers
         value1="Home / Privacy Policy"
-        value2="Add Privacy Policy"
+        value2={isEditMode ? "Edit Privacy Policy" : "Add Privacy Policy"}
       />
 
       <div className="grid grid-cols-3 gap-8 mt-8">
         <div className="col-span-2">
           <div className="bg-white rounded-xl p-8 shadow-sm">
-            <h1 className="text-xl  text-gray-900 mb-4">Add Privacy Policy</h1>
+            <h1 className="text-xl text-gray-900 mb-4">{isEditMode ? "Edit Privacy Policy" : "Add Privacy Policy"}</h1>
             <div className="h-[1px] w-full bg-black mb-8"></div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Title</label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="Enter title"
-              />
-            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Title <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className={`w-full p-3 border ${errors.title ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500`}
+                  placeholder="Enter title"
+                />
+                {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
+              </div>
 
-            <div className="space-y-2 mt-4">
-              <label className="block text-sm font-medium text-gray-700">Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="w-full h-[calc(70vh-400px)] p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="Enter description"
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Description <span className="text-red-500">*</span></label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className={`w-full h-[calc(70vh-400px)] p-3 border ${errors.description ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500`}
+                  placeholder="Enter description"
+                />
+                {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
+              </div>
             </div>
           </div>
         </div>
 
         <div className="col-span-1">
           <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h2 className="text-xl  text-gray-900 mb-8">Summary</h2>
+            <h2 className="text-xl text-gray-900 mb-8">Summary</h2>
             <div className="space-y-4">
               <div className="flex justify-between bg-green-100 p-4 rounded-lg">
-                <span className="text-gray-600">Title :</span>
-                <input className='bg-green-100' type="text" value={formData.title} readOnly />
+                <span className="text-gray-600">Title:</span>
+                <span className="text-gray-800 font-medium truncate max-w-[150px]">{formData.title || '-'}</span>
               </div>
+
               <div className="flex justify-between bg-green-100 p-4 rounded-lg mt-4">
-                <span className="text-gray-600">Description :</span>
-                <input className='bg-green-100' type="text" value={formData.description} readOnly />
+                <span className="text-gray-600">Description:</span>
+                <span className="text-gray-800 font-medium truncate max-w-[150px]">{formData.description ? `${formData.description.substring(0, 20)}...` : '-'}</span>
               </div>
 
               <div className="pt-6 mt-6 border-t flex justify-center">
                 <Custombutton
-                  onClick={handleSave}
-                  value="Create Privacy Policy"
+                  value={loading ? "Processing..." : (isEditMode ? "Update Privacy Policy" : "Create Privacy Policy")}
                   backgroundcolor="bg-[#27AE60] hover:bg-[#219652]"
                   textcolor="text-white"
-                  width="w-[160px]"
+                  width="w-full"
+                  onClick={handleSave}
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -107,8 +181,9 @@ const AddPrivacyPolicy = ({ isOpen }) => {
       <SuccessModal
         isOpen={showSuccess}
         onClose={handleClose}
-        title="Privacy Policy Added Successfully"
-        message="Your privacy policy has been successfully saved."
+        type="success"
+        title={isEditMode ? "Privacy Policy Updated Successfully" : "Privacy Policy Added Successfully"}
+        message={isEditMode ? "Your privacy policy has been successfully updated." : "Your privacy policy has been successfully saved."}
         buttonText="Close"
       />
     </div>

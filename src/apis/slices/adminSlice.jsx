@@ -48,6 +48,12 @@ export const adminSlice = createSlice({
     getAdminUserResponse: {
       response: {},
     },
+    deleteAdminUserResponse: {
+      response: {},
+      isLoading: false,
+      success: false,
+      error: null,
+    },
     getDashBoardResponse: {
       response: {},
     },
@@ -101,6 +107,9 @@ export const adminSlice = createSlice({
     },
     getAdminUser: (state, action) => {
       state.getAdminUserResponse = action.payload;
+    },
+    deleteAdminUser: (state, action) => {
+      state.deleteAdminUserResponse = action.payload;
     },
     getDashBoard: (state, action) => {
       state.getDashBoardResponse = action.payload;
@@ -423,6 +432,31 @@ export const getTotalOrdersAsync = async ({
   }
 };
 
+export const deleteAdminUserAsync = async ({ dispatch, userId, token, callbackFn }) => {
+  try {
+    dispatch(deleteAdminUser({ isLoading: true, success: false, error: null }));
+    const URL = `${BASEURL}admin/auth/users/${userId}`;
+    
+    const result = await deleteAPICall(URL, null, token);
+    
+    if (result?.data?.status === 200) {
+      dispatch(deleteAdminUser({ isLoading: false, success: true, error: null }));
+      toast.success(result?.data?.message || "Admin user deleted successfully");
+      callbackFn && callbackFn(result);
+      return result;
+    } else {
+      dispatch(deleteAdminUser({ isLoading: false, success: false, error: result?.data?.message }));
+      toast.error(result?.data?.message || "Failed to delete admin user");
+      callbackFn && callbackFn(result);
+      return result;
+    }
+  } catch (error) {
+    dispatch(deleteAdminUser({ isLoading: false, success: false, error: error.message }));
+    toast.error("Error deleting admin user: " + error.message);
+    return { error: error.message };
+  }
+};
+
 export const {
   getAdminRoles,
   getAdminRolePermission,
@@ -440,6 +474,7 @@ export const {
   getPush,
   addPush,
   deletePush,
+  deleteAdminUser,
 } = adminSlice.actions;
 export const getAdminRolesResponse = (state) =>
   state.admin.getAdminRolesResponse;
@@ -447,5 +482,7 @@ export const getAdminRolePermissionResponse = (state) =>
   state.admin.getAdminRolePermissionResponse;
 export const updateRolePermissionResponse = (state) =>
   state.admin.updateRolePermissionResponse;
+export const deleteAdminUserResponse = (state) =>
+  state.admin.deleteAdminUserResponse;
 
 export default adminSlice.reducer;

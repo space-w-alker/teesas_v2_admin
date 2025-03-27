@@ -1,22 +1,40 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { listPrivacyPolicyAsync, privacyPolicyList } from '../../apis/slices/cornerSlice';
+import { getPrivacyPolicyAsync, privacyPolicyDetails } from '../../apis/slices/cornerSlice';
 import teesasLogo from '../../assets/images/Tessas.png';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
+import { FaEdit } from 'react-icons/fa';
 
 const PrivacyPolicy = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const privacyPolicyData = useSelector(privacyPolicyList);
-  // console.log('privacyPolicyData', privacyPolicyData);
+  const privacyPolicyData = useSelector(privacyPolicyDetails);
+  const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem('authToken') || '';
 
   useEffect(() => {
-    dispatch(listPrivacyPolicyAsync({ dispatch, token: '' }));
-  }, [dispatch]);
+    setLoading(true);
+    dispatch(getPrivacyPolicyAsync({
+      dispatch,
+      token,
+      callbackFn: () => setLoading(false)
+    }));
+  }, [dispatch, token]);
+
+  const handleEdit = () => {
+    if (privacyPolicyData?.data) {
+      navigate('/add-privacy-policy', {
+        state: {
+          isEdit: true,
+          privacyPolicyData: privacyPolicyData.data
+        }
+      });
+    }
+  };
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
@@ -39,36 +57,52 @@ const PrivacyPolicy = ({ isOpen }) => {
         </div>
       </div>
 
-      <div className="flex justify-center mt-4">
-        <Custombutton
-          value="Manage"
-          textcolor="text-green-400"
-          backgroundcolor="hover:text-green-600"
-          onClick={() => navigate('/add-privacy-policy')}
-        />
+      <div className="flex justify-center gap-4 mt-4">
+        {privacyPolicyData?.data ? (
+          <Custombutton
+            value="Manage"
+            icon={<FaEdit className="mr-2" />}
+            textcolor="text-green-600"
+            backgroundcolor="hover:text-blue-700"
+            onClick={handleEdit}
+          />
+        ) : (
+          <Custombutton
+            value="Add"
+            textcolor="text-green-500"
+            backgroundcolor="hover:text-green-700"
+            onClick={() => navigate('/add-privacy-policy')}
+          />
+        )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <div className="border-b border-gray-200 pb-2 mb-4">
-          <h3 className="text-lg font-bold text-gray-900">Privacy Policy</h3>
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="bg-white rounded-lg p-4">
-            {privacyPolicyData?.data?.length > 0 ? (
-              privacyPolicyData?.data?.map((item, index) => (
-                <div key={index} className="mb-4">
-                  <h4 className="text-lg font-bold text-gray-900">{item.title}</h4>
-                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="border-b border-gray-200 pb-2 mb-4">
+            <h3 className="text-lg font-bold text-gray-900">Privacy Policy</h3>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-white rounded-lg p-4">
+              {privacyPolicyData?.data ? (
+                <div className="mb-4">
+                  <h4 className="text-md font-semibold text-gray-800">{privacyPolicyData.data.title}</h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {privacyPolicyData.data.description}
+                  </p>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-600 leading-relaxed">
-                No privacy policy information available.
-              </p>
-            )}
+              ) : (
+                <p className="text-gray-600 leading-relaxed">
+                  No privacy policy information available. Click "Add" to create one.
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

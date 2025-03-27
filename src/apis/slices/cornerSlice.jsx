@@ -213,7 +213,7 @@ export const addAboutUsAsync = ({ dispatch, data, token, callbackFn }) => {
 export const listAboutUsAsync = ({ dispatch, token, callbackFn }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}corner/about-us/list`;
+            const URL = `${BASEURL}corner/about-us`;
             const response = await getAPICall(URL, {}, token);
             if (response?.data?.status === 200) {
                 dispatch(listAboutUsSuccess(response.data));
@@ -227,12 +227,13 @@ export const listAboutUsAsync = ({ dispatch, token, callbackFn }) => {
     };
 };
 
-// Update About Us
-export const updateAboutUsAsync = ({ dispatch, id, formData, token, callbackFn }) => {
+// Add this to the existing updateAboutUsAsync function or modify it if it exists
+export const updateAboutUsAsync = ({ dispatch, data, token, callbackFn }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}corner/about-us/update/${id}`;
-            const response = await putAPICall(URL, formData, true, token);
+            const URL = `${BASEURL}corner/about-us/update`;
+            const response = await postAPICall(URL, data, token);
+
             if (response?.data?.status === 200) {
                 dispatch(updateAboutUsSuccess(response.data));
                 toast.success("About Us updated successfully");
@@ -245,6 +246,7 @@ export const updateAboutUsAsync = ({ dispatch, id, formData, token, callbackFn }
         }
     };
 };
+
 
 // Delete About Us
 export const deleteAboutUsAsync = ({ dispatch, id, token, callbackFn }) => {
@@ -305,30 +307,31 @@ export const addPrivacyPolicyAsync = ({ dispatch, data, token, callbackFn }) => 
 };
 
 // List Privacy Policy
-export const listPrivacyPolicyAsync = ({ dispatch, token, callbackFn }) => {
+export const getPrivacyPolicyAsync = ({ dispatch, token, callbackFn }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}corner/privacy-policy/list`;
+            const URL = `${BASEURL}corner/privacy-policy`;
             const response = await getAPICall(URL, {}, token);
-            console.log('response', response);
+
             if (response?.data?.status === 200) {
-                dispatch(listPrivacyPolicySuccess(response.data));
+                dispatch(getPrivacyPolicyDetailsSuccess(response.data));
                 callbackFn && callbackFn(response.data);
             } else {
-                toast.error("Failed to fetch Privacy Policy list.");
+                toast.error("Failed to fetch Privacy Policy.");
             }
         } catch (error) {
-            toast.error("Error fetching Privacy Policy list: " + error);
+            toast.error("Error fetching Privacy Policy: " + error);
         }
     };
 };
 
 // Update Privacy Policy
-export const updatePrivacyPolicyAsync = ({ dispatch, id, formData, token, callbackFn }) => {
+export const updatePrivacyPolicyAsync = ({ dispatch, data, token, callbackFn }) => {
     return async () => {
         try {
-            const URL = `${BASEURL}corner/privacy-policy/update/${id}`;
-            const response = await putAPICall(URL, formData, true, token);
+            const URL = `${BASEURL}corner/privacy-policy/update`;
+            const response = await postAPICall(URL, data, token);
+
             if (response?.data?.status === 200) {
                 dispatch(updatePrivacyPolicySuccess(response.data));
                 toast.success("Privacy Policy updated successfully");
@@ -481,19 +484,50 @@ export const addTestimonialAsync = ({ dispatch, data, token, callbackFn }) => {
     return async () => {
         try {
             const URL = `${BASEURL}corner/testimonial/add`;
-            const response = await postAPICall(URL, data, token);
+
+       
+            if (!data.description || !data.description.trim() || !data.name || !data.name.trim()) {
+                const errorResponse = {
+                    data: {
+                        status: 400,
+                        message: "Description and author name are required"
+                    }
+                };
+                callbackFn && callbackFn(errorResponse);
+                return errorResponse;
+            }
+
+            const cleanData = {
+                description: data.description.trim(),
+                name: data.name.trim()
+            };
+
+            const response = await postAPICall(URL, cleanData, token);
+
             if (response?.data?.status === 200) {
                 dispatch(addTestimonialSuccess(response.data));
                 toast.success("Testimonial added successfully");
-                callbackFn && callbackFn(response.data);
+                callbackFn && callbackFn(response);
+                return response;
             } else {
-                toast.error("Failed to add Testimonial.");
+                toast.error(response?.data?.message || "Failed to add testimonial");
+                callbackFn && callbackFn(response);
+                return response;
             }
         } catch (error) {
-            toast.error("Error adding Testimonial: " + error);
+            const errorResponse = {
+                data: {
+                    status: 500,
+                    message: error.message || "Error adding testimonial"
+                }
+            };
+            toast.error("Error adding testimonial: " + error);
+            callbackFn && callbackFn(errorResponse);
+            return errorResponse;
         }
     };
 };
+
 
 // List Testimonial
 export const listTestimonialAsync = ({ dispatch, token, callbackFn }) => {
