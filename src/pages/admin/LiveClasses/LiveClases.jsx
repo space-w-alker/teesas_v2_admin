@@ -239,14 +239,14 @@ const LiveClases = ({ isOpen }) => {
                     }}
                   />
                 </div>
-                <div
+                {/* <div
                   className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
                 >
                   <img src={Vector} alt="Vector" />
                 </div>
                 <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2">
                   <img src={container} alt="Container" />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

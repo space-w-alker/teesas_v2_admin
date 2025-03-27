@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 
 const SubscribedUserList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
@@ -282,11 +282,16 @@ const SubscribedUserList = () => {
                 <li
                   key={subscription?.id || `subscription-${index}`}
                   className="cursor-pointer"
-                // onClick={() => {
-                //   if (subscription?.user?.id) {
-                //     Navigate(`/userDetails?id=${subscription.user.id}`);
-                //   }
-                // }}
+
+
+
+
+
+                  onClick={() => {
+                    if (subscription?.user?.id) {
+                      navigate(`/userdetails/${subscription.user.id}`);
+                    }
+                  }}
                 >
                   <div className="px-[18px] py-[10px]">
                     <h6 className="font-light text-[12px] leading-[13px] text-[#767676]">

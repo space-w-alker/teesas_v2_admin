@@ -261,6 +261,8 @@ const Categories = ({ isOpen }) => {
         <Headcomponent
           value="Categories"
           showSearch={true}
+          showFilter={false}
+          showMenu={false} 
           onSearch={handleSearch}
           searchValue={searchTerm}
           onClear={() => {

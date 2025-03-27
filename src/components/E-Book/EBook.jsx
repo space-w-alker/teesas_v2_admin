@@ -215,7 +215,8 @@ const EBook = ({ isOpen }) => {
 
       <div className="p-6 border-b border-gray-100">
         <div className="flex justify-between items-center">
-          <Headcomponent value="E-Books" showSearch={false} />
+          <Headcomponent value="E-Books" showSearch={false} showFilter={false}
+            showMenu={false} />
         </div>
       </div>
 
@@ -240,7 +241,8 @@ const EBook = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm mb-8">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="E-Book List" showSearch={true} onSearch={handleSearchChange} />
+          <Headcomponent value="E-Book List" showSearch={true} showFilter={false}
+            showMenu={false} onSearch={handleSearchChange} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
@@ -287,7 +289,8 @@ const EBook = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="Book Order" showSearch={true} onSearch={handleSearchChange2} />
+          <Headcomponent value="Book Order" showSearch={true} showFilter={false}
+            showMenu={false} onSearch={handleSearchChange2} />
         </div>
         <div className="p-6">
           {bookOrders.map((orderGroup, groupIndex) => (

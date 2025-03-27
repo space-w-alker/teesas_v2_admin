@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Headers from '../common/Headers';
 import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
@@ -11,7 +11,6 @@ import { TailSpin } from "react-loader-spinner";
 import { toast } from 'react-toastify';
 
 const ResellerItem = ({ name, status, id, navigate }) => {
-
   const navigateToDetails = () => {
     navigate('/reseller-form-details', {
       state: {
@@ -53,6 +52,7 @@ const ResellerItem = ({ name, status, id, navigate }) => {
     </div>
   );
 };
+
 const formatDate = (dateString) => {
   try {
     const date = new Date(dateString);
@@ -62,7 +62,7 @@ const formatDate = (dateString) => {
       day: 'numeric'
     });
   } catch (error) {
-    console.error("Error formatting date:", error);
+   
     return dateString || "Unknown date";
   }
 };
@@ -71,7 +71,8 @@ const ResellerForm = ({ isOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const isInitialMount = useRef(true);
 
   const resellersState = useSelector(selectResellersList) || {
     data: [],
@@ -84,16 +85,119 @@ const ResellerForm = ({ isOpen }) => {
     }
   };
 
-  useEffect(() => {
-    dispatch(getResellersAsync(currentPage));
-  }, [dispatch, currentPage]);
 
+
+ 
+  useEffect(() => {
+    if (isInitialMount.current) {
+      dispatch(getResellersAsync(1, ''));
+      isInitialMount.current = false;
+    }
+  }, [dispatch]);
+
+
+  useEffect(() => {
+    if (!isInitialMount.current && currentPage > 1) {
+      dispatch(getResellersAsync(currentPage, searchTerm));
+    }
+  }, [currentPage, dispatch, searchTerm]);
+
+
+  useEffect(() => {
+    if (!isInitialMount.current && searchTerm !== '') {
+      const delayDebounceFn = setTimeout(() => {
+        setCurrentPage(1);
+        dispatch(getResellersAsync(1, searchTerm));
+      }, 800);
+      return () => clearTimeout(delayDebounceFn);
+    }
+  }, [searchTerm, dispatch]);
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || (resellersState.pagination && newPage > resellersState.pagination.total_pages)) {
       return;
     }
     setCurrentPage(newPage);
+  };
+
+  const handleSearch = (value) => {
+    const sanitizedValue = value.trim();
+    setSearchTerm(sanitizedValue);
+    if (!sanitizedValue) {
+      setCurrentPage(1);
+      dispatch(getResellersAsync(1, ''));
+    }
+  };
+
+  const handleReload = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
+    dispatch(getResellersAsync(1, ''));
+  };
+
+
+  const renderResellerItems = () => {
+
+    if (!resellersState.data || !Array.isArray(resellersState.data) || resellersState.data.length === 0) {
+
+      if (resellersState.statistics && resellersState.statistics.total_resellers > 0) {
+        return (
+          <div className="text-center py-8">
+
+            <p className="text-gray-500">No Data Found</p>
+
+          </div>
+        );
+      }
+
+      return (
+        <div className="text-center py-8 text-gray-500">
+          {resellersState.isLoading ? "Loading..." : searchTerm ? "No results found for your search" : "No reseller forms found"}
+        </div>
+      );
+    }
+
+
+    const isGroupedByDate = resellersState.data[0] && resellersState.data[0].date && resellersState.data[0].forms;
+
+    if (isGroupedByDate) {
+
+      return (
+        <div className="space-y-6">
+          {resellersState.data.map((group, groupIndex) => (
+            <div key={groupIndex}>
+              <div className="text-gray-400 text-sm mb-3">{formatDate(group.date)}</div>
+              <div className="space-y-4">
+                {group.forms && group.forms.map((form, index) => (
+                  <ResellerItem
+                    key={index}
+                    id={form.id}
+                    name={form.name}
+                    status={form.status}
+                    navigate={navigate}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    } else {
+     
+      return (
+        <div className="space-y-4">
+          {resellersState.data.map((reseller, index) => (
+            <ResellerItem
+              key={index}
+              id={reseller.id}
+              name={reseller.name || 'Unknown Name'}
+              status={reseller.status || 'Unknown Status'}
+              navigate={navigate}
+            />
+          ))}
+        </div>
+      );
+    }
   };
 
   return (
@@ -112,10 +216,10 @@ const ResellerForm = ({ isOpen }) => {
         </div>
       )}
 
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex justify-between items-center">
-          <Headcomponent value="Reseller Form" showSearch={false} />
-        </div>
+      <div className="mt-6 mb-8">
+        <h1 className="text-xl text-gray-900 cursor-pointer hover:text-[#27AE60] transition-colors"
+          onClick={handleReload}
+        >Reseller Forms</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
@@ -145,35 +249,25 @@ const ResellerForm = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="Matric Reseller's Registration" showSearch={true} />
+          <Headcomponent
+            value="Matric Reseller's Registration"
+            showSearch={true}
+            showFilter={false}
+            showMenu={false} 
+            onSearch={handleSearch}
+            searchValue={searchTerm}
+            onClear={() => {
+              setSearchTerm('');
+              setCurrentPage(1);
+              dispatch(getResellersAsync(1, ''));
+            }}
+          />
         </div>
 
         <div className="p-6">
-          {resellersState.data && resellersState.data.length > 0 ? (
-            <div className="space-y-6">
-              {resellersState.data.map((group, groupIndex) => (
-                <div key={groupIndex}>
-                  <div className="text-gray-400 text-sm mb-3">{formatDate(group.date)}</div>
-                  <div className="space-y-4">
-                    {group.forms && group.forms.map((form, index) => (
-                      <ResellerItem
-                        key={index}
-                        id={form.id}
-                        name={form.name}
-                        status={form.status}
-                        navigate={navigate}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              {resellersState.isLoading ? "Loading..." : "No reseller forms found"}
-            </div>
-          )}
+          {renderResellerItems()}
         </div>
+
         {resellersState && resellersState.pagination && (
           <div className="p-6 border-t border-gray-100 flex justify-between items-center">
             <Custombutton

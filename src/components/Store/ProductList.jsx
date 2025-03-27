@@ -213,8 +213,8 @@ const ProductList = ({ isOpen }) => {
               <option value="success">Success</option>
               <option value="failed">Failed</option>
             </select>
-            <img src={Vector} className="w-6 h-6 cursor-pointer" alt="filter" />
-            <img src={container} className="w-6 h-6 cursor-pointer" alt="menu" />
+            {/* <img src={Vector} className="w-6 h-6 cursor-pointer" alt="filter" />
+            <img src={container} className="w-6 h-6 cursor-pointer" alt="menu" /> */}
           </div>
         </div>
 
@@ -299,7 +299,8 @@ const ProductList = ({ isOpen }) => {
 
       {/* Store Items */}
       <div className="bg-white rounded-xl p-6 mt-6">
-        <Headcomponent value="Store items" showSearch={true} onSearch={(e) => setSort((prevSort) => ({ ...prevSort, search: e }))} />
+        <Headcomponent value="Store items" showSearch={true} showFilter={false}
+          showMenu={false} onSearch={(e) => setSort((prevSort) => ({ ...prevSort, search: e }))} />
 
         <div className="border-t pt-4">
           {storeItems?.map(item => (

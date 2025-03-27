@@ -142,8 +142,9 @@ const AddClass = ({ isOpen }) => {
         isOpen={showSuccess}
         onClose={() => {
           setShowSuccess(false);
-          navigate(`/categories/details/${id}`);
+          navigate(-1);
         }}
+
         title="Success"
         message={isEdit ? "Class updated successfully" : "Class added successfully"}
       />
