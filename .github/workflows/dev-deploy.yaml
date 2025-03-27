@@ -46,9 +46,9 @@ jobs:
             rm -rf package-lock.json
             rm -rf node_modules
             npm install
-            yarn build
+            #yarn build
+            pm2 start yarn --name "teesas_admin" --interpreter bash -- start
             #pm2 restart teesas_admin
-            pm2 start "yarn start" --name "teesas_admin"
             pm2 save
   notify-teams:
     runs-on: ubuntu-latest
