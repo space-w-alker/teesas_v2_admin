@@ -48,7 +48,7 @@ jobs:
             npm install
             yarn build
             #pm2 restart teesas_admin
-            pm2 start yarn --name "teesas_admin" -- start
+            pm2 start "yarn start" --name "teesas_admin"
             pm2 save
   notify-teams:
     runs-on: ubuntu-latest
