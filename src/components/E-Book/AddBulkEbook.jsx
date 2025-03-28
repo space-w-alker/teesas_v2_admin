@@ -5,9 +5,13 @@ import Headcomponent from '../common/Headcomponent';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
 import { FaCloudUploadAlt } from "react-icons/fa";
+import { useDispatch } from 'react-redux';
+import { addEbookAsync } from '../../apis/slices/ebookSlice';
+import { toast } from 'react-toastify';
 
 const AddBulkEbook = ({ isOpen }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     files: null
@@ -15,7 +19,7 @@ const AddBulkEbook = ({ isOpen }) => {
   const [dragActive, setDragActive] = useState(false);
 
   const handleFileUpload = (e) => {
-    setFormData({...formData, files: e.target.files});
+    setFormData({ ...formData, files: e.target.files });
   };
 
   const handleDrag = (e) => {
@@ -33,12 +37,27 @@ const AddBulkEbook = ({ isOpen }) => {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files) {
-      setFormData({...formData, files: e.dataTransfer.files});
+      setFormData({ ...formData, files: e.dataTransfer.files });
     }
   };
 
-  const handleSubmit = () => {
-    setShowSuccess(true);
+  const handleSubmit = async () => {
+    if (!formData.files) {
+      toast.error("Please select files before uploading.");
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    Array.from(formData.files).forEach(file => {
+      formDataToSend.append("files", file);
+    });
+
+    try {
+      await dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
+      setShowSuccess(true);
+    } catch (error) {
+      toast.error("Failed to upload e-books. Please try again.");
+    }
   };
 
   return (
@@ -48,11 +67,10 @@ const AddBulkEbook = ({ isOpen }) => {
       <div className=" mt-6 flex gap-6">
         <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
           <Headcomponent value="Upload Multiple E-Books" showSearch={false} />
-          
-          <div 
-            className={` bg-green-50 border-2 border-dashed rounded-lg p-8 text-center ${
-              dragActive ? 'bg-[#E9FDEE] border-[#27AE60]' : 'border-gray-300'
-            }`}
+
+          <div
+            className={` bg-green-50 border-2 border-dashed rounded-lg p-8 text-center ${dragActive ? 'bg-[#E9FDEE] border-[#27AE60]' : 'border-gray-300'
+              }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -112,7 +130,7 @@ const AddBulkEbook = ({ isOpen }) => {
         </div>
       </div>
 
-      <SuccessModal 
+      <SuccessModal
         isOpen={showSuccess}
         onClose={() => {
           setShowSuccess(false);

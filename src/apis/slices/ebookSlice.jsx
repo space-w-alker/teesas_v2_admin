@@ -78,9 +78,10 @@ export const updateEbookAsync = ({ dispatch, id, formData, token, callbackFn }) 
     try {
       const URL = `${BASEURL}ebook/update/${id}`;
       const response = await putAPICall(URL, formData, true, token);
+      console.log(response?.data?.status);
       if (response?.data?.status == 200) {
-        // callbackFn && callbackFn(response.data);
-        dispatch(updateEbookDetailsSuccess(response.data));
+        callbackFn && callbackFn(response.data);
+        dispatch(updateResponse(response.data));
       } else {
         toast.error("Failed to update eBook details.");
       }
