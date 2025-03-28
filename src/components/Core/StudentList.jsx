@@ -16,6 +16,7 @@ import Vector from "../../assets/images/Vector.png";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { fetchUsersAsync } from "../../apis/slices/userSlice";
+import Headcomponent from "../common/Headcomponent";
 
 const StudentList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,29 +67,6 @@ const StudentList = () => {
     setSelectedMonth(month);
     setIsModalOpen(false);
   };
-  const latestOnClick = () => {
-    setLoading(true);
-    setSortKey("Latest");
-    const newData = {
-      page: 1,
-      page_size: 10,
-      sort: "Latest",
-      course_id: selectedCourses,
-      status: activeUsers ? "Active" : "Inactive",
-    };
-  };
-
-  const oldestOnClick = () => {
-    setLoading(true);
-    setSortKey("Oldest");
-    const newData = {
-      page: 1,
-      page_size: 10,
-      sort: "Oldest",
-      course_id: selectedCourses,
-      status: activeUsers ? "Active" : "Inactive",
-    };
-  };
 
   // ---------------------------------------------NEW STUFF START-------------------------------------------------------------------
 
@@ -101,9 +79,10 @@ const StudentList = () => {
         // status: "active",
         // location: "",
         // grade: ""
+        // search: ""
       },
       sort: {
-        field: "userName",
+        field: "created_at",
         order: "asc",
       },
     },
@@ -121,9 +100,44 @@ const StudentList = () => {
   // if (error) return <p>Error fetching users: {error}</p>;
 
   // console.log('data', userList)
+  const latestOnClick = () => {
+    setLoading(true);
+    setSortKey("Latest");
+
+    setSort((prevSort) => ({
+      ...prevSort,
+      query_params: {
+        ...prevSort.query_params,
+        sort: {
+          field: "created_at",
+          order: "asc",
+        },
+      },
+    }));
+    setIsModalFilterOpen(false)
+  };
+
+
+  const oldestOnClick = () => {
+    setLoading(true);
+    setSortKey("Oldest");
+
+    setSort((prevSort) => ({
+      ...prevSort,
+      query_params: {
+        ...prevSort.query_params,
+        sort: {
+          field: "created_at",
+          order: "desc",
+        },
+      },
+    }));
+    setIsModalFilterOpen(false)
+
+  };
 
   const handleSearchChange = (e) => {
-    setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
+    setSort((prevSort) => ({ ...prevSort, query_params: { ...prevSort.query_params, filters: { ...prevSort.query_params.filters, search: e } } }));
   };
 
   useEffect(() => {
@@ -215,7 +229,16 @@ const StudentList = () => {
                 }}
               />
             </div> */}
-            <div
+ <div className="flex items-center relative lg:w-[204px]">
+                            <input
+                                type="text"
+                                name="search"
+                                onChange={(e) => handleSearchChange(e.target.value)}
+                                className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
+                                placeholder="Search Item"
+                            />
+                            <img src={SearchButton} className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer" alt="Search icon" />
+                        </div>            <div
               className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
               onClick={() => setIsModalFilterOpen(true)}
             >
@@ -232,14 +255,14 @@ const StudentList = () => {
           <h2 className="text-[22px]  leading-6 text-[#2C2E32] font-medium">
             Users/Student List
           </h2>
-          <Custombutton
+          {/* <Custombutton
             value="Filter"
             img={frame2}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
             imagePosition="right"
             onClick={() => setIsModalOpen(true)}
-          />
+          /> */}
         </div>
         <div className="">
           <ul>

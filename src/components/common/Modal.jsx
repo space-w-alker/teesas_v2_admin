@@ -16,6 +16,7 @@ const Modal = ({
   csvData2,
   closeModalWithClick1,
   closeModalWithClick2,
+  closeModalWithClick3,
   coursesData,
   addSingleButton,
   addMutipleButton,
@@ -127,7 +128,7 @@ const Modal = ({
                   {value1}
                 </label>
               </div>
-              {/* <div className="flex items-center gap-[20px] px-[10px]">
+              <div className="flex items-center gap-[20px] px-[10px]">
                 <div
                   className="w-[24px] h-[24px]  bg-[#CCCCCC] rounded-full"
                   onClick={addMutipleButton}
@@ -135,7 +136,7 @@ const Modal = ({
                 <label className="font-bold text-[16px] leading-[16px] text-[#162D3A] ">
                   {value2}
                 </label>
-              </div> */}
+              </div>
             </div>
           </div>
         );
@@ -509,8 +510,14 @@ const Modal = ({
               >
                 {value2}
               </label>
+              <label
+                onClick={closeModalWithClick3}
+                className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+              >
+                {value3}
+              </label>
             </div>
-          </div>
+          </div >
         );
       default:
         return <p>No content available</p>;

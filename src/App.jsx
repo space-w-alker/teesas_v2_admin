@@ -1908,7 +1908,7 @@ function App() {
 
         <Route path='/UploadBulkUser' element={
           <ProtectedRoute>
-            <PermissionGuard requiredPermissions={["users:add"]}>
+            <PermissionGuard requiredPermissions={["users:create"]}>
               <Customadduser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </PermissionGuard>
           </ProtectedRoute>
