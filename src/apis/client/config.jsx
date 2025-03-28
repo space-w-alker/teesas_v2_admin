@@ -113,8 +113,8 @@ export const config = {
   ADD_JOB: "admin/job/add",
   UPDATE_JOB: "admin/job/update",
 
-  GET_PUSH_NOTIFICATIONS: "admin/push-notifications",
-  ADD_PUSH_NOTIFICATION: "admin/push-notifications/add",
-  DELETE_PUSH_NOTIFICATION: "admin/push-notifications/delete",
+  GET_PUSH_NOTIFICATIONS: "notifications",
+  ADD_PUSH_NOTIFICATION: "notifications/add",
+  DELETE_PUSH_NOTIFICATION: "notifications/delete",
   CREATE_BULK_LIVE_CLASS: "live/create-bulk-live-class",
 };
