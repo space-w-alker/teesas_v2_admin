@@ -4,7 +4,7 @@ import Vector from "../../assets/images/Vector.png";
 import SearchButton from "../../assets/images/Searchbutton.png";
 import Modal from '../common/Modal';
 
-const Headcomponent = ({ value, border, showSearch = true, onSearch }) => {
+const Headcomponent = ({ value, border, showSearch = true, onSearch, latestOnClick, oldestOnClick }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
@@ -38,6 +38,9 @@ const Headcomponent = ({ value, border, showSearch = true, onSearch }) => {
                 <Modal
                     closeModal={() => setIsModalOpen(false)}
                     label="Sort By"
+                    closeModalWithClick1={latestOnClick}
+                    closeModalWithClick2={oldestOnClick}
+                // closeModal={handleModalClose}
                 />
             )}
         </div>

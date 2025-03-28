@@ -13,17 +13,11 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listEbooksAsync, listDownloadedEbooksAsync, addEbookAsync, ebookList, deleteEbookAsync, updateEbookAsync, ebookdownloadedList } from "../../apis/slices/ebookSlice";
 
-const BookItem = ({ key, ebook }) => {
+const BookItem = ({ key, ebook, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleDelete = (ebookId) => {
-    dispatch(deleteEbookAsync({
-      dispatch, id: ebookId,
-    }));
-    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
-  };
   return (
     <>
       <div className="space-y-4">
@@ -33,8 +27,8 @@ const BookItem = ({ key, ebook }) => {
               <FaBook className="w-6 h-6 text-[#27AE60]" />
             </div>
             <div className="flex flex-col">
-              <span className="font-medium text-gray-800">{ebook.class.name}</span>
-              <span className="text-sm text-blue-500">{ebook.course.name}</span>
+              <span className="font-medium text-gray-800">{ebook.title}</span>
+              <span className="text-sm text-blue-500">{ebook.class.name} | {ebook.course.name}</span>
             </div>
           </div>
           <div className="flex gap-4 items-center">
@@ -184,6 +178,13 @@ const EBook = ({ isOpen }) => {
     }
   };
 
+  const handleDeleteEbook = (ebookId) => {
+    dispatch(deleteEbookAsync({
+      dispatch, id: ebookId,
+    }));
+    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
+  };
+
   useEffect(() => {
     dispatch(listEbooksAsync({
       dispatch,
@@ -206,6 +207,47 @@ const EBook = ({ isOpen }) => {
     );
   }, [dispatch, sort, sort2]);
 
+  const handleDelete = (ebookId) => {
+    onDelete(ebookId);
+  };
+  const latestOnClick = () => {
+    setLoading(true);
+    console.log('assending');
+    setSortKey("Latest");
+
+    setSort((prevSort) => ({
+      ...prevSort,
+      query_params: {
+        ...prevSort.query_params,
+        sort: {
+          field: "created_at",
+          order: "asc",
+        },
+      },
+    }));
+    setIsModalFilterOpen(false)
+  };
+
+
+  const oldestOnClick = () => {
+    setLoading(true);
+    console.log('desending');
+
+    setSortKey("Oldest");
+
+    setSort((prevSort) => ({
+      ...prevSort,
+      query_params: {
+        ...prevSort.query_params,
+        sort: {
+          field: "created_at",
+          order: "desc",
+        },
+      },
+    }));
+    setIsModalFilterOpen(false)
+
+  };
   const totalPages = Math.ceil(ebooks.totalEbooks / sort.limit);
   const totalDownloadedPages = Math.ceil(bookOrder?.totalEbooks / sort2.limit);
 
@@ -231,7 +273,7 @@ const EBook = ({ isOpen }) => {
               <span>Add E-Book</span>
             </div>
           }
-          onClick={() => setShowModal(true)}
+          onClick={() => navigate('/add-single-ebook')}
           textcolor="text-white"
           backgroundcolor="bg-[#27AE60]"
           extraStyle="hover:bg-[#219652]"
@@ -240,13 +282,13 @@ const EBook = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm mb-8">
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="E-Book List" showSearch={true} onSearch={handleSearchChange} />
+          <Headcomponent value="E-Book List" showSearch={true} onSearch={handleSearchChange} latestOnClick={latestOnClick} oldestOnClick={oldestOnClick} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
             {ebooks.data?.all_ebook?.map((ebookItem, index) =>
               ebookItem.ebook.map((book, bookIndex) => (
-                <BookItem key={`${index}-${bookIndex}`} ebook={book} />
+                <BookItem key={`${index}-${bookIndex}`} ebook={book} onDelete={handleDeleteEbook} />
               ))
             )}
           </div>
@@ -341,9 +383,9 @@ const EBook = ({ isOpen }) => {
           label="ADD MEDIA"
           closeModal={() => setShowModal(false)}
           value1="Add Single E-Book"
-          value2="Upload Bulk E-Books"
+          // value2="Upload Bulk E-Books"
           addSingleButton={handleSingleEbook}
-          addMutipleButton={handleBulkEbook}
+        // addMutipleButton={handleBulkEbook}
         />
       )}
     </div>

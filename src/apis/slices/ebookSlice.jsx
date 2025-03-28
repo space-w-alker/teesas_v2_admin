@@ -95,7 +95,7 @@ export const updateEbookAsync = ({ dispatch, id, formData, token, callbackFn }) 
 export const getEbookDetailsAsync = ({ dispatch, id, token, callbackFn }) => {
   return async () => {
     try {
-      const URL = `${BASEURL}ebook/details?id=${id}`;
+      const URL = `${BASEURL}ebook/admin-details?id=${id}`;
       const response = await getAPICall(URL, {}, token);
       console.log(response)
       if (response?.data?.status == 200) {
