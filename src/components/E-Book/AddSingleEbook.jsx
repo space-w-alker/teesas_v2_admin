@@ -1,422 +1,195 @@
-import React, { useState } from 'react';
-import { FaCloudUploadAlt } from "react-icons/fa";
-import { useLocation, useNavigate } from 'react-router-dom';
-import Headers from '../common/Headers';
-import Custombutton from '../common/Custombutton';
-import SuccessModal from '../common/SuccessModal';
-import { addEbookAsync, updateEbookAsync } from '../../apis/slices/ebookSlice';
-// import { addEbookAsync } from '../../apis/slices/ebookSlice';
-import { listCategoriesAsync, getCategoryDetailsAsync, getClassDetailsAsync, listChaptersAsync, listLessonsAsync } from '../../apis/slices/categorySlice';
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { FaBook, FaDownload } from "react-icons/fa";
+import Headers from "../common/Headers";
+import Headcomponent from "../common/Headcomponent";
+import Custombutton from "../common/Custombutton";
+import Screenshot from "../../assets/images/Screenshot.png";
+import { getEbookDetailsAsync } from "../../apis/slices/ebookSlice";
 
-
-const AddSingleEbook = ({ isOpen }) => {
+const EbookDetails = ({ isOpen }) => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [showSuccess, setShowSuccess] = useState(false);
-  const categories = useSelector((state) => state.category?.categoryList?.data?.categories);
-  const grades = useSelector((state) => state.category?.categoryDetails.data?.classes);
-  const chapters = useSelector((state) => state.category?.classDetails?.data?.subjects);
-  console.log("categories", categories, "grades", grades, "chapters", chapters)
-  const [formData, setFormData] = useState({
-    id: location.state?.ebookData?.id || '',
-    category: location.state?.ebookData?.category || '',
-    grade: location.state?.ebookData?.grade || '',
-    chapter: location.state?.ebookData?.chapter || '',
-    bookTitle: location.state?.ebookData?.bookTitle || '',
-    price: location.state?.ebookData?.price || '',
-    description: location.state?.ebookData?.description || '',
-    pdf: location.state?.ebookData?.pdf || null,
-    icon: location.state?.ebookData?.icon || null
-  });
-
-  const [dragActive, setDragActive] = useState(false);
-  const [pdfFile, setPdfFile] = useState(null);
-  const [iconFile, setIconFile] = useState(null);
-
-  const handlePdfChange = (e) => {
-    setPdfFile(e.target.files[0]);
-    setFormData({ ...formData, pdf: e.target.files[0].name })
-  };
-
-  const handleIconChange = (e) => {
-    setIconFile(e.target.files[0]);
-    setFormData({ ...formData, icon: e.target.files[0].name })
-
-  };
-
-  // const handleFileUpload = (e, field) => {
-  //   setFormData({ ...formData, [field]: e.target.files[0] });
-  // };
-
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(e.type === "dragenter" || e.type === "dragover");
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files?.[0]) {
-      setFormData({ ...formData, pdf: e.dataTransfer.files[0] });
-    }
-  };
+  const { id } = useParams();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
 
-  // Fetch Categories on Mount
+  const ebooks = useSelector((state) => state.ebook.ebookDetails || {});
 
   useEffect(() => {
-    dispatch(listCategoriesAsync({ dispatch }));
-  }, [dispatch]);
+    dispatch(getEbookDetailsAsync({ dispatch, id })).then(() => setLoading(false));
+  }, [dispatch, id]);
 
-  // Fetch Grades when Category Changes
-  useEffect(() => {
-    if (formData.category) {
-      dispatch(getCategoryDetailsAsync({ dispatch, id: formData.category }));
-      // setFormData((prev) => ({ ...prev, grade: "", chapter: "" })); // Reset grade and chapter
-    }
-  }, [dispatch, formData.category]);
+  if (loading) {
+    return <p className="text-center">Loading...</p>;
+  }
 
-  // Fetch Chapters when Grade Changes
-  useEffect(() => {
-    if (formData.grade) {
-      dispatch(getClassDetailsAsync({ dispatch, id: formData.grade }));
-      // setFormData((prev) => ({ ...prev, chapter: "" })); // Reset chapter
-    }
-  }, [dispatch, formData.grade]);
+  console.log('ebooks', ebooks);
+  const bookName = location.state?.name || ebooks?.data?.ebook?.title || "N/A";
 
-  console.log('formData', formData)
+  // Function to handle PDF download
+  const handleDownload = (url, filename) => {
+    if (!url) return;
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    // Mapping formData to the required format with default empty values
-    const requestData = {
-      course_id: formData.category || '',
-      class_id: formData.grade || '',
-      subject_id: formData.chapter || '',
-      title: formData.bookTitle || '',
-      description: formData.description || '',
-      short_des: formData.description ? formData.description.substring(0, 100) : '',
-      price: formData.price || '',
-    };
-    // if (!pdfFile || !iconFile) {
-    //   alert("Please select both files before uploading.");
-    //   return;
-    // }
-
-    const formDataToSend = new FormData();
-
-    // Append all request data (if not null/undefined)
-    Object.keys(requestData).forEach((key) => {
-      if (requestData[key] !== undefined && requestData[key] !== null) {
-        formDataToSend.append(key, requestData[key]);
-      }
-    });
-
-    // Append files only if they exist
-    if (pdfFile instanceof File) formDataToSend.append("files", pdfFile);
-    if (iconFile instanceof File) formDataToSend.append("files", iconFile);
-
-    // Debugging: Check FormData content
-    for (let pair of formDataToSend.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
-    // Dispatch Redux action to create an ebook
-
-
-    if (formData.id) {
-      await dispatch(updateEbookAsync({ dispatch, id: formData.id, formData, callbackFn: () => {
-        toast.success("Ebook updated successfully!");
-        navigate("/e-book");
-      }}));
-    } else {
-      await dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
-    }
-
-    navigate("/e-book");
-
-    // const action = formData.id
-    //   ? updateEbookAsync({ dispatch, id: formData.id, formData: formDataToSend })
-    //   : addEbookAsync({ dispatch, data: formDataToSend });
-
-    // dispatch(action)
-    //   .unwrap()
-    //   .then(() => {
-    //     toast.success("Ebook saved successfully!");
-    //     navigate("/e-book");
-    //   })
-    //   .catch((error) => {
-    //     toast.error("Failed to save ebook. Please try again.");
-    //     console.error("Ebook save error:", error);
-    //   });
-
-  };
-
-
-  const handleClose = () => {
-    setShowSuccess(false);
-    setFormData({
-      category: '',
-      grade: '',
-      chapter: '',
-      bookTitle: '',
-      description: '',
-      pdf: null
-    });
-    navigate('/ebook');
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename || 'ebook.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <Headers
-        value1="Home"
-        value2="Add E-Book"
-      />
+    <div
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}
+    >
+      <Headers value1="Home" value2="E-Books" value3={bookName} />
 
-      <div className=" mt-6 flex gap-6">
-        <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Add E-Book</h2>
+      <div className="mt-6 bg-[#E9FDEE] rounded-xl p-6 mb-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white rounded-lg">
+            <FaBook className="w-5 h-5 text-[#27AE60]" />
           </div>
-
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Select Category
-                  </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories?.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Select Grade
-                  </label>
-                  <select
-                    value={formData.grade}
-                    onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
-                    required
-                    disabled={!formData.category} // Disable if no category is selected
-                  >
-                    <option value="">Select Grade</option>
-                    {grades?.map((grade) => (
-                      <option key={grade.id} value={grade.id}>
-                        {grade.name}
-                      </option>
-                    ))}
-                  </select>
-
-                </div>
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Select Chapter
-                  </label>
-                  <select
-                    value={formData.chapter}
-                    onChange={(e) => setFormData({ ...formData, chapter: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
-                    required
-                    disabled={!formData.grade} // Disable if no grade is selected
-                  >
-                    <option value="">Select Chapter</option>
-                    {chapters?.map((chapter) => (
-                      <option key={chapter.id} value={chapter.id}>
-                        {chapter.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Book Title
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.bookTitle}
-                    onChange={(e) => setFormData({ ...formData, bookTitle: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Book Price
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Description
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60] h-32"
-                  required
-                />
-              </div>
-              {/* upload icon */}
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Upload Icon
-                </label>
-                <div
-                  className="border-2 border-dashed rounded-lg p-8 text-center bg-[#E9FDEE] border-[#27AE60]"
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                >
-                  <FaCloudUploadAlt className="mx-auto text-5xl text-gray-400 mb-4" />
-                  <p className="text-gray-600 mb-4">
-                    Drag and drop your Icon here, or
-                    <label className="text-[#27AE60] cursor-pointer ml-1">
-                      browse
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept=".jpg"
-                        onChange={(e) => handleIconChange(e)}
-                        required
-                      />
-                    </label>
-                  </p>
-                  <p className="text-sm text-gray-500 mb-2">Supported format: jpg</p>
-                  <p className="text-sm text-gray-500">Maximum file size: 10MB</p>
-                  {formData.icon && (
-                    <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
-                      <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.icon}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* upload ebook */}
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Upload Ebook
-                </label>
-                <div
-                  className="border-2 border-dashed rounded-lg p-8 text-center bg-[#E9FDEE] border-[#27AE60]"
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                >
-                  <FaCloudUploadAlt className="mx-auto text-5xl text-gray-400 mb-4" />
-                  <p className="text-gray-600 mb-4">
-                    Drag and drop your PDF here, or
-                    <label className="text-[#27AE60] cursor-pointer ml-1">
-                      browse
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept=".pdf"
-                        onChange={(e) => handlePdfChange(e)}
-                        required
-                      />
-                    </label>
-                  </p>
-                  <p className="text-sm text-gray-500 mb-2">Supported format: PDF</p>
-                  <p className="text-sm text-gray-500">Maximum file size: 10MB</p>
-                  {formData.pdf && (
-                    <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
-                      <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{formData.pdf}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-
-        <div className="flex-1">
-          <div className="bg-white rounded-xl p-8 shadow-sm h-full">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Summary</h2>
-            <div className="bg-[#E9FDEE] rounded-lg p-6">
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Category:</span>
-                  <span className="font-medium">{formData.category || '-'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Grade:</span>
-                  <span className="font-medium">{formData.grade || '-'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Chapter:</span>
-                  <span className="font-medium">{formData.chapter || '-'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Book Title:</span>
-                  <span className="font-medium">{formData.bookTitle || '-'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Book Price:</span>
-                  <span className="font-medium">{formData.price || '-'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Icon:</span>
-                  <span className="font-medium">{formData.icon || '-'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">PDF:</span>
-                  <span className="font-medium">{formData.pdf || '-'}</span>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-col">
+            <h2 className="font-bold text-gray-900">{bookName}</h2>
             <Custombutton
-              value="Add E-Book"
-              onClick={handleSubmit}
-              backgroundcolor="bg-[#27AE60]"
-              textcolor="text-white"
-              width="w-full"
-              extraClasses="mt-8"
+              value="Visible"
+              textcolor="text-[#27AE60]"
+              backgroundcolor="bg-[#E9FDEE]"
+              extraStyle="mt-2 w-fit"
             />
           </div>
         </div>
       </div>
 
-      {showSuccess && (
-        <SuccessModal
-          isOpen={showSuccess}
-          onClose={handleClose}
-          type="success"
-          title="SUCCESS!"
-          message="E-Book Created Successfully"
-          buttonText="Close"
+      <div className="flex justify-center mb-6 gap-4">
+        <Custombutton
+          value="Manage"
+          textcolor="text-[#27AE60]"
+          backgroundcolor="bg-transparent"
+          extraStyle="font-medium"
         />
-      )}
+        <Custombutton
+          value={
+            <div className="flex items-center gap-2">
+              <FaDownload />
+              <span>Download PDF</span>
+            </div>
+          }
+          onClick={() => handleDownload(ebooks?.data?.ebook?.source, `${bookName}.pdf`)}
+          textcolor="text-white"
+          backgroundcolor="bg-[#27AE60]"
+          extraStyle="font-medium"
+        />
+      </div>
 
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div className="border-b border-gray-200 pb-2 mb-4">
+          <Headcomponent value="Details" showSearch={false} />
+        </div>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-white rounded-lg p-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray-600">Category:</p>
+                <p className="font-medium">{ebooks?.data?.ebook?.course?.name || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Grade:</p>
+                <p className="font-medium">{ebooks?.data?.ebook?.class?.name || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Chapter:</p>
+                <p className="font-medium">{ebooks?.data?.ebook?.subject?.name || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Status:</p>
+                <p className="font-medium text-[#27AE60]">
+                  {ebooks?.data?.ebook?.status === "1" ? "Active" : "Inactive"}
+                </p>
+              </div>
+              <div>
+                <p className="text-gray-600">Price:</p>
+                <p className="font-medium">{ebooks?.data?.ebook?.price || "Free"}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Description:</p>
+                <p className="font-medium">{ebooks?.data?.ebook?.description || "No description available"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Ebook Icon/Thumbnail */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="border-b border-gray-200 pb-2 mb-4">
+            <Headcomponent value="Ebook Thumbnail" showSearch={false} />
+          </div>
+          <div className="space-y-4">
+            <div className="p-4 border border-gray-200 rounded-lg flex justify-center">
+              <img
+                src={ebooks?.data?.ebook?.icon || Screenshot}
+                alt="ebook thumbnail"
+                className="max-h-[300px] object-contain rounded"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Ebook Preview */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="border-b border-gray-200 pb-2 mb-4">
+            <Headcomponent value="Ebook Preview" showSearch={false} />
+          </div>
+          <div className="space-y-4">
+            <div className="p-4 border border-gray-200 rounded-lg">
+              {ebooks?.data?.ebook?.source?.endsWith('.pdf') ? (
+                <div className="flex flex-col items-center justify-center h-[300px] bg-gray-100 rounded">
+                  <FaBook className="w-16 h-16 text-[#27AE60] mb-4" />
+                  <p className="text-gray-600">PDF Document</p>
+                  <p className="text-sm text-gray-500 mt-2">{bookName}</p>
+                  <Custombutton
+                    value="View PDF"
+                    onClick={() => window.open(ebooks?.data?.ebook?.source, '_blank')}
+                    textcolor="text-white"
+                    backgroundcolor="bg-[#27AE60]"
+                    extraStyle="mt-4"
+                  />
+                </div>
+              ) : (
+                <img
+                   
+                     src={`${config.MainUrl}${ebooks?.data?.ebook?.source }`}
+                  alt="ebook preview"
+                  className="w-full max-h-[300px] object-contain rounded"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Full-width PDF Embed (if needed) */}
+      {ebooks?.data?.ebook?.source?.endsWith('.pdf') && (
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+          <div className="border-b border-gray-200 pb-2 mb-4">
+            <Headcomponent value="PDF Document" showSearch={false} />
+          </div>
+          <div className="space-y-4">
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <iframe
+                src={`${config.MainUrl}${ebooks?.data?.ebook?.source}`}
+                title="PDF Viewer"
+                className="w-full h-[600px] rounded"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default AddSingleEbook;
+export default EbookDetails;

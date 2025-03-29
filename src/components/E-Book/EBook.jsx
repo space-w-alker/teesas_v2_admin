@@ -26,6 +26,15 @@ const BookItem = ({ key, ebook, onDelete }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    onDelete(ebook.id);
+    setShowDeleteModal(false);
+  };
+
   return (
     <>
       <div className="space-y-4">
@@ -78,7 +87,8 @@ const BookItem = ({ key, ebook, onDelete }) => {
             />
             <Custombutton
               value="Delete"
-              onClick={() => handleDelete(ebook.id)}
+
+              onClick={handleDelete}
               textcolor="text-red-600"
               backgroundcolor="bg-transparent"
               extraStyle="font-medium"
@@ -94,6 +104,7 @@ const BookItem = ({ key, ebook, onDelete }) => {
         title="Delete E-Book"
         message="Are you sure you want to delete this E-Book?"
         buttonText="Delete"
+        onConfirm={confirmDelete}
       />
     </>
   );
@@ -199,9 +210,13 @@ const EBook = ({ isOpen }) => {
       deleteEbookAsync({
         dispatch,
         id: ebookId,
+        token,
+        callbackFn: () => {
+          // Refresh the list after deletion
+          dispatch(listEbooksAsync({ dispatch, data: sort, token }));
+        }
       })
     );
-    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
   };
 
   useEffect(() => {

@@ -59,34 +59,40 @@ export const deleteEbookAsync = ({ dispatch, id, token, callbackFn }) => {
       const URL = `${BASEURL}ebook/delete/${id}`;
       const response = await deleteAPICall(URL, {}, token);
       if (response?.data?.status === 200) {
-        // callbackFn && callbackFn(response.data);
-        dispatch(getEbookDetailsSuccess(response.data));
-        toast.success('Ebook deleted successfully')
+
+
+
+        dispatch(deleteSuccess(response.data));
+        toast.success('Ebook deleted successfully');
+        callbackFn && callbackFn(response.data);
       } else {
         toast.error("Failed to delete eBook details.");
 
       }
     } catch (error) {
-      return rejectWithValue(error.message);
+
+      toast.error("Error deleting eBook: " + error.message);
     }
   }
 };
 
-// **Update Ebook**
+
 export const updateEbookAsync = ({ dispatch, id, formData, token, callbackFn }) => {
   return async () => {
     try {
       const URL = `${BASEURL}ebook/update/${id}`;
-      const response = await putAPICall(URL, formData, true, token);
-      console.log(response?.data?.status);
-      if (response?.data?.status == 200) {
+      // Change from putAPICall to postFileAPICall since we're sending files
+      const response = await postFileAPICall(URL, formData, true, token);
+
+      if (response?.data?.status === 200) {
+        dispatch(updateEbookDetailsSuccess(response.data)); // Make sure this matches the exported action
+        toast.success("Ebook updated successfully");
         callbackFn && callbackFn(response.data);
-        dispatch(updateResponse(response.data));
       } else {
-        toast.error("Failed to update eBook details.");
+        toast.error("Failed to update eBook details: " + (response?.data?.message || "Unknown error"));
       }
     } catch (error) {
-      return rejectWithValue(error.message);
+       toast.error("Error updating eBook: " + (error.message || "Unknown error"));
     }
   }
 };
@@ -185,7 +191,18 @@ export const markEbookDownloadAsync = ({ dispatch, ebookId, token, callbackFn })
   };
 };
 
-export const { getEbookDetailsSuccess, addEbookSuccess, listEbooksSuccess, listDownloadedEbooksSuccess, markDownloadSuccess, resetState, updateSuccess, deleteSuccess } = ebookSlice.actions;
+
+
+export const { 
+  getEbookDetailsSuccess, 
+  addEbookSuccess, 
+  listEbooksSuccess, 
+  listDownloadedEbooksSuccess, 
+  markDownloadSuccess, 
+  resetState, 
+  updateEbookDetailsSuccess, // Changed from updateSuccess
+  deleteSuccess 
+} = ebookSlice.actions;
 
 export const ebookDetails = (state) => state.ebook.ebookDetails;
 export const addEbookResponse = (state) => state.ebook.addEbookResponse;
