@@ -131,7 +131,10 @@ const AddSingleEbook = ({ isOpen }) => {
 
 
     if (formData.id) {
-      await dispatch(updateEbookAsync({ dispatch, id: formData.id, formData: formDataToSend }));
+      await dispatch(updateEbookAsync({ dispatch, id: formData.id, formData, callbackFn: () => {
+        toast.success("Ebook updated successfully!");
+        navigate("/e-book");
+      }}));
     } else {
       await dispatch(addEbookAsync({ dispatch, data: formDataToSend }));
     }

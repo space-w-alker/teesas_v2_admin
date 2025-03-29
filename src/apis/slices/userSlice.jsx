@@ -35,6 +35,13 @@ export const userSlice = createSlice({
                 (user) => user.id !== action.payload.id
             );
         },
+        deactivateUserSuccess: (state, action) => {
+            const userId = action.payload.id;
+            const userIndex = state.userList.findIndex(user => user.id === userId);
+            if (userIndex !== -1) {
+                state.userList[userIndex].status = 'deactivated'; // Assuming you have a status field
+            }
+        },
     },
 });
 
@@ -45,6 +52,7 @@ export const {
     bulkUploadSuccess,
     updateUserSuccess,
     deleteUserSuccess,
+    deactivateUserSuccess,
 } = userSlice.actions;
 
 // Thunk to get users
@@ -105,14 +113,15 @@ export const addUserAsync = ({ dispatch, data, token, callbackFn }) => {
 };
 
 // Thunk to upload users in bulk
-export const bulkUploadUsersAsync = ({ dispatch, formData, token }) => {
+export const bulkUploadUsersAsync = ({ dispatch, formData, token, callbackFn }) => {
     return async () => {
         try {
             const URL = `${BASEURL}admin/dashboard/users/create-bulk`;
             const response = await postFileAPICall(URL, formData, true, token);
-            console.log(201)
-            if (response?.data) {
+            console.log(response);
+            if (response?.data.status == 200) {
                 dispatch(bulkUploadSuccess(response.data));
+                callbackFn && callbackFn(response.data); // Call the callback function if provided
             } else {
                 toast.error("Failed to upload users in bulk.");
             }
@@ -156,6 +165,24 @@ export const deleteUserAsync = ({ dispatch, userId, token, callbackFn }) => {
             }
         } catch (error) {
 
+        }
+    };
+};
+
+// Thunk to deactivate a user
+export const deactivateUserAsync = ({ dispatch, userId, token }) => {
+    return async () => {
+        try {
+            const URL = `${BASEURL}admin/dashboard/users/${userId}/deactivate`;
+            const response = await patchAPICall(URL, {}, true, token);
+            if (response?.data.message) {
+                // dispatch(deactivateUserSuccess({ id: userId }));
+                toast.success(response?.data.message);
+            } else {
+                toast.error("Failed to deactivate user.");
+            }
+        } catch (error) {
+            toast.error("Error deactivating user.");
         }
     };
 };

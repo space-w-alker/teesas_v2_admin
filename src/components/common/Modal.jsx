@@ -16,6 +16,7 @@ const Modal = ({
   csvData2,
   closeModalWithClick1,
   closeModalWithClick2,
+  closeModalWithClick3,
   coursesData,
   addSingleButton,
   addMutipleButton,
@@ -509,8 +510,14 @@ const Modal = ({
               >
                 {value2}
               </label>
+              <label
+                onClick={closeModalWithClick3}
+                className="font-bold text-[16px] px-[10px] leading-[16px] text-[#162D3A] cursor-pointer"
+              >
+                {value3}
+              </label>
             </div>
-          </div>
+          </div >
         );
 
       case "ADD LIVE CLASS":

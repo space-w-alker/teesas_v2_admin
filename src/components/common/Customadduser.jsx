@@ -3,6 +3,7 @@ import uploadstates from '../../assets/images/uploadstates.png'
 import Rectangle from "../../assets/images/Rectangle.png";
 import { FaChevronLeft } from "react-icons/fa";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { uploadUsersAsync } from "../../apis/slices/authSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,6 +15,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 const Customadduser = ({ isOpen }) => {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize navigate
   const token = localStorage.getItem("authToken");
   const [show, setshow] = useState(false);
   const [File, setFile] = useState({});
@@ -61,6 +63,15 @@ const Customadduser = ({ isOpen }) => {
         dispatch,
         formData: form_data,
         token,
+        callbackFn: (response) => {
+          if (response) {
+            toast.success("Users uploaded successfully!");
+            navigate('/users'); // Navigate to the /users route after successful upload
+
+          } else {
+            toast.error("Failed to upload users.");
+          }
+        },
       }));
     } else {
       toast.error("Please select a file before uploading.");

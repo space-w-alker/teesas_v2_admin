@@ -10,24 +10,19 @@ import sharp from '../../assets/images/sharp.png';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import SuccessModal from '../common/SuccessModal';
 
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { listEbooksAsync, addEbookAsync, ebookList } from "../../apis/slices/ebookSlice";
+import { listEbooksAsync, addEbookAsync, deleteEbookAsync } from "../../apis/slices/ebookSlice";
 
-
-const BookItem = ({ key, ebook }) => {
+const BookItem = ({ key, ebook, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // console.log('bookitem', ebooks);
+
   const handleDelete = (ebookId) => {
-    // console.log(ebookId);
-    dispatch(deleteEbookAsync({
-      dispatch, id: ebookId,
-    }));
-    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
+    onDelete(ebookId);
   };
+
   return (
     <>
       <div className="space-y-4">
@@ -37,8 +32,8 @@ const BookItem = ({ key, ebook }) => {
               <FaBook className="w-6 h-6 text-[#27AE60]" />
             </div>
             <div className="flex flex-col">
-              <span className="font-medium text-gray-800">{ebook.class.name}</span>
-              <span className="text-sm text-blue-500">{ebook.course.name}</span>
+              <span className="font-medium text-gray-800">{ebook.title}</span>
+              <span className="text-sm text-blue-500">{ebook.class.name} | {ebook.course.name}</span>
             </div>
           </div>
           <div className="flex gap-4 items-center">
@@ -65,7 +60,6 @@ const BookItem = ({ key, ebook }) => {
                       price: ebook.price,
                       icon: ebook.icon,
                       pdf: ebook.source
-
                     },
                   },
                 })
@@ -127,13 +121,57 @@ const EbookList = ({ isOpen }) => {
     setSort((prevSort) => ({ ...prevSort, search: e.target.value }));
   };
 
+  const handleDeleteEbook = (ebookId) => {
+    dispatch(deleteEbookAsync({
+      dispatch, id: ebookId,
+    }));
+    dispatch(listEbooksAsync({ dispatch, data: sort, token }));
+  };
+
   console.log("ebooks heres", ebooks);
 
   useEffect(() => {
     dispatch(listEbooksAsync({ dispatch, data: sort, token }));
   }, [sort]);
 
+  const latestOnClick = () => {
+    setLoading(true);
+    console.log('assending');
+    setSortKey("Latest");
 
+    setSort((prevSort) => ({
+      ...prevSort,
+      query_params: {
+        ...prevSort.query_params,
+        sort: {
+          field: "created_at",
+          order: "asc",
+        },
+      },
+    }));
+    setIsModalFilterOpen(false)
+  };
+
+
+  const oldestOnClick = () => {
+    setLoading(true);
+    console.log('desending');
+
+    setSortKey("Oldest");
+
+    setSort((prevSort) => ({
+      ...prevSort,
+      query_params: {
+        ...prevSort.query_params,
+        sort: {
+          field: "created_at",
+          order: "desc",
+        },
+      },
+    }));
+    setIsModalFilterOpen(false)
+
+  };
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
       <Headers value1="Home" value2="E-Book List" />
@@ -156,7 +194,7 @@ const EbookList = ({ isOpen }) => {
               <span>Add E-Book</span>
             </div>
           }
-          onClick={() => setShowModal(true)}
+          onClick={() => navigate('/add-single-ebook')}
           textcolor="text-white"
           backgroundcolor="bg-[#27AE60]"
           extraStyle="hover:bg-[#219652]"
@@ -164,18 +202,16 @@ const EbookList = ({ isOpen }) => {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm mb-8">
-
         <div className="p-6 border-b border-gray-100">
-          <Headcomponent value="E-Book List" showSearch={true} onSearch={handleSearchChange} />
+          <Headcomponent value="E-Book List" showSearch={true} onSearch={handleSearchChange} latestOnClick={latestOnClick} oldestOnClick={oldestOnClick} />
         </div>
         <div className="p-6">
           <div className="space-y-4">
             {ebooks.data?.all_ebook?.map((ebookItem, index) =>
               ebookItem.ebook.map((book, bookIndex) => (
-                <BookItem key={`${index}-${bookIndex}`} ebook={book} />
+                <BookItem key={`${index}-${bookIndex}`} ebook={book} onDelete={handleDeleteEbook} />
               ))
             )}
-
           </div>
         </div>
         <div className="p-6 border-t border-gray-100 flex justify-between items-center">

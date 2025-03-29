@@ -17,7 +17,7 @@ import Vector from "../../assets/images/Vector.png";
 import SearchButton from "../../assets/images/Searchbutton.png";
 import Modal from '../../components/common/Modal';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import { fetchUserDetailsAsync, deleteUserAsync } from "../../apis/slices/userSlice";
+import { fetchUserDetailsAsync, deleteUserAsync, deactivateUserAsync } from "../../apis/slices/userSlice";
 
 const doughnutOptions = {
   responsive: true,
@@ -33,7 +33,6 @@ const doughnutOptions = {
     },
   },
 };
-
 
 const UserDetails = ({ isOpen, togglesidebar }) => {
   const Navigate = useNavigate();
@@ -85,6 +84,25 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
     }).catch((error) => {
       setLoading(false);
       closeModal();
+    });
+  };
+
+  const onDeactivateUser = () => {
+    setLoading(true);
+    dispatch(deactivateUserAsync({
+      dispatch: dispatch,
+      userId: id,
+    })).then((response) => {
+      setLoading(false);
+      closeModal();
+      // toast.success('User deactivated successfully');
+      setTimeout(() => {
+        Navigate('/users');
+      }, 1000);
+    }).catch((error) => {
+      setLoading(false);
+      closeModal();
+      toast.error('Failed to Toggle user');
     });
   };
 
@@ -276,8 +294,10 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                   label="User Details"
                   value1="Refresh"
                   value2="Delete User"
+                  value3={userData?.status === 'active' ? "Deactivate User" : "Activate User"}
                   closeModalWithClick1={onRefresh}
                   closeModalWithClick2={onDeleteUser}
+                  closeModalWithClick3={onDeactivateUser}
                 />
               )}
             </div>
@@ -448,4 +468,3 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
 };
 
 export default UserDetails;
-
