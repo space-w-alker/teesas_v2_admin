@@ -287,9 +287,8 @@ const EBook = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      } transition-all duration-300`}
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        } transition-all duration-300`}
     >
       <Headers value1="Home" value2="E-Book" />
 
@@ -328,6 +327,8 @@ const EBook = ({ isOpen }) => {
           <Headcomponent
             value="E-Book List"
             showSearch={true}
+            showFilter={false}
+            showMenu={false}
             onSearch={handleSearchChange}
             latestOnClick={latestOnClick}
             oldestOnClick={oldestOnClick}
@@ -458,7 +459,7 @@ const EBook = ({ isOpen }) => {
           value1="Add Single E-Book"
           // value2="Upload Bulk E-Books"
           addSingleButton={handleSingleEbook}
-          // addMutipleButton={handleBulkEbook}
+        // addMutipleButton={handleBulkEbook}
         />
       )}
     </div>
