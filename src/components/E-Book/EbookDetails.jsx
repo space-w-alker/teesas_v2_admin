@@ -7,6 +7,7 @@ import Headcomponent from "../common/Headcomponent";
 import Custombutton from "../common/Custombutton";
 import Screenshot from "../../assets/images/Screenshot.png";
 import { getEbookDetailsAsync } from "../../apis/slices/ebookSlice";
+import { config } from "../../apis/client/config";
 
 const EbookDetails = ({ isOpen }) => {
   const location = useLocation();
@@ -95,7 +96,8 @@ const EbookDetails = ({ isOpen }) => {
         </div>
         <div className="space-y-4">
           <div className="p-4 border border-gray-200 rounded-lg">
-            <img src={ebooks?.data?.ebook?.source || Screenshot} alt="ebook preview" className="w-full h-[400px] object-cover rounded" />
+
+            <img src={`${config.MainUrl}${ebooks?.data?.ebook?.source}`} alt="ebook preview" className="w-full h-[400px] object-cover rounded" />
           </div>
         </div>
       </div>
@@ -105,7 +107,8 @@ const EbookDetails = ({ isOpen }) => {
         </div>
         <div className="space-y-4">
           <div className="p-4 border border-gray-200 rounded-lg">
-            <img src={ebooks?.data?.ebook?.icon || Screenshot} alt="ebook preview" className="w-full h-[400px] object-cover rounded" />
+
+            <img src={`${config.MainUrl}${ebooks?.data?.ebook?.icon}`} alt="ebook preview" className="w-full h-[400px] object-cover rounded" />
           </div>
         </div>
       </div>

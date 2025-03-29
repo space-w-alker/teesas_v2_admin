@@ -81,18 +81,35 @@ export const updateEbookAsync = ({ dispatch, id, formData, token, callbackFn }) 
   return async () => {
     try {
       const URL = `${BASEURL}ebook/update/${id}`;
-      // Change from putAPICall to postFileAPICall since we're sending files
+      
+      // Debug what's being sent
+      console.log("Updating ebook with ID:", id);
+      console.log("FormData entries:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+      
       const response = await postFileAPICall(URL, formData, true, token);
+      console.log("Update response:", response);
 
       if (response?.data?.status === 200) {
         dispatch(updateEbookDetailsSuccess(response.data)); // Make sure this matches the exported action
         toast.success("Ebook updated successfully");
+        
+        // After successful update, refresh the ebook list
+        dispatch(listEbooksAsync({ 
+          dispatch, 
+          data: { page: 1, limit: 10 }, 
+          token 
+        }));
+        
         callbackFn && callbackFn(response.data);
       } else {
         toast.error("Failed to update eBook details: " + (response?.data?.message || "Unknown error"));
       }
     } catch (error) {
-       toast.error("Error updating eBook: " + (error.message || "Unknown error"));
+      console.error("Update error:", error);
+      toast.error("Error updating eBook: " + (error.message || "Unknown error"));
     }
   }
 };
@@ -193,15 +210,15 @@ export const markEbookDownloadAsync = ({ dispatch, ebookId, token, callbackFn })
 
 
 
-export const { 
-  getEbookDetailsSuccess, 
-  addEbookSuccess, 
-  listEbooksSuccess, 
-  listDownloadedEbooksSuccess, 
-  markDownloadSuccess, 
-  resetState, 
+export const {
+  getEbookDetailsSuccess,
+  addEbookSuccess,
+  listEbooksSuccess,
+  listDownloadedEbooksSuccess,
+  markDownloadSuccess,
+  resetState,
   updateEbookDetailsSuccess, // Changed from updateSuccess
-  deleteSuccess 
+  deleteSuccess
 } = ebookSlice.actions;
 
 export const ebookDetails = (state) => state.ebook.ebookDetails;
