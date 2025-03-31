@@ -20,6 +20,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
+import TestSchedule from "./TestSchedule";
 
 const options = {
   responsive: true,
@@ -348,6 +349,10 @@ const LeaderboardProfile = ({ isOpen }) => {
         userData={userData}
         monthlyData={monthlyData}
         performanceHistory={performanceHistory}
+      />
+
+      <TestSchedule
+        id={user_id}
       />
     </div>
   );
