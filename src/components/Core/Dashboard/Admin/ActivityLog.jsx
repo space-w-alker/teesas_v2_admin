@@ -276,6 +276,8 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
             </div>
           </div>
         </div>
+
+
       </div>
     </div>
   );
