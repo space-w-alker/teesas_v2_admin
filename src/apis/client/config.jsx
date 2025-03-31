@@ -2,7 +2,7 @@ export const config = {
   // BASEURL: "http://localhost:3000/v1/",
   BASEURL: "http://46.202.164.175:3000/v1/",
   MainUrl: "http://46.202.164.175:3000/public/",
-  // MainUrl: "http://localhost:3000/v1/public/",
+  // MainUrl: "http://localhost:3000/v1/",
 
   USERLOGIN: "admin/auth/login",
   SIGNUP: "admin/auth/signup",
@@ -113,8 +113,9 @@ export const config = {
   ADD_JOB: "admin/job/add",
   UPDATE_JOB: "admin/job/update",
 
-  GET_PUSH_NOTIFICATIONS: "notifications",
-  ADD_PUSH_NOTIFICATION: "notifications/add",
-  DELETE_PUSH_NOTIFICATION: "notifications/delete",
+  GET_PUSH_NOTIFICATIONS: "admin/push-notifications",
+  ADD_PUSH_NOTIFICATION: "admin/push-notifications/add",
+  DELETE_PUSH_NOTIFICATION: "admin/push-notifications/delete",
   CREATE_BULK_LIVE_CLASS: "live/create-bulk-live-class",
+
 };
