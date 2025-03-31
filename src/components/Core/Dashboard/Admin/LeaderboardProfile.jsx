@@ -352,7 +352,7 @@ const LeaderboardProfile = ({ isOpen }) => {
       />
 
       <TestSchedule
-        id={user_id}
+      id={user_id}
       />
     </div>
   );

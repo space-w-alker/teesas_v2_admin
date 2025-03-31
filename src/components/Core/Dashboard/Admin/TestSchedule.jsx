@@ -15,6 +15,33 @@ const TestSchedule = ({ id }) => {
           setScheduleData(data);
         }
       }));
+      // This is a placeholder for the actual data processing logic
+      const fetchedData = [
+        {
+          id: 1,
+          date: "22 - 04 - 2022",
+          events: [
+            {
+              type: "Practice Test",
+              subjects: "Maths, English, Agriculture, Sciences",
+              time: "10:00 am",
+              color: "bg-amber-50 border-amber-200"
+            },
+            {
+              type: "Mock Practice",
+              subjects: "Maths, English, Agriculture, Sciences",
+              time: "10:00 am",
+              color: "bg-blue-50 border-blue-200"
+            }
+          ]
+        },
+        {
+          id: 2,
+          date: "21 - 04 - 2022",
+          events: []
+        }
+      ];
+      // setScheduleData(fetchedData);
     };
 
     fetchPerformanceData();
@@ -31,36 +58,32 @@ const TestSchedule = ({ id }) => {
           </div>
         </div>
         <div className="bg-gray-50 p-6 rounded-lg shadow-sm max-w-md mx-auto">
-          {scheduleData.length === 0 ? (
-            <div className="text-gray-700 font-medium">No schedule</div>
-          ) : (
-            scheduleData.map((day) => (
-              <div key={day.id} className="mb-4">
-                <div className="text-gray-700 mb-2 font-medium">{day.date}</div>
+          {scheduleData.map((day) => (
+            <div key={day.id} className="mb-4">
+              <div className="text-gray-700 mb-2 font-medium">{day.date}</div>
 
-                {day?.events?.map((event, index) => (
-                  <div key={index} className="mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <button className={`px-4 py-2 rounded-md border bg-amber-50 border-amber-200 text-gray-800`}>
-                        {event.type}
-                      </button>
-                      <div className="text-gray-700">{event.time}</div>
-                    </div>
-
-                    <div className="text-gray-800 font-medium mb-4">
-                      {event.subjects.split(', ').map((subject, index) => (
-                        <span key={index}>{subject}{index < event.subjects.split(', ').length - 1 ? ', ' : ''}</span>
-                      ))}
-                    </div>
-
-                    {index < day.events.length - 1 && (
-                      <hr className="border-gray-200 my-4" />
-                    )}
+              {day?.tests?.map((event, index) => (
+                <div key={index} className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <button className={`px-4 py-2 rounded-md border bg-amber-50 border-amber-200 text-gray-800`}>
+                      {event.testType}
+                    </button>
+                    <div className="text-gray-700">{event.time.split(' ')[1]}</div>
                   </div>
-                ))}
-              </div>
-            ))
-          )}
+
+                  <div className="text-gray-800 font-medium mb-4">
+                    {event.subjects.map((subject, index) => (
+                      <span key={index}>{subject.name}{index < event.subjects.length - 1 ? ', ' : ''}</span>
+                    ))}
+                  </div>
+
+                  {index < day.tests.length - 1 && (
+                    <hr className="border-gray-200 my-4" />
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </div>
