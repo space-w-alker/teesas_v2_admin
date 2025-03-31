@@ -63,7 +63,7 @@ export const omotabSlice = createSlice({
 export const listStoresAsync = ({ dispatch, data, token, callbackFn }) => {
   return async () => {
     try {
-      const URL = `${BASEURL}omotab/store-list`;
+      const URL = `${BASEURL}omotab/store-list-admin`;
 
       // Build query params for pagination and search
       const queryParams = {

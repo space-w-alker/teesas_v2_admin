@@ -368,9 +368,9 @@ function App() {
           path="/question-view"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["tests:read"]}>
-                <QuestionView isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-              </PermissionGuard>
+              {/* <PermissionGuard requiredPermissions={["tests:read"]}> */}
+              <QuestionView isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              {/* </PermissionGuard> */}
             </ProtectedRoute>
           }
         />
@@ -1192,9 +1192,9 @@ function App() {
           path="/upload-questions"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["questions:create"]}>
-                <UploadQuestions isOpen={isSidebarOpen} />
-              </PermissionGuard>
+              {/* <PermissionGuard requiredPermissions={["questions:create"]}> */}
+              <UploadQuestions isOpen={isSidebarOpen} />
+              {/* </PermissionGuard> */}
             </ProtectedRoute>
           }
         />
@@ -1215,9 +1215,9 @@ function App() {
           path="/test-detail"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["university_list:read"]}>
-                <TestDetail isOpen={isSidebarOpen} />
-              </PermissionGuard>
+              {/* <PermissionGuard requiredPermissions={["university_list:read"]}> */}
+              <TestDetail isOpen={isSidebarOpen} />
+              {/* </PermissionGuard> */}
             </ProtectedRoute>
           }
         />
