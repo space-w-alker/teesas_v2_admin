@@ -265,11 +265,8 @@ const LeaderBoardlist = () => {
                     <div
                       className="text-[#FB9F00] font-normal text-[12px] leading-[16px] cursor-pointer"
                       onClick={() => {
-                        Navigate(
-                          `/LeaderBoardProfile?user_id=${item?.user?.id}&class_id=${item?.class?.id}`
-                        );
-                      }}
-                    >
+                        Navigate('/LeaderBoardProfile', { state: { user_id: item?.user?.id, class_id: item?.class?.id } });
+                      }} >
                       View Performance
                     </div>
                   </td>
@@ -320,7 +317,7 @@ const LeaderBoardlist = () => {
             className={page >= pagingData.totalPages ? "opacity-50 cursor-not-allowed" : ""}
           />
         </div>
-      </div>
+      </div >
     </>
   );
 };

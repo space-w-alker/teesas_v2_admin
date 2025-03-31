@@ -4,6 +4,8 @@ import BarChart from "./Barcharts";
 import Profile from "../../../../assets/images/Profile.png";
 import ActivityLog from "./ActivityLog";
 import { FaChevronLeft } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+
 
 import { Bar, Doughnut } from "react-chartjs-2";
 
@@ -53,20 +55,19 @@ const LeaderboardProfile = ({ isOpen }) => {
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
   const [userData, setUserData] = useState([]);
-  const urlParams = new URLSearchParams(window.location.search);
-  const user_id = urlParams.get("user_id");
-  const class_id = urlParams.get("class_id");
+  const location = useLocation();
+  const { user_id, class_id } = location.state || {};
   const [loading, setLoading] = useState(false);
   const [performanceHistory, setPerformanceHistory] = useState([]);
   const [monthlyData, setMonthlyData] = useState({});
-
+  console.log(user_id, class_id);
   useEffect(() => {
     setLoading(true);
     GetUserProfileAsync({
       dispatch: dispatch,
       data: {
-        user_id: user_id,
-        class_id: class_id,
+        user_id,
+        class_id,
       },
       token: token,
       callbackFn: (res) => {
@@ -152,9 +153,8 @@ const LeaderboardProfile = ({ isOpen }) => {
   ];
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -320,8 +320,8 @@ const LeaderboardProfile = ({ isOpen }) => {
               <div className=" rounded-lg  lg:p-[16px] bg-[#FFFAF4] ">
                 <div>
                   <div className="lg:mt-0 mt-5  p-[8px] w-full flex flex-col  gap-[2rem] ">
-                    {data2.map((item) => (
-                      <div className="lg:flex items-center w-full  bg-[#FFFFFF]  p-2 border-2 border-[#EFF1F5] rounded-[16px]">
+                    {data2.map((item, index) => (
+                      <div key={index} className="lg:flex items-center w-full  bg-[#FFFFFF]  p-2 border-2 border-[#EFF1F5] rounded-[16px]">
                         <div className="w-[24px] h-[24px] roumded-[4px]">
                           <img src={Profile} />
                         </div>
@@ -335,6 +335,8 @@ const LeaderboardProfile = ({ isOpen }) => {
                         </div>
                       </div>
                     ))}
+
+
                   </div>
                 </div>
               </div>
