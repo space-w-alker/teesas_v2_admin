@@ -79,6 +79,7 @@ const AddoneOnOneclass = ({ isOpen }) => {
     End_Time: "",
     Reoccurring: true,
     Description: "",
+    Amount: "",
   });
   const onchangeHandler = (event) => {
     const { name, value } = event.target;
@@ -111,6 +112,7 @@ const AddoneOnOneclass = ({ isOpen }) => {
         teacher_id: formData?.Teacher,
         // is_reoccurring: formData?.Reoccurring,
         class_status: "",
+        amount: formData?.Amount,
 
 
       };
@@ -132,6 +134,7 @@ const AddoneOnOneclass = ({ isOpen }) => {
               End_Time: "",
               Reoccurring: true,
               Description: "",
+              Amount: "",
             });
             setmodalopen(!modalopen);
             setAcadmyData(res?.data?.data);
@@ -328,6 +331,29 @@ const AddoneOnOneclass = ({ isOpen }) => {
                       </span>
                     )}
                   </div>
+
+                  <div className="">
+                    <label
+                      for="Amount"
+                      className="font-medium text-[14px] leading-[18px] text-[#3D3D3D] "
+                    >
+                      Amount
+                    </label>
+                    <input
+                      type="number"
+                      name="Amount"
+                      placeholder="Enter Amount"
+                      value={formData.Amount}
+                      onChange={onchangeHandler}
+                      className="w-full mt-1 text-[14px] outline-none border p-2 border-[#D9D9D9] h-[40px] rounded-lg"
+                    />
+                    {errors.Amount && (
+                      <span className="text-red-500 block p-[8px]">
+                        {errors.Amount} *
+                      </span>
+                    )}
+                  </div>
+
                   <div className="">
                     <label
                       for="Teacher"
