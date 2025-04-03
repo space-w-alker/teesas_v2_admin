@@ -229,24 +229,24 @@ const StudentList = () => {
                 }}
               />
             </div> */}
- <div className="flex items-center relative lg:w-[204px]">
-                            <input
-                                type="text"
-                                name="search"
-                                onChange={(e) => handleSearchChange(e.target.value)}
-                                className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
-                                placeholder="Search Item"
-                            />
-                            <img src={SearchButton} className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer" alt="Search icon" />
-                        </div>            <div
+            <div className="flex items-center relative lg:w-[204px]">
+              <input
+                type="text"
+                name="search"
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
+                placeholder="Search Item"
+              />
+              <img src={SearchButton} className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer" alt="Search icon" />
+            </div>            <div
               className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
               onClick={() => setIsModalFilterOpen(true)}
             >
               <img src={Vector} alt="Vector" />
             </div>
-            <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2">
+            {/* <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2">
               <img src={container} alt="Container" />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

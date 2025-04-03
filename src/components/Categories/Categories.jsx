@@ -13,6 +13,7 @@ import Custombutton from '../common/Custombutton';
 import { useRef } from 'react';
 import { getCategoriesAsync, selectCategories, deleteCategoryAsync } from '../../apis/slices/categoriesSlice';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+
 const CategoryCard = ({ category }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -160,14 +161,13 @@ const Categories = ({ isOpen }) => {
   const limit = 10;
   const [totalPages, setTotalPages] = useState(1);
 
-
   // Initial mount fetch
   useEffect(() => {
     if (isInitialMount.current) {
       dispatch(getCategoriesAsync(1, limit, ''))
         .then(response => {
-          if (response?.data?.stats?.totalPages) {
-            setTotalPages(response.data.stats.totalPages);
+          if (response?.payload?.data?.totalPages) {
+            setTotalPages(response.payload.data.totalPages);
           }
         });
       isInitialMount.current = false;
@@ -179,8 +179,8 @@ const Categories = ({ isOpen }) => {
     if (!isInitialMount.current) {
       dispatch(getCategoriesAsync(currentPage, limit, searchTerm))
         .then(response => {
-          if (response?.data?.stats?.totalPages) {
-            setTotalPages(response.data.stats.totalPages);
+          if (response?.payload?.data?.totalPages) {
+            setTotalPages(response.payload.data.totalPages);
           }
         });
     }
@@ -191,7 +191,12 @@ const Categories = ({ isOpen }) => {
     if (!isInitialMount.current && searchTerm !== '') {
       const delayDebounceFn = setTimeout(() => {
         setCurrentPage(1);
-        dispatch(getCategoriesAsync(1, limit, searchTerm));
+        dispatch(getCategoriesAsync(1, limit, searchTerm))
+          .then(response => {
+            if (response?.payload?.data?.totalPages) {
+              setTotalPages(response.payload.data.totalPages);
+            }
+          });
       }, 800);
       return () => clearTimeout(delayDebounceFn);
     }
@@ -200,20 +205,23 @@ const Categories = ({ isOpen }) => {
   const handleReload = () => {
     setSearchTerm('');
     setCurrentPage(1);
-    dispatch(getCategoriesAsync(1, limit, ''));
+    dispatch(getCategoriesAsync(1, limit, ''))
+      .then(response => {
+        if (response?.payload?.data?.totalPages) {
+          setTotalPages(response.payload.data.totalPages);
+        }
+      });
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(prev => prev - 1);
-      dispatch(getCategoriesAsync(currentPage - 1, limit, searchTerm));
     }
   };
 
   const handleNextPage = () => {
-    if (data?.length === limit) {
+    if (currentPage < totalPages) {
       setCurrentPage(prev => prev + 1);
-      dispatch(getCategoriesAsync(currentPage + 1, limit, searchTerm));
     }
   };
 
@@ -222,7 +230,12 @@ const Categories = ({ isOpen }) => {
     setSearchTerm(sanitizedValue);
     if (!sanitizedValue) {
       setCurrentPage(1);
-      dispatch(getCategoriesAsync(1, limit, ''));
+      dispatch(getCategoriesAsync(1, limit, ''))
+        .then(response => {
+          if (response?.payload?.data?.totalPages) {
+            setTotalPages(response.payload.data.totalPages);
+          }
+        });
     }
   };
 
@@ -262,13 +275,18 @@ const Categories = ({ isOpen }) => {
           value="Categories"
           showSearch={true}
           showFilter={false}
-          showMenu={false} 
+          showMenu={false}
           onSearch={handleSearch}
           searchValue={searchTerm}
           onClear={() => {
             setSearchTerm('');
             setCurrentPage(1);
-            dispatch(getCategoriesAsync(1, limit, ''));
+            dispatch(getCategoriesAsync(1, limit, ''))
+              .then(response => {
+                if (response?.payload?.data?.totalPages) {
+                  setTotalPages(response.payload.data.totalPages);
+                }
+              });
           }}
         />
         {isLoading ? (
@@ -299,11 +317,9 @@ const Categories = ({ isOpen }) => {
             disabled={currentPage === 1}
           />
 
-          <Custombutton
-            value={`Page ${currentPage}`}
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
-          />
+          <div className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages || 1}
+          </div>
 
           <Custombutton
             value="Next"
@@ -312,7 +328,7 @@ const Categories = ({ isOpen }) => {
             textcolor="text-[#000000]"
             imagePosition="right"
             onClick={handleNextPage}
-            disabled={!data || data.length < limit}
+            disabled={currentPage >= totalPages}
           />
         </div>
       </div>
@@ -333,4 +349,6 @@ const Categories = ({ isOpen }) => {
       )}
     </div>
   );
-}; export default Categories;
+};
+
+export default Categories;
