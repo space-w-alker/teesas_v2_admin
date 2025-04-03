@@ -17,7 +17,13 @@ import Vector from "../../assets/images/Vector.png";
 import SearchButton from "../../assets/images/Searchbutton.png";
 import Modal from '../../components/common/Modal';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import { fetchUserDetailsAsync, deleteUserAsync, deactivateUserAsync } from "../../apis/slices/userSlice";
+import SuccessModal from '../../components/common/SuccessModal';
+import {
+  fetchUserDetailsAsync,
+  deleteUserAsync,
+  deactivateUserAsync,
+  fetchUserSubscriptionsAsync
+} from "../../apis/slices/userSlice";
 
 const doughnutOptions = {
   responsive: true,
@@ -44,6 +50,15 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
   const userData = useSelector((state) => state.users?.userDetails?.usersList || {});
+  const userSubscriptions = useSelector((state) => state.users?.userSubscriptions || {}); // Get subscription data from Redux
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    type: 'success',
+    title: '',
+    message: '',
+    buttonText: 'Close'
+  });
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -70,48 +85,87 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
   };
 
   const onDeleteUser = () => {
+    setModalConfig({
+      type: 'caution',
+      title: 'Delete User',
+      message: 'Are you sure you want to delete this user? This action cannot be undone.',
+      buttonText: 'Delete'
+    });
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowConfirmModal(false);
     setLoading(true);
+
     dispatch(deleteUserAsync({
       dispatch: dispatch,
       userId: id,
     })).then((response) => {
       setLoading(false);
-      closeModal();
-      toast.success('User deleted successfully');
-      setTimeout(() => {
-        Navigate('/users');
-      }, 1000);
+
+      // Show success modal
+      setModalConfig({
+        type: 'success',
+        title: 'User Deleted',
+        message: 'The user has been successfully deleted.',
+        buttonText: 'Go to Users'
+      });
+      setShowSuccessModal(true);
+
     }).catch((error) => {
       setLoading(false);
-      closeModal();
+
+      // Show error modal
+      setModalConfig({
+        type: 'caution',
+        title: 'Delete Failed',
+        message: 'Failed to delete the user. Please try again.',
+        buttonText: 'Close'
+      });
+      setShowSuccessModal(true);
     });
   };
 
-  const onDeactivateUser = () => {
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    if (modalConfig.type === 'success') {
+      Navigate('/users');
+    }
+  };
+
+  const onToggleUserStatus = () => {
     setLoading(true);
     dispatch(deactivateUserAsync({
       dispatch: dispatch,
       userId: id,
     })).then((response) => {
       setLoading(false);
-      closeModal();
-      // toast.success('User deactivated successfully');
+      toast.success(`User ${userData?.status === 'active' ? 'deactivated' : 'activated'} successfully`);
       setTimeout(() => {
         Navigate('/users');
       }, 1000);
     }).catch((error) => {
       setLoading(false);
-      closeModal();
-      toast.error('Failed to Toggle user');
+      toast.error('Failed to toggle user status');
     });
   };
 
   useEffect(() => {
     setLoading(true);
+
+    // Fetch user details
     dispatch(fetchUserDetailsAsync({
       dispatch: dispatch,
       userId: id,
+      token
     })).then(() => {
+      // After user details are loaded, fetch subscriptions
+      dispatch(fetchUserSubscriptionsAsync({
+        dispatch: dispatch,
+        userId: id,
+        token
+      }));
       setLoading(false);
     }).catch((error) => {
       setLoading(false);
@@ -214,6 +268,17 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
   // Extract name parts
   const nameParts = splitName(userData?.userName);
 
+  // Format date function
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   return (
     <div
       className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
@@ -232,6 +297,23 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
           <TailSpin color="orange" radius={5} />
         </div>
       )}
+      <SuccessModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        type={modalConfig.type}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        buttonText={modalConfig.buttonText}
+        onConfirm={handleConfirmDelete}
+      />
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleModalClose}
+        type={modalConfig.type}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        buttonText={modalConfig.buttonText}
+      />
       <div className="flex justify-start  items-center lg:gap-3">
         <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
         <div>
@@ -241,51 +323,52 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
           </div>
         </div>
       </div>
-      <div className="bg-[#EFF6F1] mt-5 border rounded-lg mb-[20px] border-[#CAC4D0] h-[80px] p-[8px]">
-        <div className="flex items-center gap-4">
-          <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-            {userData?.userName?.charAt(0).toUpperCase()}
+      <div className="bg-[#EFF6F1] mt-5 border rounded-lg mb-[20px] border-[#CAC4D0] p-[8px]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
+              {userData?.userName?.charAt(0).toUpperCase()}
+            </div>
+            <div className="">
+              <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
+                {userData?.userName}
+              </p>
+              {userData?.status == 'active' ?
+                <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
+                  Active
+                </button> : <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#aa0808]">
+                  Inactive
+                </button>}
+            </div>
           </div>
-          <div className="">
-            <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
-              {userData?.userName}
-            </p>
-            {userData?.status == 'active' ?
-              <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
-                Active
-              </button> : <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#aa0808]">
-                Inactive
-              </button>}
-          </div>
+
         </div>
       </div>
-      <div className=" lg:grid grid-cols-2 gap-4">
+      <div className="lg:grid grid-cols-2 gap-4">
         <div className="">
           <div className=" w-full rounded-2xl border py-[10px] px-[12px] lg:px-[18px]  bg-[#FFFFFF] ">
-
-
             <div className={`flex justify-between items-center relative mt-3`}>
               <div>
                 <h2 className="font-medium text-[16px] lg:text-[18px] leading-[25px] text-[#2C2E32]">Basic Information</h2>
               </div>
               <div className="flex items-center relative">
                 <div className="h-[60px] lg:px-[8px] flex items-center mt-[5px]">
-                  <div className=" items-center relative lg:w-[204px] hidden">
 
-                    <input
-                      type="text"
-                      name="search"
-                      className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
-                      placeholder="Search Item"
-                    />
-                    <img src={SearchButton} className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer" alt="Search icon" />
+                  <div className="flex gap-3">
+                    <button
+                      onClick={onToggleUserStatus}
+                      className={`px-4 py-2 rounded-md text-white text-sm font-medium ${userData?.status === 'active' ? 'bg-blue-400' : 'bg-[#08AA58]'}`}
+                    >
+                      {userData?.status === 'active' ? 'Deactivate User' : 'Activate User'}
+                    </button>
+                    <button
+                      onClick={onDeleteUser}
+                      className="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-medium"
+                    >
+                      Delete User
+                    </button>
                   </div>
-                  <div className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2 hidden">
-                    <img src={Vector} alt="Vector" />
-                  </div>
-                  <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2" onClick={() => setIsModalOpen(true)}>
-                    <img src={container} alt="Container" />
-                  </div>
+
                 </div>
               </div>
               {isModalOpen && (
@@ -363,8 +446,34 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                   Edit
                 </div>
               </div>
+              
               <div className="bg-[#FFFFFF] py-[10px] px-[10px] mt-[10px] rounded-[8px] flex flex-col gap-4">
                 {formdata.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="flex lg:gap-[5rem] gap-[10px]  md:gap-[10rem] items-center  "
+                  >
+                    <div className=" text-[14px] w-[116px] lg:w-[200px] leading-[18px] text-[#1F1F1FB2]">
+                      {item.label}
+                    </div>
+                    <div className="text-[#222222E5] text-[14px] lg:text-[16px] font-normal">
+                      {item.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+            </div>
+            <div className="w-full rounded-2xl border py-[10px] px-[18px] mt-6 bg-[#FFFFFF] ">
+              <div className="border-b border-[#EBE6DC]">
+                <Headcomponent
+                  value={"Parent Details"}
+                  border="border-bottom:1px solid #EBE6DC"
+                  showSearch={false}
+                />
+              </div>
+              <div className="mt-5 bg-[#F2F2F2] rounded-2xl px-[13px] lg:px-[20px] py-[20px]">
+                {parentformdata.map((item, index) => (
                   <div
                     key={item.id}
                     className="flex lg:gap-[5rem] gap-[10px]  md:gap-[10rem] items-center  "
@@ -381,13 +490,145 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
             </div>
           </div>
         </div>
+
         <div className="">
-          <div className=" w-full rounded-2xl border py-[10px] px-[18px]   bg-[#FFFFFF] ">
-            <Headcomponent
+
+          <div className="w-full rounded-2xl border py-[10px] px-[18px] bg-[#FFFFFF]">
+            <div className="border-b border-[#EBE6DC]">
+              <Headcomponent
+                value={"Subscription Information"}
+                border="border-bottom:1px solid #EBE6DC"
+                showSearch={false}
+              />
+            </div>
+
+            {/* Current Subscriptions */}
+            <div className="mt-5 bg-[#F2F2F2] rounded-2xl px-[13px] lg:px-[20px] py-[20px]">
+              <div className="flex justify-between items-center">
+                <h2 className="font-medium text-[16px] leading-[35px] text-[#49454F]">
+                  Current Subscriptions
+                </h2>
+              </div>
+
+              <div className="bg-[#FFFFFF] py-[10px] px-[10px] mt-[10px] rounded-[8px]">
+                {userSubscriptions?.ActivesubscriptionList?.length > 0 ? (
+                  userSubscriptions.ActivesubscriptionList.map((subscription, index) => (
+                    <div key={index} className="border-b border-gray-100 pb-4 mb-4">
+                      <h3 className="font-medium text-[15px] text-[#27AE60]">
+                        {subscription.subscriptionName}
+                      </h3>
+
+                      {subscription.plan.map((plan, planIndex) => (
+                        <div key={planIndex} className="mt-2">
+                          <div className="flex justify-between mt-2">
+                            <span className="text-[14px] text-gray-600">Transaction ID:</span>
+                            <span className="text-[14px] font-medium">{plan.transaction_id}</span>
+                          </div>
+                          <div className="flex justify-between mt-2">
+                            <span className="text-[14px] text-gray-600">Start Date:</span>
+                            <span className="text-[14px] font-medium">{formatDate(plan.create_time)}</span>
+                          </div>
+                          <div className="flex justify-between mt-2">
+                            <span className="text-[14px] text-gray-600">End Date:</span>
+                            <span className="text-[14px] font-medium">{formatDate(plan.subscriptionEndDate)}</span>
+                          </div>
+                          <div className="flex justify-between mt-2">
+                            <span className="text-[14px] text-gray-600">Days Left:</span>
+                            <span className="text-[14px] font-medium">{plan.days_left} of {plan.total_days} days</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 py-4">No active subscriptions found</p>
+                )}
+              </div>
+            </div>
+
+            {/* Subscription Details */}
+            <div className="mt-5 bg-[#F2F2F2] rounded-2xl px-[13px] lg:px-[20px] py-[20px]">
+              <div className="flex justify-between items-center">
+                <h2 className="font-medium text-[16px] leading-[35px] text-[#49454F]">
+                  Subscription Details
+                </h2>
+              </div>
+
+              <div className="bg-[#FFFFFF] py-[10px] px-[10px] mt-[10px] rounded-[8px]">
+                {userSubscriptions?.ActivesubscriptionList?.length > 0 ? (
+                  userSubscriptions.ActivesubscriptionList.map((subscription, index) => (
+                    <div key={index} className="border-b border-gray-100 pb-4 mb-4 last:border-b-0 last:mb-0 last:pb-0">
+                      {subscription.plan.map((plan, planIndex) => (
+                        <div key={planIndex} className="mt-2">
+                          <h3 className="font-medium text-[15px] text-[#333]">
+                            {plan.subscription?.classes?.course?.name} - {plan.subscription?.classes?.name}
+                          </h3>
+
+                          <div className="flex justify-between mt-2">
+                            <span className="text-[14px] text-gray-600">Amount:</span>
+                            <span className="text-[14px] font-medium">₦{plan.subscription?.amount?.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between mt-2">
+                            <span className="text-[14px] text-gray-600">Duration:</span>
+                            <span className="text-[14px] font-medium">{plan.subscription?.time} days</span>
+                          </div>
+                          <div className="flex justify-between mt-2">
+                            <span className="text-[14px] text-gray-600">Description:</span>
+                            <span className="text-[14px] font-medium">{plan.subscription?.description}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 py-4">No subscription details available</p>
+                )}
+              </div>
+            </div>
+
+            {/* Subscription History */}
+            <div className="mt-5 bg-[#F2F2F2] rounded-2xl px-[13px] lg:px-[20px] py-[20px] mb-5">
+              <div className="flex justify-between items-center">
+                <h2 className="font-medium text-[16px] leading-[35px] text-[#49454F]">
+                  Subscription History
+                </h2>
+              </div>
+
+              <div className="bg-[#FFFFFF] py-[10px] px-[10px] mt-[10px] rounded-[8px]">
+                {userSubscriptions?.planHistory?.length > 0 ? (
+                  userSubscriptions.planHistory.map((history, index) => (
+                    <div key={index} className="border-b border-gray-100 pb-4 mb-4 last:border-b-0 last:mb-0 last:pb-0">
+                      <h3 className="font-medium text-[15px] text-[#333]">
+                        {history.subscriptionName || "Past Subscription"}
+                      </h3>
+
+                      {/* Display history details here */}
+                      <div className="flex justify-between mt-2">
+                        <span className="text-[14px] text-gray-600">Transaction ID:</span>
+                        <span className="text-[14px] font-medium">{history.transaction_id || "N/A"}</span>
+                      </div>
+                      <div className="flex justify-between mt-2">
+                        <span className="text-[14px] text-gray-600">Start Date:</span>
+                        <span className="text-[14px] font-medium">{formatDate(history.create_time)}</span>
+                      </div>
+                      <div className="flex justify-between mt-2">
+                        <span className="text-[14px] text-gray-600">End Date:</span>
+                        <span className="text-[14px] font-medium">{formatDate(history.subscriptionEndDate)}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 py-4">No subscription history available</p>
+                )}
+              </div>
+            </div>
+          </div>
+         {/* // <div className=" w-full rounded-2xl border py-[10px] px-[18px]   bg-[#FFFFFF] "> */}
+            {/* <Headcomponent
               value={"Report"}
               border="border-bottom:1px solid #EBE6DC"
-            />
-            <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
+            /> */}
+            {/* <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
               <div className="px-[5px]">
                 <h3 className=" font-medium text-[16px] leading-[35px] text-[#49454F]">
                   General Performance
@@ -396,7 +637,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                   <PieChart data={info} labels={labels} />
                 </div>
               </div>
-            </div>
+            </div> */}
             {/* <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
               <div className="px-[5px]">
                 <h3 className=" font-medium text-[16px] leading-[35px] text-[#49454F]">
@@ -407,62 +648,26 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                 </div>
               </div>
             </div>*/}
-          </div>
-        </div>
-
-        <div className=" mt-5 lg:mt-0 w-full rounded-2xl border py-[10px] lg:px-[18px] px-[8px]  bg-[#FFFFFF] ">
-          <div className="border-b border-[#EBE6DC]">
-            <Headcomponent
-              value={"Activity History"}
-              border="border-bottom:1px solid #EBE6DC"
-            />
-          </div>
-
-          <ActivityHistory data={userData?.activity_logs} />
-        </div>
-
-        <div className=" w-full rounded-2xl border py-[10px] px-[18px] lg:mt-0 mt-5 bg-[#FFFFFF] ">
-          <div className="border-b border-[#EBE6DC]">
-            <Headcomponent
-              value={"Parent Details"}
-              border="border-bottom:1px solid #EBE6DC"
-              showSearch={false}
-            />
-          </div>
-          <div className="mt-5 bg-[#F2F2F2] rounded-2xl px-[13px] lg:px-[20px] py-[20px]">
-            {/* <div className="flex justify-between items-center ">
-              <div className="">
-                <h2 className="font-medium text-[16px] leading-[35px] text-[#49454F]">
-                  Bio And Contact
-                </h2>
-              </div>
-              <div
-                className=" text-[#27AE60] cursor-pointer"
-                onClick={() => {
-                  // Navigate("/Parent");
-                }}
-              >
-                Edit
-              </div>
-            </div> */}
-            <div className="bg-[#FFFFFF] py-[10px] px-[10px] mt-[10px] rounded-[8px] flex flex-col gap-4">
-              {parentformdata.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="flex lg:gap-[5rem] gap-[10px]  md:gap-[10rem] items-center  "
-                >
-                  <div className=" text-[14px] w-[116px] lg:w-[200px] leading-[18px] text-[#1F1F1FB2]">
-                    {item.label}
-                  </div>
-                  <div className="text-[#222222E5] text-[14px] lg:text-[16px] font-normal">
-                    {item.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* </div> */}
         </div>
       </div>
+      <div className="lg:grid grid-cols-2 gap-4 mt-4">
+        {/* <div className="">
+          <div className="w-full rounded-2xl border py-[10px] lg:px-[18px] px-[8px]  bg-[#FFFFFF] ">
+            <div className="border-b border-[#EBE6DC]">
+              <Headcomponent
+                value={"Activity History"}
+                border="border-bottom:1px solid #EBE6DC"
+              />
+            </div>
+            <ActivityHistory data={userData?.activity_logs} />
+          </div>
+        </div> */}
+        <div className="">
+         
+        </div>
+      </div>
+    
     </div >
   );
 };

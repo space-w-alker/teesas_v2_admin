@@ -245,6 +245,7 @@ const StudentList = () => {
                 src={SearchButton}
                 className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer"
                 alt="Search icon"
+                onClick={() => setIsModalFilterOpen(true)}
               />
             </div>{" "}
             <div

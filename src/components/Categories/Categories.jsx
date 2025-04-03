@@ -201,7 +201,12 @@ const Categories = ({ isOpen }) => {
     if (!isInitialMount.current && searchTerm !== "") {
       const delayDebounceFn = setTimeout(() => {
         setCurrentPage(1);
-        dispatch(getCategoriesAsync(1, limit, searchTerm));
+        dispatch(getCategoriesAsync(1, limit, searchTerm))
+          .then(response => {
+            if (response?.payload?.data?.totalPages) {
+              setTotalPages(response.payload.data.totalPages);
+            }
+          });
       }, 800);
       return () => clearTimeout(delayDebounceFn);
     }
@@ -210,7 +215,12 @@ const Categories = ({ isOpen }) => {
   const handleReload = () => {
     setSearchTerm("");
     setCurrentPage(1);
-    dispatch(getCategoriesAsync(1, limit, ""));
+    dispatch(getCategoriesAsync(1, limit, ''))
+      .then(response => {
+        if (response?.payload?.data?.totalPages) {
+          setTotalPages(response.payload.data.totalPages);
+        }
+      });
   };
 
   const handlePrevPage = () => {
@@ -329,7 +339,7 @@ const Categories = ({ isOpen }) => {
             textcolor="text-[#000000]"
             imagePosition="right"
             onClick={handleNextPage}
-            disabled={!data || data.length < limit}
+            disabled={currentPage >= totalPages}
           />
         </div>
       </div>

@@ -13,6 +13,7 @@ export const userSlice = createSlice({
         addUserResponse: {},
         bulkUploadResponse: {},
         updateUserResponse: {},
+        userSubscriptions: {},
     },
     reducers: {
         listUsersSuccess: (state, action) => {
@@ -42,6 +43,9 @@ export const userSlice = createSlice({
                 state.userList[userIndex].status = 'deactivated'; // Assuming you have a status field
             }
         },
+        getUserSubscriptionsSuccess: (state, action) => {
+            state.userSubscriptions = action.payload;
+        },
     },
 });
 
@@ -53,6 +57,7 @@ export const {
     updateUserSuccess,
     deleteUserSuccess,
     deactivateUserSuccess,
+    getUserSubscriptionsSuccess,
 } = userSlice.actions;
 
 // Thunk to get users
@@ -96,21 +101,16 @@ export const addUserAsync = ({ dispatch, data, token, callbackFn }) => {
     return async () => {
         try {
             const URL = `${BASEURL}admin/dashboard/users/add-single`;
-            const response = await postAPICall(URL, data, true, token);
-            console.log('test', response);
-            if (response?.data.data) {
-                callbackFn && callbackFn(response.data);
-                dispatch(addUserSuccess(response.data));
-                toast.success('User added successfully')
+            const response = await postFileAPICall(URL, data, true, token);
+            dispatch(addUserSuccess(response.data));
+            callbackFn && callbackFn({ success: true, data: response.data });
 
-            } else {
-                toast.error(response?.data.error);
-            }
         } catch (error) {
-            toast.error(error);
+            callbackFn && callbackFn({ success: false, message: error.message || 'An error occurred' });
         }
     };
 };
+
 
 // Thunk to upload users in bulk
 export const bulkUploadUsersAsync = ({ dispatch, formData, token, callbackFn }) => {
@@ -177,12 +177,28 @@ export const deactivateUserAsync = ({ dispatch, userId, token }) => {
             const response = await patchAPICall(URL, {}, true, token);
             if (response?.data.message) {
                 // dispatch(deactivateUserSuccess({ id: userId }));
-                toast.success(response?.data.message);
-            } else {
-                toast.error("Failed to deactivate user.");
+                // toast.success(response?.data.message);
             }
         } catch (error) {
             toast.error("Error deactivating user.");
+        }
+    };
+};
+
+// Thunk to fetch user subscriptions
+export const fetchUserSubscriptionsAsync = ({ dispatch, userId, token }) => {
+    return async () => {
+        try {
+            const URL = `${BASEURL}subscriptions/admin-user-subscriptions/${userId}`;
+            const response = await getAPICall(URL, true, token);
+
+            if (response?.data && response.data.status === 200) {
+                dispatch(getUserSubscriptionsSuccess(response.data.data));
+            } else {
+                toast.error("Failed to fetch user subscriptions.");
+            }
+        } catch (error) {
+            toast.error("Error fetching user subscriptions.");
         }
     };
 };
