@@ -14,6 +14,9 @@ const {
   RESERVE_LIVE_CLASS,
   GET_STUDENTS_LIVE_CLASS,
   GET_ADMIN_Subjects,
+  GET_BANK_TRANSFER_DETAILS,
+  ACCEPT_BANK_TRANSFER,
+  REJECT_BANK_TRANSFER,
 } = config;
 
 export const liveClassSlice = createSlice({
@@ -49,6 +52,11 @@ export const liveClassSlice = createSlice({
       success: false,
       error: null
     },
+    bankTransferDetails: {
+      isLoading: false,
+      data: null,
+      error: null
+    }
   },
   reducers: {
     getLiveClasses: (state, action) => {
@@ -75,7 +83,9 @@ export const liveClassSlice = createSlice({
     getSubjects: (state, action) => {
       state.getSubjectsResponse = action.payload;
     },
-
+    setBankTransferDetails: (state, action) => {
+      state.bankTransferDetails = action.payload;
+    },
     reset: (state, action) => {
       state.getLiveClassesResponse = {
         reaponse: {},
@@ -286,6 +296,104 @@ export const resetBulkLiveClassUpload = () => (dispatch) => {
   }));
 };
 
+// Add this new async function to fetch bank transfer details
+export const getBankTransferDetailsAsync = async ({
+  dispatch,
+  callbackFn,
+  liveClassId,
+  token,
+}) => {
+  try {
+    dispatch(setBankTransferDetails({ isLoading: true, data: null, error: null }));
+    const URL = `${BASEURL}${GET_BANK_TRANSFER_DETAILS}/${liveClassId}`;
+    const result = await getAPICall(URL, {}, token);
+    
+    if (result?.data?.status === 200) {
+      dispatch(setBankTransferDetails({ 
+        isLoading: false, 
+        data: result.data.data, 
+        error: null 
+      }));
+    } else {
+      dispatch(setBankTransferDetails({ 
+        isLoading: false, 
+        data: null, 
+        error: result?.data?.message || "Failed to fetch bank transfer details" 
+      }));
+    }
+    
+    callbackFn && callbackFn(result);
+    return result;
+  } catch (err) {
+    dispatch(setBankTransferDetails({ 
+      isLoading: false, 
+      data: null, 
+      error: err.message || "An error occurred while fetching bank transfer details" 
+    }));
+    return { error: err };
+  }
+};
+
+// Function to accept bank transfer
+export const acceptBankTransferAsync = async ({
+  dispatch,
+  callbackFn,
+  liveClassId,
+  bankTransferId,
+  token,
+}) => {
+  try {
+    const URL = `${BASEURL}${ACCEPT_BANK_TRANSFER}`;
+    const body = {
+      live_class_id: liveClassId,
+      bank_transfer_id: bankTransferId
+    };
+    
+    const result = await postAPICall(URL, body, token);
+    
+    if (result?.data?.status === 200) {
+      toast.success("Payment accepted successfully");
+    } else {
+      toast.error(result?.data?.message || "Failed to accept payment");
+    }
+    
+    callbackFn && callbackFn(result);
+    return result;
+  } catch (err) {
+    console.error("Error accepting bank transfer:", err);
+    return { error: err };
+  }
+};
+
+// Function to reject bank transfer
+export const rejectBankTransferAsync = async ({
+  dispatch,
+  callbackFn,
+  requestId,
+  token,
+}) => {
+  try {
+    const URL = `${BASEURL}${REJECT_BANK_TRANSFER}`;
+    const body = {
+      requestId: requestId
+    };
+    
+    const result = await postAPICall(URL, body, token);
+    
+    if (result?.data?.status === 200) {
+      toast.success("Payment rejected successfully");
+    } else {
+      toast.error(result?.data?.message || "Failed to reject payment");
+    }
+    
+    callbackFn && callbackFn(result);
+    return result;
+  } catch (err) {
+    console.error("Error rejecting bank transfer:", err);
+    return { error: err };
+  }
+};
+
 export const {
   getLiveClasses,
   getLiveClass,
@@ -294,9 +402,10 @@ export const {
   deleteLiveClass,
   reserveLiveClass,
   getStudentsLiveClasses,
-  getSubjectsResponse,
-  setBulkLiveClassUpload,
+  getSubjects,
+  setBankTransferDetails,
 } = liveClassSlice.actions;
+
 export const getLiveClassesResponse = (state) =>
   state.liveClass.getLiveClassesResponse;
 export const getLiveClassResponse = (state) =>
@@ -304,6 +413,6 @@ export const getLiveClassResponse = (state) =>
 export const addLiveClassResponse = (state) =>
   state.liveClass.addLiveClassResponse;
 export const selectBulkLiveClassUpload = (state) => state.liveClass.bulkUpload;
-
+export const selectBankTransferDetails = (state) => state.liveClass.bankTransferDetails;
 
 export default liveClassSlice.reducer;

@@ -118,4 +118,10 @@ export const config = {
   DELETE_PUSH_NOTIFICATION: "notifications/delete",
   CREATE_BULK_LIVE_CLASS: "live/create-bulk-live-class",
 
+  GET_BANK_TRANSFER_DETAILS: "live/bank-transfer-details",
+  ACCEPT_BANK_TRANSFER: "live/enrol-one-to-one-success-class-accept",
+  REJECT_BANK_TRANSFER: "live/reject-bank-transfer",
+
+
+
 };

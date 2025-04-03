@@ -304,7 +304,7 @@ const OneOnclass = ({ isOpen }) => {
                       </div>
                     </div>
 
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-3">
                       {/* <Custombutton
                       value={user?.active ? "Visible" : "Hidden"}
                       img={sharp}
@@ -316,6 +316,12 @@ const OneOnclass = ({ isOpen }) => {
                       }
                       imagePosition="left"
                     /> */}
+                      <Custombutton
+                        value="View Proof"
+                        backgroundcolor="bg-[#E9FDEE]"
+                        textcolor="text-[#27AE60]"
+                        onClick={() => Navigate(`/payment-proof/${user?.id}`)}
+                      />
                       <img
                         src={container}
                         alt="Actions"
@@ -432,4 +438,4 @@ const OneOnclass = ({ isOpen }) => {
 
 export default OneOnclass;
 
-                  
+
