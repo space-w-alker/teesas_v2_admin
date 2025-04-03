@@ -6,7 +6,6 @@ import ActivityLog from "./ActivityLog";
 import { FaChevronLeft } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 
-
 import { Bar, Doughnut } from "react-chartjs-2";
 
 import React, { useState, useEffect } from "react";
@@ -21,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { TailSpin } from "react-loader-spinner";
 import TestSchedule from "./TestSchedule";
+import StudentStatsDashboard from "./StudentStatsDashboard";
 
 const options = {
   responsive: true,
@@ -154,8 +154,9 @@ const LeaderboardProfile = ({ isOpen }) => {
   ];
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem]  px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -171,7 +172,12 @@ const LeaderboardProfile = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft />
+        <button
+          onClick={() => Navigate(-1)}
+          className="flex items-center text-gray-600"
+        >
+          <FaChevronLeft />
+        </button>
         <div>
           <div
             onClick={() => {
@@ -263,6 +269,7 @@ const LeaderboardProfile = ({ isOpen }) => {
           </div>
         </div>
       </div>
+      <StudentStatsDashboard id={user_id} class={class_id} />
       <div>
         <div className=" rounded-[12px] border border-[#EFF1F5] lg:p-[24px] bg-[#FFFFFF] mt-10 hidden">
           {/* <div className=" lg:grid grid-cols-3 gap-[33px]">
@@ -322,7 +329,10 @@ const LeaderboardProfile = ({ isOpen }) => {
                 <div>
                   <div className="lg:mt-0 mt-5  p-[8px] w-full flex flex-col  gap-[2rem] ">
                     {data2.map((item, index) => (
-                      <div key={index} className="lg:flex items-center w-full  bg-[#FFFFFF]  p-2 border-2 border-[#EFF1F5] rounded-[16px]">
+                      <div
+                        key={index}
+                        className="lg:flex items-center w-full  bg-[#FFFFFF]  p-2 border-2 border-[#EFF1F5] rounded-[16px]"
+                      >
                         <div className="w-[24px] h-[24px] roumded-[4px]">
                           <img src={Profile} />
                         </div>
@@ -336,8 +346,6 @@ const LeaderboardProfile = ({ isOpen }) => {
                         </div>
                       </div>
                     ))}
-
-
                   </div>
                 </div>
               </div>
@@ -351,9 +359,7 @@ const LeaderboardProfile = ({ isOpen }) => {
         performanceHistory={performanceHistory}
       />
 
-      <TestSchedule
-      id={user_id}
-      />
+      <TestSchedule id={user_id} />
     </div>
   );
 };

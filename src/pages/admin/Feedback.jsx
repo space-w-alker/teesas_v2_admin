@@ -3,7 +3,10 @@ import Headcomponent from "../../components/common/Headcomponent";
 import Userfeedback from "../../components/Core/Dashboard/Admin/Userfeedback";
 import { FaChevronLeft } from "react-icons/fa";
 import Modal from "../../components/common/Modal";
-import { getUsersFeedbackAsync, getUserFeedBacksCsvAsync } from "../../apis/slices/feedBackSlice";
+import {
+  getUsersFeedbackAsync,
+  getUserFeedBacksCsvAsync,
+} from "../../apis/slices/feedBackSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
@@ -27,7 +30,7 @@ const Feedback = ({ isOpen }) => {
   const [progressCsv, setProgressCsv] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const newData = {
       page: 1,
       limit: 10,
@@ -42,11 +45,13 @@ const Feedback = ({ isOpen }) => {
           setdata(res?.data?.data?.data?.feedback);
           setPageData(res?.data?.data?.data?.overview);
           setTotalFeedback(res?.data?.data?.data?.overview?.totalFeedback);
-          setTotalResolvedFeedback(res?.data?.data?.data?.overview?.totalResolvedFeedback);
+          setTotalResolvedFeedback(
+            res?.data?.data?.data?.overview?.totalResolvedFeedback
+          );
           setLoading(false);
         } else {
           alert(res?.data?.message);
-          setLoading(false);
+          // setLoading(false);
         }
       },
     });
@@ -66,7 +71,6 @@ const Feedback = ({ isOpen }) => {
     // });
   }, []);
 
-
   const [isActive, setIsActive] = useState(false);
   const handleClick = () => {
     setIsActive(!isActive);
@@ -74,8 +78,9 @@ const Feedback = ({ isOpen }) => {
   };
   return (
     <div
-      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
-        }`}
+      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -91,7 +96,10 @@ const Feedback = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+        <FaChevronLeft
+          onClick={() => Navigate(-1)}
+          className="cursor-pointer"
+        />
 
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
@@ -130,7 +138,7 @@ const Feedback = ({ isOpen }) => {
             </div>
           </div>
         </div>
-        <div
+        {/* <div
           className={`border border-[#27AE60] w-[120px] h-[40px] rounded-lg py-[7px] px-[16px] mt-3 float-right bg-[#27AE60]`}
         >
           <CSVLink
@@ -141,18 +149,24 @@ const Feedback = ({ isOpen }) => {
           >
             <button
               className={`text-[14px] leading-[20px] text-center text-white `}
-            // onClick={handleClick}
+              // onClick={handleClick}
             >
               Export CSV
             </button>
-
           </CSVLink>
-        </div>
+        </div> */}
       </div>
 
       <div className="mt-[60px]">
         <Userfeedback />
-        {isModalOpen && <Modal csvData1={csvUser} csvData2={progressCsv} closeModal={handleModalClose} label="Export" />}
+        {isModalOpen && (
+          <Modal
+            csvData1={csvUser}
+            csvData2={progressCsv}
+            closeModal={handleModalClose}
+            label="Export"
+          />
+        )}
       </div>
     </div>
   );

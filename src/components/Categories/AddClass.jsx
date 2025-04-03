@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { addClassAsync, updateClassAsync } from '../../apis/slices/categoriesSlice';
-import Headers from '../common/Headers';
-import SuccessModal from '../common/SuccessModal';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  addClassAsync,
+  updateClassAsync,
+} from "../../apis/slices/categoriesSlice";
+import Headers from "../common/Headers";
+import SuccessModal from "../common/SuccessModal";
+import PropTypes from "prop-types";
 
 const AddClass = ({ isOpen }) => {
   const navigate = useNavigate();
@@ -17,7 +20,7 @@ const AddClass = ({ isOpen }) => {
   const categoryName = location.state?.categoryName;
 
   const [formData, setFormData] = useState({
-    className: location.state?.className || ''
+    className: location.state?.className || "",
   });
   const [showSuccess, setShowSuccess] = useState(false);
   const [formErrors, setFormErrors] = useState({});
@@ -26,19 +29,22 @@ const AddClass = ({ isOpen }) => {
   const validateForm = () => {
     const errors = {};
     if (!formData.className.trim()) {
-      errors.className = 'Class name is required';
+      errors.className = "Class name is required";
     }
     if (formData.className.length < 3) {
-      errors.className = 'Class name must be at least 3 characters';
+      errors.className = "Class name must be at least 3 characters";
+    }
+    if (formData.className.length > 30) {
+      errors.className = "Class name must not exceed 30 characters";
     }
     return errors;
   };
 
   const handleChange = (e) => {
-    const sanitizedValue = e.target.value.trim().replace(/[^a-zA-Z0-9\s]/g, '');
-    setFormData(prev => ({
+    const sanitizedValue = e.target.value.trim().replace(/[^a-zA-Z0-9\s]/g, "");
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: sanitizedValue
+      [e.target.name]: sanitizedValue,
     }));
     // Clear error when user starts typing
     if (formErrors.className) {
@@ -57,11 +63,13 @@ const AddClass = ({ isOpen }) => {
     try {
       let result;
       if (isEdit) {
-        result = await dispatch(updateClassAsync({
-          classId,
-          categoryId: id || categoryId,
-          className: formData.className
-        }));
+        result = await dispatch(
+          updateClassAsync({
+            classId,
+            categoryId: id || categoryId,
+            className: formData.className,
+          })
+        );
       } else {
         result = await dispatch(addClassAsync(id, formData.className));
       }
@@ -72,35 +80,49 @@ const AddClass = ({ isOpen }) => {
   };
 
   // Update page title and button text based on mode
-  const pageTitle = isEdit ? 'Edit Class' : 'Add Class';
-  const buttonText = isEdit ? 'Update Class' : 'Add Class';
+  const pageTitle = isEdit ? "Edit Class" : "Add Class";
+  const buttonText = isEdit ? "Update Class" : "Add Class";
 
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
+    <div
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
+    >
       <Headers value1="Home" value2={pageTitle} />
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl p-8 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-8">{pageTitle}</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-8">
+              {pageTitle}
+            </h2>
             <div className="grid grid-cols-2 gap-6">
               <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-3">Class Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Class Name
+                </label>
                 <input
                   type="text"
                   name="className"
                   value={formData.className}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${formErrors.className ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:outline-none focus:border-[#27AE60]`}
+                  className={`w-full p-3 border ${
+                    formErrors.className ? "border-red-500" : "border-gray-200"
+                  } rounded-lg focus:outline-none focus:border-[#27AE60]`}
                   placeholder="Enter Class Name"
                 />
                 {formErrors.className && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.className}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.className}
+                  </p>
                 )}
               </div>
 
               <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-3">Category Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Category Name
+                </label>
                 <input
                   type="text"
                   value={categoryName}
@@ -119,11 +141,15 @@ const AddClass = ({ isOpen }) => {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Class Name:</span>
-                  <span className="font-medium">{formData.className || '-'}</span>
+                  <span className="font-medium">
+                    {formData.className.length > 20
+                      ? formData.className.substring(0, 10) + "..."
+                      : formData.className || "-"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Category:</span>
-                  <span className="font-medium">{categoryName || '-'}</span>
+                  <span className="font-medium">{categoryName || "-"}</span>
                 </div>
               </div>
             </div>
@@ -132,7 +158,7 @@ const AddClass = ({ isOpen }) => {
               disabled={isSubmitting}
               className="w-full mt-8 px-6 py-3 bg-[#27AE60] text-white rounded-lg disabled:opacity-50"
             >
-              {isSubmitting ? 'Processing...' : buttonText}
+              {isSubmitting ? "Processing..." : buttonText}
             </button>
           </div>
         </div>
@@ -144,15 +170,16 @@ const AddClass = ({ isOpen }) => {
           setShowSuccess(false);
           navigate(-1);
         }}
-
         title="Success"
-        message={isEdit ? "Class updated successfully" : "Class added successfully"}
+        message={
+          isEdit ? "Class updated successfully" : "Class added successfully"
+        }
       />
     </div>
   );
 };
 AddClass.propTypes = {
-  isOpen: PropTypes.bool.isRequired
+  isOpen: PropTypes.bool.isRequired,
 };
 
 export default AddClass;

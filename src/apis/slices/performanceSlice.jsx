@@ -41,7 +41,7 @@ export const performanceSlice = createSlice({
 export const getPerformanceAsync = (userId, callback) => async (dispatch) => {
     try {
         dispatch(setPerformanceData({ isLoading: true, data: null, error: null }));
-        const URL = `${BASEURL}/performance/mock-practice-permonce?user_id=${userId}`;
+        const URL = `${BASEURL}performance/mock-practice-permonce?user_id=${userId}`;
         const result = await getAPICall(URL);
         console.log(result.data.data.mockPracticeTest);
         if (result?.data?.status === 200) {
@@ -60,30 +60,38 @@ export const getPerformanceAsync = (userId, callback) => async (dispatch) => {
     }
 };
 
-export const getReportPerformanceAsync = (testAttemptId) => async (dispatch) => {
-    try {
-        dispatch(setReportData({ isLoading: true, data: null, error: null }));
-        const URL = `${BASEURL}/performance/get-report-performance?test_attemt_id=${testAttemptId}`;
-        const result = await getAPICall(URL);
 
-        if (result?.data?.status === 200) {
-            dispatch(setReportData({
-                isLoading: false,
-                data: result.data.data,
-                error: null
-            }));
-        } else {
-            throw new Error('Failed to fetch report performance');
-        }
+export const getReportPerformanceAsync =
+  (testAttemptId, callback) => async (dispatch) => {
+    try {
+      dispatch(setReportData({ isLoading: true, data: null, error: null }));
+      const URL = `${BASEURL}performance/get-report-performance?test_attemt_id=${testAttemptId}`;
+      const result = await getAPICall(URL);
+
+      if (result?.data?.status === 200) {
+        dispatch(
+          setReportData({
+            isLoading: false,
+            data: result.data.data,
+            error: null,
+          })
+        );
+        if (callback) callback(null, result.data.data);
+      } else {
+        throw new Error("Failed to fetch report performance");
+      }
     } catch (error) {
-        dispatch(setReportData({ isLoading: false, data: null, error: error.message }));
+      dispatch(
+        setReportData({ isLoading: false, data: null, error: error.message })
+      );
+      if (callback) callback(error.message);
     }
-};
+  };
 
 export const getVideoGrowthAsync = (userId, year) => async (dispatch) => {
     try {
         dispatch(setVideoGrowthData({ isLoading: true, data: null, error: null }));
-        const URL = `${BASEURL}/performance/get-video-growth?user_id=${userId}&year=${year}`;
+        const URL = `${BASEURL}performance/get-video-growth?user_id=${userId}&year=${year}`;
         const result = await getAPICall(URL);
 
         if (result?.data?.status === 200) {

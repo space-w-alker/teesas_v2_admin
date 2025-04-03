@@ -1,22 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPaymentsAsync, selectPayments, getBankTransfersAsync, selectBankTransfers } from '../../apis/slices/paymentSlice';
-import Custombutton from '../common/Custombutton';
-import Headcomponent from '../common/Headcomponent';
-import Headers from '../common/Headers';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getPaymentsAsync,
+  selectPayments,
+  getBankTransfersAsync,
+  selectBankTransfers,
+} from "../../apis/slices/paymentSlice";
+import Custombutton from "../common/Custombutton";
+import Headcomponent from "../common/Headcomponent";
+import Headers from "../common/Headers";
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-const PaymentCard = ({ id, user_name, subscription_type, date, status, subscription_amount, payment_type }) => {
+const PaymentCard = ({
+  id,
+  user_name,
+  subscription_type,
+  date,
+  status,
+  subscription_amount,
+  payment_type,
+}) => {
   const navigate = useNavigate();
-  const formattedDate = new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   // Use first letter of subscription_type as fallback for account holder initial
-  const initial = subscription_type ? subscription_type[0].toUpperCase() : 'U';
+  const initial = subscription_type ? subscription_type[0].toUpperCase() : "U";
 
   return (
     <>
@@ -36,7 +49,9 @@ const PaymentCard = ({ id, user_name, subscription_type, date, status, subscript
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <span className="font-medium text-gray-900">₦{subscription_amount}</span>
+            <span className="font-medium text-gray-900">
+              ₦{subscription_amount}
+            </span>
           </div>
           <button
             onClick={() => navigate(`/payments/${id}/details`)}
@@ -50,16 +65,22 @@ const PaymentCard = ({ id, user_name, subscription_type, date, status, subscript
   );
 };
 
-const BankTransferCard = ({ id, accountHolderName, status, createdAt, proofImage }) => {
+const BankTransferCard = ({
+  id,
+  accountHolderName,
+  status,
+  createdAt,
+  proofImage,
+}) => {
   const navigate = useNavigate();
-  const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   // Use first letter of account holder name as initial
-  const initial = accountHolderName ? accountHolderName[0].toUpperCase() : 'U';
+  const initial = accountHolderName ? accountHolderName[0].toUpperCase() : "U";
 
   return (
     <div className="flex items-center justify-between py-4 border-b">
@@ -71,10 +92,14 @@ const BankTransferCard = ({ id, accountHolderName, status, createdAt, proofImage
           <h3 className="font-medium text-gray-900">{accountHolderName}</h3>
           <p className="text-sm text-gray-500">{formattedDate}</p>
           <div className="flex gap-2 mt-1">
-            <span className={`text-sm px-2 py-0.5 rounded ${status === 'confirmed' ? 'bg-green-100 text-green-800' :
-              'bg-yellow-100 text-yellow-800'
-              }`}>
-              {status === 'confirmed' ? 'Confirmed' : 'In Progress'}
+            <span
+              className={`text-sm px-2 py-0.5 rounded ${
+                status === "confirmed"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-yellow-100 text-yellow-800"
+              }`}
+            >
+              {status === "confirmed" ? "Confirmed" : "In Progress"}
             </span>
           </div>
         </div>
@@ -127,7 +152,10 @@ const Payments = ({ isOpen }) => {
   };
 
   const handleBankTransferNextPage = () => {
-    if (bankTransferPagination.pages && bankTransferPage < bankTransferPagination.pages) {
+    if (
+      bankTransferPagination.pages &&
+      bankTransferPage < bankTransferPagination.pages
+    ) {
       setBankTransferPage(bankTransferPage + 1);
     }
   };
@@ -139,7 +167,11 @@ const Payments = ({ isOpen }) => {
   };
 
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
+    <div
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
+    >
       <Headers value1="Home" value2="Payments" />
 
       <div className="p-6 border-b border-gray-100">
@@ -155,27 +187,28 @@ const Payments = ({ isOpen }) => {
             <span className="text-2xl font-bold">
               ₦ {statistics?.total_amount?.value || 0}
             </span>
-            <div className="flex items-center text-green-600">
+            {/* <div className="flex items-center text-green-600">
               <span className="text-sm">+{statistics?.total_amount?.percentage_increase || 0}%</span>
               <span className="text-xs ml-1">vs {statistics?.total_amount?.comparison_period || 'Last Period'}</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
 
       {/* Regular Payments Section */}
       <div className="bg-white rounded-xl p-6 mt-6">
-        <Headcomponent value="Payments History" border="Border" showSearch={false} />
+        <Headcomponent
+          value="Payments History"
+          border="Border"
+          showSearch={false}
+        />
         <div className="p-6">
           <div className="space-y-2">
             {isLoading ? (
               <div>Loading...</div>
             ) : payments && Array.isArray(payments) && payments.length > 0 ? (
               payments.map((payment) => (
-                <PaymentCard
-                  key={payment.id}
-                  {...payment}
-                />
+                <PaymentCard key={payment.id} {...payment} />
               ))
             ) : (
               <div>No payments found</div>
@@ -211,17 +244,20 @@ const Payments = ({ isOpen }) => {
 
       {/* Bank Transfer Payments Section */}
       <div className="bg-white rounded-xl p-6 mt-6">
-        <Headcomponent value="Bank Transfer Payments" border="Border" showSearch={false} />
+        <Headcomponent
+          value="Bank Transfer Payments"
+          border="Border"
+          showSearch={false}
+        />
         <div className="p-6">
           <div className="space-y-2">
             {bankTransfersState.isLoading ? (
               <div>Loading...</div>
-            ) : bankTransfers && Array.isArray(bankTransfers) && bankTransfers.length > 0 ? (
+            ) : bankTransfers &&
+              Array.isArray(bankTransfers) &&
+              bankTransfers.length > 0 ? (
               bankTransfers.map((transfer) => (
-                <BankTransferCard
-                  key={transfer.id}
-                  {...transfer}
-                />
+                <BankTransferCard key={transfer.id} {...transfer} />
               ))
             ) : (
               <div>No bank transfers found</div>
@@ -250,7 +286,9 @@ const Payments = ({ isOpen }) => {
                 textcolor="text-[#000000]"
                 imagePosition="right"
                 onClick={handleBankTransferNextPage}
-                disabled={bankTransferPage >= (bankTransferPagination.pages || 1)}
+                disabled={
+                  bankTransferPage >= (bankTransferPagination.pages || 1)
+                }
               />
             </div>
           )}
