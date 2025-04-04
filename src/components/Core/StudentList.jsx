@@ -135,13 +135,23 @@ const StudentList = () => {
   };
 
   const handleSearchChange = (e) => {
-    setSort((prevSort) => ({
-      ...prevSort,
-      query_params: {
-        ...prevSort.query_params,
-        filters: { ...prevSort.query_params.filters, search: e },
-      },
-    }));
+    setSort((prevSort) => {
+      const updatedFilters = { ...prevSort.query_params.filters };
+
+      if (e?.length > 0) {
+        updatedFilters.search = e; // Add search key when there's input
+      } else {
+        delete updatedFilters.search; // Remove search key when input is empty
+      }
+
+      return {
+        ...prevSort,
+        query_params: {
+          ...prevSort.query_params,
+          filters: updatedFilters, // Set updated filters
+        },
+      };
+    });
   };
 
   useEffect(() => {
