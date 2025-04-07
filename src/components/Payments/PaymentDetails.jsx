@@ -11,7 +11,6 @@ import Headers from '../common/Headers';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
 import banklogo from "../../assets/images/banklogo.png";
-import { config } from "../../apis/client/config";
 import { TailSpin } from "react-loader-spinner";
 
 const PaymentDetails = ({ isOpen }) => {
@@ -79,8 +78,12 @@ const PaymentDetails = ({ isOpen }) => {
   }
 
   const { payment_info, user_info, transaction_details } = paymentData;
-  const isBankTransfer = payment_info.payment_type === 'Bank Transfer';
-  const imageUrl = `${config.MainUrl}${transaction_details.proof_image}`;
+  const MainUrl = "http://46.202.164.175:3000/public/";
+  const imageUrl = `${MainUrl}${transaction_details.proof_image}`;
+
+  const isBankTransfer =
+    payment_info.payment_type === 'Bank Transfer' ||
+    payment_info.payment_type === 'bank_transfer';
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
@@ -93,9 +96,11 @@ const PaymentDetails = ({ isOpen }) => {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900">{user_info.name}</h2>
-            <span className={`inline-block px-3 py-1 rounded-full text-sm ${payment_info.status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
-              payment_info.status === 'completed' ? 'bg-green-100 text-green-800' :
-                'bg-red-100 text-red-800'
+            <span className={`inline-block px-3 py-1 rounded-full text-sm ${payment_info.status === 'active' ? 'bg-green-100 text-green-800' :
+                payment_info.status === 'inactive' ? 'bg-red-100 text-red-800' :
+                  payment_info.status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
+                    payment_info.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      'bg-gray-100 text-gray-800'
               }`}>
               {payment_info.status}
             </span>
@@ -115,43 +120,45 @@ const PaymentDetails = ({ isOpen }) => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-        <div className="border-b border-gray-200 pb-2 mb-4 flex justify-between items-center">
-          <h3 className="text-lg font-bold text-gray-900">Payment Proof</h3>
+      {isBankTransfer && (
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+          <div className="border-b border-gray-200 pb-2 mb-4 flex justify-between items-center">
+            <h3 className="text-lg font-bold text-gray-900">Payment Proof</h3>
 
-          {isBankTransfer && payment_info.status === 'in-progress' && (
-            <div className="flex gap-3">
-              <Custombutton
-                value={isConfirming ? "Confirming..." : "Confirm Payment"}
-                onClick={handleConfirmClick}
-                backgroundcolor="bg-[#27AE60]"
-                textcolor="text-white"
-                disabled={isConfirming}
+            {payment_info.status === 'in-progress' && (
+              <div className="flex gap-3">
+                <Custombutton
+                  value={isConfirming ? "Confirming..." : "Confirm Payment"}
+                  onClick={handleConfirmClick}
+                  backgroundcolor="bg-[#27AE60]"
+                  textcolor="text-white"
+                  disabled={isConfirming}
+                />
+                <Custombutton
+                  value={isRejecting ? "Rejecting..." : "Reject Payment"}
+                  onClick={handleRejectClick}
+                  backgroundcolor="bg-[#FF4D4F]"
+                  textcolor="text-white"
+                  disabled={isRejecting}
+                />
+              </div>
+            )}
+          </div>
+          <div className="p-4 border border-gray-200 rounded-lg">
+            {transaction_details.proof_image && (
+              <img
+                src={imageUrl}
+                alt="Payment Proof"
+                className="w-full h-[600px] object-cover rounded"
+                onError={(e) => {
+                  console.log("Image load error:", e);
+                  e.target.style.display = 'none';
+                }}
               />
-              <Custombutton
-                value={isRejecting ? "Rejecting..." : "Reject Payment"}
-                onClick={handleRejectClick}
-                backgroundcolor="bg-[#FF4D4F]"
-                textcolor="text-white"
-                disabled={isRejecting}
-              />
-            </div>
-          )}
+            )}
+          </div>
         </div>
-        <div className="p-4 border border-gray-200 rounded-lg">
-          {transaction_details.proof_image && (
-            <img
-              src={imageUrl}
-              alt="Payment Proof"
-              className="w-full h-[600px] object-cover rounded"
-              onError={(e) => {
-                console.log("Image load error:", e);
-                e.target.style.display = 'none';
-              }}
-            />
-          )}
-        </div>
-      </div>
+      )}
 
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="border-b border-gray-200 pb-2 mb-4">
@@ -172,8 +179,8 @@ const PaymentDetails = ({ isOpen }) => {
               })}</p>
             </div>
             <div>
-              <p className="text-gray-600">Account Holder:</p>
-              <p className="font-medium">{transaction_details.account_holder}</p>
+              <p className="text-gray-600">Transaction ID:</p>
+              <p className="font-medium">{transaction_details.transaction_id}</p>
             </div>
             <div>
               <p className="text-gray-600">Device ID:</p>
@@ -181,17 +188,22 @@ const PaymentDetails = ({ isOpen }) => {
             </div>
             <div>
               <p className="text-gray-600">Status:</p>
-              <p className={`font-medium ${payment_info.status === 'completed' ? 'text-green-600' :
-                payment_info.status === 'in-progress' ? 'text-yellow-600' :
-                  'text-red-600'
+              <p className={`font-medium ${payment_info.status === 'active' ? 'text-green-600' :
+                  payment_info.status === 'inactive' ? 'text-red-600' :
+                    payment_info.status === 'completed' ? 'text-green-600' :
+                      payment_info.status === 'in-progress' ? 'text-yellow-600' :
+                        'text-gray-600'
                 }`}>
                 {payment_info.status}
               </p>
             </div>
+            <div>
+              <p className="text-gray-600">Amount:</p>
+              <p className="font-medium">₦{transaction_details.subscription_amount.toLocaleString()}</p>
+            </div>
           </div>
         </div>
       </div>
-
 
       <SuccessModal
         isOpen={showConfirmModal}
@@ -203,7 +215,6 @@ const PaymentDetails = ({ isOpen }) => {
         onConfirm={handleConfirm}
       />
 
-
       <SuccessModal
         isOpen={showRejectModal}
         onClose={() => setShowRejectModal(false)}
@@ -213,7 +224,6 @@ const PaymentDetails = ({ isOpen }) => {
         buttonText="Reject"
         onConfirm={handleReject}
       />
-
 
       <SuccessModal
         isOpen={showSuccessModal}

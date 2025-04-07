@@ -71,6 +71,7 @@ const BankTransferCard = ({
   status,
   createdAt,
   proofImage,
+  user
 }) => {
   const navigate = useNavigate();
   const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
@@ -79,8 +80,9 @@ const BankTransferCard = ({
     day: "numeric",
   });
 
-  // Use first letter of account holder name as initial
-  const initial = accountHolderName ? accountHolderName[0].toUpperCase() : "U";
+  // Use first letter of user name as initial, fallback to account holder name if user is not available
+  const userName = user?.name || accountHolderName;
+  const initial = userName ? userName[0].toUpperCase() : "U";
 
   return (
     <div className="flex items-center justify-between py-4 border-b">
@@ -89,19 +91,25 @@ const BankTransferCard = ({
           <span className="text-[#1890FF] font-medium">{initial}</span>
         </div>
         <div>
-          <h3 className="font-medium text-gray-900">{accountHolderName}</h3>
+          <h3 className="font-medium text-gray-900">{userName}</h3>
           <p className="text-sm text-gray-500">{formattedDate}</p>
           <div className="flex gap-2 mt-1">
             <span
-              className={`text-sm px-2 py-0.5 rounded ${
-                status === "confirmed"
+              className={`text-sm px-2 py-0.5 rounded ${status === "confirmed" || status === "active"
                   ? "bg-green-100 text-green-800"
-                  : "bg-yellow-100 text-yellow-800"
-              }`}
+                  : status === "rejected" || status === "inactive"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
             >
-              {status === "confirmed" ? "Confirmed" : "In Progress"}
+              {status === "confirmed" || status === "active"
+                ? "Confirmed"
+                : status === "rejected" || status === "inactive"
+                  ? "Rejected"
+                  : "In Progress"}
             </span>
           </div>
+
         </div>
       </div>
       <div className="flex items-center gap-4">

@@ -458,7 +458,7 @@ const SignInList = ({ isOpen }) => {
         <div>
           <div className="rounded-xl w-full p-[12px] bg-[#FFFFFF] dash mt-5">
             <h3 className="font-medium text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px]">
-              SignIn
+              Sign In
             </h3>
             <div className="block signIn lg:grid grid-cols-2 gap-5 mt-5">
               {dashData?.usersList?.length === 0 ? (
@@ -489,14 +489,15 @@ const SignInList = ({ isOpen }) => {
                                 {item?.status || "N/A"}
                               </div>
                             </div>
-                            <div className="flex items-center gap-2 bg-[#FFF3D0] mt-[10px] px-[5px] py-[5px] rounded-2xl overflow-hidden">
-                              <div className="font-medium text-[12px] leading-[15px] text-[#2C2E32] whitespace-nowrap">
-                                Class
+                            <div className="flex flex-wrap items-center gap-2 bg-[#FFF3D0] mt-[10px] px-[8px] py-[5px] rounded-2xl w-full">
+                              <div className="font-medium text-[12px] leading-[15px] text-[#2C2E32]">
+                                Class:
                               </div>
-                              <div className="font-medium text-[12px] leading-[15px] text-[#2C2E32] truncate">
+                              <div className="font-medium text-[12px] leading-[15px] text-[#2C2E32] break-words">
                                 {item?.grade || "N/A"}
                               </div>
                             </div>
+
                           </div>
                         </div>
                       </div>
