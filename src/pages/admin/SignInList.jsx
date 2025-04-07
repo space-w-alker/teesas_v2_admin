@@ -142,7 +142,7 @@ const SignInList = ({ isOpen }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
     setList([...ListData]);
-    // setLoading(true);
+    setLoading(true);
     const storedAdminData = localStorage.getItem("userData");
     const admin = JSON.parse(storedAdminData);
     setAdminData(admin);
@@ -457,45 +457,54 @@ const SignInList = ({ isOpen }) => {
         </div>
         <div>
           <div className="rounded-xl w-full p-[12px] bg-[#FFFFFF] dash mt-5">
-            <h3 className=" font-medium text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px] ">
+            <h3 className="font-medium text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px]">
               SignIn
             </h3>
-            <div className=" block signIn lg:grid grid-cols-2  gap-5 mt-5">
-              {dashData?.usersList?.map((item, i) => {
-                if (i < 6) {
-                  return (
-                    <div
-                      key={i}
-                      className="rounded-lg border border-[#ECEDEE] box-shadow  "
-                    >
-                      <div className="flex items-center gap-[18px] gaps lg:gap-[17px] xxl:gap-[21px] ">
-                        <div className="font-bold p-3 text-[14px] pr-[16px] status xl:pr-[33px] xxl:pr-[77px] leading-[22px] border-dashed text-[#2C2E32] border-r border-[#A2A4A9]  xxl:pl-[21px] ">
-                          <img src={catIcon} />
-                          {item?.userName}
-                        </div>
-                        <div className="">
-                          <div className="flex items-center gap-4 ">
-                            <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
-                              Status
-                            </div>
-                            <div className="bg-[#DBF3E6] uppercase rounded-[22px] px-[8px] py-[5px]  lg:w-[48px] lg:h-[16px]  font-normal text-[9px] leading-[8px] text-[#6ECF9D]  ">
-                              {item?.status}
-                            </div>
+            <div className="block signIn lg:grid grid-cols-2 gap-5 mt-5">
+              {dashData?.usersList?.length === 0 ? (
+                <div className="col-span-2 text-center py-4 text-gray-500">
+                  No users found
+                </div>
+              ) : (
+                dashData?.usersList?.map((item, i) => {
+                  if (i < 6) {
+                    return (
+                      <div
+                        key={i}
+                        className="rounded-lg border border-[#ECEDEE] box-shadow mb-3 lg:mb-0"
+                      >
+                        <div className="flex items-start gap-2 lg:gap-[17px]">
+                          <div className="font-bold p-3 text-[14px] pr-[16px] status xl:pr-[33px] leading-[22px] border-dashed text-[#2C2E32] border-r border-[#A2A4A9] min-w-[120px] max-w-[40%]">
+                            <img src={catIcon} alt="User" className="inline-block mr-1 align-top mt-1" />
+                            <span className="break-words inline-block align-top">
+                              {item?.userName || "Unknown"}
+                            </span>
                           </div>
-                          <div className="flex items-center gap-4 bg-[#FFF3D0] mt-[10px] px-[5px] py-[5px] rounded-2xl">
-                            <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
-                              Class
+                          <div className="flex-1 pr-2 pt-3">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <div className="font-medium text-[12px] leading-[15px] text-[#2C2E32]">
+                                Status
+                              </div>
+                              <div className="bg-[#DBF3E6] uppercase rounded-[22px] px-[8px] py-[5px] font-normal text-[9px] leading-[8px] text-[#6ECF9D]">
+                                {item?.status || "N/A"}
+                              </div>
                             </div>
-                            <div className=" font-medium text-[12px] leading-[15px] text-[#2C2E32]">
-                              {item?.grade}
+                            <div className="flex items-center gap-2 bg-[#FFF3D0] mt-[10px] px-[5px] py-[5px] rounded-2xl overflow-hidden">
+                              <div className="font-medium text-[12px] leading-[15px] text-[#2C2E32] whitespace-nowrap">
+                                Class
+                              </div>
+                              <div className="font-medium text-[12px] leading-[15px] text-[#2C2E32] truncate">
+                                {item?.grade || "N/A"}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                }
-              })}
+                    );
+                  }
+                  return null;
+                })
+              )}
             </div>
             <div className="flex justify-center py-[20px]">
               <button
@@ -506,53 +515,57 @@ const SignInList = ({ isOpen }) => {
               </button>
             </div>
           </div>
+
+
         </div>
 
-        <div className="rounded-xl w-full p-[12px] bg-[#FFFFFF] dash lg:mt-0 mt-3">
+        <div className="rounded-xl w-full p-[16px] bg-[#FFFFFF] dash lg:mt-0 mt-3">
           <h3 className="font-medium text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px]">
             Recent Subscriptions
           </h3>
+
           <div>
             {loadingSubscriptions ? (
-              <div className="flex justify-center py-4">
-                <p>Loading subscriptions...</p>
+              <div className="flex justify-center items-center py-8">
+                <p className="text-gray-500">Loading subscriptions...</p>
               </div>
             ) : subscriptions.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                No User found
+                No subscriptions found
               </div>
             ) : (
-              <ul>
+              <div className="space-y-4">
                 {subscriptions.slice(0, 4).map((subscription, index) => (
-                  <li
+                  <div
                     key={subscription?.id || `subscription-${index}`}
-                    className="cursor-pointer"
+                    className="border border-gray-100 rounded-lg shadow-sm"
                   >
-                    <div className="px-[18px] py-[10px]">
-                      <h6 className="font-light text-[12px] leading-[13px] text-[#767676]">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <h6 className="font-light text-[12px] text-gray-500">
                         {formatDate(subscription?.create_time)}
                       </h6>
                     </div>
-                    <div className="flex items-center justify-between p-5 max-sm:flex-col">
-                      <div className="flex items-center gap-3 px-[18px]">
-                        <div className="rounded-full text-center p-2 w-[40px] h-[40px] bg-[#E9FDEE]">
+
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-4">
+                      <div className="flex items-start sm:items-center gap-3">
+                        <div className="rounded-full flex-shrink-0 flex items-center justify-center text-center p-2 w-[40px] h-[40px] bg-[#E9FDEE] text-[#4AC384] font-medium">
                           {subscription?.user?.name ? subscription.user.name.charAt(0).toUpperCase() : "U"}
                         </div>
-                        <div>
-                          <div className="flex pl-[20px] items-center gap-2">
-                            <p>{subscription?.user?.name || "Unknown User"}</p>
-                          </div>
-                          <div className="pl-[20px] flex flex-col gap-[10px]">
-                            <p className="font-normal text-[#555555] text-[12px] leading-[15px]">
-                              {subscription?.user?.email || "No email"}
-                            </p>
-                            <p className="font-normal text-[#555555] text-[12px] leading-[15px]">
-                              {subscription?.subscription?.description || "No description"}
-                            </p>
-                          </div>
+
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-[14px] text-gray-800 mb-1 break-words">
+                            {subscription?.user?.name || "Unknown User"}
+                          </p>
+                          <p className="font-normal text-[12px] text-gray-500 mb-1 truncate">
+                            {subscription?.user?.email || "No email"}
+                          </p>
+                          <p className="font-normal text-[12px] text-gray-600 break-words">
+                            {subscription?.subscription?.description || "No description"}
+                          </p>
                         </div>
                       </div>
-                      <div className="max-sm:mt-5">
+
+                      <div className="sm:flex-shrink-0">
                         <Custombutton
                           value={subscription?.is_expired ? "Expired" : "Active"}
                           backgroundcolor={subscription?.is_expired ? "bg-[#c14345]" : "bg-[#27ae60]"}
@@ -561,10 +574,11 @@ const SignInList = ({ isOpen }) => {
                         />
                       </div>
                     </div>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
+
             <div className="flex justify-center py-[20px]">
               <button
                 className="bg-[#ECEDEE] text-[#000000] font-normal text-[14px] leading-[18px] mt-2 py-[6px] px-[19px] rounded-md"
@@ -578,6 +592,7 @@ const SignInList = ({ isOpen }) => {
 
 
 
+
         <div className="hidden rounded-xl w-full p-[12px] bg-[#FFFFFF] dash lg:mt-0 mt-3 ">
           <h3 className="font-meduim text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px] ">
             Assigned tasks
@@ -587,6 +602,7 @@ const SignInList = ({ isOpen }) => {
               {showAllData
                 ? ListData.map((item) => (
                   <div
+                    key={item.id}
                     className="flex items-center justify-between  gap-2 Border py-[10px] "
                     style={{
                       textDecoration:
@@ -616,8 +632,9 @@ const SignInList = ({ isOpen }) => {
                     )}
                   </div>
                 ))
-                : ListData.slice(0, 4).map((item, key) => (
+                : ListData.slice(0, 4).map((item) => (
                   <div
+                    key={item.id}
                     className="flex items-center justify-between  gap-2 Border py-[10px] "
                     style={{
                       textDecoration:

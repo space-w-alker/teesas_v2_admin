@@ -135,21 +135,24 @@ const StudentList = () => {
   };
 
   const handleSearchChange = (e) => {
+    const searchValue = e.trim();
+
     setSort((prevSort) => {
       const updatedFilters = { ...prevSort.query_params.filters };
 
-      if (e?.length > 0) {
-        updatedFilters.search = e; // Add search key when there's input
+
+      if (!searchValue) {
+        delete updatedFilters.search;
       } else {
-        delete updatedFilters.search; // Remove search key when input is empty
+        updatedFilters.search = searchValue;
       }
 
       return {
         ...prevSort,
         query_params: {
           ...prevSort.query_params,
-          filters: updatedFilters, // Set updated filters
-        },
+          filters: updatedFilters
+        }
       };
     });
   };
@@ -199,51 +202,7 @@ const StudentList = () => {
       <div className={`flex justify-end items-center relative mt-3`}>
         <div className="flex items-center relative">
           <div className="h-[60px] lg:px-[8px] flex items-center mt-[5px]">
-            {/* <div className="flex items-center relative lg:w-[204px]">
-              <input
-                type="text"
-                name="search"
-                className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
-                placeholder="Search Item"
-                value={searchValue}
-                onChange={(e) => handleSearchChange(e)}
-              />
-              <img
-                src={SearchButton}
-                className="absolute w-[30px] h-[30px] top-[56%]  -translate-y-1/2 right-[8px] z-50 cursor-pointer"
-                alt="Search icon"
-                onClick={() => {
-                  if (searchValue != "") {
-                    setLoading(true);
-                    const newData = {
-                      page: 1,
-                      page_size: 10,
-                      search: searchValue,
-                      course_id: selectedCourses,
-                      status: activeUsers ? "Active" : "Inactive",
-                      sort: sortKey,
-                    };
-                    // getuserAsync({
-                    //   dispatch: dispatch,
-                    //   body: newData,
-                    //   token: token,
-                    //   callbackFn: (res) => {
-                    //     if (res?.data?.status === 200) {
-                    //       setdata(res?.data?.data?.users);
-                    //       setPageData(res?.data?.data?.paging);
-                    //       setLoading(false);
-                    //       setPage(1);
-                    //     } else {
-                    //       alert(res?.data?.message);
-                    //       setLoading(false);
-                    //     }
-                    //   },
-                    // });
-                  }
-                }}
-              />
-            </div> */}
-            <div className="flex items-center relative lg:w-[204px]">
+            <div className="flex items-center relative lg:w-[204px] w-full">
               <input
                 type="text"
                 name="search"
@@ -251,166 +210,159 @@ const StudentList = () => {
                 className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
                 placeholder="Search Item"
               />
-              <img
-                src={SearchButton}
-                className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer"
-                alt="Search icon"
-                onClick={() => setIsModalFilterOpen(true)}
-              />
-            </div>{" "}
+              <img src={SearchButton} className="absolute w-[30px] h-[30px] top-[56%] -translate-y-1/2 right-[8px] z-50 cursor-pointer" alt="Search icon" />
+            </div>
             <div
               className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
               onClick={() => setIsModalFilterOpen(true)}
             >
               <img src={Vector} alt="Vector" />
             </div>
-            {/* <div className="w-[30px] lg:w-[34px] lg:h-[40px] ml-2">
-              <img src={container} alt="Container" />
-            </div> */}
           </div>
         </div>
       </div>
-      <div className="py-[2px]  rounded-[18px] bg-[#FFFFFF]  mt-3 ">
-        <div className="user">
-          <h2 className="text-[22px]  leading-6 text-[#2C2E32] font-medium">
-            Users/Student List
-          </h2>
-          {/* <Custombutton
-            value="Filter"
-            img={frame2}
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
-            imagePosition="right"
-            onClick={() => setIsModalOpen(true)}
-          /> */}
-        </div>
-        <div className="">
-          <ul>
-            {userList?.usersList?.map((user) => (
-              <li
-                key={user.id}
-                className="cursor-pointer"
-                onClick={() => {
-                  Navigate(`/userdetails/${user?.id}`);
-                }}
-              >
-                <div className="px-[18px] py-[10px]">
-                  <h6 className=" font-light text-[12px] leading-[13px] text-[#767676] ">
-                    {user.created_at}
-                  </h6>
-                </div>
-                <div className="flex items-center justify-between p-5 max-sm:flex-col  ">
-                  <div className="flex  items-center gap-3 px-[18px] ">
-                    <div className=" rounded-full text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED]">
-                      {user?.userName.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="flex pl-[20px] items-center  gap-2">
-                        <p>{user.userName}</p>
+
+      <div className="rounded-xl w-full p-[16px] bg-[#FFFFFF] mt-3">
+        <h3 className="font-medium text-[18px] text-[#2C2E32] leading-[25px] Border pb-[15px]">
+          Users/Student List
+        </h3>
+
+        <div>
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <p className="text-gray-500">Loading users...</p>
+            </div>
+          ) : userList?.usersList?.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No users found
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {userList?.usersList?.map((user) => (
+                <div
+                  key={user.id}
+                  className="border border-gray-100 rounded-lg shadow-sm cursor-pointer"
+                  onClick={() => {
+                    Navigate(`/userdetails/${user?.id}`);
+                  }}
+                >
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <h6 className="font-light text-[12px] text-gray-500">
+                      {user.created_at}
+                    </h6>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-4">
+                    <div className="flex items-start sm:items-center gap-3">
+                      <div className="rounded-full flex-shrink-0 flex items-center justify-center text-center p-2 w-[40px] h-[40px] bg-[#F8F5ED] text-gray-700 font-medium">
+                        {user?.userName?.charAt(0)?.toUpperCase() || "U"}
                       </div>
-                      <div className="pl-[20px]  flex flex-col gap-[10px]">
-                        <p className=" font-normal text-[#555555] text-[12px] leading-[15px]">
-                          {/* {user?.course} */}
+
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-[14px] text-gray-800 mb-1 break-words">
+                          {user.userName || "Unknown User"}
                         </p>
-                        <div className="flex  items-center   h-[16px]  bg-[#F2F2F2] ">
-                          {/* <img
-                      className="h-[11px]"
-                      src={item.icon2}
-                      alt="Icon 2"
-                    /> */}
-                          <p className=" font-bold w-full text-[12px] leading-[15px] text-[#555555]">
-                            {user?.grade} / {user?.course}
+
+                        {user?.email && (
+                          <p className="font-normal text-[12px] text-gray-500 mb-1 truncate">
+                            {user.email}
                           </p>
-                        </div>
+                        )}
+
+                        {(user?.grade || user?.course) && (
+                          <p className="font-normal text-[12px] text-gray-600 break-words">
+                            {[user?.grade, user?.course].filter(Boolean).join(" / ")}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  </div>
-                  <div className="max-sm:mt-5 ">
-                    <Custombutton
-                      value={user?.status}
-                      img={check}
-                      backgroundcolor="bg-[#ede1d5]"
-                      textcolor="text-[#EA8527]"
-                      imagePosition="left"
-                    />
+
+                    <div className="sm:flex-shrink-0">
+                      <Custombutton
+                        value={user?.status}
+                        img={check}
+                        backgroundcolor={user?.status?.toLowerCase() === "active" ? "bg-[#E9FDEE]" : "bg-[#FFE9E9]"}
+                        textcolor={user?.status?.toLowerCase() === "active" ? "text-[#27ae60]" : "text-[#c14345]"}
+                        imagePosition="left"
+                      />
+                    </div>
                   </div>
                 </div>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </div>
+          )}
+
+          <div className="flex justify-between items-center mt-6 mb-4">
+            <Custombutton
+              value="Previous"
+              icon={
+                pageData.currentPage > 1 ? (
+                  <FaArrowLeft color="#000000" />
+                ) : (
+                  <FaArrowLeft color="#cccccc" />
+                )
+              }
+              backgroundcolor="bg-[#F2F2F2]"
+              textcolor={
+                pageData.currentPage > 1 ? "text-[#000000]" : "text-[#cccccc]"
+              }
+              imagePosition="left"
+              onClick={() => handlePageChange(pageData?.currentPage - 1)}
+              disabled={pageData.currentPage <= 1}
+            />
+
+            <Custombutton
+              value={`Page ${pageData?.currentPage} of ${pageData?.totalPages}`}
+              backgroundcolor="bg-[#F2F2F2]"
+              textcolor="text-[#000000]"
+            />
+
+            <Custombutton
+              value="Next"
+              icon={
+                pageData.currentPage < pageData.totalPages ? (
+                  <FaArrowRight color="#000000" />
+                ) : (
+                  <FaArrowRight color="#cccccc" />
+                )
+              }
+              backgroundcolor="bg-[#F2F2F2]"
+              textcolor={
+                pageData.currentPage < pageData.totalPages
+                  ? "text-[#000000]"
+                  : "text-[#cccccc]"
+              }
+              imagePosition="right"
+              onClick={() => {
+                handlePageChange(pageData?.currentPage + 1);
+              }}
+              disabled={pageData.currentPage >= pageData.totalPages}
+            />
+          </div>
         </div>
-
-        <div className="flex justify-between items-center mt-6 ml-4 mr-4 mb-4">
-          <Custombutton
-            value="Previous"
-            icon={
-              pageData.currentPage > 1 ? (
-                <FaArrowLeft color="#000000" />
-              ) : (
-                <FaArrowLeft color="#cccccc" />
-              )
-            }
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor={
-              pageData.currentPage > 1 ? "text-[#000000]" : "text-[#cccccc]"
-            }
-            imagePosition="left"
-            onClick={() => handlePageChange(pageData?.currentPage - 1)}
-            disabled={pageData.currentPage <= 1}
-          />
-
-          <Custombutton
-            value={`Page ${pageData?.currentPage} of ${pageData?.totalPages}`}
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor="text-[#000000]"
-          />
-
-          <Custombutton
-            value="Next"
-            icon={
-              pageData.currentPage < pageData.totalPages ? (
-                <FaArrowRight color="#000000" />
-              ) : (
-                <FaArrowRight color="#cccccc" />
-              )
-            }
-            backgroundcolor="bg-[#F2F2F2]"
-            textcolor={
-              pageData.currentPage < pageData.totalPages
-                ? "text-[#000000]"
-                : "text-[#cccccc]"
-            }
-            imagePosition="right"
-            onClick={() => {
-              // setPageData({ ...pageData, currentPage: pageData?.currentPage + 1 });
-              handlePageChange(pageData?.currentPage + 1);
-            }}
-            disabled={pageData.currentPage >= pageData.totalPages}
-          />
-        </div>
-
-        {isModalOpen && (
-          <Modal
-            closeModal={handleModalClose}
-            label="Filter"
-            coursesData={coursesData}
-            onSelectCourse={handleFilterByCourse}
-            onSelectStatus={handleFilterByStatus}
-            onClick={handleApply}
-            selectedCoursesData={selectedCourses}
-            selectedStatusData={activeUsers}
-          />
-        )}
-
-        {isModalFilterOpen && (
-          <Modal
-            closeModalWithClick1={latestOnClick}
-            closeModalWithClick2={oldestOnClick}
-            closeModal={handleModalClose}
-            label="Sort By"
-          />
-        )}
       </div>
+
+      {isModalOpen && (
+        <Modal
+          closeModal={handleModalClose}
+          label="Filter"
+          coursesData={coursesData}
+          onSelectCourse={handleFilterByCourse}
+          onSelectStatus={handleFilterByStatus}
+          onClick={handleApply}
+          selectedCoursesData={selectedCourses}
+          selectedStatusData={activeUsers}
+        />
+      )}
+
+      {isModalFilterOpen && (
+        <Modal
+          closeModalWithClick1={latestOnClick}
+          closeModalWithClick2={oldestOnClick}
+          closeModal={handleModalClose}
+          label="Sort By"
+        />
+      )}
     </>
   );
 };
