@@ -14,7 +14,7 @@ import { useLocation, useNavigation, useParams } from "react-router-dom";
 import { addUserAsync } from "../../apis/slices/userSlice";
 import { getCountriesAsync, getCategoriesAsync } from "../../apis/slices/categoriesSlice";
 import { useNavigate } from "react-router-dom";
-
+import SuccessModal from "../../components/common/SuccessModal";
 
 const EditUser = ({ isOpen, togglesidebar }) => {
   const location = useLocation();
@@ -32,7 +32,6 @@ const EditUser = ({ isOpen, togglesidebar }) => {
     date_of_birth: userData?.date_of_birth || "",
     gender: userData?.gender || "",
     email: userData?.email || "",
-    password: userData?.password || "",
     parent_name: userData?.parent_name || "",
     parent_email: userData?.parent_email || "",
     parent_address: userData?.parent_address || "",
@@ -42,7 +41,14 @@ const EditUser = ({ isOpen, togglesidebar }) => {
     location: userData?.location || '',
     status: "active"
   });
-  console.log('thi', formData?.location);
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    type: 'success',
+    title: '',
+    message: '',
+    buttonText: 'Close'
+  });
 
   const countries = useSelector((state) => state.categories.countries?.data || []);
   const category = useSelector((state) => state.categories.list?.data || []);
@@ -53,14 +59,13 @@ const EditUser = ({ isOpen, togglesidebar }) => {
     dispatch(getCategoriesAsync())
   }, []);
 
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [imageFile, setImageFile] = useState({});
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
 
-  console.log('t', addData);
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
@@ -73,13 +78,6 @@ const EditUser = ({ isOpen, togglesidebar }) => {
     fetchUser();
 
   }, [dispatch, id]);
-
-  // console.log('test', userData)
-  // useEffect(() => {
-  //   if (isEdit && userData) {
-  //     setFormData(userData);
-  //   }
-  // }, [isEdit, userData]);
 
   const handleCategoryChange = (event) => {
     const selectedId = event.target.value;
@@ -95,78 +93,136 @@ const EditUser = ({ isOpen, togglesidebar }) => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const image_type_data = file.type;
+      const image_array = image_type_data.split("/");
+      const image_types = image_array[1].split(" ");
+      const img_type = image_types[0];
+      var types = ["jpg", "png", "svg", "jpeg", "gif", "webp"];
+
+      if (types.includes(img_type)) {
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+      } else {
+        setModalConfig({
+          type: 'caution',
+          title: 'Invalid File Type',
+          message: 'Please upload only image files (jpg, png, svg, jpeg, gif, webp).',
+          buttonText: 'Try Again'
+        });
+        setShowModal(true);
+      }
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    if (modalConfig.type === 'success') {
+      navigate(`/userdetails/${userData?.id}`);
+    }
+  };
+
   const submitContactForm = () => {
-    const errorData = Validation(formData);
+
+    const modifiedValidation = (data) => {
+
+      const sanitizedData = {};
+      for (const key in data) {
+        sanitizedData[key] = data[key] === undefined ? "" : data[key];
+      }
+
+
+      const validationErrors = Validation(sanitizedData);
+
+      if (validationErrors.phone) {
+        delete validationErrors.phone;
+      }
+
+      return validationErrors;
+    };
+
+    const errorData = modifiedValidation(formData);
     setError(errorData);
 
     if (Object.keys(errorData).length === 0) {
-      const finaldata = {
-        first_name: formData?.first_name,
-        middle_name: formData?.middle_name,
-        last_name: formData?.last_name,
-        phone: formData?.phone,
-        country_id: formData?.country_id || 81, // Default value if not provided
-        date_of_birth: formData?.date_of_birth,
-        gender: formData?.gender.toUpperCase(),
-        email: formData?.email,
-        password: formData?.password,
-        parent_name: formData?.parent_name,
-        parent_email: formData?.parent_email,
-        parent_address: formData?.parent_address,
-        parent_relationship: formData?.parent_relationship,
-        grade: parseInt(formData?.grade, 10) || 21, // Convert to integer
-        course: parseInt(formData?.course, 10) || 153, // Convert to integer
-        location: formData?.location,
-        status: "active",
-      };
+      setLoading(true);
+
+      const formDataToSend = new FormData();
+
+      formDataToSend.append("first_name", formData.first_name || "");
+      formDataToSend.append("middle_name", formData.middle_name || "");
+      formDataToSend.append("last_name", formData.last_name || "");
+      formDataToSend.append("phone", formData.phone || "");
+      formDataToSend.append("country_id", formData.country_id || "81");
+      formDataToSend.append("date_of_birth", formData.date_of_birth || "");
+      formDataToSend.append("gender", (formData.gender || "").toUpperCase());
+      formDataToSend.append("email", formData.email || "");
+      formDataToSend.append("parent_name", formData.parent_name || "");
+      formDataToSend.append("parent_email", formData.parent_email || "");
+      formDataToSend.append("parent_address", formData.parent_address || "");
+      formDataToSend.append("parent_relationship", formData.parent_relationship || "");
+      formDataToSend.append("grade", formData.grade || "");
+      formDataToSend.append("course", formData.course || "");
+      formDataToSend.append("location", formData.location || "");
+      formDataToSend.append("status", "active");
+
+      if (imageFile) {
+        formDataToSend.append("image", imageFile);
+      }
 
       dispatch(updateUserAsync({
-        dispatch, userId: userData?.id, data: finaldata, callbackFn: (res) => {
-          console.log('callback', res)
-          setFormData({
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            phone: "",
-            country_id: "",
-            date_of_birth: "",
-            gender: "",
-            email: "",
-            password: "",
-            parent_name: "",
-            parent_email: "",
-            parent_address: "",
-            parent_relationship: "",
-            grade: location.state?.categoryData?.classes || '',
-            course: location.state?.categoryData?.name || '',
-            location: location.state?.categoryData?.country || '',
-            status: "active"
+        dispatch,
+        userId: userData?.id,
+        data: formDataToSend,
+        callbackFn: (res) => {
+          setLoading(false);
+          if (res?.status == 200) {
+            setModalConfig({
+              type: 'success',
+              title: 'User Updated Successfully',
+              message: 'The user has been updated in the system.',
+              buttonText: 'Go to User Details'
+            });
+          } else {
+            setModalConfig({
+              type: 'caution',
+              title: 'Failed to Update User',
+              message: res?.data?.message || 'There was an error updating the user.',
+              buttonText: 'Try Again'
+            });
+          }
 
-          });
-          navigate(`/userdetails/${userData?.id}`);
+
+          setShowModal(true);
         }
-      }))
-      // .then((response) => {
-      //   console.log('tt', response);
-      //   if (response?.payload?.success) {
-      //     toast.success('User added successfully');
-      //   } else {
-      //     toast.error(response?.payload?.message || "Failed to add user.");
-      //   }
-      // })
-      // .catch((error) => {
-      //   toast.error(error.message || "An error occurred.");
-      // });
+      }));
     } else {
-      toast.error("Please fill all required fields.");
+      setModalConfig({
+        type: 'caution',
+        title: 'Validation Error',
+        message: 'Please fill all required fields correctly.',
+        buttonText: 'OK'
+      });
+      setShowModal(true);
     }
   };
+
   return (
     <div
-      className={`  py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}
     >
-      {/* {loading && (
+      <SuccessModal
+        isOpen={showModal}
+        onClose={handleModalClose}
+        type={modalConfig.type}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        buttonText={modalConfig.buttonText}
+      />
+
+      {loading && (
         <div
           style={{
             position: "absolute",
@@ -174,21 +230,21 @@ const EditUser = ({ isOpen, togglesidebar }) => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             zIndex: 9999,
-          }} */}
-      {/* >
+          }}
+        >
           <TailSpin color="green" radius={5} />
         </div>
-      )} */}
-      <div className="flex justify-start  items-center lg:gap-3">
+      )}
+      <div className="flex justify-start items-center lg:gap-3">
         <FaChevronLeft onClick={() => navigate(-1)} className="cursor-pointer" />
         <div>
-          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+          <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home / Users/
             <span className="text-black font-medium"> EditUsers</span>
           </div>
         </div>
       </div>
-      <div className=" block lg:flex justify-center lg:gap-[17px] xl:gap-10 py-[2rem]">
+      <div className="block lg:flex justify-center lg:gap-[17px] xl:gap-10 py-[2rem]">
         {showCustomAddUser ? (
           <Customadduser
             showCustomAddUser={showCustomAddUser}
@@ -202,69 +258,40 @@ const EditUser = ({ isOpen, togglesidebar }) => {
           />
         ) : (
           <>
-            {loading && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  zIndex: 9999,
-                }}
-              >
-                <TailSpin color="green" radius={5} />
-              </div>
-            )}
             <div className="users bg-[#FFFFFF] rounded-xl lg:w-[80%]">
-              <h2 className="text-[18px]  leading-[20px] Border  pb-[10px] text-[#000000] font-medium">
+              <h2 className="text-[18px] leading-[20px] Border pb-[10px] text-[#000000] font-medium">
                 Edit User Details
               </h2>
               <div>
-                <p className=" font-medium text-[14px] leading-[18px] mt-5 text-[#3D3D3D] pb-[8px]">
+                <p className="font-medium text-[14px] leading-[18px] mt-5 text-[#3D3D3D] pb-[8px]">
                   Upload User Image
                 </p>
-                <div className="h-[48px] py-[10px] border border-dashed border-[#B9B9B9]  text-[#B9B9B9] bg-[#EFF6F1] rounded-lg">
-                  <p className=" font-normal text-center cursor-pointer text-[16px] leading-[24px]  translate-x-0 text-[#49454F]">
-                    <div className="text-center relative ">
-                      {" "}
+                <div className="relative">
+                  <div className="h-[48px] py-[10px] border border-dashed border-[#B9B9B9] text-[#B9B9B9] bg-[#EFF6F1] rounded-lg">
+                    <p className="font-normal text-center cursor-pointer text-[16px] leading-[24px] translate-x-0 text-[#49454F]">
                       Click to upload Image
-                    </div>
+                    </p>
                     <input
-                      onChange={(e) => {
-                        if (
-                          e.target.files[0] !== null &&
-                          e.target.files[0] !== undefined
-                        ) {
-                          const image_type_data = e.target.files[0].type;
-                          const image_array = image_type_data?.split("/");
-                          const image_types = image_array[1].split(" ");
-                          const img_type = image_types[0];
-                          var types = [
-                            "jpg",
-                            "png",
-                            "svg",
-                            "jpeg",
-                            "gif",
-                            "webp",
-                          ];
-                          if (types.includes(img_type)) {
-                            setImageFile(e.target.files[0])
-                          } else {
-                            toast.error("Please Upload Only Images.");
-                          }
-                        }
-                      }}
+                      onChange={handleImageChange}
                       type="file"
-                      className="text-[#EFF6F1]   opacity-0 absolute top-0 left-[45%] max-sm:left-0 "
-                      placeholder=""
+                      className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                      accept="image/*"
                     />
-                  </p>
+                  </div>
+                  {imagePreview && (
+                    <div className="mt-2">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="h-20 w-20 object-cover rounded-md"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className=" ">
+              <div>
                 <form>
-
                   {/* Full Name Fields */}
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
@@ -345,12 +372,11 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                         className="mt-1 w-full border p-2 rounded-lg"
                         placeholder="Enter Phone Number"
                         onChange={onchangeHandler}
-                      />{console.log(formData?.phone)}
-                      {errors?.phone && <span className="text-red-500">Enter Phone Number *</span>}
+                      />
                     </div>
                   </div>
 
-                  {/* Email & Password */}
+                  {/* Email field (without password) */}
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
                       <label className="font-medium text-[14px]">Email</label>
@@ -364,22 +390,8 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                       />
                       {errors?.email && <span className="text-red-500">Enter Email *</span>}
                     </div>
-                    <div>
-                      <label className="font-medium text-[14px]">Password</label>
-                      <input
-                        type="password"
-                        name="password"
-                        value={formData?.password}
-                        className="mt-1 w-full border p-2 rounded-lg"
-                        placeholder="Enter Password"
-                        onChange={onchangeHandler}
-                      />
-                      {errors?.password && <span className="text-red-500">Enter Password *</span>}
-                    </div>
-                  </div>
 
-                  {/* Parent Details */}
-                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
+                    {/* Parent Name field moved up to replace password field */}
                     <div>
                       <label className="font-medium text-[14px]">Parent Name</label>
                       <input
@@ -391,10 +403,14 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                         onChange={onchangeHandler}
                       />
                     </div>
+                  </div>
+
+                  {/* Parent Details */}
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
                       <label className="font-medium text-[14px]">Parent Email</label>
                       <input
-                        type="text"
+                        type="email"
                         name="parent_email"
                         value={formData?.parent_email}
                         className="mt-1 w-full border p-2 rounded-lg"
@@ -402,9 +418,6 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                         onChange={onchangeHandler}
                       />
                     </div>
-                  </div>
-
-                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
                       <label className="font-medium text-[14px]">Parent Address</label>
                       <input
@@ -416,6 +429,9 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                         onChange={onchangeHandler}
                       />
                     </div>
+                  </div>
+
+                  <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
                       <label className="font-medium text-[14px]">Parent Relationship</label>
                       <input
@@ -427,9 +443,20 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                         onChange={onchangeHandler}
                       />
                     </div>
+                    <div>
+                      <label className="font-medium text-[14px]">Location</label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData?.location}
+                        className="mt-1 w-full border p-2 rounded-lg"
+                        placeholder="Enter Location"
+                        onChange={onchangeHandler}
+                      />
+                    </div>
                   </div>
 
-                  {/* Grade, Course, Country, Location, Status */}
+                  {/* Grade, Course, Country */}
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
                       <label className="font-medium text-[14px]">Course</label>
@@ -448,7 +475,6 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                       </select>
                     </div>
 
-                    {/* Grade (Class) Dropdown - Depends on Selected Course */}
                     <div>
                       <label className="font-medium text-[14px]">Grade</label>
                       <select
@@ -456,19 +482,18 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                         value={formData?.grade}
                         className="mt-1 w-full border p-2 rounded-lg"
                         onChange={onchangeHandler}
-                        disabled={!selectedCategory} // Disable if no course is selected
+                        disabled={!selectedCategory}
                       >
                         <option disabled value="">Select Grade</option>
                         {category
                           .find((cat) => cat.id == selectedCategory)
-                          ?.classes.map((cls) => (
+                          ?.classes?.map((cls) => (
                             <option key={cls.id} value={cls.id}>
                               {cls.name}
                             </option>
                           ))}
                       </select>
                     </div>
-
                   </div>
 
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
@@ -493,51 +518,49 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                       </select>
                       {errors?.country_id && <span className="text-red-500">Select Country *</span>}
                     </div>
-                    <div>
-                      <label className="font-medium text-[14px]">Location</label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData?.location}
-                        className="mt-1 w-full border p-2 rounded-lg"
-                        placeholder="Enter Location"
-                        onChange={onchangeHandler}
-                      />
-                    </div>
                   </div>
-
                 </form>
-
-
-
               </div>
             </div>
-            <div className="users bg-[#ffffff] lg:mt-0 mt-5 lg:w-[35%] rounded-lg h-[50%]">
-              <h2 className="text-[18px]  leading-[20px]  pb-[10px] text-[#000000] font-medium">
+            <div className="users bg-[#ffffff] lg:mt-0 mt-5 lg:w-[45%] rounded-lg h-[50%]">
+              <h2 className="text-[18px] leading-[20px] pb-[10px] text-[#000000] font-medium">
                 Summary
               </h2>
               <div className="rounded-2xl bg-[#EFF6F1] p-2">
-                {Object.entries(formData).map(([key, value]) => (
-                  <div key={key} className="flex  justify-between mt-2">
-                    <div className="font-light mt-3 text-[14px] leading-[16px] text-[#5A5B5C]">
-                      {key.replace(/_/g, " ")}
+                {Object.entries(formData)
+                  .filter(([key]) => key !== 'password') // Don't show password in summary
+                  .map(([key, value]) => (
+                    <div key={key} className="flex justify-between mt-2">
+                      <div className="font-light mt-3 text-[14px] leading-[16px] text-[#5A5B5C]">
+                        {key.replace(/_/g, " ")}
+                      </div>
+                      <div className="text-[16px] mt-2 leading-[24px] text-[#000000]">
+                        {value}
+                      </div>
                     </div>
-                    <div className="text-[16px] leading-[24px] text-[#000000]">
-                      {value}
+                  ))}
+                {imagePreview && (
+                  <div className="flex justify-between mt-2">
+                    <div className="font-light mt-3 text-[14px] leading-[16px] text-[#5A5B5C]">
+                      Image
+                    </div>
+                    <div className="text-[16px] mt-2 leading-[24px] text-[#000000]">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="h-10 w-10 object-cover rounded-md"
+                      />
                     </div>
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="bg-[FFF9FD] m-auto my-10">
                 <button
                   type="button"
-                  className=" h-[32px] rounded-lg text-center  w-[200px]  text-white bg-[#27AE60]"
-                  onClick={() => {
-                    submitContactForm();
-                  }}
+                  className="h-[32px] rounded-lg text-center w-[200px] text-white bg-[#27AE60]"
+                  onClick={submitContactForm}
                 >
-                  {" "}
                   Update User
                 </button>
               </div>

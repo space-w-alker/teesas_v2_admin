@@ -136,16 +136,14 @@ export const updateUserAsync = ({ dispatch, userId, data, callbackFn, token }) =
     return async () => {
         try {
             const URL = `${BASEURL}admin/dashboard/users/${userId}/edit`;
-            const response = await patchAPICall(URL, data, true, token);
+            const response = await postFileAPICall(URL, data, true, token);
             console.log('res', response)
             if (response?.data.data) {
                 callbackFn && callbackFn(response.data);
 
                 dispatch(updateUserSuccess(response.data));
                 toast.success('Updated successfully')
-            } else {
-                toast.error("Failed to update user.");
-            }
+            } 
         } catch (error) {
             toast.error("Error updating user.");
         }
