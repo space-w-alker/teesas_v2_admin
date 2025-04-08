@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
 import DonationList from '../DonationEnquiry/DonationList'
 
-const DonationEnquiry = ({isOpen}) => {
+const DonationEnquiry = ({ isOpen }) => {
   const navigate = useNavigate()
   const [donationData, setDonationData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -34,10 +34,10 @@ const DonationEnquiry = ({isOpen}) => {
           transform: "translate(-50%, -50%)",
           zIndex: 9999,
         }}>
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
-      
+
       <div className='flex justify-start items-center lg:gap-3'>
         <FaChevronLeft />
         <div>
@@ -62,9 +62,9 @@ const DonationEnquiry = ({isOpen}) => {
         />
       </div>
 
-      
 
-      <DonationList/>
+
+      <DonationList />
     </div>
   )
 }

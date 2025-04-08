@@ -172,7 +172,7 @@ const AddPromoCode = ({ isOpen }) => {
 
       {addPromocodeState.isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
 

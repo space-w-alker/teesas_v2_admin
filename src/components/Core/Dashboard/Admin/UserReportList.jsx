@@ -47,7 +47,7 @@ const UserReportList = () => {
           transform: "translate(-50%, -50%)",
           zIndex: 9999,
         }}>
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
 
@@ -96,11 +96,11 @@ const UserReportList = () => {
               >
                 <div className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px]">
                   <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative">
-                  <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative flex items-center justify-center">
-  <span className="text-[16px] font-medium text-[#1D2026]">
-    {report.title.charAt(0).toUpperCase()}
-  </span>
-</div>
+                    <div className="w-[32px] h-[32px] rounded-[16px] bg-[#F8F5ED] relative flex items-center justify-center">
+                      <span className="text-[16px] font-medium text-[#1D2026]">
+                        {report.title.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
 
                   </div>
                   <div>
@@ -117,7 +117,7 @@ const UserReportList = () => {
                   </div>
                 </div>
 
-                
+
               </div>
             </li>
           ))}

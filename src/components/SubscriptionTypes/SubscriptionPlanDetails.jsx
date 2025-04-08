@@ -120,7 +120,7 @@ const SubscriptionPlanDetails = ({ isOpen }) => {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       ) : error ? (
         <div className="text-center py-8 text-red-500">{error}</div>

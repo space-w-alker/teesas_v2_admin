@@ -29,9 +29,8 @@ const NotificationDetails = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[8rem] lg:px-[10rem] px-[10px] ${
-        isOpen ? "ml-[240px]" : ""
-      }`}
+      className={`py-[8rem] lg:px-[10rem] px-[10px] ${isOpen ? "ml-[240px]" : ""
+        }`}
     >
       <div className="flex items-center gap-2 text-sm mb-6">
         <span className="text-gray-400">Home</span>
@@ -56,7 +55,7 @@ const NotificationDetails = ({ isOpen }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
 

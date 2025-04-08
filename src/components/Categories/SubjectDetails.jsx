@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FiEdit, FiTrash2, FiMoreVertical } from 'react-icons/fi';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { TailSpin } from "react-loader-spinner";
 import book from '../../assets/images/book.png';
 import Headers from '../common/Headers';
 import bookopen from '../../assets/images/bookopen.png';
@@ -22,11 +23,23 @@ const SubjectDetails = ({ isOpen }) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const { data, isLoading } = useSelector(state => state.categories.subjects);
 
   useEffect(() => {
-    dispatch(getSubjectDetailsAsync(id, currentPage));
+    setLoading(true);
+    const fetchData = async () => {
+      try {
+        await dispatch(getSubjectDetailsAsync(id, currentPage));
+      } catch (error) {
+        console.error("Error fetching subject details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [dispatch, id, currentPage]);
 
 
@@ -36,10 +49,17 @@ const SubjectDetails = ({ isOpen }) => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     const handleDelete = async () => {
-      setShowDropdown(false);
-      const success = await dispatch(deleteSubjectAsync(id, subject.id));
-      if (success) {
-        dispatch(getSubjectDetailsAsync(id));
+      try {
+        setShowDropdown(false);
+        setLoading(true);
+        const success = await dispatch(deleteSubjectAsync(id, subject.id));
+        if (success) {
+          await dispatch(getSubjectDetailsAsync(id));
+        }
+      } catch (error) {
+        console.error("Error deleting subject:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -126,6 +146,18 @@ const SubjectDetails = ({ isOpen }) => {
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
+      {loading && (
+        <div style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 9999,
+        }}>
+          <TailSpin color="green" radius={5} />
+        </div>
+      )}
+
       <div className="mb-8">
         <Headers
           value1="Home"
@@ -233,7 +265,10 @@ const SubjectDetails = ({ isOpen }) => {
         isOpen={showSuccessModal}
         onClose={() => {
           setShowSuccessModal(false);
-          dispatch(getSubjectDetailsAsync(id));
+          setLoading(true);
+          dispatch(getSubjectDetailsAsync(id))
+            .then(() => setLoading(false))
+            .catch(() => setLoading(false));
         }}
         type="success"
         title="Success"

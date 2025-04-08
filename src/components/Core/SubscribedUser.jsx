@@ -68,7 +68,7 @@ const SubscribedUser = ({ isOpen }) => {
             transform: "translate(-50%, -50%)",
             zIndex: 9999,
           }}>
-            <TailSpin color="orange" radius={5} />
+            <TailSpin color="green" radius={5} />
           </div>
         )}
 

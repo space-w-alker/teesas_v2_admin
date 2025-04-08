@@ -140,7 +140,7 @@ const CreateSubject = ({ isOpen }) => {
                   <option value="#EB5757">Red</option>
                   <option value="#F2C94C">Yellow</option>
                   <option value="#9B51E0">Purple</option>
-                  <option value="#27AE60">Orange</option>
+                  <option value="#27AE60">green</option>
                   <option value="#56CCF2">Light Blue</option>
                   <option value="#219653">Dark Green</option>
                 </select>

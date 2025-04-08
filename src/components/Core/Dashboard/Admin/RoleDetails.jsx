@@ -16,7 +16,7 @@ const RoleDetails = ({ roleData }) => {
   }, [dispatch, roleData, id]);
 
   if (!roleDetail) {
-    return <TailSpin color="orange" radius={5} />;
+    return <TailSpin color="green" radius={5} />;
   }
 
   // Group permissions by module for better display

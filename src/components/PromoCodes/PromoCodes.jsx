@@ -98,7 +98,7 @@ const PromoCodes = ({ isOpen }) => {
         search: searchTerm,
       },
       token,
-      callbackFn: () => {},
+      callbackFn: () => { },
     });
   };
 
@@ -149,9 +149,8 @@ const PromoCodes = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      } transition-all duration-300`}
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        } transition-all duration-300`}
     >
       <Headers value1="Home" value2="Promo Codes" />
 
@@ -200,7 +199,7 @@ const PromoCodes = ({ isOpen }) => {
         <div className="p-6">
           {promocodesState.isLoading || deletePromocodeState.isLoading ? (
             <div className="flex justify-center items-center py-8">
-              <TailSpin color="orange" radius={5} />
+              <TailSpin color="green" radius={5} />
             </div>
           ) : promocodesState.error ? (
             <div className="text-center py-8 text-red-500">

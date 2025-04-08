@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
 import ReportList from '../Core/Dashboard/Admin/UserReportList'
 
-const UserReport = ({isOpen}) => {
+const UserReport = ({ isOpen }) => {
   const navigate = useNavigate()
   const [reportData, setReportData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -37,7 +37,7 @@ const UserReport = ({isOpen}) => {
           transform: "translate(-50%, -50%)",
           zIndex: 9999,
         }}>
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
       <div className='flex justify-start items-center lg:gap-3'>
@@ -59,13 +59,13 @@ const UserReport = ({isOpen}) => {
           height="h-[111px]"
           backgroundcolor="bg-[#FFFFFF]"
           value={reportData?.total_reports}
-         
+
         />
       </div>
 
-      
 
-      <ReportList/>
+
+      <ReportList />
     </div>
   )
 }

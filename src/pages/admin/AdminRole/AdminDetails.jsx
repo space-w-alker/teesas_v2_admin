@@ -41,7 +41,7 @@ const AdminDetails = ({ isOpen }) => {
   };
 
   if (!roleDetail) {
-    return <TailSpin color="orange" radius={5} />;
+    return <TailSpin color="green" radius={5} />;
   }
 
   return (

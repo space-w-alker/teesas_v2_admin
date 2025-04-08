@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FiEdit, FiTrash2, FiMoreVertical } from 'react-icons/fi';
+import { TailSpin } from "react-loader-spinner";
 import Headers from '../common/Headers';
 import bookopen from '../../assets/images/bookopen.png';
 import { getChapterDetailsAsync, deleteChapterAsync } from '../../apis/slices/categoriesSlice';
@@ -18,6 +19,7 @@ const SubjectChapterDetails = ({ isOpen }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +28,10 @@ const SubjectChapterDetails = ({ isOpen }) => {
   const { data, isLoading } = useSelector(state => state.categories.chapters);
 
   useEffect(() => {
-    dispatch(getChapterDetailsAsync(id));
+    setLoading(true);
+    dispatch(getChapterDetailsAsync(id))
+      .then(() => setLoading(false))
+      .catch(() => setLoading(false));
   }, [dispatch, id]);
 
   const ChapterCard = ({ chapter }) => {
@@ -65,10 +70,6 @@ const SubjectChapterDetails = ({ isOpen }) => {
                 <button
                   className="w-full px-4 py-2 text-left hover:bg-gray-50"
                   onClick={() => navigate(`/add-unit-chapter/${id}/${chapter.id}`)}
-
-
-
-
                 >
                   Edit Chapter
                 </button>
@@ -106,16 +107,28 @@ const SubjectChapterDetails = ({ isOpen }) => {
 
   const handleDeleteConfirm = async () => {
     if (selectedChapter) {
+      setLoading(true);
       await dispatch(deleteChapterAsync(selectedChapter.id));
       setShowDeleteModal(false);
       setShowSuccessModal(true);
+      setLoading(false);
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
+      {loading && (
+        <div style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 9999,
+        }}>
+          <TailSpin color="green" radius={5} />
+        </div>
+      )}
+
       <div className="mb-8">
         <Headers
           value1="Home"
@@ -162,7 +175,6 @@ const SubjectChapterDetails = ({ isOpen }) => {
         <div className="flex justify-between items-center mt-6">
           <Custombutton
             value="Previous"
-
             icon={<FaArrowLeft />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -176,7 +188,6 @@ const SubjectChapterDetails = ({ isOpen }) => {
 
           <Custombutton
             value="Next"
-
             icon={<FaArrowRight />}
             backgroundcolor="bg-[#F2F2F2]"
             textcolor="text-[#000000]"
@@ -200,7 +211,10 @@ const SubjectChapterDetails = ({ isOpen }) => {
         isOpen={showSuccessModal}
         onClose={() => {
           setShowSuccessModal(false);
-          dispatch(getChapterDetailsAsync(id));
+          setLoading(true);
+          dispatch(getChapterDetailsAsync(id))
+            .then(() => setLoading(false))
+            .catch(() => setLoading(false));
         }}
         type="success"
         title="Success"

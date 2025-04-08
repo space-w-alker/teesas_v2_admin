@@ -74,9 +74,8 @@ const AddJobForm = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      } transition-all duration-300`}
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        } transition-all duration-300`}
     >
       <Headers value1="Home" value2="Add Job Opening" />
       {loading && (
@@ -89,7 +88,7 @@ const AddJobForm = ({ isOpen }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
 

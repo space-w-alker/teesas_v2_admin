@@ -33,7 +33,7 @@ const StudentStatsDashboard = ({ id, class: classId }) => {
           </h2>
           <div className="relative mb-4">
             <div className="absolute inset-0 flex justify-center items-center">
-              <div className="bg-orange-400 text-white px-4 py-2 rounded-full text-sm font-medium">
+              <div className="bg-green-400 text-white px-4 py-2 rounded-full text-sm font-medium">
                 234 pts
               </div>
             </div>
@@ -45,9 +45,8 @@ const StudentStatsDashboard = ({ id, class: classId }) => {
                 >
                   <div className="relative w-2 bg-gray-200 rounded-t">
                     <div
-                      className={`absolute bottom-0 w-2 ${
-                        index % 2 === 1 ? "bg-orange-400" : "bg-gray-800"
-                      } rounded-t`}
+                      className={`absolute bottom-0 w-2 ${index % 2 === 1 ? "bg-green-400" : "bg-gray-800"
+                        } rounded-t`}
                       style={{ height: `${Math.random() * 80 + 20}%` }}
                     />
                     <div className="h-48 w-full" />
@@ -87,16 +86,15 @@ const StudentStatsDashboard = ({ id, class: classId }) => {
                       fill="none"
                       stroke={subject.color}
                       strokeWidth="10"
-                      strokeDasharray={`${subject.percentage} ${
-                        100 - subject.percentage
-                      }`}
+                      strokeDasharray={`${subject.percentage} ${100 - subject.percentage
+                        }`}
                       strokeDashoffset={
                         index === 0
                           ? 0
                           : reportData.Reports.Graph.slice(0, index).reduce(
-                              (acc, curr) => acc + curr.percentage,
-                              0
-                            )
+                            (acc, curr) => acc + curr.percentage,
+                            0
+                          )
                       }
                     />
                   ))}

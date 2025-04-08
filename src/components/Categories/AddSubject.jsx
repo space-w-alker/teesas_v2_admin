@@ -27,7 +27,7 @@ const AddSubject = ({ isOpen }) => {
     { label: "Green", value: "#27AE60" },
     { label: "Blue", value: "#2D9CDB" },
     { label: "Purple", value: "#9B51E0" },
-    { label: "Orange", value: "#27AE60" },
+    { label: "green", value: "#27AE60" },
   ];
 
   const handleFileChange = (event) => {
@@ -91,9 +91,8 @@ const AddSubject = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       <div className="mb-8">
         <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">

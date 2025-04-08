@@ -75,9 +75,8 @@ const AddSalesTeam = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[8rem] lg:px-[9rem] px-[10px] ${
-        isOpen ? "ml-[240px]" : ""
-      }`}
+      className={`py-[8rem] lg:px-[9rem] px-[10px] ${isOpen ? "ml-[240px]" : ""
+        }`}
     >
       <div className="flex justify-start items-center lg:gap-3 mb-6">
         <FaChevronLeft
@@ -102,7 +101,7 @@ const AddSalesTeam = ({ isOpen }) => {
               zIndex: 9999,
             }}
           >
-            <TailSpin color="orange" radius={5} />
+            <TailSpin color="green" radius={5} />
           </div>
         )}
 

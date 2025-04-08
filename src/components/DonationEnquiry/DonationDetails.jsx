@@ -3,11 +3,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
 import donationIcon from "../../assets/images/Banner-icon.png"
 
-const DonationDetails = ({isOpen}) => {
+const DonationDetails = ({ isOpen }) => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const donationId = searchParams.get('id')
-  
+
   const [donationData, setDonationData] = useState({
     id: 1,
     donor_name: "Michael Smith",
@@ -49,7 +49,7 @@ const DonationDetails = ({isOpen}) => {
           transform: "translate(-50%, -50%)",
           zIndex: 9999,
         }}>
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
 

@@ -61,14 +61,14 @@ const TeacherLists = () => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
       <div className="Border">
         <div className={`flex justify-between items-center relative mt-3`}>
           <div>
             <h2 className="font-medium text-[16px] lg:text-[18px] leading-[25px] text-[#2C2E32]">
-              Teachers List 
+              Teachers List
             </h2>
           </div>
           <div className="flex items-center relative">

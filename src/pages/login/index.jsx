@@ -23,12 +23,12 @@ function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     const loginCheck = localStorage.getItem("authToken");
-    if(loginCheck){
+    if (loginCheck) {
       navigate("/Dashboard");
     }
-  },[])
+  }, [])
 
   const handlechange = (e) => {
     setFormData({
@@ -56,15 +56,15 @@ function Login() {
       setError(validationErrors);
       return;
     }
-  
+
     setError({});
     setLoading(true);
-  
+
     const credentials = {
       email: formData.email,
       password: formData.password
     };
-  
+
     loginAsync({
       dispatch,
       body: credentials,
@@ -81,7 +81,7 @@ function Login() {
           setError({ general: data?.message });
         }
       },
-      
+
     });
   };
 
@@ -98,7 +98,7 @@ function Login() {
               zIndex: 9999,
             }}
           >
-            <TailSpin color="orange" radius={5} />
+            <TailSpin color="green" radius={5} />
           </div>
         )}
         <div className=" w-full h-full text-[20px] text-start font-[500]">
@@ -146,24 +146,23 @@ function Login() {
           )}
 
           {/* <Link to="/forgot-password"> */}
-            <div className="flex items-center justify-end text-[12px] mt-2  text-[#3D3D3D]">
-            <div className="cursor-pointer" onClick={()=>{
+          <div className="flex items-center justify-end text-[12px] mt-2  text-[#3D3D3D]">
+            <div className="cursor-pointer" onClick={() => {
               navigate("/forgot-password")
             }}>
               Forgot Password?
-              </div>
             </div>
+          </div>
           {/* </Link> */}
 
           <button
             type="button"
             onClick={SubmitSigninAction}
             disabled={loading || !formData.password || !formData.email}
-            className={`mt-[20px] bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg ${
-              loading || !formData.password || !formData.email
+            className={`mt-[20px] bg-[#27AE60] text-[14px] flex items-center justify-center text-[#FFFFFF] w-full p-2 rounded-lg ${loading || !formData.password || !formData.email
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer"
-            }`}
+              }`}
           >
             Sign In
           </button>

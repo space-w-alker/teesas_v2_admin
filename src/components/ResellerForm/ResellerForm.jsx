@@ -36,11 +36,10 @@ const ResellerItem = ({ name, status, id, navigate }) => {
         <div className="flex items-center gap-3">
           <span className="font-medium text-gray-800">{name}</span>
           <span
-            className={`px-3 py-1 rounded-full text-sm ${
-              status === "Approved"
+            className={`px-3 py-1 rounded-full text-sm ${status === "Approved"
                 ? "bg-green-100 text-green-600"
                 : "bg-yellow-100 text-yellow-600"
-            }`}
+              }`}
           >
             {status}
           </span>
@@ -163,8 +162,8 @@ const ResellerForm = ({ isOpen }) => {
           {resellersState.isLoading
             ? "Loading..."
             : searchTerm
-            ? "No results found for your search"
-            : "No reseller forms found"}
+              ? "No results found for your search"
+              : "No reseller forms found"}
         </div>
       );
     }
@@ -217,9 +216,8 @@ const ResellerForm = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      } transition-all duration-300`}
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        } transition-all duration-300`}
     >
       <Headers value1="Home" value2="Reseller Form" />
 
@@ -233,7 +231,7 @@ const ResellerForm = ({ isOpen }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
 
@@ -303,9 +301,8 @@ const ResellerForm = ({ isOpen }) => {
             />
 
             <Custombutton
-              value={`Page ${currentPage} of ${
-                resellersState.pagination.total_pages || 1
-              }`}
+              value={`Page ${currentPage} of ${resellersState.pagination.total_pages || 1
+                }`}
               backgroundcolor="bg-[#F2F2F2]"
               textcolor="text-[#000000]"
             />

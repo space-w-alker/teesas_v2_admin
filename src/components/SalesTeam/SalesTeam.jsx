@@ -40,9 +40,8 @@ const SalesTeam = ({ isOpen }) => {
   // console.log('salesTeamData', salesTeamData);
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -54,7 +53,7 @@ const SalesTeam = ({ isOpen }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
 

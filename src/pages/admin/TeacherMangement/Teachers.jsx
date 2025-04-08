@@ -50,9 +50,8 @@ const Teachers = ({ isOpen }) => {
   }, []);
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
-        isOpen ? "lg:ml-[260px]" : ""
-      }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -64,7 +63,7 @@ const Teachers = ({ isOpen }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
@@ -172,7 +171,7 @@ const Teachers = ({ isOpen }) => {
                 </div>
                 <div
                   className="w-[20px] lg:w-[24px] lg:h-[24px] cursor-pointer ml-2"
-                  // onClick={() => setIsModalFilterOpen(true)}
+                // onClick={() => setIsModalFilterOpen(true)}
                 >
                   <img src={Vector} alt="Vector" />
                 </div>

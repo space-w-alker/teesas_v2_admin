@@ -154,9 +154,8 @@ const AddTeacher = ({ isOpen }) => {
         onClick={() => {
           Navigate(-1);
         }}
-        className={`flex justify-start items-center pt-[8rem] lg:pt-[8rem] lg:px-[9rem] mt-3  px-[10px] ${
-          isOpen ? "ml-[240px]" : ""
-        }`}
+        className={`flex justify-start items-center pt-[8rem] lg:pt-[8rem] lg:px-[9rem] mt-3  px-[10px] ${isOpen ? "ml-[240px]" : ""
+          }`}
       >
         <FaChevronLeft />
         <div>
@@ -168,9 +167,8 @@ const AddTeacher = ({ isOpen }) => {
       </div>
 
       <div
-        className={` block lg:flex justify-center gap-10 py-[8rem] lg:py-[1rem] lg:px-[9rem] mt-3 px-[10px] ${
-          isOpen ? "ml-[240px]" : ""
-        }`}
+        className={` block lg:flex justify-center gap-10 py-[8rem] lg:py-[1rem] lg:px-[9rem] mt-3 px-[10px] ${isOpen ? "ml-[240px]" : ""
+          }`}
       >
         {loading && (
           <div
@@ -182,7 +180,7 @@ const AddTeacher = ({ isOpen }) => {
               zIndex: 9999,
             }}
           >
-            <TailSpin color="orange" radius={5} />
+            <TailSpin color="green" radius={5} />
           </div>
         )}
         <div className="users bg-[#FFFFFF] rounded-xl lg:w-[80%]">

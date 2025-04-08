@@ -115,7 +115,7 @@ const ResellerFormDetails = ({ isOpen }) => {
           value3={location.state?.name || "Reseller Details"}
         />
         <div className="flex justify-center items-center h-[300px]">
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       </div>
     );

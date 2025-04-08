@@ -116,7 +116,7 @@ const AddSingleSubscription = ({ isOpen }) => {
 
         {isLoading && !isPaginating && (
           <div className="flex justify-center my-8">
-            <TailSpin color="orange" radius={5} />
+            <TailSpin color="green" radius={5} />
           </div>
         )}
 

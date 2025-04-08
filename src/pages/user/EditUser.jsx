@@ -176,7 +176,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
             zIndex: 9999,
           }} */}
       {/* >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )} */}
       <div className="flex justify-start  items-center lg:gap-3">
@@ -212,7 +212,7 @@ const EditUser = ({ isOpen, togglesidebar }) => {
                   zIndex: 9999,
                 }}
               >
-                <TailSpin color="orange" radius={5} />
+                <TailSpin color="green" radius={5} />
               </div>
             )}
             <div className="users bg-[#FFFFFF] rounded-xl lg:w-[80%]">

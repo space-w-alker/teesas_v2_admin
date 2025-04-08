@@ -78,9 +78,8 @@ const Feedback = ({ isOpen }) => {
   };
   return (
     <div
-      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${
-        isOpen ? "xl:ml-[260px]" : ""
-      }`}
+      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
     >
       {loading && (
         <div
@@ -92,7 +91,7 @@ const Feedback = ({ isOpen }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">

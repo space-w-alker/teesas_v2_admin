@@ -129,7 +129,7 @@ const OneOnclass = ({ isOpen }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
       <div className="flex justify-start items-center lg:gap-3">

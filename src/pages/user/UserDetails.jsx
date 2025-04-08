@@ -294,7 +294,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
       <SuccessModal
@@ -446,7 +446,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                   Edit
                 </div>
               </div>
-              
+
               <div className="bg-[#FFFFFF] py-[10px] px-[10px] mt-[10px] rounded-[8px] flex flex-col gap-4">
                 {formdata.map((item, index) => (
                   <div
@@ -462,7 +462,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                   </div>
                 ))}
               </div>
-              
+
             </div>
             <div className="w-full rounded-2xl border py-[10px] px-[18px] mt-6 bg-[#FFFFFF] ">
               <div className="border-b border-[#EBE6DC]">
@@ -623,12 +623,12 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
               </div>
             </div>
           </div>
-         {/* // <div className=" w-full rounded-2xl border py-[10px] px-[18px]   bg-[#FFFFFF] "> */}
-            {/* <Headcomponent
+          {/* // <div className=" w-full rounded-2xl border py-[10px] px-[18px]   bg-[#FFFFFF] "> */}
+          {/* <Headcomponent
               value={"Report"}
               border="border-bottom:1px solid #EBE6DC"
             /> */}
-            {/* <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
+          {/* <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
               <div className="px-[5px]">
                 <h3 className=" font-medium text-[16px] leading-[35px] text-[#49454F]">
                   General Performance
@@ -638,7 +638,7 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
                 </div>
               </div>
             </div> */}
-            {/* <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
+          {/* <div className="rounded-2xl p-[10px] bg-[#F2F2F2] mt-5">
               <div className="px-[5px]">
                 <h3 className=" font-medium text-[16px] leading-[35px] text-[#49454F]">
                   Certain Performance
@@ -664,10 +664,10 @@ const UserDetails = ({ isOpen, togglesidebar }) => {
           </div>
         </div> */}
         <div className="">
-         
+
         </div>
       </div>
-    
+
     </div >
   );
 };

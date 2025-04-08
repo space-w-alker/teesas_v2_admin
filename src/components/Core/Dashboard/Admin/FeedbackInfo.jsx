@@ -84,7 +84,7 @@ const FeedbackInfo = ({ item }) => {
             zIndex: 9999,
           }}
         >
-          <TailSpin color="orange" radius={5} />
+          <TailSpin color="green" radius={5} />
         </div>
       )}
       <div className="mt-10 bg-[#FFFFFF] border border-[#ECEDEE]  rounded-[18px]  pb-[20px] box-shadow">
