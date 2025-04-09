@@ -24,11 +24,15 @@ export const omotabSlice = createSlice({
       isLoading: false,
       success: false,
       error: null
+    },
+    bankTransferDetails: {
+      isLoading: false,
+      data: null,
+      error: null
     }
   },
   reducers: {
     getStoreListSuccess: (state, action) => {
-      // Fix: Properly handle payload instead of ignoring first argument
       state.storeList = action.payload;
     },
     getStoreDetailsSuccess: (state, action) => {
@@ -55,6 +59,9 @@ export const omotabSlice = createSlice({
     },
     setUpdateOrder: (state, action) => {
       state.updateOrder = action.payload;
+    },
+    setBankTransferDetails: (state, action) => {
+      state.bankTransferDetails = action.payload;
     }
   },
 });
@@ -78,7 +85,7 @@ export const listStoresAsync = ({ dispatch, data, token, callbackFn }) => {
       if (response?.data?.status === 200) {
         // Fix: Get correct data path and dispatch only the data
         const storeData = response.data.data.omotabStore;
-        console.log('Store data:', storeData); // Debug log
+
 
         if (callbackFn) {
           callbackFn(storeData);
@@ -90,7 +97,7 @@ export const listStoresAsync = ({ dispatch, data, token, callbackFn }) => {
         toast.error("Failed to fetch store list.");
       }
     } catch (error) {
-      console.error('Store list fetch error:', error); // Debug log
+
       toast.error("Error fetching store list.");
     }
   };
@@ -250,12 +257,129 @@ export const updateOrderStatusAsync = ({ dispatch, orderId, status, token }) => 
   };
 };
 
-export const { getStoreListSuccess, getStoreDetailsSuccess, addStoreSuccess, updateStoreSuccess, deleteStoreSuccess, resetState, setOrders, setCreateOrder, setUpdateOrder } = omotabSlice.actions;
+// Get bank transfer details
+// Update the getBankTransferDetailsAsync function
+export const getBankTransferDetailsAsync = ({ dispatch, orderId, token }) => {
+  return async () => {
+    try {
+      dispatch(setBankTransferDetails({ isLoading: true, data: null, error: null }));
+      // Fix the URL to not include any unnecessary query parameters
+      const URL = `${BASEURL}omotab/orders/bank-transfer-details/${orderId}`;
+
+      // Make sure we're not passing any query parameters here
+      const response = await getAPICall(URL, null, token);
+
+      if (response?.data?.status === 200) {
+        dispatch(setBankTransferDetails({
+          isLoading: false,
+          data: response.data.data,
+          error: null
+        }));
+        return response.data.data;
+      } else {
+        throw new Error(response?.data?.message || "Failed to fetch bank transfer details");
+      }
+    } catch (error) {
+      dispatch(setBankTransferDetails({
+        isLoading: false,
+        data: null,
+        error: error.message || "Error fetching bank transfer details"
+      }));
+      toast.error(error.message || "Error fetching bank transfer details");
+      return null;
+    }
+  };
+};
+
+
+
+// Accept bank transfer payment
+export const acceptBankTransferAsync = ({ dispatch, bankTransferId, token, callbackFn }) => {
+  return async () => {
+    try {
+      const URL = `${BASEURL}omotab/orders/bank-transfers/${bankTransferId}/accept`;
+
+      const response = await postAPICall(URL, {}, token);
+
+      if (response?.data?.status === 200) {
+        toast.success("Payment accepted successfully!");
+        callbackFn && callbackFn(response);
+        return true;
+      } else {
+        throw new Error(response?.data?.message || "Failed to accept payment");
+      }
+    } catch (error) {
+      toast.error(error.message || "Error accepting payment");
+      return false;
+    }
+  };
+};
+
+// Reject bank transfer payment
+export const rejectBankTransferAsync = ({ dispatch, bankTransferId, token, callbackFn }) => {
+  return async () => {
+    try {
+      const URL = `${BASEURL}omotab/orders/bank-transfers/${bankTransferId}/reject`;
+
+      const response = await postAPICall(URL, {}, token);
+
+      if (response?.data?.status === 200) {
+        toast.success("Payment rejected successfully!");
+        callbackFn && callbackFn(response);
+        return true;
+      } else {
+        throw new Error(response?.data?.message || "Failed to reject payment");
+      }
+    } catch (error) {
+      toast.error(error.message || "Error rejecting payment");
+      return false;
+    }
+  };
+};
+
+// Update order delivery status
+export const updateOrderDeliveryStatusAsync = ({ dispatch, orderId, status, token, callbackFn }) => {
+  return async () => {
+    try {
+      dispatch(setUpdateOrder({ isLoading: true, success: false, error: null }));
+      const URL = `${BASEURL}omotab/orders/${orderId}/delivery-status`;
+
+      const response = await putAPICall(URL, { status }, token);
+
+      if (response?.data?.status === 200) {
+        dispatch(setUpdateOrder({ isLoading: false, success: true, error: null }));
+        toast.success(`Order status updated to ${status} successfully`);
+        callbackFn && callbackFn(response);
+        return true;
+      } else {
+        throw new Error(response?.data?.message || "Failed to update order delivery status");
+      }
+    } catch (error) {
+      dispatch(setUpdateOrder({ isLoading: false, success: false, error: error.message }));
+      toast.error(error.message || "Error updating order delivery status");
+      return false;
+    }
+  };
+};
+
+export const {
+  getStoreListSuccess,
+  getStoreDetailsSuccess,
+  addStoreSuccess,
+  updateStoreSuccess,
+  deleteStoreSuccess,
+  resetState,
+  setOrders,
+  setCreateOrder,
+  setUpdateOrder,
+  setBankTransferDetails
+} = omotabSlice.actions;
 
 export const storeList = (state) => state.omotab.storeList;
 export const storeDetails = (state) => state.omotab.storeDetails;
 export const selectOrders = (state) => state.omotab.orders;
 export const selectCreateOrder = (state) => state.omotab.createOrder;
 export const selectUpdateOrder = (state) => state.omotab.updateOrder;
+export const selectBankTransferDetails = (state) => state.omotab.bankTransferDetails;
 
 export default omotabSlice.reducer;

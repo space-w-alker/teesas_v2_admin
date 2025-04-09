@@ -13,6 +13,7 @@ import notes from "../../assets/images/Group1000001600.png";
 import { TailSpin } from "react-loader-spinner";
 import { fetchUsersAsync } from "../../apis/slices/userSlice";
 import { getUserCsvAsync } from "../../apis/slices/authSlice";
+import { exportUsersCsv } from "../../apis/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 
 
@@ -31,6 +32,7 @@ const Home = ({ isOpen, toggleSidebar }) => {
 
   const userList = useSelector((state) => state.users?.userList?.overview);
   const Tdata = useSelector((state) => state.users?.userList?.usersList);
+  const exportResponse = useSelector((state) => state.users?.exportCsvResponse);
 
   const [sort, setSort] = useState({
     query_params: {
@@ -46,6 +48,14 @@ const Home = ({ isOpen, toggleSidebar }) => {
       }
     }
   });
+
+
+  useEffect(() => {
+
+    dispatch(exportUsersCsv({ dispatch, token }));
+
+    dispatch(fetchUsersAsync({ dispatch, params: sort, token }));
+  }, [dispatch, token]);
 
   // const csvUser = [
   //   ["firstname", "lastname", "email"],

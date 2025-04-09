@@ -1902,7 +1902,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/store/order-details"
+        <Route path="/store/order-details/:id"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["store_order_list:read"]}>

@@ -14,6 +14,7 @@ export const userSlice = createSlice({
         bulkUploadResponse: {},
         updateUserResponse: {},
         userSubscriptions: {},
+        exportCsvResponse:{}
     },
     reducers: {
         listUsersSuccess: (state, action) => {
@@ -30,6 +31,9 @@ export const userSlice = createSlice({
         },
         updateUserSuccess: (state, action) => {
             state.updateUserResponse = action.payload;
+        },
+        exportCsvSuccess: (state, action) => {
+            state.exportCsvResponse = action.payload;
         },
         deleteUserSuccess: (state, action) => {
             state.userList = state.userList.filter(
@@ -50,6 +54,7 @@ export const userSlice = createSlice({
 });
 
 export const {
+    exportCsvSuccess,
     listUsersSuccess,
     getUserDetailsSuccess,
     addUserSuccess,
@@ -59,6 +64,25 @@ export const {
     deactivateUserSuccess,
     getUserSubscriptionsSuccess,
 } = userSlice.actions;
+
+
+
+export const exportUsersCsv = ({ dispatch, token }) => {
+    return async () => {
+        try {
+            const URL = `${BASEURL}admin/dashboard/users/export-csv`;
+            const response = await getAPICall(URL, true, token);
+
+            if (response?.data) {
+                dispatch(exportCsvSuccess(response.data));
+            } else {
+                toast.error("Failed to export users CSV.");
+            }
+        } catch (error) {
+            toast.error("Error exporting users CSV.");
+        }
+    };
+};
 
 // Thunk to get users
 export const fetchUsersAsync = ({ dispatch, params, token }) => {
@@ -200,5 +224,9 @@ export const fetchUserSubscriptionsAsync = ({ dispatch, userId, token }) => {
         }
     };
 };
+
+
+
+
 
 export default userSlice.reducer;

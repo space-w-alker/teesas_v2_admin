@@ -10,10 +10,10 @@ import book from '../../assets/images/receip.png'
 import Custombutton from '../common/Custombutton'
 import Reactangle from '../../assets/images/Rectangle copy.png'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteStoreAsync, listStoresAsync, getOrdersAsync } from '../../apis/slices/omotabSlice'
+import { deleteStoreAsync, listStoresAsync, getOrdersAsync, updateOrderDeliveryStatusAsync } from '../../apis/slices/omotabSlice'
 import Headcomponent from '../common/Headcomponent';
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-
+import { toast } from "react-toastify";
 
 const StatCard = ({ title, count }) => (
   <div className="bg-white rounded-xl shadow-sm p-4">
@@ -31,6 +31,7 @@ const ProductList = ({ isOpen }) => {
   const [loading, setLoading] = useState(false)
   const listStore = useSelector((state) => state.omotab.storeList || []);
   const orders = useSelector((state) => state.omotab.orders || {});
+  const updateOrderState = useSelector((state) => state.omotab.updateOrder || {});
 
   const dispatch = useDispatch();
   const [sort, setSort] = useState({
@@ -48,6 +49,24 @@ const ProductList = ({ isOpen }) => {
     limit: 10,
     status: ''
   });
+
+  // Add state for status dropdown
+  const [openStatusDropdown, setOpenStatusDropdown] = useState(null);
+  const token = localStorage.getItem("authToken");
+
+  // Add click outside handler to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openStatusDropdown && !event.target.closest('.status-dropdown')) {
+        setOpenStatusDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openStatusDropdown]);
 
   const handleSearchChange = (e) => {
     setSort((prevSort) => ({
@@ -213,8 +232,6 @@ const ProductList = ({ isOpen }) => {
               <option value="success">Success</option>
               <option value="failed">Failed</option>
             </select>
-            {/* <img src={Vector} className="w-6 h-6 cursor-pointer" alt="filter" />
-            <img src={container} className="w-6 h-6 cursor-pointer" alt="menu" /> */}
           </div>
         </div>
 
@@ -226,31 +243,99 @@ const ProductList = ({ isOpen }) => {
                 <div
                   key={order.id}
                   className="flex items-center justify-between p-4 hover:shadow-lg hover:bg-green-50 transition-all duration-300 cursor-pointer"
-                  onClick={() => navigate('/store/order-details/', {
+                >
+                  <div className="flex items-center gap-4" onClick={() => navigate(`/store/order-details/${order.orderNumber}`, {
                     state: {
                       orderNumber: order.orderNumber,
                       amount: order.amount,
                       status: order.status
                     }
-                  })}
-                >
-                  <div className="flex items-center gap-4">
+                  })}>
                     <div className="p-2 bg-green-50 rounded-full">
                       <img src={order.image || book} className="w-8 h-8" alt="book" />
                     </div>
                     <div>
                       <p className="font-medium">Order #{order.orderNumber}</p>
-                      <div className="flex gap-2 mt-2">
-                        <span className={`px-3 py-1 rounded-full text-sm ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          order.status === 'success' ? 'bg-green-100 text-green-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
-                          {order.status}
-                        </span>
-                      </div>
                     </div>
                   </div>
-                  <p className="font-bold text-green-400">{order.amount}</p>
+
+                  {/* Updated Status and Amount Display with Dropdown */}
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center relative status-dropdown">
+                      <div
+                        className={`px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 cursor-pointer transition-all duration-300 hover:shadow-md ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' :
+                            order.status === 'success' || order.status === 'delivered' ? 'bg-green-100 text-green-800 hover:bg-green-200' :
+                              'bg-red-100 text-red-800 hover:bg-red-200'
+                          }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenStatusDropdown(openStatusDropdown === order.id ? null : order.id);
+                        }}
+                      >
+                        <span className={`w-2 h-2 rounded-full ${order.status === 'pending' ? 'bg-yellow-500' :
+                            order.status === 'success' || order.status === 'delivered' ? 'bg-green-500' :
+                              'bg-red-500'
+                          }`}></span>
+                        <span className="capitalize">{order.status}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${openStatusDropdown === order.id ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+
+                      {/* Dropdown menu */}
+                      {openStatusDropdown === order.id && (
+                        <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                          <div className="py-1">
+                            <p className="px-4 py-2 text-xs text-gray-500 border-b">Update Status</p>
+                            {['pending', 'confirmed', 'packed', 'out-for-delivery', 'delivered', 'cancelled'].map((status) => (
+                              <button
+                                key={status}
+                                className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                                  order.status === status ? 'bg-gray-50 font-medium' : ''
+                                }`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  dispatch(updateOrderDeliveryStatusAsync({
+                                    dispatch,
+                                    orderId: order.id,
+                                    status: status,
+                                    token,
+                                    callbackFn: () => {
+                                      setOpenStatusDropdown(null);
+                                      // Refresh orders after status update
+                                      dispatch(getOrdersAsync({
+                                        dispatch,
+                                        page: orderFilters.page,
+                                        limit: orderFilters.limit,
+                                        search: orderFilters.search,
+                                        status: orderFilters.status
+                                      }));
+                                    }
+                                  }));
+                                }}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className={`w-2 h-2 rounded-full ${
+                                    status === 'pending' ? 'bg-yellow-500' :
+                                    status === 'confirmed' ? 'bg-blue-500' :
+                                    status === 'packed' ? 'bg-purple-500' :
+                                    status === 'out-for-delivery' ? 'bg-indigo-500' :
+                                    status === 'delivered' ? 'bg-green-500' :
+                                    'bg-red-500'
+                                  }`}></span>
+                                  <span className="capitalize">{status.replace(/-/g, ' ')}</span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <p className="font-bold text-green-600 text-lg">{order.amount}</p>
+                      <p className="text-xs text-gray-500">Paid amount</p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -259,8 +344,7 @@ const ProductList = ({ isOpen }) => {
 
         {/* Orders Pagination Controls */}
         <div className="user bg-white">
-
-          <Custombutton
+                   <Custombutton
             className={`px-3 py-1 rounded border ${orderFilters.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
             onClick={() => handleOrderPageChange(orderFilters.page - 1)}
             disabled={orderFilters.page === 1}
@@ -361,7 +445,6 @@ const ProductList = ({ isOpen }) => {
 
         {/* Store Items Pagination Controls */}
         <div className="user bg-white">
-
           <Custombutton
             className={`px-3 py-1 rounded border ${sort.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
             onClick={() => handlePageChange(sort.page - 1)}
@@ -388,9 +471,8 @@ const ProductList = ({ isOpen }) => {
           />
         </div>
       </div>
+    </div>
+  );
+};
 
-    </div >
-  )
-}
-
-export default ProductList
+export default ProductList;
