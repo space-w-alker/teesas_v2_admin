@@ -7,9 +7,12 @@ import { useDispatch } from "react-redux";
 import Validation from "../../components/validator/addUserValidator";
 import { FaChevronLeft } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
 import { addUserAsync } from "../../apis/slices/userSlice";
-import { getCountriesAsync, getCategoriesAsync } from "../../apis/slices/categoriesSlice";
+import {
+  getCountriesAsync,
+  getCategoriesAsync,
+} from "../../apis/slices/categoriesSlice";
 import { useNavigate } from "react-router-dom";
 import SuccessModal from "../../components/common/SuccessModal";
 
@@ -32,32 +35,35 @@ const AddUser = ({ isOpen, togglesidebar }) => {
     parent_phone: "",
     parent_address: "",
     parent_relationship: "",
-    grade: location.state?.categoryData?.classes || '',
-    course: location.state?.categoryData?.name || '',
-    location: location.state?.categoryData?.country || '',
-    status: "active"
+    grade: location.state?.categoryData?.classes || "",
+    course: location.state?.categoryData?.name || "",
+    location: location.state?.categoryData?.country || "",
+    status: "active",
   });
-
 
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
-    type: 'success',
-    title: '',
-    message: '',
-    buttonText: 'Close'
+    type: "success",
+    title: "",
+    message: "",
+    buttonText: "Close",
   });
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const countries = useSelector((state) => state.categories.countries?.data || []);
+  const countries = useSelector(
+    (state) => state.categories.countries?.data || []
+  );
   const category = useSelector((state) => state.categories.list?.data || []);
-  const [selectedCategory, setSelectedCategory] = useState(formData.course || "");
+  const [selectedCategory, setSelectedCategory] = useState(
+    formData.course || ""
+  );
 
   useEffect(() => {
     dispatch(getCountriesAsync());
-    dispatch(getCategoriesAsync())
+    dispatch(getCategoriesAsync());
   }, []);
 
   const handleCategoryChange = (event) => {
@@ -88,10 +94,11 @@ const AddUser = ({ isOpen, togglesidebar }) => {
         setImagePreview(URL.createObjectURL(file));
       } else {
         setModalConfig({
-          type: 'caution',
-          title: 'Invalid File Type',
-          message: 'Please upload only image files (jpg, png, svg, jpeg, gif, webp).',
-          buttonText: 'Try Again'
+          type: "caution",
+          title: "Invalid File Type",
+          message:
+            "Please upload only image files (jpg, png, svg, jpeg, gif, webp).",
+          buttonText: "Try Again",
         });
         setShowModal(true);
       }
@@ -100,8 +107,8 @@ const AddUser = ({ isOpen, togglesidebar }) => {
 
   const handleModalClose = () => {
     setShowModal(false);
-    if (modalConfig.type === 'success') {
-      Navigate('/users');
+    if (modalConfig.type === "success") {
+      Navigate("/users");
     }
   };
 
@@ -113,7 +120,6 @@ const AddUser = ({ isOpen, togglesidebar }) => {
       setLoading(true);
 
       const formDataToSend = new FormData();
-
 
       formDataToSend.append("first_name", formData.first_name);
       formDataToSend.append("middle_name", formData.middle_name);
@@ -128,72 +134,74 @@ const AddUser = ({ isOpen, togglesidebar }) => {
       formDataToSend.append("parent_email", formData.parent_email);
       formDataToSend.append("parent_phone", formData.parent_phone);
       formDataToSend.append("parent_address", formData.parent_address);
-      formDataToSend.append("parent_relationship", formData.parent_relationship);
+      formDataToSend.append(
+        "parent_relationship",
+        formData.parent_relationship
+      );
       formDataToSend.append("grade", formData.grade || "");
       formDataToSend.append("course", formData.course || "");
       formDataToSend.append("location", formData.location || "");
       formDataToSend.append("status", "active");
 
-
       if (imageFile) {
         formDataToSend.append("image", imageFile);
       }
 
-      dispatch(addUserAsync({
-        dispatch,
-        data: formDataToSend,
-        callbackFn: (res) => {
-          setLoading(false);
-          debugger
-          if (res?.data?.status == 200) {
-            setModalConfig({
-              type: 'success',
-              title: 'User Added Successfully',
-              message: 'The user has been added to the system.',
-              buttonText: 'Go to Users'
-            });
-            setformData({
-              first_name: "",
-              middle_name: "",
-              last_name: "",
-              phone: "",
-              country_id: "",
-              date_of_birth: "",
-              gender: "",
-              email: "",
-              password: "",
-              parent_name: "",
-              parent_email: "",
-              parent_phone: "",
-              parent_address: "",
-              parent_relationship: "",
-              grade: location.state?.categoryData?.classes || '',
-              course: location.state?.categoryData?.name || '',
-              location: location.state?.categoryData?.country || '',
-              status: "active"
-            });
-            setImageFile(null);
-            setImagePreview(null);
-          } else {
+      dispatch(
+        addUserAsync({
+          dispatch,
+          data: formDataToSend,
+          callbackFn: (res) => {
+            setLoading(false);
+            if (res?.data?.status == 200) {
+              setModalConfig({
+                type: "success",
+                title: "User Added Successfully",
+                message: "The user has been added to the system.",
+                buttonText: "Go to Users",
+              });
+              setformData({
+                first_name: "",
+                middle_name: "",
+                last_name: "",
+                phone: "",
+                country_id: "",
+                date_of_birth: "",
+                gender: "",
+                email: "",
+                password: "",
+                parent_name: "",
+                parent_email: "",
+                parent_phone: "",
+                parent_address: "",
+                parent_relationship: "",
+                grade: location.state?.categoryData?.classes || "",
+                course: location.state?.categoryData?.name || "",
+                location: location.state?.categoryData?.country || "",
+                status: "active",
+              });
+              setImageFile(null);
+              setImagePreview(null);
+            } else {
+              setModalConfig({
+                type: "caution",
+                title: "Failed to Add User",
+                message:
+                  res?.data?.message || "There was an error adding the user.",
+                buttonText: "Try Again",
+              });
+            }
 
-            setModalConfig({
-              type: 'caution',
-              title: 'Failed to Add User',
-              message: res?.data?.message || 'There was an error adding the user.',
-              buttonText: 'Try Again'
-            });
-          }
-
-          setShowModal(true);
-        }
-      }));
+            setShowModal(true);
+          },
+        })
+      );
     } else {
-
       setModalConfig({
-        type: 'caution',
-        title: 'Validation Error',
-        message: 'Please fill all required fields correctly.',
-        buttonText: 'OK'
+        type: "caution",
+        title: "Validation Error",
+        message: "Please fill all required fields correctly.",
+        buttonText: "OK",
       });
       setShowModal(true);
     }
@@ -201,9 +209,10 @@ const AddUser = ({ isOpen, togglesidebar }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
     >
-
       <SuccessModal
         isOpen={showModal}
         onClose={handleModalClose}
@@ -227,7 +236,10 @@ const AddUser = ({ isOpen, togglesidebar }) => {
         </div>
       )}
       <div className="flex justify-start items-center lg:gap-3">
-        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+        <FaChevronLeft
+          onClick={() => Navigate(-1)}
+          className="cursor-pointer"
+        />
         <div>
           <div className="font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home / Users/
@@ -286,7 +298,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                   {/* Full Name Fields */}
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
-                      <label className="font-medium text-[14px]">First Name</label>
+                      <label className="font-medium text-[14px]">
+                        First Name
+                      </label>
                       <input
                         type="text"
                         name="first_name"
@@ -295,10 +309,14 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         placeholder="Enter First Name"
                         onChange={onchangeHandler}
                       />
-                      {errors.first_name && <span className="text-red-500">Enter First Name *</span>}
+                      {errors.first_name && (
+                        <span className="text-red-500">Enter First Name *</span>
+                      )}
                     </div>
                     <div>
-                      <label className="font-medium text-[14px]">Middle Name</label>
+                      <label className="font-medium text-[14px]">
+                        Middle Name
+                      </label>
                       <input
                         type="text"
                         name="middle_name"
@@ -312,7 +330,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
 
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
-                      <label className="font-medium text-[14px]">Last Name</label>
+                      <label className="font-medium text-[14px]">
+                        Last Name
+                      </label>
                       <input
                         type="text"
                         name="last_name"
@@ -321,7 +341,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         placeholder="Enter Last Name"
                         onChange={onchangeHandler}
                       />
-                      {errors.last_name && <span className="text-red-500">Enter Last Name *</span>}
+                      {errors.last_name && (
+                        <span className="text-red-500">Enter Last Name *</span>
+                      )}
                     </div>
 
                     {/* Gender */}
@@ -333,18 +355,24 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         onChange={onchangeHandler}
                         className="w-full mt-1 border p-2 rounded-lg"
                       >
-                        <option disabled value="">Select Gender</option>
+                        <option disabled value="">
+                          Select Gender
+                        </option>
                         <option value="MALE">Male</option>
                         <option value="FEMALE">Female</option>
                       </select>
-                      {errors.gender && <span className="text-red-500">Select Gender *</span>}
+                      {errors.gender && (
+                        <span className="text-red-500">Select Gender *</span>
+                      )}
                     </div>
                   </div>
 
                   {/* Date of Birth & Phone Number */}
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
-                      <label className="font-medium text-[14px]">Date of Birth</label>
+                      <label className="font-medium text-[14px]">
+                        Date of Birth
+                      </label>
                       <input
                         type="date"
                         name="date_of_birth"
@@ -352,10 +380,16 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         className="mt-1 w-full border p-2 rounded-lg"
                         onChange={onchangeHandler}
                       />
-                      {errors.date_of_birth && <span className="text-red-500">Enter Date of Birth *</span>}
+                      {errors.date_of_birth && (
+                        <span className="text-red-500">
+                          Enter Date of Birth *
+                        </span>
+                      )}
                     </div>
                     <div>
-                      <label className="font-medium text-[14px]">Phone Number</label>
+                      <label className="font-medium text-[14px]">
+                        Phone Number
+                      </label>
                       <input
                         type="text"
                         name="phone"
@@ -364,7 +398,11 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         placeholder="Enter Phone Number"
                         onChange={onchangeHandler}
                       />
-                      {errors.phone && <span className="text-red-500">Enter Phone Number *</span>}
+                      {errors.phone && (
+                        <span className="text-red-500">
+                          Enter Phone Number *
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -380,10 +418,14 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         placeholder="Enter Email"
                         onChange={onchangeHandler}
                       />
-                      {errors.email && <span className="text-red-500">Enter Email *</span>}
+                      {errors.email && (
+                        <span className="text-red-500">Enter Email *</span>
+                      )}
                     </div>
                     <div>
-                      <label className="font-medium text-[14px]">Password</label>
+                      <label className="font-medium text-[14px]">
+                        Password
+                      </label>
                       <input
                         type="password"
                         name="password"
@@ -392,14 +434,18 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         placeholder="Enter Password"
                         onChange={onchangeHandler}
                       />
-                      {errors.password && <span className="text-red-500">Enter Password *</span>}
+                      {errors.password && (
+                        <span className="text-red-500">Enter Password *</span>
+                      )}
                     </div>
                   </div>
 
                   {/* Parent Details */}
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
-                      <label className="font-medium text-[14px]">Parent Name</label>
+                      <label className="font-medium text-[14px]">
+                        Parent Name
+                      </label>
                       <input
                         type="text"
                         name="parent_name"
@@ -410,7 +456,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                       />
                     </div>
                     <div>
-                      <label className="font-medium text-[14px]">Parent Email</label>
+                      <label className="font-medium text-[14px]">
+                        Parent Email
+                      </label>
                       <input
                         type="email"
                         name="parent_email"
@@ -424,7 +472,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
 
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
-                      <label className="font-medium text-[14px]">Parent Phone</label>
+                      <label className="font-medium text-[14px]">
+                        Parent Phone
+                      </label>
                       <input
                         type="text"
                         name="parent_phone"
@@ -435,7 +485,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                       />
                     </div>
                     <div>
-                      <label className="font-medium text-[14px]">Parent Address</label>
+                      <label className="font-medium text-[14px]">
+                        Parent Address
+                      </label>
                       <input
                         type="text"
                         name="parent_address"
@@ -449,7 +501,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
 
                   <div className="block lg:grid grid-cols-2 gap-5 mt-5">
                     <div>
-                      <label className="font-medium text-[14px]">Parent Relationship</label>
+                      <label className="font-medium text-[14px]">
+                        Parent Relationship
+                      </label>
                       <input
                         type="text"
                         name="parent_relationship"
@@ -460,7 +514,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                       />
                     </div>
                     <div>
-                      <label className="font-medium text-[14px]">Location</label>
+                      <label className="font-medium text-[14px]">
+                        Location
+                      </label>
                       <input
                         type="text"
                         name="location"
@@ -482,7 +538,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         className="mt-1 w-full border p-2 rounded-lg"
                         onChange={handleCategoryChange}
                       >
-                        <option disabled value="">Select Course</option>
+                        <option disabled value="">
+                          Select Course
+                        </option>
                         {category.map((cat) => (
                           <option key={cat.id} value={cat.id}>
                             {cat.name}
@@ -500,7 +558,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         onChange={onchangeHandler}
                         disabled={!selectedCategory}
                       >
-                        <option disabled value="">Select Grade</option>
+                        <option disabled value="">
+                          Select Grade
+                        </option>
                         {category
                           .find((cat) => cat.id == selectedCategory)
                           ?.classes?.map((cls) => (
@@ -521,7 +581,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                         onChange={onchangeHandler}
                         className="w-full mt-1 border p-2 rounded-lg"
                       >
-                        <option disabled value="">Select Country</option>
+                        <option disabled value="">
+                          Select Country
+                        </option>
                         {countries.length > 0 ? (
                           countries.map((country) => (
                             <option key={country.id} value={country.id}>
@@ -532,7 +594,9 @@ const AddUser = ({ isOpen, togglesidebar }) => {
                           <option disabled>Loading countries...</option>
                         )}
                       </select>
-                      {errors.country_id && <span className="text-red-500">Select Country *</span>}
+                      {errors.country_id && (
+                        <span className="text-red-500">Select Country *</span>
+                      )}
                     </div>
                   </div>
                 </form>
@@ -544,7 +608,7 @@ const AddUser = ({ isOpen, togglesidebar }) => {
               </h2>
               <div className="rounded-2xl bg-[#EFF6F1] p-2">
                 {Object.entries(formData)
-                  .filter(([key]) => key !== 'password') // Don't show password in summary
+                  .filter(([key]) => key !== "password") // Don't show password in summary
                   .map(([key, value]) => (
                     <div key={key} className="flex justify-between mt-2">
                       <div className="font-light mt-3 text-[14px] leading-[16px] text-[#5A5B5C]">

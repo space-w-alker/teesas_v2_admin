@@ -5,25 +5,22 @@ import UserCard from "../../components/common/UserCard";
 import Button from "../../components/common/Button";
 import StudentList from "../../components/Core/StudentList";
 import Headcomponent from "../../components/common/Headcomponent";
-import arrow_upward from '../../assets/images/arrow_upward.png'
+import arrow_upward from "../../assets/images/arrow_upward.png";
 import { useDispatch, useSelector } from "react-redux";
 // import { getUsersCsv, userAsync, getUserCsvAsync } from "../../apis/slices/authSlice";
 import { FaChevronLeft } from "react-icons/fa";
 import notes from "../../assets/images/Group1000001600.png";
 import { TailSpin } from "react-loader-spinner";
 import { fetchUsersAsync } from "../../apis/slices/userSlice";
-import { getUserCsvAsync } from "../../apis/slices/authSlice";
-// import { exportUsersCsv } from "../../apis/slices/userSlice";
+// import { getUserCsvAsync } from "../../apis/slices/authSlice";
+import { exportUsersCsv } from "../../apis/slices/userSlice";
 import { useNavigate } from "react-router-dom";
-
-
-
 
 const Home = ({ isOpen, toggleSidebar }) => {
   const [selectedMonth, setSelectedMonth] = useState("August");
   const [data, setdata] = useState([]);
   const token = localStorage.getItem("authToken");
-  const [dashFilter, setDashFilter] = useState('Daily');
+  const [dashFilter, setDashFilter] = useState("Daily");
   const [csvUser, setCsvUser] = useState([]);
   const [progressCsv, setProgressCsv] = useState([]);
   const dispatch = useDispatch();
@@ -44,18 +41,10 @@ const Home = ({ isOpen, toggleSidebar }) => {
       },
       sort: {
         field: "userName",
-        order: "asc"
-      }
-    }
+        order: "asc",
+      },
+    },
   });
-
-
-  // useEffect(() => {
-
-  //   dispatch(exportUsersCsv({ dispatch, token }));
-
-  //   dispatch(fetchUsersAsync({ dispatch, params: sort, token }));
-  // }, [dispatch, token]);
 
   // const csvUser = [
   //   ["firstname", "lastname", "email"],
@@ -63,40 +52,39 @@ const Home = ({ isOpen, toggleSidebar }) => {
   //   ["Raed", "Labes", "rl@smthing.co.com"],
   //   ["Yezzi", "Min l3b", "ymin@cocococo.com"]
   // ];
-  // useEffect(() => {
-  //   dispatch(fetchUsersAsync({ dispatch, params: sort }));
-  //   dispatch(getUserCsvAsync({
-  //     dispatch: dispatch,
-  //     data: {},
-  //     token: token,
-  //     callbackFn: (res) => {
-  //       if (res?.data?.status == 200) {
-  //         console.log(res?.data?.data?.users)
-  //         // setCsvUser(res?.data?.data?.users);
-  //         // setProgressCsv(res?.data?.data?.user_progress)
-  //         setLoading(false);
-  //       } else {
-  //         //toast.error(res?.message);
-  //         setLoading(false);
-  //       }
-  //     },
-  //   }));
-  // }, [dispatch]);
-
+  useEffect(() => {
+    dispatch(
+      exportUsersCsv({
+        dispatch: dispatch,
+        data: {},
+        token: token,
+        callbackFn: (res) => {
+          if (res?.data?.status == 200) {
+            setCsvUser(res?.data?.data?.basicUserData);
+            setProgressCsv(res?.data?.data?.usersWithVideoData);
+            setLoading(false);
+          } else {
+            //toast.error(res?.message);
+            setLoading(false);
+          }
+        },
+      })
+    );
+  }, []);
 
   // Extract headers dynamically
   // const headers = Object.keys(data[0]).map(key => ({ label: key, key }));
   // useEffect(() => {
   //   if (!Tdata || !Tdata.length) {
 
-  const flatData = Tdata?.map(item => ({
+  const flatData = Tdata?.map((item) => ({
     ...item,
     parent: item.parent ? JSON.stringify(item.parent) : "", // Convert nested object to string
   }));
   // setCsvUser(flatData)
   // }
   // }, []);
-  console.log('homedata', Tdata, flatData, userList);
+  console.log("homedata", Tdata, flatData, userList);
 
   // useEffect(() => {
   //   setLoading(true);
@@ -118,14 +106,17 @@ const Home = ({ isOpen, toggleSidebar }) => {
   //     },
   //   });
   //   //setLoading(true)
-  //   
+  //
 
   // }, []);
 
   return (
     <div>
       <div
-        className={` py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
+        className={` py-[7rem] lg:px-[5rem] px-[10px] ${
+          isOpen ? "xl:ml-[260px]" : ""
+        }`}
+      >
         {loading && (
           <div
             style={{
@@ -139,10 +130,15 @@ const Home = ({ isOpen, toggleSidebar }) => {
             <TailSpin color="green" radius={5} />
           </div>
         )}
-        <div className='flex justify-start items-center lg:gap-3'>
-          <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+        <div className="flex justify-start items-center lg:gap-3">
+          <FaChevronLeft
+            onClick={() => Navigate(-1)}
+            className="cursor-pointer"
+          />
           <div>
-            <div className=' font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>Home /<span className='text-black font-medium'> Users</span></div>
+            <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+              Home /<span className="text-black font-medium"> Users</span>
+            </div>
           </div>
         </div>
         <h2 className=" font-bold text-[22px]  leading-[28px] text-[#2C2E32] mt-10 ">
@@ -222,8 +218,12 @@ const Home = ({ isOpen, toggleSidebar }) => {
             </div>
           </div>
         </div>
-        <Button value1={"Export CSV"}
-          value2={"Add User"} csvData1={flatData} csvData2={progressCsv} />
+        <Button
+          value1={"Export CSV"}
+          value2={"Add User"}
+          csvData1={csvUser}
+          csvData2={progressCsv}
+        />
         <StudentList />
       </div>
     </div>
