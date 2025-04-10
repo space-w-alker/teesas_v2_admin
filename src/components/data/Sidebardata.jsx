@@ -50,23 +50,23 @@ const Sidebardata = [
     heading: "Learning Center",
     items: [
       {
-        name: "JAMB and SSCE Tutorial",
+        name: "Learning Center Courses",
         icon: hashtag,
-        path: "/jamb-ssce",
+        path: "/learning-center-courses",
         permissions: ["jamb_ssce_tutorial:read"]
       },
-      {
-        name: "7 Habits Bootcamp",
-        icon: hashtag,
-        path: "/7habitsbootcamp",
-        permissions: ["habits_bootcamps:read"]
-      },
-      {
-        name: "Summer Camp",
-        icon: hashtag,
-        path: "/summercamp",
-        permissions: ["summer_camp:read"]
-      }
+      // {
+      //   name: "7 Habits Bootcamp",
+      //   icon: hashtag,
+      //   path: "/7habitsbootcamp",
+      //   permissions: ["habits_bootcamps:read"]
+      // },
+      // {
+      //   name: "Summer Camp",
+      //   icon: hashtag,
+      //   path: "/summercamp",
+      //   permissions: ["summer_camp:read"]
+      // }
     ]
   },
   {

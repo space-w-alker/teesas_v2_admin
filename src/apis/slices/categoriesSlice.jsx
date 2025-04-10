@@ -161,6 +161,12 @@ const initialState = {
     data: null,
     error: null,
   },
+  bulkVideoUpload: {
+    isLoading: false,
+    data: null,
+    success: false,
+    error: null,
+  },
 };
 
 export const categoriesSlice = createSlice({
@@ -244,6 +250,9 @@ export const categoriesSlice = createSlice({
     },
     setSingleChapterDetails: (state, action) => {
       state.singleChapterDetails = action.payload;
+    },
+    setBulkVideoUpload: (state, action) => {
+      state.bulkVideoUpload = action.payload;
     },
   },
 });
@@ -1068,6 +1077,48 @@ export const getSingleChapterDetailsAsync = (chapterId) => async (dispatch) => {
   }
 };
 
+export const uploadBulkVideoAsync = (formData) => async (dispatch) => {
+  try {
+    dispatch(
+      setBulkVideoUpload({
+        isLoading: true,
+        data: null,
+        success: false,
+        error: null,
+      })
+    );
+    const URL = `${BASEURL}admin/category/create-bulk-video`;
+
+    const result = await postFileAPICall(URL, formData);
+
+    if (result?.data?.message === "Video bulk uploaded successfully.") {
+      dispatch(
+        setBulkVideoUpload({
+          isLoading: false,
+          data: result.data.data,
+          success: true,
+          error: null,
+        })
+      );
+
+      return result.data.data;
+    } else {
+      throw new Error(result?.data?.message || "Failed to upload videos");
+    }
+  } catch (error) {
+    dispatch(
+      setBulkVideoUpload({
+        isLoading: false,
+        data: null,
+        success: false,
+        error: error.message || "Failed to upload videos",
+      })
+    );
+
+    throw error;
+  }
+};
+
 export const {
   setCategoryList,
   setCategoryCreate,
@@ -1095,6 +1146,7 @@ export const {
   setDeleteChapter,
   setBulkCategoryUpload,
   setSingleChapterDetails,
+  setBulkVideoUpload,
 } = categoriesSlice.actions;
 
 export const selectBulkCategoryUpload = (state) => state.categories.bulkUpload;
@@ -1113,5 +1165,6 @@ export const selectDeleteTopicMedia = (state) =>
   state.categories.deleteTopicMedia;
 export const selectUniversities = (state) => state.categories.universities;
 export const selectCountries = (state) => state.categories.countries;
+export const selectBulkVideoUpload = (state) => state.categories.bulkVideoUpload;
 
 export default categoriesSlice.reducer;

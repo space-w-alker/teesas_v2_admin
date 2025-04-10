@@ -24,6 +24,8 @@ const TopicsList = ({ isOpen }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false); // Add loading state
+  const [showAddMediaModal, setShowAddMediaModal] = useState(false);
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
 
   const { data, isLoading } = useSelector(state => state.categories.topics);
 
@@ -65,6 +67,22 @@ const TopicsList = ({ isOpen }) => {
     }
   };
 
+  const handleAddMedia = (topicId) => {
+    setSelectedTopicId(topicId);
+    setShowAddMediaModal(true);
+  };
+
+  const handleMediaOptionSelect = (option) => {
+    if (option === 'unit') {
+      // Navigate to single media upload (existing functionality)
+      navigate(`/add-media/${selectedTopicId}`);
+    } else if (option === 'bulk') {
+      // Navigate to bulk media upload page
+      navigate(`/bulk-upload-media/${selectedTopicId}`);
+    }
+    setShowAddMediaModal(false);
+  };
+
   const TopicCard = ({ topic }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
@@ -97,7 +115,10 @@ const TopicsList = ({ isOpen }) => {
             {showDropdown && (
               <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg py-2 z-10">
                 <button
-                  onClick={() => navigate(`/add-media/${topic.id}`)}
+                  onClick={() => {
+                    setShowDropdown(false);
+                    handleAddMedia(topic.id);
+                  }}
                   className="w-full px-4 py-2 text-left text-blue-500 hover:bg-gray-50"
                 >
                   Add Media
@@ -244,6 +265,19 @@ const TopicsList = ({ isOpen }) => {
         title="Success"
         message="Topic deleted successfully"
       />
+
+      {/* Add Media Modal */}
+      {showAddMediaModal && (
+        <Modal
+          label="ADD MEDIA"
+          value1="Add Single Media"
+          value2="Upload Bulk Media"
+          closeModal={() => setShowAddMediaModal(false)}
+          onClick={handleMediaOptionSelect}
+          addSingleButton={() => handleMediaOptionSelect('unit')}
+          addMutipleButton={() => handleMediaOptionSelect('bulk')}
+        />
+      )}
     </div>
   );
 };

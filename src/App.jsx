@@ -112,9 +112,9 @@ import ResellerFormDetails from './components/ResellerForm/ResellerFormDetails';
 import SevenHabitsBootcamp from './components/7HabitsBootcamp/7HabitsBootcamp';
 import RegistrationDetails from './components/7HabitsBootcamp/RegistrationDetails';
 import AddParticipant from './components/7HabitsBootcamp/AddParticipant';
-import JAMBtutorial from './components/JAMB and SSCE Tutorial/JAMBtutorial';
-import TutorialDetails from './components/JAMB and SSCE Tutorial/TutorialDetails';
-import AddSingleParticipant from './components/JAMB and SSCE Tutorial/AddSingleParticipant';
+import JAMBtutorial from './components/LearningCenter/JAMBtutorial';
+import TutorialDetails from './components/LearningCenter/TutorialDetails';
+import AddSingleParticipant from './components/LearningCenter/AddSingleParticipant';
 import SummerCamp from './components/SummerCamp/SummerCamp';
 import AddSingleCampParticipant from './components/SummerCamp/AddSIngleSummerCampParticipant';
 import SummerCampDetails from './components/SummerCamp/SummerCampDetails';
@@ -167,7 +167,7 @@ import AddPractice from './components/Practice/AddPractice';
 import PracticeDetails from './components/Practice/PracticeDetails';
 import UniversityViewPdf from './components/QuestionBank/UniversityViewPdf';
 import AddBulkSummerCampParticipant from './components/SummerCamp/AddBulkSummerCampParticipant';
-import AddBulkJambParticipant from './components/JAMB and SSCE Tutorial/AddBulkJambParticipant';
+import AddBulkJambParticipant from './components/LearningCenter/AddBulkJambParticipant';
 import AddBulk7HabitBootcamp from './components/7HabitsBootcamp/AddBulk7HabitBootcamp';
 import AddClass from './components/Categories/AddClass';
 import TopicsList from './components/Categories/TopicsList';
@@ -181,6 +181,9 @@ import PermissionGuard from './components/common/PermissionGuard';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 import UploadBulkLiveClass from './pages/admin/LiveClasses/UploadBulkLiveClass';
 import PaymentProof from './pages/admin/one-on-oneclass/PaymentProof';
+import LearningCenterCourses from './components/LearningCenter/LearningCenterCourses';
+import AddSubjectLearningCenter from './components/LearningCenter/AddSubjectLearningCenter';
+import BulkUploadMedia from './components/Categories/BulkUploadMedia';
 
 function App() {
 
@@ -329,9 +332,9 @@ function App() {
           path="/payment-proof/:id"
           element={
             <ProtectedRoute>
-            
-                <PaymentProof isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-             
+
+              <PaymentProof isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
             </ProtectedRoute>
           }
         />
@@ -712,6 +715,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/bulk-upload-media/:topicId"
+          element={
+            <ProtectedRoute>
+
+              <BulkUploadMedia isOpen={isSidebarOpen} />
+
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/add-unit-media"
           element={
@@ -1453,6 +1467,28 @@ function App() {
               <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:create", "jamb_ssce_tutorial:read"]}>
                 <JAMBtutorial isOpen={isSidebarOpen} />
               </PermissionGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/learning-center-courses"
+          element={
+            <ProtectedRoute>
+
+              <LearningCenterCourses isOpen={isSidebarOpen} />
+
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/learning-center/add-subject"
+          element={
+            <ProtectedRoute>
+
+              <AddSubjectLearningCenter isOpen={isSidebarOpen} />
+
             </ProtectedRoute>
           }
         />
