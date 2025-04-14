@@ -176,6 +176,8 @@ const LearningCenterCourses = ({ isOpen }) => {
           <Headcomponent 
             value="Course List" 
             showSearch={true}
+            showFilter={false}
+            showMenu={false} 
             onSearch={handleSearch}
             searchValue={searchTerm}
             onClear={() => {
