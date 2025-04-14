@@ -22,6 +22,7 @@ import salesReducer from "./apis/slices/salesSlice";
 import bannerReducer from "./apis/slices/bannerSlice";
 import rolesReducer from "./apis/slices/rolesSlice";
 import performanceReducer from "./apis/slices/performanceSlice";
+import learningCenterReducer from "./apis/slices/learningCenterSlice";
 
 export default configureStore({
   reducer: {
@@ -48,5 +49,6 @@ export default configureStore({
     banner: bannerReducer,
     roles: rolesReducer,
     perfomance: performanceReducer,
+    learningCenter: learningCenterReducer,
   },
 });
