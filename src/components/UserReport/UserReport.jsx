@@ -1,73 +1,161 @@
-import React, { useState, useEffect } from 'react'
-//import report from '../../assets/images/report.png'
-import reportIcon from "../../assets/images/Banner-icon.png";
+import React, { useState, useEffect } from "react";
+import Headcomponent from "../../components/common/Headcomponent";
+import UserReportDetails from "../UserReport/UserReportDetails";
+import { FaChevronLeft } from "react-icons/fa";
+import Modal from "../../components/common/Modal";
+import {
+  getUsersFeedbackAsync,
+  getUserFeedBacksCsvAsync,
+} from "../../apis/slices/feedBackSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
+import { CSVLink } from "react-csv";
 
-import UserCard from '../common/UserCard'
-import { FaChevronLeft } from "react-icons/fa"
-import { useNavigate } from 'react-router-dom'
-import { TailSpin } from "react-loader-spinner"
-import ReportList from '../Core/Dashboard/Admin/UserReportList'
-
-const UserReport = ({ isOpen }) => {
-  const navigate = useNavigate()
-  const [reportData, setReportData] = useState([])
-  const [loading, setLoading] = useState(false)
-
-  const dummyReportStats = {
-    total_reports: 250,
-    active_reports: 85,
-    resolved_reports: 165
-  }
+const Feedback = ({ isOpen }) => {
+  const Navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = localStorage.getItem("authToken");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+  const [pageData, setPageData] = useState({});
+  const [data, setdata] = useState([]);
+  const [searchValue, setVearchValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [totalFeedback, setTotalFeedback] = useState("");
+  const [totalResolvedFeedback, setTotalResolvedFeedback] = useState("");
+  const [csvUser, setCsvUser] = useState([]);
+  const [progressCsv, setProgressCsv] = useState([]);
 
   useEffect(() => {
-    setLoading(true)
-    setTimeout(() => {
-      setReportData(dummyReportStats)
-      setLoading(false)
-    }, 1000)
-  }, [])
+    // setLoading(true);
+    const newData = {
+      page: 1,
+      limit: 10,
+      isResolved: false,
+      feedback_type: "video_feedback"
+    };
+    getUsersFeedbackAsync({
+      dispatch: dispatch,
+      data: newData,
+      token: token,
+      callbackFn: (res) => {
+        if (res?.data?.status === 200) {
+          setdata(res?.data?.data?.data?.feedback);
+          setPageData(res?.data?.data?.data?.overview);
+          setTotalFeedback(res?.data?.data?.data?.overview?.totalFeedback);
+          setTotalResolvedFeedback(
+            res?.data?.data?.data?.overview?.totalResolvedFeedback
+          );
+          setLoading(false);
+        } else {
+          alert(res?.data?.message);
+          setLoading(false);
+        }
+      },
+    });
+  }, []);
 
+  const [isActive, setIsActive] = useState(false);
+  const handleClick = () => {
+    setIsActive(!isActive);
+    setIsModalOpen(true);
+  };
   return (
-    <div className={`py-[7rem] lg:px-[5rem] flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
+    <div
+      className={` py-[7rem] lg:px-[5rem]  px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
+        }`}
+    >
       {loading && (
-        <div style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9999,
-        }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+          }}
+        >
           <TailSpin color="green" radius={5} />
         </div>
       )}
-      <div className='flex justify-start items-center lg:gap-3'>
-        <FaChevronLeft />
+      <div className="flex justify-start  items-center lg:gap-3">
+        <FaChevronLeft
+          onClick={() => Navigate(-1)}
+          className="cursor-pointer"
+        />
+
         <div>
-          <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
-            Home / <span className='text-black font-medium'>User Reports</span>
+          <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
+            Home /<span className="text-black font-medium"> User Report</span>
           </div>
         </div>
       </div>
+      <div>
+        <h2 className=" font-bold text-[22px]  leading-[28px] text-[#2C2E32] mt-7">
+          User Report
+        </h2>
+        <div className="lg:flex gap-[10px]  justify-between mt-5 ">
+          <div className="p-[10px] bg-[#FFFFFF] flex flex-col gap-2  w-full lg:h-[72px]  py-[10px]  px-[15px] rounded-xl">
+            <div>
+              <p className="text-[12px] leading-[12px] text-[#001D4A] mt-2">
+                Total User Report Feedback
+              </p>
+            </div>
+            <div>
+              <p className="font-meduim text-[20px] leading-[20px]">
+                {totalFeedback}
+              </p>
+            </div>
+          </div>
 
-      <h2 className="mt-6 font-bold text-[22px] leading-[28px] text-[#2C2E32]">
-        User Reports
-      </h2>
-
-      <div className="mt-3">
-        <UserCard
-          label="Total Reports"
-          height="h-[111px]"
-          backgroundcolor="bg-[#FFFFFF]"
-          value={reportData?.total_reports}
-
-        />
+          <div className="p-[10px] bg-[#FFFFFF] flex flex-col gap-2  lg:mt-0 mt-5  w-full lg:h-[72px]  py-[10px]  px-[15px] rounded-xl">
+            <div className="">
+              <p className="text-[12px] leading-[12px] text-[#001D4A] mt-2">
+                Total Resolve User Report Feedback
+              </p>
+            </div>
+            <div>
+              <p className="font-meduim text-[20px] leading-[20px]">
+                {totalResolvedFeedback}
+              </p>
+            </div>
+          </div>
+        </div>
+        {/* <div
+          className={`border border-[#27AE60] w-[120px] h-[40px] rounded-lg py-[7px] px-[16px] mt-3 float-right bg-[#27AE60]`}
+        >
+          <CSVLink
+            style={{ textDecoration: "none", color: "white" }}
+            data={data}
+            separator={";"}
+            filename="User_List.csv"
+          >
+            <button
+              className={`text-[14px] leading-[20px] text-center text-white `}
+              // onClick={handleClick}
+            >
+              Export CSV
+            </button>
+          </CSVLink>
+        </div> */}
       </div>
 
-
-
-      <ReportList />
+      <div className="mt-[60px]">
+        <UserReportDetails feedbackType="video_feedback" />
+        {isModalOpen && (
+          <Modal
+            csvData1={csvUser}
+            csvData2={progressCsv}
+            closeModal={handleModalClose}
+            label="Export"
+          />
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserReport
+export default Feedback;

@@ -44,11 +44,11 @@ const FeedbackInfo = ({ item }) => {
       label: "Date of registration",
       value: item?.user?.created_at || "-",
     },
-    {
-      id: 5,
-      label: "Channel",
-      value: item?.user?.user_courses[0].course.name || "-",
-    },
+    // {
+    //   id: 5,
+    //   label: "Channel",
+    //   value: item?.user?.user_courses[0].course.name || "-",
+    // },
     {
       id: 6,
       label: "Date Sent",
@@ -95,14 +95,14 @@ const FeedbackInfo = ({ item }) => {
                 Feedback Information
               </h2>
             </div>
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <div className="w-[39px] h-[42px]">
                 <img src={SearchButton} />
               </div>
               <div className="w-[24px] h-[24px]">
                 <img src={Vector} />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="px-[10px] mt-5">

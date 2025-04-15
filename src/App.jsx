@@ -184,6 +184,7 @@ import PaymentProof from './pages/admin/one-on-oneclass/PaymentProof';
 import LearningCenterCourses from './components/LearningCenter/LearningCenterCourses';
 import AddSubjectLearningCenter from './components/LearningCenter/AddSubjectLearningCenter';
 import BulkUploadMedia from './components/Categories/BulkUploadMedia';
+import ParentReport from './components/ParentReport/ParentReport'
 
 function App() {
 
@@ -1730,6 +1731,18 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/parentsReport"
+          element={
+            <ProtectedRoute>
+
+              <ParentReport isOpen={isSidebarOpen} />
+
+            </ProtectedRoute>
+          }
+        />
+
+
         <Route path="/parentsReportType"
           element={
             <ProtectedRoute>
@@ -1893,9 +1906,9 @@ function App() {
         <Route path="/user-report"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["user_report:read"]}>
+            
                 <UserReport isOpen={isSidebarOpen} />
-              </PermissionGuard>
+  
             </ProtectedRoute>
           }
         />
@@ -1903,9 +1916,9 @@ function App() {
         <Route path="/Reports/Details"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["user_report:read"]}>
+            
                 <UserReportDetails isOpen={isSidebarOpen} />
-              </PermissionGuard>
+            
             </ProtectedRoute>
           }
         />

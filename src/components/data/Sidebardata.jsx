@@ -26,6 +26,20 @@ const Sidebardata = [
         permissions: ["feedback:read"]
       },
       {
+        name: "User Report",
+        icon: feedback,
+        path: "/user-report",
+     
+      },
+      {
+        name: "Parent Report",
+        icon: feedback,
+        path: "/parentsReport",
+     
+      },
+     
+ 
+      {
         name: "Leader Board",
         icon: feedback,
         path: "/leaderboard",

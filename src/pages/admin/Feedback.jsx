@@ -34,6 +34,8 @@ const Feedback = ({ isOpen }) => {
     const newData = {
       page: 1,
       limit: 10,
+      isResolved: false,
+      feedback_type: "app_feedback"
     };
     getUsersFeedbackAsync({
       dispatch: dispatch,
@@ -41,7 +43,6 @@ const Feedback = ({ isOpen }) => {
       token: token,
       callbackFn: (res) => {
         if (res?.data?.status === 200) {
-          // console.log('res', res?.data?.data?.data?.overview?.totalFeedback)
           setdata(res?.data?.data?.data?.feedback);
           setPageData(res?.data?.data?.data?.overview);
           setTotalFeedback(res?.data?.data?.data?.overview?.totalFeedback);
@@ -51,24 +52,10 @@ const Feedback = ({ isOpen }) => {
           setLoading(false);
         } else {
           alert(res?.data?.message);
-          // setLoading(false);
+          setLoading(false);
         }
       },
     });
-    // getUserFeedBacksCsvAsync({
-    //   dispatch: dispatch,
-    //   data: newData,
-    //   token: token,
-    //   callbackFn: (res) => {
-    //     if (res?.data?.status === 200) {
-    //       setCsvUser(res?.data?.data?.feedback);
-    //       setLoading(false);
-    //     } else {
-    //       alert(res?.data?.message);
-    //       setLoading(false);
-    //     }
-    //   },
-    // });
   }, []);
 
   const [isActive, setIsActive] = useState(false);
@@ -102,19 +89,19 @@ const Feedback = ({ isOpen }) => {
 
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
-            Home /<span className="text-black font-medium"> User Feedback</span>
+            Home /<span className="text-black font-medium"> App Feedback</span>
           </div>
         </div>
       </div>
       <div>
         <h2 className=" font-bold text-[22px]  leading-[28px] text-[#2C2E32] mt-7">
-          Users Feedback
+          App Feedback
         </h2>
         <div className="lg:flex gap-[10px]  justify-between mt-5 ">
           <div className="p-[10px] bg-[#FFFFFF] flex flex-col gap-2  w-full lg:h-[72px]  py-[10px]  px-[15px] rounded-xl">
             <div>
               <p className="text-[12px] leading-[12px] text-[#001D4A] mt-2">
-                Total Feedback
+                Total App Feedback
               </p>
             </div>
             <div>
@@ -127,7 +114,7 @@ const Feedback = ({ isOpen }) => {
           <div className="p-[10px] bg-[#FFFFFF] flex flex-col gap-2  lg:mt-0 mt-5  w-full lg:h-[72px]  py-[10px]  px-[15px] rounded-xl">
             <div className="">
               <p className="text-[12px] leading-[12px] text-[#001D4A] mt-2">
-                Total Resolved Feedback
+                Total Resolved App Feedback
               </p>
             </div>
             <div>
@@ -157,7 +144,7 @@ const Feedback = ({ isOpen }) => {
       </div>
 
       <div className="mt-[60px]">
-        <Userfeedback />
+        <Userfeedback feedbackType="app_feedback" />
         {isModalOpen && (
           <Modal
             csvData1={csvUser}
