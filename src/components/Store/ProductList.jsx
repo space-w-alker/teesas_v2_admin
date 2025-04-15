@@ -36,7 +36,7 @@ const ProductList = ({ isOpen }) => {
   const dispatch = useDispatch();
   const [sort, setSort] = useState({
     data: "",
-    filterList: "",  // Filters applied
+    filterList: "",  
     sort: "",
     search: "",
     page: 1,
@@ -68,21 +68,50 @@ const ProductList = ({ isOpen }) => {
     };
   }, [openStatusDropdown]);
 
-  const handleSearchChange = (e) => {
-    setSort((prevSort) => ({
-      ...prevSort,
-      search: e.target.value,
-      page: 1 // Reset to first page on new search
+  // Auto-reload functionality
+  useEffect(() => {
+    // Initial data load
+    setLoading(true);
+    dispatch(listStoresAsync({
+      dispatch,
+      data: sort,
+      callbackFn: () => setLoading(false)
     }));
-  };
-
-  const handleOrderSearchChange = (e) => {
-    setOrderFilters(prev => ({
-      ...prev,
-      search: e.target.value,
-      page: 1
+    
+    dispatch(getOrdersAsync({
+      dispatch,
+      page: orderFilters.page,
+      limit: orderFilters.limit,
+      search: orderFilters.search,
+      status: orderFilters.status
     }));
-  };
+    
+    // Set up auto-reload when returning to this page
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setLoading(true);
+        dispatch(listStoresAsync({
+          dispatch,
+          data: sort,
+          callbackFn: () => setLoading(false)
+        }));
+        
+        dispatch(getOrdersAsync({
+          dispatch,
+          page: orderFilters.page,
+          limit: orderFilters.limit,
+          search: orderFilters.search,
+          status: orderFilters.status
+        }));
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -102,6 +131,22 @@ const ProductList = ({ isOpen }) => {
       status: orderFilters.status
     }));
   }, [orderFilters]);
+
+  const handleSearchChange = (e) => {
+    setSort((prevSort) => ({
+      ...prevSort,
+      search: e.target.value,
+      page: 1 // Reset to first page on new search
+    }));
+  };
+
+  const handleOrderSearchChange = (e) => {
+    setOrderFilters(prev => ({
+      ...prev,
+      search: e.target.value,
+      page: 1
+    }));
+  };
 
   const statsData = orders?.data?.statistics || {
     totalProducts: 0,

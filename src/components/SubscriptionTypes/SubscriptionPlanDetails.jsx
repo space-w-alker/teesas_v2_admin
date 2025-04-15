@@ -7,7 +7,7 @@ import Headcomponent from '../common/Headcomponent';
 import StatCard from '../common/StatCard';
 import Custombutton from '../common/Custombutton';
 import SuccessModal from '../common/SuccessModal';
-import { FaPlus, FaArrowLeft, FaArrowRight, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaArrowLeft, FaEdit, FaArrowRight, FaTrash } from 'react-icons/fa';
 import { getCourseSubscriptionsAsync, deleteSubscriptionPlanAsync } from '../../apis/slices/subscriptionsSlice';
 
 const SubscriptionPlanDetails = ({ isOpen }) => {
@@ -175,6 +175,18 @@ const SubscriptionPlanDetails = ({ isOpen }) => {
                           Subscription for {plan.classes?.name || 'Class'} - {plan.time} Days
                         </h3>
                         <div className="flex gap-2">
+                          <Custombutton
+                            value={<FaEdit />}
+                            textcolor="text-blue-500"
+                            backgroundcolor="bg-transparent"
+                            onClick={() => navigate(`/edit-subscription-plan/${plan.id}`, { 
+                              state: { 
+                                courseId, 
+                                courseName,
+                                planId: plan.id
+                              } 
+                            })}
+                          />
                           <Custombutton
                             value={<FaTrash />}
                             textcolor="text-red-500"

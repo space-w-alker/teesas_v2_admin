@@ -185,6 +185,7 @@ import LearningCenterCourses from './components/LearningCenter/LearningCenterCou
 import AddSubjectLearningCenter from './components/LearningCenter/AddSubjectLearningCenter';
 import BulkUploadMedia from './components/Categories/BulkUploadMedia';
 import ParentReport from './components/ParentReport/ParentReport'
+import EditSubscriptionPlan from './components/SubscriptionTypes/EditSubscriptionPlan';
 
 function App() {
 
@@ -1622,6 +1623,13 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/edit-subscription-plan/:planId"
+          element={<ProtectedRoute><EditSubscriptionPlan isOpen={isSidebarOpen} /></ProtectedRoute>}
+        />
+
+
 
         <Route path="/add-subscription-plan"
           element={

@@ -39,6 +39,7 @@ ChartJS.register(
   Legend
 );
 import { getSubscribedUsersAsync } from "../../apis/slices/subscriptionsSlice";
+import { getUsersFeedbackAsync } from "../../apis/slices/feedBackSlice";
 
 
 const SignInList = ({ isOpen }) => {
@@ -56,6 +57,12 @@ const SignInList = ({ isOpen }) => {
   const [loading, setLoading] = useState(false);
   const [subscriptions, setSubscriptions] = useState([]);
   const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
+  const [feedbackStats, setFeedbackStats] = useState({
+    totalFeedback: 0,
+    totalResolvedFeedback: 0,
+    totalUnresolvedFeedback: 0
+  });
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
 
 
   const formatDate = (dateString) => {
@@ -71,7 +78,34 @@ const SignInList = ({ isOpen }) => {
       return dateString;
     }
   };
+  
+  const fetchFeedbackStats = () => {
+    setLoadingFeedback(true);
 
+    getUsersFeedbackAsync({
+      dispatch: dispatch,
+      data: {
+        page: 1,
+        limit: 1
+        // No feedback_type to get combined data
+      },
+      token: token,
+      callbackFn: (res) => {
+        setLoadingFeedback(false);
+        if (res?.data?.status === 200) {
+          const stats = res?.data?.data?.data?.overview || {};
+
+          setFeedbackStats({
+            totalFeedback: stats.totalFeedback || 0,
+            totalResolvedFeedback: stats.totalResolvedFeedback || 0,
+            totalUnresolvedFeedback: (stats.totalFeedback || 0) - (stats.totalResolvedFeedback || 0)
+          });
+        } else {
+          console.error("Failed to fetch feedback stats:", res?.data?.message);
+        }
+      }
+    });
+  };
 
 
 
@@ -174,6 +208,7 @@ const SignInList = ({ isOpen }) => {
         }
       },
     });
+    fetchFeedbackStats();
 
   }, []);
 
@@ -369,65 +404,53 @@ const SignInList = ({ isOpen }) => {
           </div>
         </div>
 
-        <div className="hidden rounded-xl p-[16px] w-full bg-[#FFFFFF] dash mt-5">
-          <div className=" flex justify-between Border  pb-[8px]">
+        <div className="rounded-xl p-[16px] w-full bg-[#FFFFFF] dash mt-5">
+          <div className="flex justify-between Border pb-[8px]">
             <div>
-              <h3 className=" font-medium text-[18px] text-[#2C2E32] leading-[25px] ">
-                Suport Tracker
+              <h3 className="font-medium text-[18px] text-[#2C2E32] leading-[25px]">
+                Support Tracker
               </h3>
             </div>
-            <div>
-              <Custombutton
-                value="Filter"
-                img={frame2}
-                backgroundcolor="bg-[#F2F2F2]"
-                textcolor="text-[#000000]"
-                imagePosition="right"
-              // onClick={() => setIsModalOpen(true)}
-              />
-            </div>
           </div>
-          <div className=" mt-4 lg:grid  md:grid md:grid-cols-2 md:gap-5 xl:grid-cols-4 lg:grid-cols-3 lg:gap-7">
-            <div>
-              <UserCard
-                label="Total number of tickets"
-                height="h-[105px]"
-                backgroundcolor="bg-[#F2F2F2]"
-                value="5,000"
-                img2={Ynotes}
-                width="w-[298px]"
-              />
-            </div>
-            <div>
-              <UserCard
-                label="Total new tickets"
-                height="h-[105px]"
-                backgroundcolor="bg-[#F2F2F2]"
-                value="20"
-                img2={Gnotes}
-                width="w-[298px]"
-              />
-            </div>
-            <div>
-              <UserCard
-                label="Total opened tickets"
-                height="h-[105px]"
-                backgroundcolor="bg-[#F2F2F2]"
-                value="12"
-                img2={Bnotes}
-                width="w-[298px]"
-              />
-            </div>
-            <div>
-              <UserCard
-                label="Total Response Time"
-                height="h-[105px]"
-                backgroundcolor="bg-[#F2F2F2]"
-                value="244 "
-                img2={Pnotes}
-                width="w-[298px]"
-              />
-            </div>
+          <div className="mt-4 lg:grid md:grid md:grid-cols-2 md:gap-5 xl:grid-cols-3 lg:grid-cols-3 lg:gap-7">
+            {loadingFeedback ? (
+              <div className="col-span-3 flex justify-center py-8">
+                <TailSpin color="green" radius={5} height={50} width={50} />
+              </div>
+            ) : (
+              <>
+                <div>
+                  <UserCard
+                    label="Total Feedback"
+                    height="h-[105px]"
+                    backgroundcolor="bg-[#F2F2F2]"
+                      value={feedbackStats.totalFeedback.toString()}
+                    img2={Ynotes}
+                    width="w-[298px]"
+                  />
+                </div>
+                <div>
+                  <UserCard
+                    label="Total Resolved Feedback"
+                    height="h-[105px]"
+                    backgroundcolor="bg-[#F2F2F2]"
+                      value={feedbackStats.totalResolvedFeedback.toString()}
+                    img2={Gnotes}
+                    width="w-[298px]"
+                  />
+                </div>
+                <div>
+                  <UserCard
+                    label="Total Unresolved Feedback"
+                    height="h-[105px]"
+                    backgroundcolor="bg-[#F2F2F2]"
+                    value={feedbackStats.totalUnresolvedFeedback.toString()}
+                    img2={Bnotes}
+                    width="w-[298px]"
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

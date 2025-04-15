@@ -4,6 +4,7 @@ import { config } from "../../../../apis/client/config";
 
 const BannerComponent = ({ bannerData }) => {
   // If no banner data is provided, show loading or placeholder
+  console.log("Banner Data:", bannerData);
   if (!bannerData) {
     return (
       <div className="bg-white rounded-xl shadow-sm p-6 text-center">
@@ -11,6 +12,8 @@ const BannerComponent = ({ bannerData }) => {
       </div>
     );
   }
+  const imageUrl = `${config.MainUrl}${bannerData.image}`;
+  console.log("Image URL:", imageUrl);
 
   return (
     <div>
@@ -72,13 +75,13 @@ const BannerComponent = ({ bannerData }) => {
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="w-full h-100 rounded-lg overflow-hidden">
             <img
-              src={`${config.MainUrl}${bannerData.image}`}
+              src={imageUrl}
               alt={bannerData.title || "Banner Preview"}
               className="w-full h-full object-cover"
             />
           </div>
         </div>
-      </div>
+      </div> 
     </div>
   );
 };

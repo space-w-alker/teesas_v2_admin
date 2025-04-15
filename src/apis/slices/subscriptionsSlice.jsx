@@ -524,3 +524,64 @@ export const selectCourses = (state) => state.subscriptions.courses;
 
 
 export default subscriptionsSlice.reducer;
+
+export const updateSubscriptionPlanAsync = ({ dispatch, planId, body, token, callbackFn }) => {
+  try {
+    dispatch(setSubscriptionPlanCreation({ isLoading: true, data: null, error: null, success: false }));
+    const URL = `${BASEURL}admin/dashboard/subscription-plans/${planId}`;
+
+    const result = postAPICall(URL, body, token).then((res) => {
+      if (res?.data?.status === 200) {
+        dispatch(setSubscriptionPlanCreation({ 
+          isLoading: false, 
+          data: res.data.data, 
+          error: null,
+          success: true 
+        }));
+      } else {
+        dispatch(setSubscriptionPlanCreation({ 
+          isLoading: false, 
+          data: null, 
+          error: res?.data?.message || "Failed to update subscription plan",
+          success: false 
+        }));
+      }
+      callbackFn && callbackFn(res);
+      return res;
+    });
+  } catch (err) {
+    dispatch(setSubscriptionPlanCreation({ isLoading: false, error: err.message, success: false }));
+    callbackFn && callbackFn({ error: err });
+  }
+};
+
+export const getSubscriptionPlanAsync = ({ dispatch, planId, token, callbackFn }) => {
+  try {
+    dispatch(setSubscriptionPlanCreation({ isLoading: true, data: null, error: null, success: false }));
+
+    const URL = `${BASEURL}admin/dashboard/subscription-plansdetail/${planId}`;
+
+    const result = getAPICall(URL, {}, token).then((res) => {
+      if (res?.data?.status === 200) {
+        dispatch(setSubscriptionPlanCreation({ 
+          isLoading: false, 
+          data: res.data.data, 
+          error: null,
+          success: true 
+        }));
+      } else {
+        dispatch(setSubscriptionPlanCreation({ 
+          isLoading: false, 
+          data: null, 
+          error: res?.data?.message || "Failed to fetch subscription plan",
+          success: false 
+        }));
+      }
+      callbackFn && callbackFn(res);
+      return res;
+    });
+  } catch (err) {
+    dispatch(setSubscriptionPlanCreation({ isLoading: false, error: err.message, success: false }));
+    callbackFn && callbackFn({ error: err });
+  }
+};

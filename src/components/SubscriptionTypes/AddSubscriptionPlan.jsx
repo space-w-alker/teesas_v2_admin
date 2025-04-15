@@ -81,24 +81,46 @@ const AddSubscriptionPlan = ({ isOpen }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'amount' || name === 'discount' || name === 'time'
-        ? parseFloat(value) || ''
-        : value
-    }));
+
+
+
+
+
+
+    
+    // Special handling for discount field
+    if (name === 'discount') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value === '' ? 0 : parseFloat(value) || 0 // Convert to number or use 0
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: name === 'amount' || name === 'time'
+          ? parseFloat(value) || ''
+          : value
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const token = localStorage.getItem('token') || '';
+    
+
+    const submissionData = {
+      ...formData,
+
+      discount: formData.discount === '' ? 0 : formData.discount
+    };
 
     setLoading(true);
 
     createSubscriptionPlanAsync({
       dispatch,
-      body: formData,
+      body: submissionData, 
       token,
       callbackFn: (res) => {
         setLoading(false);
@@ -184,7 +206,6 @@ const AddSubscriptionPlan = ({ isOpen }) => {
                     value={formData.discount}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
-                    required
                   />
                 </div>
               </div>
