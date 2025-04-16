@@ -217,56 +217,60 @@ const LeaderboardProfile = ({ isOpen }) => {
           </div>
         </div>
 
-        <div className=" md:grid lg:grid grid-cols-4 gap-5 px-[8px] pb-[10px] lg:pb-0 lg:px-0">
-          <div className="p-[10px] bg-[#F3F7FC] mt-4 lg:mt-0 flex flex-col gap-2  lg:w-[223px] h-[80px]  py-[10px]  px-[15px] rounded-xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+          <div className="p-4 bg-[#F3F7FC] flex flex-col gap-2 rounded-xl shadow-sm">
             <div>
-              <p className="text-[16px] font-normal leading-[12px] text-[#001D4A] mt-2">
+              <p className="text-sm md:text-base font-normal text-[#001D4A]">
                 Total Points
               </p>
             </div>
             <div>
-              <p className="font-bold text-[19px] lg:text-[26px] leading-[38px] text-[#000000]">
-                {userData?.leaderboardDetails?.totalPoints}
+              <p className="font-bold text-xl md:text-2xl text-[#000000]">
+                {userData?.leaderboardDetails?.totalPoints || 0}
               </p>
             </div>
           </div>
-          <div className="p-[10px] bg-[#F3F7FC] flex flex-col gap-2 mt-4 lg:mt-0  lg:w-[223px]  lh-[80px]  py-[10px]  px-[15px] rounded-xl">
+
+          <div className="p-4 bg-[#F3F7FC] flex flex-col gap-2 rounded-xl shadow-sm">
             <div>
-              <p className="text-[16px] leading-[12px] text-[#001D4A] mt-2">
+              <p className="text-sm md:text-base font-normal text-[#001D4A]">
                 Dialogues Passed
               </p>
             </div>
             <div>
-              <p className="font-bold text-[19px] lg:text-[26px] leading-[38px] text-[#000000]">
-                {userData?.leaderboardDetails?.dialoguesPassed}
+              <p className="font-bold text-xl md:text-2xl text-[#000000]">
+                {userData?.leaderboardDetails?.dialoguesPassed || 0}
               </p>
             </div>
           </div>
-          <div className="p-[10px] bg-[#F3F7FC] mt-4 lg:mt-0  flex flex-col gap-2  lg:w-[223px] h-[80px]  py-[10px]  px-[15px] rounded-xl">
+
+          <div className="p-4 bg-[#F3F7FC] flex flex-col gap-2 rounded-xl shadow-sm">
             <div>
-              <p className="text-[16px] leading-[12px] text-[#001D4A] mt-2">
+              <p className="text-sm md:text-base font-normal text-[#001D4A]">
                 Top 3 Finish
               </p>
             </div>
             <div>
-              <p className="font-bold text-[19px] lg:text-[26px] leading-[38px] text-[#000000]">
-                {userData?.leaderboardDetails?.top3Finish}
+              <p className="font-bold text-xl md:text-2xl text-[#000000]">
+                {userData?.leaderboardDetails?.top3Finish || 0}
               </p>
             </div>
           </div>
-          <div className="p-[10px] bg-[#F3F7FC] mt-4 lg:mt-0  flex flex-col gap-2    lg:w-[223px] h-[80px]  py-[10px]  px-[15px] rounded-xl">
+
+          <div className="p-4 bg-[#F3F7FC] flex flex-col gap-2 rounded-xl shadow-sm">
             <div>
-              <p className="text-[16px] leading-[12px] text-[#001D4A] mt-2">
+              <p className="text-sm md:text-base font-normal text-[#001D4A]">
                 Highest Score
               </p>
             </div>
             <div>
-              <p className="font-bold text-[26px] leading-[38px] text-[#000000]">
-                {userData?.leaderboardDetails?.highestScore}
+              <p className="font-bold text-xl md:text-2xl text-[#000000]">
+                {userData?.leaderboardDetails?.highestScore || 0}
               </p>
             </div>
           </div>
         </div>
+
       </div>
       <StudentStatsDashboard id={user_id} class={class_id} />
       <div>
@@ -356,6 +360,8 @@ const LeaderboardProfile = ({ isOpen }) => {
         userData={userData}
         monthlyData={monthlyData}
         performanceHistory={performanceHistory}
+        userId={user_id}
+        classId={class_id}
       />
 
       <TestSchedule id={user_id} />

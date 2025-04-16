@@ -1,10 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Parctice from "./Parctice";
 import BarChart from "./Barcharts";
 import Profile from "../../../../assets/images/Profile.png";
 import { Bar, Doughnut } from "react-chartjs-2";
+import { getSubjectsAsync } from "../../../../apis/slices/performanceSlice";
+import { useDispatch } from "react-redux";
 
-const ActivityLog = (userData, monthlyData, performanceHistory) => {
+const ActivityLog = ({ userData, monthlyData, performanceHistory, userId, classId }) => {
+  const dispatch = useDispatch();
+  const [subjectsData, setSubjectsData] = useState([]);
+  const [overallPerformance, setOverallPerformance] = useState(0);
+
+  useEffect(() => {
+    if (userId && classId) {
+      getSubjectsAsync({
+        dispatch,
+        data: {
+          classId: classId,
+          userId: userId
+        },
+        token: localStorage.getItem("authToken"),
+        callbackFn: (res) => {
+          if (res?.data?.status === 200 && res.data.data && res.data.data.subjects) {
+            setSubjectsData(res.data.data.subjects);
+
+     
+            const totalSubjects = res.data.data.subjects.length;
+            if (totalSubjects > 0) {
+              const totalPercentage = res.data.data.subjects.reduce((sum, subject) => {
+                const percentage = subject.totalLessons > 0
+                  ? (subject.completedLessons / subject.totalLessons) * 100
+                  : 0;
+                return sum + percentage;
+              }, 0);
+
+              setOverallPerformance(parseFloat((totalPercentage / totalSubjects).toFixed(1)));
+            }
+          }
+        },
+      });
+    }
+  }, [userId, classId]);
+
   const options2 = {
     responsive: true,
     plugins: {
@@ -57,7 +94,7 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
     datasets: [
       {
         label: "Points",
-        data: userData?.monthlyData,
+        data: monthlyData,
         backgroundColor: "rgba(209, 204, 242, 1)",
         // innerWidth: '1rem',
         // outerHeight: '13rem'
@@ -80,7 +117,7 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
           </div>
 
           <div className=" lg:px-[20px] py-[30px] flex flex-col gap-4 ">
-            {userData?.userData?.activity_logs?.map((item, i) => {
+            {userData?.activity_logs?.map((item, i) => {
               return (
                 <>
                   <div
@@ -125,7 +162,7 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
             </div>
 
             <div className=" lg:px-[20px] py-[30px] flex flex-col gap-4 ">
-              {userData?.userData?.bookmarks?.map((item, i) => {
+              {userData?.bookmarks?.map((item, i) => {
                 return (
                   <>
                     <div
@@ -137,7 +174,7 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
                       </div>
                       <div className="flex flex-col gap-y-2">
                         <div className="text-[0.875rem] font-bold">
-                          {userData?.userData?.leaderboardDetails?.user?.name}{" "}
+                          {userData?.leaderboardDetails?.user?.name}{" "}
                           Added {item?.video?.title}
                         </div>
                         {/* <div className="mb-3 text-[10px] text-[#126DFB]">
@@ -151,92 +188,71 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
             </div>
           </div>
         </div>
-        <div className=" mt-10 hidden">
-          <div>
-            <h2 className="font-extrabold text-[22px] leading-[30px] text-[#171818]">
-              Stats
-            </h2>
-          </div>
-          <div className="lg:p-[24px] rounded-[12px] bg-[#FFFFFF] border border-[#EFF1F5] mt-5">
-            <div className=" rounded-[8px] lg:p-[16px] bg-[#FFFAF4] lg:w-[460px] lg:h-[290px]">
-              <Bar
-                // width={150}
-                // height={100}
-                options={options2}
-                data={data2}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5 lg:mt-10 ">
-          <div>
-            <h2 className="font-extrabold text-[18px] lg:text-[22px] leading-[30px] text-[#171818]">
-              Achievements
-            </h2>
-          </div>
-          <div className="lg:p-[24px] rounded-[12px] bg-[#FFFFFF] border border-[#EFF1F5] mt-2 lg:mt-5 px-[8px] ">
-            {userData?.userData?.achievementsList?.map((item, i) => (
-              <div className="flex justify-between items-center mt-5" key={i}>
-                <div className="flex items-center gap-4">
-                  <img src={Profile} className="lg:w-[40px] lg:h-[40px]" />
-                  <p className=" font-bold text-[15px] lg:text-[18px] leading-[24px] text-[#000000] ">
-                    {item.title}
-                  </p>
-                </div>
-                <div>
-                  <p className=" font-normal text-[12px] leading-[21px] text-[#000000]">
-                    {((item?.progress / item?.goal) * 100).toFixed(0)}%
-                    Completed
-                  </p>
-                  <input
-                    type="range"
-                    min="0"
-                    max={item?.goal}
-                    value={item?.progress}
-                    className="accent"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mt-5 lg:mt-10 ">
-          <div>
+      
+      </div>
+      <div>
+       
+        <div className="  ">
+          <div className="lg:p-[24px] rounded-[12px] bg-[#FFFFFF] border border-[#EFF1F5]   px-[8px] ">
+            {/* Display each subject individually */}
             <h2 className="font-extrabold text-[18px] lg:text-[22px] leading-[30px] text-[#171818]">
               Subject Performance
             </h2>
-          </div>
-          <div className="lg:p-[24px] rounded-[12px] bg-[#FFFFFF] border border-[#EFF1F5] mt-2 lg:mt-5 px-[8px] ">
-            {userData?.userData?.achievementsList?.map((item, i) => (
-              <div className="flex justify-between items-center mt-5" key={i}>
+            {subjectsData.map((subject, index) => {
+              const percentage = subject.totalLessons > 0
+                ? parseFloat(((subject.completedLessons / subject.totalLessons) * 100).toFixed(1))
+                : 0;
+
+              return (
+                <div className="flex justify-between items-center mt-5" key={index}>
+                  <div className="flex items-center gap-4">
+                    <img src={Profile} className="lg:w-[40px] lg:h-[40px]" />
+                    <p className="font-bold text-[15px] lg:text-[18px] leading-[24px] text-[#000000]">
+                      {subject.name}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-normal text-[12px] leading-[21px] text-[#000000]">
+                      {percentage}% Completed
+                    </p>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={percentage}
+                      className="accent"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Show overall performance as well */}
+            {subjectsData.length > 0 && (
+              <div className="flex justify-between items-center mt-5 border-t pt-5">
                 <div className="flex items-center gap-4">
                   <img src={Profile} className="lg:w-[40px] lg:h-[40px]" />
-                  <p className=" font-bold text-[15px] lg:text-[18px] leading-[24px] text-[#000000] ">
-                    {item.title}
+                  <p className="font-bold text-[15px] lg:text-[18px] leading-[24px] text-[#000000]">
+                    Overall Subject Progress
                   </p>
                 </div>
                 <div>
-                  <p className=" font-normal text-[12px] leading-[21px] text-[#000000]">
-                    {((item?.progress / item?.goal) * 100).toFixed(0)}%
-                    Completed
+                  <p className="font-normal text-[12px] leading-[21px] text-[#000000]">
+                    {overallPerformance}% Completed
                   </p>
                   <input
                     type="range"
                     min="0"
-                    max={item?.goal}
-                    value={item?.progress}
+                    max="100"
+                    value={overallPerformance || 0}
                     className="accent"
                   />
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
-      </div>
-      <div>
-        {/* <Parctice performanceHistory={userData?.performanceHistory} /> */}
-        <div className="">
+        {/* <div className="">
           <div className=" rounded-[12px] py-[20px] px-[25px] bg-[#FFFFFF] activity ">
             <div className="flex items-center justify-between">
               <div>
@@ -244,13 +260,13 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
                   Performance History
                 </h2>
               </div>
-              {/* <div className=" text-[12px] cursor-pointer lg:text-[14px] leading-[19px] font-normal text-[#0B6661] ">
+              <div className=" text-[12px] cursor-pointer lg:text-[14px] leading-[19px] font-normal text-[#0B6661] ">
               View All
-            </div>*/}
+             </div>
             </div>
 
             <div className=" lg:px-[20px] py-[30px] flex flex-col gap-4 ">
-              {userData?.userData?.bookmarks?.map((item, i) => {
+              {userData?.bookmarks?.map((item, i) => {
                 return (
                   <>
                     <div
@@ -262,12 +278,12 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
                       </div>
                       <div className="flex flex-col gap-y-2">
                         <div className="text-[0.875rem] font-bold">
-                          {userData?.userData?.leaderboardDetails?.user?.name}{" "}
+                          {userData?.leaderboardDetails?.user?.name}{" "}
                           Watched {item?.video?.title}
                         </div>
-                        {/* <div className="mb-3 text-[10px] text-[#126DFB]">
+                        <div className="mb-3 text-[10px] text-[#126DFB]">
                           {item?.created_at}
-                        </div> */}
+                        </div>
                       </div>
                     </div>
                   </>
@@ -275,10 +291,8 @@ const ActivityLog = (userData, monthlyData, performanceHistory) => {
               })}
             </div>
           </div>
-        </div>
-
-
-      </div>
+        </div> */}
+       </div>
     </div>
   );
 };
