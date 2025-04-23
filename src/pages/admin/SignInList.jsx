@@ -107,11 +107,65 @@ const SignInList = ({ isOpen }) => {
     });
   };
 
+  const totalUsersGraph = [
+    { y: 18, height: 35, label: "May" },
+    { y: 20, height: 38, label: "Jun" },
+    { y: 22, height: 40, label: "Jul" },
+    { y: 24, height: 42, label: "Aug" },
+    { y: 26, height: 44, label: "Sep" },
+    { y: 28, height: 46, label: "Oct" },
+    { y: 30, height: 48, label: "Nov" },
+    { y: 32, height: 50, label: "Dec" },
+    { y: 34, height: 52, label: "Jan" },
+    { y: 36, height: 54, label: "Feb" },
+    { y: 40, height: 60, label: "Mar" },
+    { y: 45, height: 70, label: "Apr" },
+  ];
 
+  const activeUsersGraph = [
+    { y: 18, height: 35, label: "May" },
+    { y: 20, height: 38, label: "Jun" },
+    { y: 22, height: 40, label: "Jul" },
+    { y: 24, height: 42, label: "Aug" },
+    { y: 26, height: 44, label: "Sep" },
+    { y: 28, height: 46, label: "Oct" },
+    { y: 30, height: 48, label: "Nov" },
+    { y: 32, height: 50, label: "Dec" },
+    { y: 34, height: 52, label: "Jan" },
+    { y: 36, height: 54, label: "Feb" },
+    { y: 40, height: 60, label: "Mar" },
+    { y: 45, height: 70, label: "Apr" },
+  ];
 
+  const subscribedUsersGraph = [
+    { y: 18, height: 35, label: "May" },
+    { y: 20, height: 38, label: "Jun" },
+    { y: 22, height: 40, label: "Jul" },
+    { y: 24, height: 42, label: "Aug" },
+    { y: 26, height: 44, label: "Sep" },
+    { y: 28, height: 46, label: "Oct" },
+    { y: 30, height: 48, label: "Nov" },
+    { y: 32, height: 50, label: "Dec" },
+    { y: 34, height: 52, label: "Jan" },
+    { y: 36, height: 54, label: "Feb" },
+    { y: 40, height: 60, label: "Mar" },
+    { y: 45, height: 70, label: "Apr" },
+  ];
 
-
-
+  const totalOrdersGraph = [
+    { y: 18, height: 35, label: "May" },
+    { y: 20, height: 38, label: "Jun" },
+    { y: 22, height: 40, label: "Jul" },
+    { y: 24, height: 42, label: "Aug" },
+    { y: 26, height: 44, label: "Sep" },
+    { y: 28, height: 46, label: "Oct" },
+    { y: 30, height: 48, label: "Nov" },
+    { y: 32, height: 50, label: "Dec" },
+    { y: 34, height: 52, label: "Jan" },
+    { y: 36, height: 54, label: "Feb" },
+    { y: 40, height: 60, label: "Mar" },
+    { y: 45, height: 70, label: "Apr" },
+  ];
   const data = [
     {
       name: "Allyson Stairs",
@@ -317,9 +371,11 @@ const SignInList = ({ isOpen }) => {
                 height="h-[105px]"
                 backgroundcolor="bg-[#F2F2F2]"
                 value={'44357'}
+                growth={true}
                 // value={dashData?.overview?.totalUsers}
                 img2={Gnotes}
                 width="w-[298px]"
+                graphData={totalUsersGraph}
               />
             </div>
             <div>
@@ -330,8 +386,10 @@ const SignInList = ({ isOpen }) => {
                 growth={true}
                 value={'32479'}
                 // value={dashData?.overview?.activeUsers}
+
                 img2={Pnotes}
                 width="w-[298px]"
+                graphData={activeUsersGraph}
               />
             </div>
             <div>
@@ -340,9 +398,11 @@ const SignInList = ({ isOpen }) => {
                 height="h-[105px]"
                 backgroundcolor="bg-[#F2F2F2]"
                 value={'5679'}
+                growth={true}
                 // value={dashData?.overview?.totalActiveSubscriptions}
                 img2={Ynotes}
                 width="w-[298px]"
+                graphData={subscribedUsersGraph}
               />
             </div>
             <div>
@@ -351,9 +411,11 @@ const SignInList = ({ isOpen }) => {
                 height="h-[105px]"
                 backgroundcolor="bg-[#F2F2F2]"
                 value={'4375'}
+                growth={true}
                 // value={dashData?.overview?.totalOrders}
                 img2={Gnotes}
                 width="w-[298px]"
+                graphData={totalOrdersGraph}
               />
             </div>
             <div>
