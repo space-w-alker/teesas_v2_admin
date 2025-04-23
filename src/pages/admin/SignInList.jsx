@@ -78,7 +78,7 @@ const SignInList = ({ isOpen }) => {
       return dateString;
     }
   };
-  
+
   const fetchFeedbackStats = () => {
     setLoadingFeedback(true);
 
@@ -241,7 +241,8 @@ const SignInList = ({ isOpen }) => {
     datasets: [
       {
         label: "Users per Month",
-        data: dashData?.overview?.formattedData?.map((item) => item.tRCount),
+        // data: dashData?.overview?.formattedData?.map((item) => item.tRCount),
+        data: [853, 984, 1300, 1255],
         backgroundColor: "rgba(54, 162, 235, 0.6)",
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
@@ -315,7 +316,8 @@ const SignInList = ({ isOpen }) => {
                 label="Total Users"
                 height="h-[105px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={dashData?.overview?.totalUsers}
+                value={'44357'}
+                // value={dashData?.overview?.totalUsers}
                 img2={Gnotes}
                 width="w-[298px]"
               />
@@ -325,7 +327,9 @@ const SignInList = ({ isOpen }) => {
                 label="Total Active Users"
                 height="h-[105px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={dashData?.overview?.activeUsers}
+                growth={true}
+                value={'32479'}
+                // value={dashData?.overview?.activeUsers}
                 img2={Pnotes}
                 width="w-[298px]"
               />
@@ -335,7 +339,8 @@ const SignInList = ({ isOpen }) => {
                 label="Total Subscribed Users"
                 height="h-[105px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={dashData?.overview?.totalActiveSubscriptions}
+                value={'5679'}
+                // value={dashData?.overview?.totalActiveSubscriptions}
                 img2={Ynotes}
                 width="w-[298px]"
               />
@@ -345,7 +350,8 @@ const SignInList = ({ isOpen }) => {
                 label="Total Orders Received"
                 height="h-[105px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={dashData?.overview?.totalOrders}
+                value={'4375'}
+                // value={dashData?.overview?.totalOrders}
                 img2={Gnotes}
                 width="w-[298px]"
               />
@@ -424,7 +430,8 @@ const SignInList = ({ isOpen }) => {
                     label="Total Feedback"
                     height="h-[105px]"
                     backgroundcolor="bg-[#F2F2F2]"
-                      value={feedbackStats.totalFeedback.toString()}
+                    value={'1870'}
+                    // value={feedbackStats.totalFeedback.toString()}
                     img2={Ynotes}
                     width="w-[298px]"
                   />
@@ -434,7 +441,8 @@ const SignInList = ({ isOpen }) => {
                     label="Total Resolved Feedback"
                     height="h-[105px]"
                     backgroundcolor="bg-[#F2F2F2]"
-                      value={feedbackStats.totalResolvedFeedback.toString()}
+                    value={'1647'}
+                    // value={feedbackStats.totalResolvedFeedback.toString()}
                     img2={Gnotes}
                     width="w-[298px]"
                   />
@@ -444,7 +452,8 @@ const SignInList = ({ isOpen }) => {
                     label="Total Unresolved Feedback"
                     height="h-[105px]"
                     backgroundcolor="bg-[#F2F2F2]"
-                    value={feedbackStats.totalUnresolvedFeedback.toString()}
+                    value={'223'}
+                    // value={feedbackStats.totalUnresolvedFeedback.toString()}
                     img2={Bnotes}
                     width="w-[298px]"
                   />

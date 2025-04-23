@@ -93,7 +93,8 @@ const SubscribedUser = ({ isOpen }) => {
                 width="lg:w-[33%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={totalSubscriptions}
+                value={'8353'}
+                // value={totalSubscriptions}
                 // value2={0}
                 // img={arrow_upward}
                 img2={notes}
@@ -103,7 +104,8 @@ const SubscribedUser = ({ isOpen }) => {
                 width="lg:w-[33%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={totalActiveSubscriptions}
+                value={'5679'}
+                // value={totalActiveSubscriptions}
                 // value2={0}
                 // img={arrow_upward}
                 img2={notes}
@@ -113,7 +115,8 @@ const SubscribedUser = ({ isOpen }) => {
                 width="lg:w-[33%]"
                 height="lg:h-[142px]"
                 backgroundcolor="bg-[#F2F2F2]"
-                value={totalExpiredSubscriptions}
+                value={'2674'}
+                // value={totalExpiredSubscriptions}
                 // value2={0}
                 // img={arrow_upward}
                 img2={notes}
