@@ -16,13 +16,13 @@ const AddStoreItem = ({ isOpen }) => {
   console.log(itemId)
   const [formData, setFormData] = useState({
     productName: '',
-    plan: '',
+
     description: '',
-    shortDescription: '',
+
     itemDetail: '',
-    productionDescription: '',
-    overview: '',
-    shippingPolicy: '',
+  
+
+
     price: '',
     quantity: '',
     color: '',
@@ -41,13 +41,13 @@ const AddStoreItem = ({ isOpen }) => {
           if (storeData) {
             setFormData({
               productName: storeData.title || '',
-              plan: storeData.plan || '', // Check if `plan` exists in the response
+          
               description: storeData.descriptions || '',
-              shortDescription: storeData.short_description || '',
+    
               itemDetail: storeData.item_detail || '',
-              productionDescription: storeData.production_description || '',
-              overview: storeData.overview || '',
-              shippingPolicy: storeData.shipping_policy || '',
+      
+   
+         
               price: storeData.price || '',
               quantity: storeData.quantity || '',
               color: storeData.color || '',
@@ -80,43 +80,49 @@ const AddStoreItem = ({ isOpen }) => {
   const handleSubmit = () => {
     const payload = {
       title: formData.productName,
-      plan: formData.plan,
-      short_description: formData.shortDescription,
-      production_description: formData.productionDescription,
+   
+
+   
       quantity: formData.quantity,
       item_detail: formData.itemDetail,
       color: formData.color,
-      overview: formData.overview,
-      shipping_policy: formData.shippingPolicy,
-      image: formData.image.name,
+
+  
       currency_code: formData.currency_code,
       price: parseFloat(formData.price) || 0,
       status: formData.status || '1',
       extra: formData.extra,
-      feature: typeof formData.feature === "string" ? formData.feature.split(",") : formData.feature || []
+      feature: typeof formData.feature === "string" ? formData.feature.split(",") : formData.feature || [],
+      image: formData.image 
     };
 
-
-    const formDataToSend = new FormData();
-
-    // Append all request data (if not null/undefined)
-    Object.keys(payload).forEach((key) => {
-      if (payload[key] !== undefined && payload[key] !== null) {
-        formDataToSend.append(key, payload[key]);
-      }
-    });
-    if (formData.image) formDataToSend.append("files", formData.image);
-
     if (isEditing) {
-      dispatch(updateStoreAsync({ dispatch, id: itemId, data: payload }));
+      dispatch(updateStoreAsync({
+        dispatch,
+        id: itemId,
+        data: payload,
+        callbackFn: () => {
+          setShowSuccess(true);
+          navigate('/produuct-list');
+        }
+      }));
     } else {
-      dispatch(createStoreAsync({ data: formDataToSend }));
+      const formDataToSend = new FormData();
+      Object.keys(payload).forEach((key) => {
+        if (payload[key] !== undefined && payload[key] !== null) {
+          formDataToSend.append(key, payload[key]);
+        }
+      });
+
+      dispatch(createStoreAsync({
+        data: formDataToSend,
+        callbackFn: () => {
+          setShowSuccess(true);
+          navigate('/produuct-list');
+        }
+      }));
     }
-
-    setShowSuccess(true);
-    navigate('/produuct-list');
   };
-
 
   return (
     <>
@@ -150,19 +156,7 @@ const AddStoreItem = ({ isOpen }) => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Select Plan</label>
-                  <select
-                    name="plan"
-                    value={formData.plan}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                  >
-                    <option value="">Select plan</option>
-                    <option value="basic">Basic</option>
-                    <option value="premium">Premium</option>
-                  </select>
-                </div>
+              
 
                 <div className="space-y-2 col-span-2">
                   <label className="block text-sm font-medium text-gray-700">Description</label>
@@ -176,16 +170,7 @@ const AddStoreItem = ({ isOpen }) => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Short Description</label>
-                  <input
-                    type="text"
-                    name="shortDescription"
-                    value={formData.shortDescription}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
+           
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Item Detail</label>
@@ -198,38 +183,9 @@ const AddStoreItem = ({ isOpen }) => {
                   />
                 </div>
 
-                <div className="space-y-2 col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Production Description</label>
-                  <textarea
-                    name="productionDescription"
-                    value={formData.productionDescription}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    rows="4"
-                  />
-                </div>
+              
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Overview</label>
-                  <textarea
-                    name="overview"
-                    value={formData.overview}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    rows="4"
-                  />
-                </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Shipping Policy</label>
-                  <textarea
-                    name="shippingPolicy"
-                    value={formData.shippingPolicy}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    rows="4"
-                  />
-                </div>
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Price</label>
@@ -299,33 +255,16 @@ const AddStoreItem = ({ isOpen }) => {
                     <span className="font-medium">{formData.productName || 'Not set'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Plan:</span>
-                    <span className="font-medium">{formData.plan || 'Not set'}</span>
-                  </div>
-                  <div className="flex justify-between">
                     <span className="text-gray-600">Description:</span>
                     <span className="font-medium">{formData.description || 'Not set'}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Short Description:</span>
-                    <span className="font-medium">{formData.shortDescription || 'Not set'}</span>
-                  </div>
+               
                   <div className="flex justify-between">
                     <span className="text-gray-600">Item Detail:</span>
                     <span className="font-medium">{formData.itemDetail || 'Not set'}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Production Description:</span>
-                    <span className="font-medium">{formData.productionDescription || 'Not set'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Overview:</span>
-                    <span className="font-medium">{formData.overview || 'Not set'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Shipping Policy:</span>
-                    <span className="font-medium">{formData.shippingPolicy || 'Not set'}</span>
-                  </div>
+              
+              
                   <div className="flex justify-between">
                     <span className="text-gray-600">Price:</span>
                     <span className="font-medium">₦{formData.price || 'Not set'}</span>

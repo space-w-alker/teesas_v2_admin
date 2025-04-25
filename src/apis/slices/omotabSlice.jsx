@@ -143,20 +143,41 @@ export const createStoreAsync = ({ dispatch, data, token, callbackFn }) => {
 };
 
 // Thunk to update a store
+// Thunk to update a store
 export const updateStoreAsync = ({ dispatch, id, data, token, callbackFn }) => {
   return async () => {
     try {
       const URL = `${BASEURL}omotab/update/${id}`;
-      const response = await putAPICall(URL, data, token);
-      if (response?.data?.status == 200) {
+
+      // Create FormData instance
+      const formDataToSend = new FormData();
+
+      // Append all fields except image
+      Object.keys(data).forEach(key => {
+        if (key !== 'image') {
+          formDataToSend.append(key, data[key]);
+        }
+      });
+
+      // Append image file if it's a File object
+      if (data.image instanceof File) {
+        formDataToSend.append('image', data.image);
+      }
+
+      const response = await postFileAPICall(URL, formDataToSend, token);
+
+      if (response?.data?.status === 200) {
         callbackFn && callbackFn(response);
-        dispatch(updateStoreSuccess(response));
+        dispatch(updateStoreSuccess(response.data));
         toast.success("Store updated successfully.");
+        return true;
       } else {
         toast.error("Failed to update store.");
+        return false;
       }
     } catch (error) {
       toast.error("Error updating store.");
+      return false;
     }
   };
 };
