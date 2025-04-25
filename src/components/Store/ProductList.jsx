@@ -14,6 +14,7 @@ import { deleteStoreAsync, listStoresAsync, getOrdersAsync, updateOrderDeliveryS
 import Headcomponent from '../common/Headcomponent';
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { config } from "../../apis/client/config";
 
 const StatCard = ({ title, count }) => (
   <div className="bg-white rounded-xl shadow-sm p-4">
@@ -36,7 +37,7 @@ const ProductList = ({ isOpen }) => {
   const dispatch = useDispatch();
   const [sort, setSort] = useState({
     data: "",
-    filterList: "",  
+    filterList: "",
     sort: "",
     search: "",
     page: 1,
@@ -77,7 +78,7 @@ const ProductList = ({ isOpen }) => {
       data: sort,
       callbackFn: () => setLoading(false)
     }));
-    
+
     dispatch(getOrdersAsync({
       dispatch,
       page: orderFilters.page,
@@ -85,7 +86,7 @@ const ProductList = ({ isOpen }) => {
       search: orderFilters.search,
       status: orderFilters.status
     }));
-    
+
     // Set up auto-reload when returning to this page
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
@@ -95,7 +96,7 @@ const ProductList = ({ isOpen }) => {
           data: sort,
           callbackFn: () => setLoading(false)
         }));
-        
+
         dispatch(getOrdersAsync({
           dispatch,
           page: orderFilters.page,
@@ -105,9 +106,9 @@ const ProductList = ({ isOpen }) => {
         }));
       }
     };
-    
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -189,7 +190,7 @@ const ProductList = ({ isOpen }) => {
   const storeItems = listStore?.data?.map(item => ({
     id: item.id,
     name: item.title,
-    image: item.image,
+    image: item.image ? `${config.MainUrl}store/${item.image}` : Reactangle,
     price: `${item.currency_code}${" "}${item.price}`
   }));
 
@@ -309,8 +310,8 @@ const ProductList = ({ isOpen }) => {
                     <div className="flex items-center relative status-dropdown">
                       <div
                         className={`px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 cursor-pointer transition-all duration-300 hover:shadow-md ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' :
-                            order.status === 'success' || order.status === 'delivered' ? 'bg-green-100 text-green-800 hover:bg-green-200' :
-                              'bg-red-100 text-red-800 hover:bg-red-200'
+                          order.status === 'success' || order.status === 'delivered' ? 'bg-green-100 text-green-800 hover:bg-green-200' :
+                            'bg-red-100 text-red-800 hover:bg-red-200'
                           }`}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -318,8 +319,8 @@ const ProductList = ({ isOpen }) => {
                         }}
                       >
                         <span className={`w-2 h-2 rounded-full ${order.status === 'pending' ? 'bg-yellow-500' :
-                            order.status === 'success' || order.status === 'delivered' ? 'bg-green-500' :
-                              'bg-red-500'
+                          order.status === 'success' || order.status === 'delivered' ? 'bg-green-500' :
+                            'bg-red-500'
                           }`}></span>
                         <span className="capitalize">{order.status}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${openStatusDropdown === order.id ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -335,9 +336,8 @@ const ProductList = ({ isOpen }) => {
                             {['pending', 'confirmed', 'packed', 'out-for-delivery', 'delivered', 'cancelled'].map((status) => (
                               <button
                                 key={status}
-                                className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                                  order.status === status ? 'bg-gray-50 font-medium' : ''
-                                }`}
+                                className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${order.status === status ? 'bg-gray-50 font-medium' : ''
+                                  }`}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   dispatch(updateOrderDeliveryStatusAsync({
@@ -360,14 +360,13 @@ const ProductList = ({ isOpen }) => {
                                 }}
                               >
                                 <div className="flex items-center gap-2">
-                                  <span className={`w-2 h-2 rounded-full ${
-                                    status === 'pending' ? 'bg-yellow-500' :
+                                  <span className={`w-2 h-2 rounded-full ${status === 'pending' ? 'bg-yellow-500' :
                                     status === 'confirmed' ? 'bg-blue-500' :
-                                    status === 'packed' ? 'bg-purple-500' :
-                                    status === 'out-for-delivery' ? 'bg-indigo-500' :
-                                    status === 'delivered' ? 'bg-green-500' :
-                                    'bg-red-500'
-                                  }`}></span>
+                                      status === 'packed' ? 'bg-purple-500' :
+                                        status === 'out-for-delivery' ? 'bg-indigo-500' :
+                                          status === 'delivered' ? 'bg-green-500' :
+                                            'bg-red-500'
+                                    }`}></span>
                                   <span className="capitalize">{status.replace(/-/g, ' ')}</span>
                                 </div>
                               </button>
@@ -389,7 +388,7 @@ const ProductList = ({ isOpen }) => {
 
         {/* Orders Pagination Controls */}
         <div className="user bg-white">
-                   <Custombutton
+          <Custombutton
             className={`px-3 py-1 rounded border ${orderFilters.page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
             onClick={() => handleOrderPageChange(orderFilters.page - 1)}
             disabled={orderFilters.page === 1}
@@ -438,8 +437,16 @@ const ProductList = ({ isOpen }) => {
               className="flex items-center justify-between p-4 hover:shadow-lg hover:bg-green-50 transition-all duration-300 cursor-pointer"
             >
               <div className="flex items-center gap-4">
-                <div className="p-2 bg-green-50 rounded-full">
-                  <img src={Reactangle} className="w-8 h-8" alt="book" />
+                <div className="p-2 bg-green-50 rounded-full w-12 h-12 overflow-hidden">
+                  <img
+                    src={item.image}
+                    className="w-full h-full object-cover rounded-full"
+                    alt={item.name}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = Reactangle;
+                    }}
+                  />
                 </div>
                 <div>
                   <p className="font-medium">{item.name}</p>
