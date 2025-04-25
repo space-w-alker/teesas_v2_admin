@@ -17,10 +17,10 @@ const AddStoreItem = ({ isOpen }) => {
   const [formData, setFormData] = useState({
     productName: '',
 
-    description: '',
+    descriptions: '',
 
     itemDetail: '',
-  
+
 
 
     price: '',
@@ -41,13 +41,13 @@ const AddStoreItem = ({ isOpen }) => {
           if (storeData) {
             setFormData({
               productName: storeData.title || '',
-          
-              description: storeData.descriptions || '',
-    
+
+              descriptions: storeData.descriptions || '',
+
               itemDetail: storeData.item_detail || '',
-      
-   
-         
+
+
+
               price: storeData.price || '',
               quantity: storeData.quantity || '',
               color: storeData.color || '',
@@ -80,20 +80,20 @@ const AddStoreItem = ({ isOpen }) => {
   const handleSubmit = () => {
     const payload = {
       title: formData.productName,
-   
 
-   
+
+
       quantity: formData.quantity,
       item_detail: formData.itemDetail,
       color: formData.color,
 
-  
+      descriptions: formData.descriptions || '',
       currency_code: formData.currency_code,
       price: parseFloat(formData.price) || 0,
       status: formData.status || '1',
       extra: formData.extra,
       feature: typeof formData.feature === "string" ? formData.feature.split(",") : formData.feature || [],
-      image: formData.image 
+      image: formData.image
     };
 
     if (isEditing) {
@@ -156,21 +156,19 @@ const AddStoreItem = ({ isOpen }) => {
                   />
                 </div>
 
-              
+
 
                 <div className="space-y-2 col-span-2">
                   <label className="block text-sm font-medium text-gray-700">Description</label>
                   <textarea
-                    name="description"
-                    value={formData.description}
+                    name="descriptions"
+                    value={formData.descriptions}
                     onChange={handleInputChange}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     rows="4"
                     placeholder="Enter description"
                   />
                 </div>
-
-           
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Item Detail</label>
@@ -183,7 +181,7 @@ const AddStoreItem = ({ isOpen }) => {
                   />
                 </div>
 
-              
+
 
 
 
@@ -256,15 +254,15 @@ const AddStoreItem = ({ isOpen }) => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Description:</span>
-                    <span className="font-medium">{formData.description || 'Not set'}</span>
+                    <span className="font-medium">{formData.descriptions || 'Not set'}</span>
                   </div>
-               
+
                   <div className="flex justify-between">
                     <span className="text-gray-600">Item Detail:</span>
                     <span className="font-medium">{formData.itemDetail || 'Not set'}</span>
                   </div>
-              
-              
+
+
                   <div className="flex justify-between">
                     <span className="text-gray-600">Price:</span>
                     <span className="font-medium">₦{formData.price || 'Not set'}</span>
