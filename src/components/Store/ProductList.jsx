@@ -176,7 +176,7 @@ const ProductList = ({ isOpen }) => {
         orderNumber: order.id,
         amount: `₦${order.amount}`,
         status: order.status,
-        image: order.omotab?.image
+        image: order.omotab?.image ? `${config.MainUrl}store/${order.omotab.image}` : Reactangle
       });
     });
     return Object.entries(grouped).map(([date, orders]) => ({
@@ -297,8 +297,16 @@ const ProductList = ({ isOpen }) => {
                       status: order.status
                     }
                   })}>
-                    <div className="p-2 bg-green-50 rounded-full">
-                      <img src={order.image || book} className="w-8 h-8" alt="book" />
+                    <div className="p-2 bg-green-50 rounded-full w-12 h-12 overflow-hidden">
+                      <img
+                        src={order.image}
+                        className="w-full h-full object-cover rounded-full"
+                        alt={`Order #${order.orderNumber}`}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = Reactangle;
+                        }}
+                      />
                     </div>
                     <div>
                       <p className="font-medium">Order #{order.orderNumber}</p>
