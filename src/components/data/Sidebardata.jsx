@@ -1,6 +1,6 @@
-import hashtag from '../../assets/images/hashtag.png'
-import home from '../../assets/images/home.png';
-import feedback from '../../assets/images/Feedback.png';
+import hashtag from "../../assets/images/hashtag.png";
+import home from "../../assets/images/home.png";
+import feedback from "../../assets/images/Feedback.png";
 
 const Sidebardata = [
   {
@@ -11,41 +11,38 @@ const Sidebardata = [
         name: "Users",
         icon: home,
         path: "/users",
-        permissions: ["users:read"]
+        permissions: ["users:read"],
       },
       {
-        name: "Subscribed Users", 
+        name: "Subscribed Users",
         icon: hashtag,
         path: "/subscribed-users",
-        permissions: ["subscribed_users:read"]
+        permissions: ["subscribed_users:read"],
       },
       {
         name: "Feedback",
         icon: feedback,
         path: "/feedback",
-        permissions: ["feedback:read"]
+        permissions: ["feedback:read"],
       },
       {
         name: "User Report",
         icon: feedback,
         path: "/user-report",
-     
       },
       {
         name: "Parent Report",
         icon: feedback,
         path: "/parentsReport",
-     
       },
-     
- 
+
       {
         name: "Leader Board",
         icon: feedback,
         path: "/leaderboard",
-        permissions: ["leader_board:read"]
-      }
-    ]
+        permissions: ["leader_board:read"],
+      },
+    ],
   },
   {
     id: 2,
@@ -55,9 +52,9 @@ const Sidebardata = [
         name: "Reseller Form",
         icon: hashtag,
         path: "/resellerform",
-        permissions: ["reseller_forms:read"]
-      }
-    ]
+        permissions: ["reseller_forms:read"],
+      },
+    ],
   },
   {
     id: 3,
@@ -67,7 +64,7 @@ const Sidebardata = [
         name: "Learning Center Courses",
         icon: hashtag,
         path: "/learning-center-courses",
-        permissions: ["jamb_ssce_tutorial:read"]
+        permissions: ["jamb_ssce_tutorial:read"],
       },
       // {
       //   name: "7 Habits Bootcamp",
@@ -81,7 +78,7 @@ const Sidebardata = [
       //   path: "/summercamp",
       //   permissions: ["summer_camp:read"]
       // }
-    ]
+    ],
   },
   {
     id: 4,
@@ -91,15 +88,21 @@ const Sidebardata = [
         name: "Payment History",
         icon: hashtag,
         path: "/payments",
-        permissions: ["bank_transfer_history:read"]
+        permissions: ["bank_transfer_history:read"],
       },
       {
         name: "Bank Details",
         icon: hashtag,
         path: "/payments/bank-details",
-        permissions: ["bank_account_details:read"]
-      }
-    ]
+        permissions: ["bank_account_details:read"],
+      },
+      {
+        name: "Withdraw Details",
+        icon: hashtag,
+        path: "/payments/withdraw-requests",
+        permissions: ["bank_account_details:read"],
+      },
+    ],
   },
   {
     id: 5,
@@ -109,39 +112,39 @@ const Sidebardata = [
         name: "Categories",
         icon: hashtag,
         path: "/Categories",
-        permissions: ["categories:read"]
+        permissions: ["categories:read"],
       },
       {
-        name: 'Lesson',
+        name: "Lesson",
         icon: hashtag,
         path: "/lesson",
-        permissions: ["lessons:read"]
+        permissions: ["lessons:read"],
       },
       {
-        name: ' Test',
+        name: " Test",
         icon: hashtag,
         path: "/test",
-        permissions: ["test:read"]
+        permissions: ["test:read"],
       },
       {
-        name: 'Question Bank',
+        name: "Question Bank",
         icon: hashtag,
         path: "/question-bank",
-        permissions: ["question_bank:read"]
+        permissions: ["question_bank:read"],
       },
       {
-        name: 'University List',
+        name: "University List",
         icon: hashtag,
         path: "/uni-list",
-        permissions: ["university_list:read"]
+        permissions: ["university_list:read"],
       },
       {
-        name: 'E-Book',
+        name: "E-Book",
         icon: hashtag,
         path: "/e-book",
-        permissions: ["ebook_list:read"]
-      }
-    ]
+        permissions: ["ebook_list:read"],
+      },
+    ],
   },
   {
     id: 6,
@@ -151,15 +154,15 @@ const Sidebardata = [
         name: "Subsription Types",
         icon: hashtag,
         path: "/subscription-types",
-        permissions: ["subscription_types:read"]
+        permissions: ["subscription_types:read"],
       },
       {
         name: "Promo Codes",
         icon: hashtag,
         path: "/promo-codes",
-        permissions: ["promocodes:read"]
-      }
-    ]
+        permissions: ["promocodes:read"],
+      },
+    ],
   },
   {
     id: 7,
@@ -169,21 +172,21 @@ const Sidebardata = [
         name: "Teacher List",
         icon: hashtag,
         path: "/teacherlistmanagement",
-        permissions: ["staff:read"]
+        permissions: ["staff:read"],
       },
       {
         name: "Schedule Live Classes",
         icon: hashtag,
         path: "/scheduleliveclasses",
-        permissions: ["schedule_live_classes:read"]
+        permissions: ["schedule_live_classes:read"],
       },
       {
         name: "One-on-One Class Management",
         icon: hashtag,
         path: "/one-on-oneclassmanagement",
-        permissions: ["one_on_one_class:read"]
-      }
-    ]
+        permissions: ["one_on_one_class:read"],
+      },
+    ],
   },
   {
     id: 8,
@@ -193,9 +196,9 @@ const Sidebardata = [
         name: "Support Ticket",
         icon: hashtag,
         path: "/supportmanagement",
-        permissions: ["support_ticket:read"]
-      }
-    ]
+        permissions: ["support_ticket:read"],
+      },
+    ],
   },
   {
     id: 9,
@@ -205,27 +208,27 @@ const Sidebardata = [
         name: "About Us",
         icon: hashtag,
         path: "/about-us",
-        permissions: ["about_us:read"]
+        permissions: ["about_us:read"],
       },
       {
         name: "Privacy Policy",
         icon: hashtag,
         path: "/privacy-policy",
-        permissions: ["privacy_policy:read"]
+        permissions: ["privacy_policy:read"],
       },
       {
         name: "Testimonials",
         icon: hashtag,
         path: "/testimonials",
-        permissions: ["testimonials:read"]
+        permissions: ["testimonials:read"],
       },
       {
         name: "Contact Us",
         icon: hashtag,
         path: "/contact-us",
-        permissions: ["contact_info:read"]
-      }
-    ]
+        permissions: ["contact_info:read"],
+      },
+    ],
   },
   {
     id: 10,
@@ -235,27 +238,27 @@ const Sidebardata = [
         name: "Banner",
         icon: hashtag,
         path: "/banner",
-        permissions: ["home_banner:read"]
+        permissions: ["home_banner:read"],
       },
       {
         name: "Sales Team",
         icon: hashtag,
         path: "/sales-team",
-        permissions: ["sales_team:read"]
+        permissions: ["sales_team:read"],
       },
       {
         name: "Push Notification",
         icon: hashtag,
         path: "/push-notification",
-        permissions: ["push_notifications:read"]
+        permissions: ["push_notifications:read"],
       },
       {
         name: "Country",
         icon: hashtag,
         path: "/country-list",
-        permissions: ["country_list:read"]
-      }
-    ]
+        permissions: ["country_list:read"],
+      },
+    ],
   },
   {
     id: 11,
@@ -265,9 +268,9 @@ const Sidebardata = [
         name: "Job Openings",
         icon: hashtag,
         path: "/job-opening",
-        permissions: ["job_openings:read"]
-      }
-    ]
+        permissions: ["job_openings:read"],
+      },
+    ],
   },
   {
     id: 12,
@@ -277,9 +280,9 @@ const Sidebardata = [
         name: "Change Password",
         icon: hashtag,
         path: "/ChangePassword",
-        permissions: ["change_password:read"]
-      }
-    ]
+        permissions: ["change_password:read"],
+      },
+    ],
   },
   {
     id: 13,
@@ -289,9 +292,9 @@ const Sidebardata = [
         name: "Overview & Product List",
         icon: hashtag,
         path: "/produuct-list",
-        permissions: ["store_product_list:read"]
-      }
-    ]
+        permissions: ["store_product_list:read"],
+      },
+    ],
   },
   {
     id: 14,
@@ -301,16 +304,16 @@ const Sidebardata = [
         name: "Admin Role",
         icon: hashtag,
         path: "/AdminRole",
-        permissions: ["admin_roles:read"]
+        permissions: ["admin_roles:read"],
       },
       {
         name: "Admin Users",
         icon: hashtag,
         path: "/AdminUser",
-        permissions: ["admin_users:read"]
-      }
-    ]
-  }
+        permissions: ["admin_users:read"],
+      },
+    ],
+  },
 ];
 
 export default Sidebardata;

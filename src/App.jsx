@@ -1,210 +1,215 @@
-import { useState } from 'react';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/login";
-import ForgetPassword from './pages/forgot-password';
-import Home from './pages/user/Home';
-import User from './components/Core/Dashboard/users/User';
-import AddUser from './pages/user/AddUser';
-import Navigation from './components/common/Navigation';
-import UserDetails from './pages/user/UserDetails';
-import SignInList from './pages/admin/SignInList';
-import Feedback from './pages/admin/Feedback';
-import UserFeedbackDetails from './pages/admin/UserFeedbackDetails';
-import Sidebar from './components/common/Sidebar';
-import LeaderBoard from './pages/admin/LeaderBoard/LeaderBoard';
-import LeaderboardProfile from './components/Core/Dashboard/Admin/LeaderboardProfile';
-import LiveClases from './pages/admin/LiveClasses/LiveClases';
-import AddLiveClass from './pages/admin/LiveClasses/AddLiveClass';
-import LiveClassDetails from './pages/admin/LiveClasses/LiveClassDetails';
-import ManageLiveClass from './pages/admin/LiveClasses/ManageLiveClass';
-import Teachers from './pages/admin/TeacherMangement/Teachers';
-import TestDetails from './pages/admin/TeacherMangement/TestDetails';
-import StudentManagement from './pages/admin/StudentMangemet/StudentManagement';
-import AddStudent from './pages/admin/StudentMangemet/AddStudent';
-import OneOnclass from './pages/admin/one-on-oneclass/OneOnclass';
-import AddoneOnOneclass from './pages/admin/one-on-oneclass/AddoneOnOneclass';
-import TeacherList from './pages/admin/TeacherList/TeacherList';
-import TeacherDetails from './pages/admin/TeacherList/TeacherDetails';
-import AddTeacher from './pages/admin/TeacherList/AddTeacher';
-import SupportTicket from './pages/admin/supportTicket/SupportTicket';
-import SupportTicketDetails from './pages/admin/supportTicket/SupportTicketDetails';
-import ParentReportType from './pages/admin/ParentReportType/ParentReportType';
-import AddParentReportType from './pages/admin/ParentReportType/AddParentReportType';
-import ParentReportTypeDetails from './pages/admin/ParentReportType/ParentReportTypeDetails';
-import ParentSuggestions from './pages/admin/ParentReportType/ParentSuggestions';
-import ChangePassword from './pages/admin/ChangePassword/ChangePassword';
-import AdminRole from './pages/admin/AdminRole/AdminRole';
-import AddAdminRole from './pages/admin/AdminRole/AddAdminRole';
-import AdminUser from './pages/admin/AdminUser/AdminUser';
-import AdminUserDetails from './pages/admin/AdminUser/AdminUserDetails';
-import AddAdminUser from './pages/admin/AdminUser/AddAdminUser';
-import Profile from './pages/user/Profile/Profile';
-import EditUser from './pages/user/EditUser';
-import DataAnalytics from './pages/user/DataAnalytics/DataAnalytics';
-import ViewAnalytics from './pages/user/DataAnalytics/ViewAnalytics';
-import ConversionRates from './pages/user/DataAnalytics/CoversionRates';
-import Parent from './pages/user/Parent';
-import Customadduser from './components/common/Customadduser';
-import ProtectedRoute from './components/common/ProtectedRoute';
+import ForgetPassword from "./pages/forgot-password";
+import Home from "./pages/user/Home";
+import User from "./components/Core/Dashboard/users/User";
+import AddUser from "./pages/user/AddUser";
+import Navigation from "./components/common/Navigation";
+import UserDetails from "./pages/user/UserDetails";
+import SignInList from "./pages/admin/SignInList";
+import Feedback from "./pages/admin/Feedback";
+import UserFeedbackDetails from "./pages/admin/UserFeedbackDetails";
+import Sidebar from "./components/common/Sidebar";
+import LeaderBoard from "./pages/admin/LeaderBoard/LeaderBoard";
+import LeaderboardProfile from "./components/Core/Dashboard/Admin/LeaderboardProfile";
+import LiveClases from "./pages/admin/LiveClasses/LiveClases";
+import AddLiveClass from "./pages/admin/LiveClasses/AddLiveClass";
+import LiveClassDetails from "./pages/admin/LiveClasses/LiveClassDetails";
+import ManageLiveClass from "./pages/admin/LiveClasses/ManageLiveClass";
+import Teachers from "./pages/admin/TeacherMangement/Teachers";
+import TestDetails from "./pages/admin/TeacherMangement/TestDetails";
+import StudentManagement from "./pages/admin/StudentMangemet/StudentManagement";
+import AddStudent from "./pages/admin/StudentMangemet/AddStudent";
+import OneOnclass from "./pages/admin/one-on-oneclass/OneOnclass";
+import AddoneOnOneclass from "./pages/admin/one-on-oneclass/AddoneOnOneclass";
+import TeacherList from "./pages/admin/TeacherList/TeacherList";
+import TeacherDetails from "./pages/admin/TeacherList/TeacherDetails";
+import AddTeacher from "./pages/admin/TeacherList/AddTeacher";
+import SupportTicket from "./pages/admin/supportTicket/SupportTicket";
+import SupportTicketDetails from "./pages/admin/supportTicket/SupportTicketDetails";
+import ParentReportType from "./pages/admin/ParentReportType/ParentReportType";
+import AddParentReportType from "./pages/admin/ParentReportType/AddParentReportType";
+import ParentReportTypeDetails from "./pages/admin/ParentReportType/ParentReportTypeDetails";
+import ParentSuggestions from "./pages/admin/ParentReportType/ParentSuggestions";
+import ChangePassword from "./pages/admin/ChangePassword/ChangePassword";
+import AdminRole from "./pages/admin/AdminRole/AdminRole";
+import AddAdminRole from "./pages/admin/AdminRole/AddAdminRole";
+import AdminUser from "./pages/admin/AdminUser/AdminUser";
+import AdminUserDetails from "./pages/admin/AdminUser/AdminUserDetails";
+import AddAdminUser from "./pages/admin/AdminUser/AddAdminUser";
+import Profile from "./pages/user/Profile/Profile";
+import EditUser from "./pages/user/EditUser";
+import DataAnalytics from "./pages/user/DataAnalytics/DataAnalytics";
+import ViewAnalytics from "./pages/user/DataAnalytics/ViewAnalytics";
+import ConversionRates from "./pages/user/DataAnalytics/CoversionRates";
+import Parent from "./pages/user/Parent";
+import Customadduser from "./components/common/Customadduser";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import SubscribedUser from "./components/Core/SubscribedUser";
-import AddSingleSubscription from './pages/subscriptions/AddSingleSubscription';
-import UploadBulkSubscription from './pages/subscriptions/UploadBulkSubscription';
-import AddSubscriptionForm from './pages/subscriptions/AddSubscriptionForm';
-import Lesson from './components/Lesson/Lession';
-import Classes from './components/Lesson/Classes';
-import Subjects from './components/Lesson/Subjects';
-import Chapters from './components/Lesson/Chapters';
-import Payments from './components/Payments/Payments';
-import PaymentDetails from './components/Payments/PaymentDetails';
-import BankDetails from './components/Payments/BankDetails';
-import AddBank from './components/Payments/AddBank';
-import ViewBank from './components/Payments/ViewBank';
-import Categories from './components/Categories/Categories';
-import AddCategory from './components/Categories/AddCategory';
-import UploadBulkCategory from './components/Categories/UploadBulkCategory';
-import CategoryDetails from './components/Categories/CategoryDetails';
-import SubjectDetails from './components/Categories/SubjectDetails';
-import AddSubject from './components/Categories/AddSubject';
-import SubjectChapterDetails from './components/Categories/SubjectChapterDetails';
-import AddUnitChapter from './components/Categories/AddUnitChapter';
-import BulkUploadChapter from './components/Categories/BulkUploadChapter';
-import AddUnitTopic from './components/Categories/AddUnitTopic';
-import UTMELesson from './components/UTME/UTMELesson';
-import AddSubjectUtme from './components/UTME/AddSubjectUtme';
-import CreateSubject from './components/UTME/CreateSubject';
-import CreateChapter from './components/UTME/CreateChapterUtme';
+import AddSingleSubscription from "./pages/subscriptions/AddSingleSubscription";
+import UploadBulkSubscription from "./pages/subscriptions/UploadBulkSubscription";
+import AddSubscriptionForm from "./pages/subscriptions/AddSubscriptionForm";
+import Lesson from "./components/Lesson/Lession";
+import Classes from "./components/Lesson/Classes";
+import Subjects from "./components/Lesson/Subjects";
+import Chapters from "./components/Lesson/Chapters";
+import Payments from "./components/Payments/Payments";
+import PaymentDetails from "./components/Payments/PaymentDetails";
+import BankDetails from "./components/Payments/BankDetails";
+import AddBank from "./components/Payments/AddBank";
+import ViewBank from "./components/Payments/ViewBank";
+import Categories from "./components/Categories/Categories";
+import AddCategory from "./components/Categories/AddCategory";
+import UploadBulkCategory from "./components/Categories/UploadBulkCategory";
+import CategoryDetails from "./components/Categories/CategoryDetails";
+import SubjectDetails from "./components/Categories/SubjectDetails";
+import AddSubject from "./components/Categories/AddSubject";
+import SubjectChapterDetails from "./components/Categories/SubjectChapterDetails";
+import AddUnitChapter from "./components/Categories/AddUnitChapter";
+import BulkUploadChapter from "./components/Categories/BulkUploadChapter";
+import AddUnitTopic from "./components/Categories/AddUnitTopic";
+import UTMELesson from "./components/UTME/UTMELesson";
+import AddSubjectUtme from "./components/UTME/AddSubjectUtme";
+import CreateSubject from "./components/UTME/CreateSubject";
+import CreateChapter from "./components/UTME/CreateChapterUtme";
 
-import Practice from './components/Practice/Practice';
-import PracticeClasses from './components/Practice/PracticeClasses';
-import PracticeSubject from './components/Practice/PracticeSubject';
-import PracticeChapters from './components/Practice/PracticeChapters';
-import PracticeTopic from './components/Practice/PracticeTopic';
+import Practice from "./components/Practice/Practice";
+import PracticeClasses from "./components/Practice/PracticeClasses";
+import PracticeSubject from "./components/Practice/PracticeSubject";
+import PracticeChapters from "./components/Practice/PracticeChapters";
+import PracticeTopic from "./components/Practice/PracticeTopic";
 // Import the ProtectedRoute component
 
-import { ToastContainer } from 'react-toastify';
-import PracticeUnitMediaUpload from './components/Practice/PracticeUnitMediaUpload';
-import PracticeBulkMediaUpload from './components/Practice/PracticeBulkMediaUpload';
-import PracticeTopicList from './components/Practice/PracticeTopicList';
-import Test from './components/Test/Test'
-import TestClass from './components/Test/TestClass';
-import TestSubject from './components/Test/TestSubject';
-import TestChapter from './components/Test/TestChapter';
-import TestTopics from './components/Test/TestTopics';
-import TestTopicList from './components/Test/TestTopicList';
-import AddTest from './components/Test/AddTest';
-import TestDetail from './components/Test/TestDetails';
-import UniversityList from './components/QuestionBank/UniversityList';
-import UniversitySubjects from './components/QuestionBank/UniversitySubjects';
-import UniversityAddSubject from './components/QuestionBank/UniversityAddSubject';
-import UniversityAddPdf from './components/QuestionBank/UniversityAddPdf';
-import UniversitySubjectDetail from './components/QuestionBank/UniversitySubjectDetail';
-import UniList from './components/UniversityList/UniList';
-import UniAdd from './components/UniversityList/UniAdd';
-import EBook from './components/E-Book/EBook';
-import AddSingleEbook from './components/E-Book/AddSingleEbook';
-import AddBulkEbook from './components/E-Book/AddBulkEbook';
-import EBookDetails from './components/E-Book/EbookDetails';
-import EbookList from './components/E-Book/EbookList';
-import EbookOrderList from './components/E-Book/EbookOrderList';
-import ResellerForm from './components/ResellerForm/ResellerForm';
-import ResellerFormDetails from './components/ResellerForm/ResellerFormDetails';
-import SevenHabitsBootcamp from './components/7HabitsBootcamp/7HabitsBootcamp';
-import RegistrationDetails from './components/7HabitsBootcamp/RegistrationDetails';
-import AddParticipant from './components/7HabitsBootcamp/AddParticipant';
-import JAMBtutorial from './components/LearningCenter/JAMBtutorial';
-import TutorialDetails from './components/LearningCenter/TutorialDetails';
-import AddSingleParticipant from './components/LearningCenter/AddSingleParticipant';
-import SummerCamp from './components/SummerCamp/SummerCamp';
-import AddSingleCampParticipant from './components/SummerCamp/AddSIngleSummerCampParticipant';
-import SummerCampDetails from './components/SummerCamp/SummerCampDetails';
-import JobOpenings from './components/HumanResource/JobOpening';
-import AddJobForm from './components/HumanResource/AddJobForm';
-import JobDetails from './components/HumanResource/JobDetails';
-import SubscriptionTypes from './components/SubscriptionTypes/SubscriptionTypes';
-import SubscriptionPlanDetails from './components/SubscriptionTypes/SubscriptionPlanDetails';
-import AddSubscriptionPlan from './components/SubscriptionTypes/AddSubscriptionPlan';
-import PromoCodes from './components/PromoCodes/PromoCodes';
-import AddPromoCode from './components/PromoCodes/AddPromoCode';
-import PromoCodeDetails from './components/PromoCodes/PromoCodeDetails';
-import AboutUs from './components/TeesasCorner/AboutUs';
-import AddAboutUs from './components/TeesasCorner/AddAboutUs';
-import PrivacyPolicy from './components/TeesasCorner/PrivacyPolicy';
-import AddPrivacyPolicy from './components/TeesasCorner/AddPrivacyPolicy';
-import Testimonials from './components/TeesasCorner/Testimonials';
-import AddTestimonial from './components/TeesasCorner/AddTestimonial';
-import ContactUs from './components/TeesasCorner/ContactUs';
-import AddContactUs from './components/TeesasCorner/AddContactUs';
-import Banner from './components/Banner/Banner';
-import AddBanner from './components/Banner/AddBanner';
-import BannerDetails from './components/Banner/BannerDetails';
-import SalesTeam from './components/SalesTeam/SalesTeam';
-import SalesTeamDetails from './components/SalesTeam/SalesTeamDetails';
-import AddSalesTeam from './components/SalesTeam/AddSalesTeam';
-import PushNotification from './components/PushNotification/PushNotification';
-import AddNotification from './components/PushNotification/AddNotification';
-import NotificationDetails from './components/PushNotification/NotificationDetails';
-import CountryList from './components/Country/CountryList';
-import AddCountry from './components/Country/AddCountry';
-import CountryDetails from './components/Country/CountryDetails';
-import Badges from './components/Badges/Badges';
-import AddBadge from './components/Badges/AddBadge';
-import BadgeDetails from './components/Badges/BadgeDetails';
-import UserReport from './components/UserReport/UserReport';
-import UserReportDetails from './components/UserReport/UserReportDetails';
-import ProductList from './components/Store/ProductList';
-import AddStoreItem from './components/Store/AddStoreItem';
-import StoreItemDetails from './components/Store/StoreItemDetails';
-import OrderItemDetails from './components/Store/OrderItemDetails';
-import DonationEnquiry from './components/DonationEnquiry/DonationEnquiry';
-import DonationDetails from './components/DonationEnquiry/DonationDetails';
-import Topics from './components/Lesson/Topics';
-import AddUnitMedia from './components/Lesson/AddUnitMedia';
-import TopicDetails from './components/Lesson/TopicDetail';
-import AddPracticeUtme from './components/UTME/AddPracticeUtme';
-import AddPractice from './components/Practice/AddPractice';
+import { ToastContainer } from "react-toastify";
+import PracticeUnitMediaUpload from "./components/Practice/PracticeUnitMediaUpload";
+import PracticeBulkMediaUpload from "./components/Practice/PracticeBulkMediaUpload";
+import PracticeTopicList from "./components/Practice/PracticeTopicList";
+import Test from "./components/Test/Test";
+import TestClass from "./components/Test/TestClass";
+import TestSubject from "./components/Test/TestSubject";
+import TestChapter from "./components/Test/TestChapter";
+import TestTopics from "./components/Test/TestTopics";
+import TestTopicList from "./components/Test/TestTopicList";
+import AddTest from "./components/Test/AddTest";
+import TestDetail from "./components/Test/TestDetails";
+import UniversityList from "./components/QuestionBank/UniversityList";
+import UniversitySubjects from "./components/QuestionBank/UniversitySubjects";
+import UniversityAddSubject from "./components/QuestionBank/UniversityAddSubject";
+import UniversityAddPdf from "./components/QuestionBank/UniversityAddPdf";
+import UniversitySubjectDetail from "./components/QuestionBank/UniversitySubjectDetail";
+import UniList from "./components/UniversityList/UniList";
+import UniAdd from "./components/UniversityList/UniAdd";
+import EBook from "./components/E-Book/EBook";
+import AddSingleEbook from "./components/E-Book/AddSingleEbook";
+import AddBulkEbook from "./components/E-Book/AddBulkEbook";
+import EBookDetails from "./components/E-Book/EbookDetails";
+import EbookList from "./components/E-Book/EbookList";
+import EbookOrderList from "./components/E-Book/EbookOrderList";
+import ResellerForm from "./components/ResellerForm/ResellerForm";
+import ResellerFormDetails from "./components/ResellerForm/ResellerFormDetails";
+import SevenHabitsBootcamp from "./components/7HabitsBootcamp/7HabitsBootcamp";
+import RegistrationDetails from "./components/7HabitsBootcamp/RegistrationDetails";
+import AddParticipant from "./components/7HabitsBootcamp/AddParticipant";
+import JAMBtutorial from "./components/LearningCenter/JAMBtutorial";
+import TutorialDetails from "./components/LearningCenter/TutorialDetails";
+import AddSingleParticipant from "./components/LearningCenter/AddSingleParticipant";
+import SummerCamp from "./components/SummerCamp/SummerCamp";
+import AddSingleCampParticipant from "./components/SummerCamp/AddSIngleSummerCampParticipant";
+import SummerCampDetails from "./components/SummerCamp/SummerCampDetails";
+import JobOpenings from "./components/HumanResource/JobOpening";
+import AddJobForm from "./components/HumanResource/AddJobForm";
+import JobDetails from "./components/HumanResource/JobDetails";
+import SubscriptionTypes from "./components/SubscriptionTypes/SubscriptionTypes";
+import SubscriptionPlanDetails from "./components/SubscriptionTypes/SubscriptionPlanDetails";
+import AddSubscriptionPlan from "./components/SubscriptionTypes/AddSubscriptionPlan";
+import PromoCodes from "./components/PromoCodes/PromoCodes";
+import AddPromoCode from "./components/PromoCodes/AddPromoCode";
+import PromoCodeDetails from "./components/PromoCodes/PromoCodeDetails";
+import AboutUs from "./components/TeesasCorner/AboutUs";
+import AddAboutUs from "./components/TeesasCorner/AddAboutUs";
+import PrivacyPolicy from "./components/TeesasCorner/PrivacyPolicy";
+import AddPrivacyPolicy from "./components/TeesasCorner/AddPrivacyPolicy";
+import Testimonials from "./components/TeesasCorner/Testimonials";
+import AddTestimonial from "./components/TeesasCorner/AddTestimonial";
+import ContactUs from "./components/TeesasCorner/ContactUs";
+import AddContactUs from "./components/TeesasCorner/AddContactUs";
+import Banner from "./components/Banner/Banner";
+import AddBanner from "./components/Banner/AddBanner";
+import BannerDetails from "./components/Banner/BannerDetails";
+import SalesTeam from "./components/SalesTeam/SalesTeam";
+import SalesTeamDetails from "./components/SalesTeam/SalesTeamDetails";
+import AddSalesTeam from "./components/SalesTeam/AddSalesTeam";
+import PushNotification from "./components/PushNotification/PushNotification";
+import AddNotification from "./components/PushNotification/AddNotification";
+import NotificationDetails from "./components/PushNotification/NotificationDetails";
+import CountryList from "./components/Country/CountryList";
+import AddCountry from "./components/Country/AddCountry";
+import CountryDetails from "./components/Country/CountryDetails";
+import Badges from "./components/Badges/Badges";
+import AddBadge from "./components/Badges/AddBadge";
+import BadgeDetails from "./components/Badges/BadgeDetails";
+import UserReport from "./components/UserReport/UserReport";
+import UserReportDetails from "./components/UserReport/UserReportDetails";
+import ProductList from "./components/Store/ProductList";
+import AddStoreItem from "./components/Store/AddStoreItem";
+import StoreItemDetails from "./components/Store/StoreItemDetails";
+import OrderItemDetails from "./components/Store/OrderItemDetails";
+import DonationEnquiry from "./components/DonationEnquiry/DonationEnquiry";
+import DonationDetails from "./components/DonationEnquiry/DonationDetails";
+import Topics from "./components/Lesson/Topics";
+import AddUnitMedia from "./components/Lesson/AddUnitMedia";
+import TopicDetails from "./components/Lesson/TopicDetail";
+import AddPracticeUtme from "./components/UTME/AddPracticeUtme";
+import AddPractice from "./components/Practice/AddPractice";
 
-import PracticeDetails from './components/Practice/PracticeDetails';
-import UniversityViewPdf from './components/QuestionBank/UniversityViewPdf';
-import AddBulkSummerCampParticipant from './components/SummerCamp/AddBulkSummerCampParticipant';
-import AddBulkJambParticipant from './components/LearningCenter/AddBulkJambParticipant';
-import AddBulk7HabitBootcamp from './components/7HabitsBootcamp/AddBulk7HabitBootcamp';
-import AddClass from './components/Categories/AddClass';
-import TopicsList from './components/Categories/TopicsList';
-import AddTopic from './components/Categories/AddTopic';
-import TopicDetail from './components/Categories/TopicDetail';
-import UploadQuestions from './components/Test/UploadQuestions';
-import QuestionView from './components/Test/QuestionView';
-import AdminDetails from './pages/admin/AdminRole/AdminDetails';
-import AdminPermission from './pages/admin/AdminRole/AdminPermission';
-import PermissionGuard from './components/common/PermissionGuard';
-import UnauthorizedPage from './pages/UnauthorizedPage';
-import UploadBulkLiveClass from './pages/admin/LiveClasses/UploadBulkLiveClass';
-import PaymentProof from './pages/admin/one-on-oneclass/PaymentProof';
-import LearningCenterCourses from './components/LearningCenter/LearningCenterCourses';
-import AddSubjectLearningCenter from './components/LearningCenter/AddSubjectLearningCenter';
-import BulkUploadMedia from './components/Categories/BulkUploadMedia';
-import ParentReport from './components/ParentReport/ParentReport'
-import EditSubscriptionPlan from './components/SubscriptionTypes/EditSubscriptionPlan';
+import PracticeDetails from "./components/Practice/PracticeDetails";
+import UniversityViewPdf from "./components/QuestionBank/UniversityViewPdf";
+import AddBulkSummerCampParticipant from "./components/SummerCamp/AddBulkSummerCampParticipant";
+import AddBulkJambParticipant from "./components/LearningCenter/AddBulkJambParticipant";
+import AddBulk7HabitBootcamp from "./components/7HabitsBootcamp/AddBulk7HabitBootcamp";
+import AddClass from "./components/Categories/AddClass";
+import TopicsList from "./components/Categories/TopicsList";
+import AddTopic from "./components/Categories/AddTopic";
+import TopicDetail from "./components/Categories/TopicDetail";
+import UploadQuestions from "./components/Test/UploadQuestions";
+import QuestionView from "./components/Test/QuestionView";
+import AdminDetails from "./pages/admin/AdminRole/AdminDetails";
+import AdminPermission from "./pages/admin/AdminRole/AdminPermission";
+import PermissionGuard from "./components/common/PermissionGuard";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
+import UploadBulkLiveClass from "./pages/admin/LiveClasses/UploadBulkLiveClass";
+import PaymentProof from "./pages/admin/one-on-oneclass/PaymentProof";
+import LearningCenterCourses from "./components/LearningCenter/LearningCenterCourses";
+import AddSubjectLearningCenter from "./components/LearningCenter/AddSubjectLearningCenter";
+import BulkUploadMedia from "./components/Categories/BulkUploadMedia";
+import ParentReport from "./components/ParentReport/ParentReport";
+import EditSubscriptionPlan from "./components/SubscriptionTypes/EditSubscriptionPlan";
+import WithdrawRequest from "./components/Payments/WithdrawRequest";
+import WithdrawRequestDetails from "./components/Payments/WithdrawRequestDetails";
 
 function App() {
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => {
-    setIsSidebarOpen(prevState => !prevState);
+    setIsSidebarOpen((prevState) => !prevState);
   };
 
   const location = useLocation();
 
   // Check if the current location matches the login page path
-  const isLoginPage = location.pathname === '/';
-  const isForgetPage = location.pathname === '/forgot-password';
+  const isLoginPage = location.pathname === "/";
+  const isForgetPage = location.pathname === "/forgot-password";
 
   return (
     <>
       {/* Render Navigation only if it's not the login page */}
-      {!isLoginPage && !isForgetPage && <Navigation isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
-      {!isLoginPage && !isForgetPage && <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+      {!isLoginPage && !isForgetPage && (
+        <Navigation isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      )}
+      {!isLoginPage && !isForgetPage && (
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      )}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
@@ -215,7 +220,13 @@ function App() {
           path="/addusers"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["users:create", "users:read", "users:update"]}>
+              <PermissionGuard
+                requiredPermissions={[
+                  "users:create",
+                  "users:read",
+                  "users:update",
+                ]}
+              >
                 <AddUser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -226,7 +237,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["users:read"]}>
-                <UserDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <UserDetails
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -246,7 +260,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["users:update"]}>
-                <EditUser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <EditUser
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -255,7 +272,10 @@ function App() {
           path="/Dashboard"
           element={
             <ProtectedRoute>
-              <SignInList isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <SignInList
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -273,8 +293,13 @@ function App() {
           path="/Feedback"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["feedback:read", "feedback:create"]}>
-                <Feedback isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["feedback:read", "feedback:create"]}
+              >
+                <Feedback
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -284,7 +309,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["feedback:read"]}>
-                <UserFeedbackDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <UserFeedbackDetails
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -294,7 +322,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["leader_board:read"]}>
-                <LeaderBoard isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <LeaderBoard
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -304,7 +335,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["leader_board:read"]}>
-                <LeaderboardProfile isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <LeaderboardProfile
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -313,8 +347,13 @@ function App() {
           path="/scheduleliveclasses"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["lessons:read", "lessons:create"]}>
-                <LiveClases isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["lessons:read", "lessons:create"]}
+              >
+                <LiveClases
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -324,7 +363,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["lessons:create"]}>
-                <AddLiveClass isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <AddLiveClass
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -334,21 +376,24 @@ function App() {
           path="/payment-proof/:id"
           element={
             <ProtectedRoute>
-
-              <PaymentProof isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
+              <PaymentProof
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="/LiveClassDetails"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["lessons:read"]}>
-                <LiveClassDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-              </PermissionGuard >
+                <LiveClassDetails
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
+              </PermissionGuard>
             </ProtectedRoute>
           }
         />
@@ -356,8 +401,13 @@ function App() {
           path="/ManageLiveClass"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["lessons:read", "lessons:update"]}>
-                <ManageLiveClass isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["lessons:read", "lessons:update"]}
+              >
+                <ManageLiveClass
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -366,8 +416,13 @@ function App() {
           path="/Teacher"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["teachers:read", "teachers:create"]}>
-                <Teachers isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["teachers:read", "teachers:create"]}
+              >
+                <Teachers
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -377,7 +432,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["tests:read"]}>
-                <TestDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <TestDetails
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -388,7 +446,10 @@ function App() {
           element={
             <ProtectedRoute>
               {/* <PermissionGuard requiredPermissions={["tests:read"]}> */}
-              <QuestionView isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <QuestionView
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
               {/* </PermissionGuard> */}
             </ProtectedRoute>
           }
@@ -398,7 +459,10 @@ function App() {
           path="/studentlistmanagement"
           element={
             <ProtectedRoute>
-              <StudentManagement isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <StudentManagement
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -406,7 +470,10 @@ function App() {
           path="/AddLiveClassStudent"
           element={
             <ProtectedRoute>
-              <AddStudent isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <AddStudent
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -414,7 +481,10 @@ function App() {
           path="/one-on-oneclassmanagement"
           element={
             <ProtectedRoute>
-              <OneOnclass isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <OneOnclass
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -422,7 +492,10 @@ function App() {
           path="/Addone-on-oneClass"
           element={
             <ProtectedRoute>
-              <AddoneOnOneclass isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <AddoneOnOneclass
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -431,17 +504,22 @@ function App() {
           path="/upload-bulk-live-classes"
           element={
             <ProtectedRoute>
-              <UploadBulkLiveClass isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <UploadBulkLiveClass
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="/teacherlistmanagement"
           element={
             <ProtectedRoute>
-              <TeacherList isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <TeacherList
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -449,7 +527,10 @@ function App() {
           path="/Teacher/TeacherDetails"
           element={
             <ProtectedRoute>
-              <TeacherDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <TeacherDetails
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -457,7 +538,10 @@ function App() {
           path="/Teacher/AddTeacher"
           element={
             <ProtectedRoute>
-              <AddTeacher isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <AddTeacher
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -465,8 +549,16 @@ function App() {
           path="/supportmanagement"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["support_ticket:read", "support_ticket:create"]}>
-                <SupportTicket isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={[
+                  "support_ticket:read",
+                  "support_ticket:create",
+                ]}
+              >
+                <SupportTicket
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -476,7 +568,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["support_ticket:read"]}>
-                <SupportTicketDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <SupportTicketDetails
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -485,7 +580,10 @@ function App() {
           path="/ParentReportType"
           element={
             <ProtectedRoute>
-              <ParentReportType isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <ParentReportType
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -493,7 +591,10 @@ function App() {
           path="/AddParentReportType"
           element={
             <ProtectedRoute>
-              <AddParentReportType isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <AddParentReportType
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -501,7 +602,10 @@ function App() {
           path="/ParentReportTypeDetails"
           element={
             <ProtectedRoute>
-              <ParentReportTypeDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <ParentReportTypeDetails
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -509,7 +613,10 @@ function App() {
           path="/ParentSuggestions"
           element={
             <ProtectedRoute>
-              <ParentSuggestions isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <ParentSuggestions
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -517,20 +624,32 @@ function App() {
           path="/ChangePassword"
           element={
             <ProtectedRoute>
-              <ChangePassword isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <ChangePassword
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
-        <Route path="/AdminDetails/:id" element={<ProtectedRoute>
-          <AdminDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        </ProtectedRoute>
-        } />
+        <Route
+          path="/AdminDetails/:id"
+          element={
+            <ProtectedRoute>
+              <AdminDetails
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/AdminRole"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["admin_roles:read", "admin_roles:create"]}>
+              <PermissionGuard
+                requiredPermissions={["admin_roles:read", "admin_roles:create"]}
+              >
                 <AdminRole isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -541,8 +660,13 @@ function App() {
           path="/AdminPermission"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["admin_roles:read", "admin_roles:update"]}>
-                <AdminPermission isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["admin_roles:read", "admin_roles:update"]}
+              >
+                <AdminPermission
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -552,7 +676,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["admin_roles:create"]}>
-                <AddAdminRole isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <AddAdminRole
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -561,8 +688,13 @@ function App() {
           path="/AdminUser"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["admin_users:read", "admin_users:create"]}>
-                <AdminUser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["admin_users:read", "admin_users:create"]}
+              >
+                <AdminUser
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -572,7 +704,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["admin_users:read"]}>
-                <AdminUserDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <AdminUserDetails
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -582,7 +717,10 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["admin_users:create"]}>
-                <AddAdminUser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <AddAdminUser
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -601,7 +739,10 @@ function App() {
           path="/DataAnalytics"
           element={
             <ProtectedRoute>
-              <DataAnalytics isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <DataAnalytics
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -609,7 +750,10 @@ function App() {
           path="/ViewAnalytics"
           element={
             <ProtectedRoute>
-              <ViewAnalytics isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <ViewAnalytics
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
@@ -617,18 +761,28 @@ function App() {
           path="/ConversionRates"
           element={
             <ProtectedRoute>
-              <ConversionRates isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <ConversionRates
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              />
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="/subscribed-users"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscribed_users:read", "subscribed_users:create"]}>
-                <SubscribedUser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={[
+                  "subscribed_users:read",
+                  "subscribed_users:create",
+                ]}
+              >
+                <SubscribedUser
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -638,8 +792,13 @@ function App() {
           path="/addSingleSubscription"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscribed_users:create"]}>
-                <AddSingleSubscription isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["subscribed_users:create"]}
+              >
+                <AddSingleSubscription
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -648,8 +807,13 @@ function App() {
           path="/UploadBulkSubscription"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscribed_users:create"]}>
-                <UploadBulkSubscription isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["subscribed_users:create"]}
+              >
+                <UploadBulkSubscription
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -658,8 +822,13 @@ function App() {
           path="/add-subscription-form"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscribed_users:create"]}>
-                <AddSubscriptionForm isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <PermissionGuard
+                requiredPermissions={["subscribed_users:create"]}
+              >
+                <AddSubscriptionForm
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
               </PermissionGuard>
             </ProtectedRoute>
           }
@@ -668,12 +837,13 @@ function App() {
           path="/lesson"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["categories:read", "categories:create"]}>
+              <PermissionGuard
+                requiredPermissions={["categories:read", "categories:create"]}
+              >
                 <Lesson isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
-
         />
 
         <Route
@@ -721,9 +891,7 @@ function App() {
           path="/bulk-upload-media/:topicId"
           element={
             <ProtectedRoute>
-
               <BulkUploadMedia isOpen={isSidebarOpen} />
-
             </ProtectedRoute>
           }
         />
@@ -784,7 +952,6 @@ function App() {
           }
         />
 
-
         <Route
           path="/payments/add-bank"
           element={
@@ -794,7 +961,23 @@ function App() {
           }
         />
 
+        <Route
+          path="/payments/withdraw-requests"
+          element={
+            <ProtectedRoute>
+              <WithdrawRequest isOpen={isSidebarOpen} />
+            </ProtectedRoute>
+          }
+        />
 
+        <Route
+          path="/payments/withdraw-details"
+          element={
+            <ProtectedRoute>
+              <WithdrawRequestDetails isOpen={isSidebarOpen} />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/Categories"
@@ -815,7 +998,6 @@ function App() {
           }
         />
 
-
         <Route
           path="/categories/add-category"
           element={
@@ -831,7 +1013,6 @@ function App() {
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["categories:create"]}>
-
                 <UploadBulkCategory isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -976,12 +1157,16 @@ function App() {
           }
         />
 
-        <Route path="/add-topic/:id" element={<ProtectedRoute>
-          <PermissionGuard requiredPermissions={["categories:create"]}>
-            <AddTopic isOpen={isSidebarOpen} />
-          </PermissionGuard>
-        </ProtectedRoute>
-        } />
+        <Route
+          path="/add-topic/:id"
+          element={
+            <ProtectedRoute>
+              <PermissionGuard requiredPermissions={["categories:create"]}>
+                <AddTopic isOpen={isSidebarOpen} />
+              </PermissionGuard>
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/utme-lesson"
@@ -1158,7 +1343,9 @@ function App() {
           path="/test"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["test:read", "test:create"]}>
+              <PermissionGuard
+                requiredPermissions={["test:read", "test:create"]}
+              >
                 <Test isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1168,7 +1355,9 @@ function App() {
           path="/test-class"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["test:read", "test:create"]}>
+              <PermissionGuard
+                requiredPermissions={["test:read", "test:create"]}
+              >
                 <TestClass isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1179,7 +1368,9 @@ function App() {
           path="/test-subject"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["test:read", "test:create"]}>
+              <PermissionGuard
+                requiredPermissions={["test:read", "test:create"]}
+              >
                 <TestSubject isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1190,7 +1381,9 @@ function App() {
           path="/test-chapter"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["test:read", "test:create"]}>
+              <PermissionGuard
+                requiredPermissions={["test:read", "test:create"]}
+              >
                 <TestChapter isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1200,7 +1393,9 @@ function App() {
           path="/test-topic"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["test:read", "test:create"]}>
+              <PermissionGuard
+                requiredPermissions={["test:read", "test:create"]}
+              >
                 <TestTopics isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1228,7 +1423,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="/add-test"
@@ -1446,7 +1640,9 @@ function App() {
           path="/bulk-upload"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["habits_bootcamps:create"]}>
+              <PermissionGuard
+                requiredPermissions={["habits_bootcamps:create"]}
+              >
                 <AddBulk7HabitBootcamp isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1456,7 +1652,9 @@ function App() {
           path="/add-participant"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["habits_bootcamps:create"]}>
+              <PermissionGuard
+                requiredPermissions={["habits_bootcamps:create"]}
+              >
                 <AddParticipant isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1466,7 +1664,12 @@ function App() {
           path="/jamb-ssce"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:create", "jamb_ssce_tutorial:read"]}>
+              <PermissionGuard
+                requiredPermissions={[
+                  "jamb_ssce_tutorial:create",
+                  "jamb_ssce_tutorial:read",
+                ]}
+              >
                 <JAMBtutorial isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1477,9 +1680,7 @@ function App() {
           path="/learning-center-courses"
           element={
             <ProtectedRoute>
-
               <LearningCenterCourses isOpen={isSidebarOpen} />
-
             </ProtectedRoute>
           }
         />
@@ -1488,9 +1689,7 @@ function App() {
           path="/learning-center/add-subject"
           element={
             <ProtectedRoute>
-
               <AddSubjectLearningCenter isOpen={isSidebarOpen} />
-
             </ProtectedRoute>
           }
         />
@@ -1499,7 +1698,12 @@ function App() {
           path="/tutorial-details"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:create", "jamb_ssce_tutorial:read"]}>
+              <PermissionGuard
+                requiredPermissions={[
+                  "jamb_ssce_tutorial:create",
+                  "jamb_ssce_tutorial:read",
+                ]}
+              >
                 <TutorialDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1510,7 +1714,9 @@ function App() {
           path="/add-single-participant"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:read"]}>
+              <PermissionGuard
+                requiredPermissions={["jamb_ssce_tutorial:read"]}
+              >
                 <AddSingleParticipant isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1521,7 +1727,9 @@ function App() {
           path="/add-bulk-participant"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:read"]}>
+              <PermissionGuard
+                requiredPermissions={["jamb_ssce_tutorial:read"]}
+              >
                 <AddBulkJambParticipant isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1607,17 +1815,22 @@ function App() {
           path="/subscription-types"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscription_types:read"]}>
+              <PermissionGuard
+                requiredPermissions={["subscription_types:read"]}
+              >
                 <SubscriptionTypes isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
 
-        <Route path="/subscription-plans/:courseId"
+        <Route
+          path="/subscription-plans/:courseId"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscription_types:read"]}>
+              <PermissionGuard
+                requiredPermissions={["subscription_types:read"]}
+              >
                 <SubscriptionPlanDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
@@ -1626,21 +1839,27 @@ function App() {
 
         <Route
           path="/edit-subscription-plan/:planId"
-          element={<ProtectedRoute><EditSubscriptionPlan isOpen={isSidebarOpen} /></ProtectedRoute>}
-        />
-
-
-
-        <Route path="/add-subscription-plan"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["subscription_types:create"]}>
+              <EditSubscriptionPlan isOpen={isSidebarOpen} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/add-subscription-plan"
+          element={
+            <ProtectedRoute>
+              <PermissionGuard
+                requiredPermissions={["subscription_types:create"]}
+              >
                 <AddSubscriptionPlan isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
-        <Route path="/promo-codes"
+        <Route
+          path="/promo-codes"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["promocodes:read"]}>
@@ -1649,7 +1868,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/add-promo-code"
+        <Route
+          path="/add-promo-code"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["promocodes:create"]}>
@@ -1658,7 +1878,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/promo-code-details"
+        <Route
+          path="/promo-code-details"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["promocodes:read"]}>
@@ -1667,7 +1888,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/about-us"
+        <Route
+          path="/about-us"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["about_us:read"]}>
@@ -1676,7 +1898,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/add-about-us"
+        <Route
+          path="/add-about-us"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["about_us:create"]}>
@@ -1685,7 +1908,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/privacy-policy"
+        <Route
+          path="/privacy-policy"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["privacy_policy:read"]}>
@@ -1694,7 +1918,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/add-privacy-policy"
+        <Route
+          path="/add-privacy-policy"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["privacy_policy:create"]}>
@@ -1703,7 +1928,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/testimonials"
+        <Route
+          path="/testimonials"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["testimonials:read"]}>
@@ -1712,7 +1938,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/add-testimonials"
+        <Route
+          path="/add-testimonials"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["testimonials:create"]}>
@@ -1721,7 +1948,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/contact-us"
+        <Route
+          path="/contact-us"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["contact_info:read"]}>
@@ -1730,7 +1958,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/add-contact-us"
+        <Route
+          path="/add-contact-us"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["contact_info:create"]}>
@@ -1740,18 +1969,17 @@ function App() {
           }
         />
 
-        <Route path="/parentsReport"
+        <Route
+          path="/parentsReport"
           element={
             <ProtectedRoute>
-
               <ParentReport isOpen={isSidebarOpen} />
-
             </ProtectedRoute>
           }
         />
 
-
-        <Route path="/parentsReportType"
+        <Route
+          path="/parentsReportType"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["parent:read"]}>
@@ -1760,7 +1988,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/add-parent-report"
+        <Route
+          path="/add-parent-report"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["parent:create"]}>
@@ -1769,7 +1998,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/banner"
+        <Route
+          path="/banner"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["home_banner:read"]}>
@@ -1778,7 +2008,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/Banner/AddBanner"
+        <Route
+          path="/Banner/AddBanner"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["home_banner:create"]}>
@@ -1787,7 +2018,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/Banner/BannerDetails"
+        <Route
+          path="/Banner/BannerDetails"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["home_banner:read"]}>
@@ -1796,7 +2028,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/sales-team"
+        <Route
+          path="/sales-team"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["sales_team:read"]}>
@@ -1806,7 +2039,8 @@ function App() {
           }
         />
 
-        <Route path="/SalesTeam/Details"
+        <Route
+          path="/SalesTeam/Details"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["sales_team:read"]}>
@@ -1816,7 +2050,8 @@ function App() {
           }
         />
 
-        <Route path="/SalesTeam/AddsalesTeamMember"
+        <Route
+          path="/SalesTeam/AddsalesTeamMember"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["sales_team:create"]}>
@@ -1825,37 +2060,47 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/push-notification"
+        <Route
+          path="/push-notification"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["push_notifications:read"]}>
+              <PermissionGuard
+                requiredPermissions={["push_notifications:read"]}
+              >
                 <PushNotification isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
 
-        <Route path="PushNotification/AddNotification"
+        <Route
+          path="PushNotification/AddNotification"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["push_notifications:create"]}>
+              <PermissionGuard
+                requiredPermissions={["push_notifications:create"]}
+              >
                 <AddNotification isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
 
-        <Route path="/PushNotification/NotificationDetails"
+        <Route
+          path="/PushNotification/NotificationDetails"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["push_notifications:read"]}>
+              <PermissionGuard
+                requiredPermissions={["push_notifications:read"]}
+              >
                 <NotificationDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
 
-        <Route path="/country-list"
+        <Route
+          path="/country-list"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["country_list:read"]}>
@@ -1865,7 +2110,8 @@ function App() {
           }
         />
 
-        <Route path="/Countries/AddCountry"
+        <Route
+          path="/Countries/AddCountry"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["country_list:create"]}>
@@ -1874,7 +2120,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/Countries/Details"
+        <Route
+          path="/Countries/Details"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["country_list:read"]}>
@@ -1883,7 +2130,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/badges"
+        <Route
+          path="/badges"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["badge:read"]}>
@@ -1892,7 +2140,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/Badges/AddBadge"
+        <Route
+          path="/Badges/AddBadge"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["badge:create"]}>
@@ -1902,7 +2151,8 @@ function App() {
           }
         />
 
-        <Route path="/Badges/Details"
+        <Route
+          path="/Badges/Details"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["badge:read"]}>
@@ -1911,55 +2161,63 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/user-report"
+        <Route
+          path="/user-report"
           element={
             <ProtectedRoute>
-            
-                <UserReport isOpen={isSidebarOpen} />
-  
+              <UserReport isOpen={isSidebarOpen} />
             </ProtectedRoute>
           }
         />
 
-        <Route path="/Reports/Details"
+        <Route
+          path="/Reports/Details"
           element={
             <ProtectedRoute>
-            
-                <UserReportDetails isOpen={isSidebarOpen} />
-            
+              <UserReportDetails isOpen={isSidebarOpen} />
             </ProtectedRoute>
           }
         />
 
-        <Route path="/produuct-list"
+        <Route
+          path="/produuct-list"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["store_product_list:read"]}>
+              <PermissionGuard
+                requiredPermissions={["store_product_list:read"]}
+              >
                 <ProductList isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
-        <Route path="/store/add"
+        <Route
+          path="/store/add"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["store_product_list:create"]}>
+              <PermissionGuard
+                requiredPermissions={["store_product_list:create"]}
+              >
                 <AddStoreItem isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
 
-        <Route path="/store/item-details/:id"
+        <Route
+          path="/store/item-details/:id"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["store_product_list:read"]}>
+              <PermissionGuard
+                requiredPermissions={["store_product_list:read"]}
+              >
                 <StoreItemDetails isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
-        <Route path="/store/order-details/:id"
+        <Route
+          path="/store/order-details/:id"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["store_order_list:read"]}>
@@ -1969,7 +2227,8 @@ function App() {
           }
         />
 
-        <Route path="/donation-enquiry"
+        <Route
+          path="/donation-enquiry"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["donation_enquiry:read"]}>
@@ -1979,7 +2238,8 @@ function App() {
           }
         />
 
-        <Route path="donation-details"
+        <Route
+          path="donation-details"
           element={
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["donation_enquiry:read"]}>
@@ -1989,33 +2249,43 @@ function App() {
           }
         />
 
-        <Route path='/UploadBulkUser' element={
-          <ProtectedRoute>
-            <PermissionGuard requiredPermissions={["users:create"]}>
-              <Customadduser isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-            </PermissionGuard>
-          </ProtectedRoute>
-        } />
+        <Route
+          path="/UploadBulkUser"
+          element={
+            <ProtectedRoute>
+              <PermissionGuard requiredPermissions={["users:create"]}>
+                <Customadduser
+                  isOpen={isSidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                />
+              </PermissionGuard>
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/admin-role/permissions/:id"
           element={
             <ProtectedRoute>
-              <PermissionGuard requiredPermissions={["admin_roles:read", "admin_roles:update"]}>
+              <PermissionGuard
+                requiredPermissions={["admin_roles:read", "admin_roles:update"]}
+              >
                 <AdminPermission isOpen={isSidebarOpen} />
               </PermissionGuard>
             </ProtectedRoute>
           }
         />
-      </Routes >
+      </Routes>
 
-      <ToastContainer position="top-right"
+      <ToastContainer
+        position="top-right"
         autoClose={2000}
         ProgressBar={true}
         newestOnTop={false}
         closeOnClick={false}
         rtl={false}
-        pauseOnHover={false} />
+        pauseOnHover={false}
+      />
     </>
   );
 }

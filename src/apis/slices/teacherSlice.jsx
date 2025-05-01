@@ -1,10 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAPICall, postAPICall, postFileAPICall, deleteAPICall } from "../client/methodCalls";
+import {
+  getAPICall,
+  postAPICall,
+  postFileAPICall,
+  deleteAPICall,
+} from "../client/methodCalls";
 import { toast } from "react-toastify";
 
 import { config } from "../client/config";
 
-const { GET_TEACHERS, GET_TEACHER_STATISTICS, UPDATE_TEACHER, BASEURL, ADD_TEACHER, GET_TEACHER_DETAILS, GET_LOCAL_GOV, GET_LIVE_CLASS_TEACHERS } = config;
+const {
+  GET_TEACHERS,
+  GET_TEACHER_STATISTICS,
+  UPDATE_TEACHER,
+  BASEURL,
+  ADD_TEACHER,
+  GET_TEACHER_DETAILS,
+  GET_LOCAL_GOV,
+  GET_LIVE_CLASS_TEACHERS,
+  UPDATE_WITHDRAW_REQUEST,
+  GET_WITHDRAW_REQUEST,
+} = config;
 
 export const teacherSlice = createSlice({
   name: "teacher",
@@ -33,6 +49,12 @@ export const teacherSlice = createSlice({
     deleteTeacherResponse: {
       response: {},
     },
+    getWithdrawRequestResponse: {
+      response: {},
+    },
+    updateWithdrawRequestResponse: {
+      response: {},
+    },
   },
   reducers: {
     getTeachers: (state, action) => {
@@ -48,16 +70,22 @@ export const teacherSlice = createSlice({
       state.addTeacherResponse = action.payload;
     },
     getTeacherDetails: (state, action) => {
-      state.getTeacherDetailsResponse = action.payload
+      state.getTeacherDetailsResponse = action.payload;
     },
     getLocalGov: (state, action) => {
-      state.getLocalGovResponse = action.payload
+      state.getLocalGovResponse = action.payload;
     },
     getLiveClassTeachers: (state, action) => {
       state.getLiveClassTeachersResponse = action.payload;
     },
     deleteTeacher: (state, action) => {
       state.deleteTeacherResponse = action.payload;
+    },
+    getWithdrawRequest: (state, action) => {
+      state.getWithdrawRequestResponse = action.payload;
+    },
+    updateWithdrawRequest: (state, action) => {
+      state.updateWithdrawRequestResponse = action.payload;
     },
 
     reset: (state, action) => {
@@ -68,8 +96,12 @@ export const teacherSlice = createSlice({
   },
 });
 
-
-export const getTeachersAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getTeachersAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_TEACHERS}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -105,7 +137,12 @@ export const deleteTeacherAsync = async ({
   }
 };
 
-export const getTeacherStatsAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getTeacherStatsAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_TEACHER_STATISTICS}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -118,7 +155,12 @@ export const getTeacherStatsAsync = async ({ dispatch, callbackFn, data, token }
   }
 };
 
-export const updateTeacherAsync = async ({ dispatch, body, callbackFn, token }) => {
+export const updateTeacherAsync = async ({
+  dispatch,
+  body,
+  callbackFn,
+  token,
+}) => {
   try {
     // dispatch(UserLogin({ isLoading: true }));
     const URL = `${BASEURL}${UPDATE_TEACHER}`;
@@ -132,7 +174,12 @@ export const updateTeacherAsync = async ({ dispatch, body, callbackFn, token }) 
   }
 };
 
-export const getTeacherDetailsAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getTeacherDetailsAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_TEACHER_DETAILS}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -145,8 +192,12 @@ export const getTeacherDetailsAsync = async ({ dispatch, callbackFn, data, token
   }
 };
 
-
-export const addTeacherAsync = async ({ dispatch, body, callbackFn, token }) => {
+export const addTeacherAsync = async ({
+  dispatch,
+  body,
+  callbackFn,
+  token,
+}) => {
   try {
     // dispatch(UserLogin({ isLoading: true }));
     const URL = `${BASEURL}${ADD_TEACHER}`;
@@ -160,7 +211,12 @@ export const addTeacherAsync = async ({ dispatch, body, callbackFn, token }) => 
   }
 };
 
-export const getLocalGovAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getLocalGovAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_LOCAL_GOV}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -173,8 +229,12 @@ export const getLocalGovAsync = async ({ dispatch, callbackFn, data, token }) =>
   }
 };
 
-
-export const getLiveClassTeachersAsync = async ({ dispatch, callbackFn, data, token }) => {
+export const getLiveClassTeachersAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
   try {
     const URL = `${BASEURL}${GET_LIVE_CLASS_TEACHERS}`;
     const result = getAPICall(URL, data, token).then((res) => {
@@ -187,13 +247,60 @@ export const getLiveClassTeachersAsync = async ({ dispatch, callbackFn, data, to
   }
 };
 
+export const getWithdrawRequestAsync = async ({
+  dispatch,
+  callbackFn,
+  data,
+  token,
+}) => {
+  try {
+    const URL = `${BASEURL}${GET_WITHDRAW_REQUEST}`;
+    const result = getAPICall(URL, data, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(getWithdrawRequest({ isLoading: false, response: result.data }));
+  } catch (err) {
+    dispatch(getWithdrawRequest({ isLoading: false }));
+  }
+};
 
+export const updateWithdrawRequestAsync = async ({
+  dispatch,
+  body,
+  callbackFn,
+  token,
+}) => {
+  try {
+    // dispatch(UserLogin({ isLoading: true }));
+    const URL = `${BASEURL}${UPDATE_WITHDRAW_REQUEST}`;
+    const result = await postAPICall(URL, body, true, token).then((res) => {
+      callbackFn && callbackFn(res);
+      return res;
+    });
+    dispatch(
+      updateWithdrawRequest({ isLoading: false, response: result.data })
+    );
+  } catch (error) {
+    dispatch(updateWithdrawRequest({ isLoading: false }));
+  }
+};
 
 export const resetAsync = () => async (dispatch) => {
   dispatch(reset());
 };
-export const { getTeachers, getTeacherStats, updateTeacher, addTeacher, getTeacherDetails, getLocalGov, getLiveClassTeachers, deleteTeacher } =
-  teacherSlice.actions;
+export const {
+  getTeachers,
+  getTeacherStats,
+  updateTeacher,
+  addTeacher,
+  getTeacherDetails,
+  getLocalGov,
+  getLiveClassTeachers,
+  deleteTeacher,
+  getWithdrawRequest,
+  updateWithdrawRequest,
+} = teacherSlice.actions;
 
 export const getTeachersResponse = (state) => state.teacher.getTeachersResponse;
 

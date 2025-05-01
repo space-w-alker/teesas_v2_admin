@@ -122,6 +122,6 @@ export const config = {
   ACCEPT_BANK_TRANSFER: "live/enrol-one-to-one-success-class-accept",
   REJECT_BANK_TRANSFER: "live/reject-bank-transfer",
 
-
-
+  GET_WITHDRAW_REQUEST: "home/get-withdraw-requests",
+  UPDATE_WITHDRAW_REQUEST: "home/withdraw-request/update-status",
 };
