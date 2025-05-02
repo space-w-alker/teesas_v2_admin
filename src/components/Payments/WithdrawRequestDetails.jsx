@@ -30,7 +30,6 @@ const WithdrawRequestDetails = ({ isOpen }) => {
   };
 
   const handleConfirm = async () => {
-    debugger;
     setShowConfirmModal(false);
     setIsConfirming(true);
     const body = {
@@ -43,8 +42,6 @@ const WithdrawRequestDetails = ({ isOpen }) => {
       token,
       body,
       callbackFn: (response) => {
-        setIsConfirming(false);
-        debugger;
         if (response?.data?.status === 200) {
           setSuccessMessage("Payment confirmed successfully!");
           setShowSuccessModal(true);
@@ -218,7 +215,7 @@ const WithdrawRequestDetails = ({ isOpen }) => {
         title="CONFIRM REQUEST"
         message="Are you sure you want to confirm this REQUEST transfer payment?"
         buttonText="Confirm"
-        // onConfirm={handleConfirm}
+        onConfirm={handleConfirm}
       />
 
       <SuccessModal
@@ -229,19 +226,6 @@ const WithdrawRequestDetails = ({ isOpen }) => {
         message="Are you sure you want to reject this REQUEST transfer payment?"
         buttonText="Reject"
         onConfirm={handleReject}
-      />
-
-      <SuccessModal
-        isOpen={showSuccessModal}
-        onClose={() => {
-          debugger;
-          setShowSuccessModal(false);
-        }}
-        type="success"
-        title="SUCCESS!"
-        message={successMessage}
-        buttonText="Confirm"
-        onConfirm={handleConfirm}
       />
     </div>
   );
