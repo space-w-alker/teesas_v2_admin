@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { useLocation, useNavigate } from 'react-router-dom';
-import Headers from '../common/Headers';
-import Custombutton from '../common/Custombutton';
-import SuccessModal from '../common/SuccessModal';
-import { addEbookAsync, updateEbookAsync, listEbooksAsync } from '../../apis/slices/ebookSlice';
-import { listCategoriesAsync, getCategoryDetailsAsync, getClassDetailsAsync } from '../../apis/slices/categorySlice';
+import { useLocation, useNavigate } from "react-router-dom";
+import Headers from "../common/Headers";
+import Custombutton from "../common/Custombutton";
+import SuccessModal from "../common/SuccessModal";
+import {
+  addEbookAsync,
+  updateEbookAsync,
+  listEbooksAsync,
+} from "../../apis/slices/ebookSlice";
+import {
+  listCategoriesAsync,
+  getCategoryDetailsAsync,
+  getClassDetailsAsync,
+} from "../../apis/slices/categorySlice";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -14,21 +22,27 @@ const AddSingleEbook = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
-  const categories = useSelector((state) => state.category?.categoryList?.data?.categories);
-  const grades = useSelector((state) => state.category?.categoryDetails.data?.classes);
-  const chapters = useSelector((state) => state.category?.classDetails?.data?.subjects);
+  const categories = useSelector(
+    (state) => state.category?.categoryList?.data?.categories
+  );
+  const grades = useSelector(
+    (state) => state.category?.categoryDetails.data?.classes
+  );
+  const chapters = useSelector(
+    (state) => state.category?.classDetails?.data?.subjects
+  );
 
   // Initialize form data from location state if editing
   const [formData, setFormData] = useState({
-    id: location.state?.ebookData?.id || '',
-    category: location.state?.ebookData?.category || '',
-    grade: location.state?.ebookData?.grade || '',
-    chapter: location.state?.ebookData?.chapter || '',
-    bookTitle: location.state?.ebookData?.bookTitle || '',
-    price: location.state?.ebookData?.price || '',
-    description: location.state?.ebookData?.description || '',
+    id: location.state?.ebookData?.id || "",
+    category: location.state?.ebookData?.category || "",
+    grade: location.state?.ebookData?.grade || "",
+    chapter: location.state?.ebookData?.chapter || "",
+    bookTitle: location.state?.ebookData?.bookTitle || "",
+    price: location.state?.ebookData?.price || "",
+    description: location.state?.ebookData?.description || "",
     pdf: location.state?.ebookData?.pdf || null,
-    icon: location.state?.ebookData?.icon || null
+    icon: location.state?.ebookData?.icon || null,
   });
 
   const [dragActive, setDragActive] = useState(false);
@@ -62,7 +76,7 @@ const AddSingleEbook = ({ isOpen }) => {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files?.[0]) {
-      if (e.dataTransfer.files[0].type === 'application/pdf') {
+      if (e.dataTransfer.files[0].type === "application/pdf") {
         setPdfFile(e.dataTransfer.files[0]);
         setFormData({ ...formData, pdf: e.dataTransfer.files[0].name });
       } else {
@@ -114,25 +128,28 @@ const AddSingleEbook = ({ isOpen }) => {
     }
 
     // Add all the form fields
-    formDataToSend.append("course_id", formData.category || '');
-    formDataToSend.append("class_id", formData.grade || '');
-    formDataToSend.append("subject_id", formData.chapter || '');
-    formDataToSend.append("title", formData.bookTitle || '');
-    formDataToSend.append("description", formData.description || '');
-    formDataToSend.append("short_des", formData.description ? formData.description.substring(0, 100) : '');
-    formDataToSend.append("price", formData.price || '');
+    formDataToSend.append("course_id", formData.category || "");
+    formDataToSend.append("class_id", formData.grade || "");
+    formDataToSend.append("subject_id", formData.chapter || "");
+    formDataToSend.append("title", formData.bookTitle || "");
+    formDataToSend.append("description", formData.description || "");
+    formDataToSend.append(
+      "short_des",
+      formData.description ? formData.description.substring(0, 100) : ""
+    );
+    formDataToSend.append("price", formData.price || "");
 
     // Only append files if they're actually new files
     if (pdfFile instanceof File) {
       formDataToSend.append("files", pdfFile);
-    } else if (formData.pdf && typeof formData.pdf === 'string' && isEdit) {
+    } else if (formData.pdf && typeof formData.pdf === "string" && isEdit) {
       // If it's a string (existing file path) and we're editing, tell the server to keep the existing file
       formDataToSend.append("keep_pdf", "true");
     }
 
     if (iconFile instanceof File) {
       formDataToSend.append("files", iconFile);
-    } else if (formData.icon && typeof formData.icon === 'string' && isEdit) {
+    } else if (formData.icon && typeof formData.icon === "string" && isEdit) {
       // If it's a string (existing file path) and we're editing, tell the server to keep the existing file
       formDataToSend.append("keep_icon", "true");
     }
@@ -157,7 +174,7 @@ const AddSingleEbook = ({ isOpen }) => {
           callbackFn: () => {
             setIsSubmitting(false);
             setShowSuccess(true);
-          }
+          },
         });
 
         // Dispatch the action and wait for it to complete
@@ -171,7 +188,7 @@ const AddSingleEbook = ({ isOpen }) => {
           callbackFn: () => {
             setIsSubmitting(false);
             setShowSuccess(true);
-          }
+          },
         });
 
         // Dispatch the action and wait for it to complete
@@ -186,21 +203,22 @@ const AddSingleEbook = ({ isOpen }) => {
 
   const handleClose = () => {
     setShowSuccess(false);
-    navigate('/e-book');
+    navigate("/e-book");
   };
 
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      <Headers
-        value1="Home"
-        value2={isEdit ? "Update E-Book" : "Add E-Book"}
-      />
+    <div
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      } transition-all duration-300`}
+    >
+      <Headers value1="Home" value2={isEdit ? "Update E-Book" : "Add E-Book"} />
 
       <div className=" mt-6 flex gap-6">
         <div className="flex-[2] bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-4 mb-6">
             <h2 className="text-xl font-bold text-gray-900">
-              {isEdit ? 'Update E-Book' : 'Add E-Book'}
+              {isEdit ? "Update E-Book" : "Add E-Book"}
             </h2>
           </div>
 
@@ -213,7 +231,9 @@ const AddSingleEbook = ({ isOpen }) => {
                   </label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, category: e.target.value })
+                    }
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
                   >
@@ -231,7 +251,9 @@ const AddSingleEbook = ({ isOpen }) => {
                   </label>
                   <select
                     value={formData.grade}
-                    onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, grade: e.target.value })
+                    }
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
                     disabled={!formData.category} // Disable if no category is selected
@@ -250,7 +272,9 @@ const AddSingleEbook = ({ isOpen }) => {
                   </label>
                   <select
                     value={formData.chapter}
-                    onChange={(e) => setFormData({ ...formData, chapter: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, chapter: e.target.value })
+                    }
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
                     disabled={!formData.grade} // Disable if no grade is selected
@@ -270,7 +294,9 @@ const AddSingleEbook = ({ isOpen }) => {
                   <input
                     type="text"
                     value={formData.bookTitle}
-                    onChange={(e) => setFormData({ ...formData, bookTitle: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, bookTitle: e.target.value })
+                    }
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
                   />
@@ -282,7 +308,9 @@ const AddSingleEbook = ({ isOpen }) => {
                   <input
                     type="number"
                     value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, price: e.target.value })
+                    }
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]"
                     required
                   />
@@ -294,7 +322,9 @@ const AddSingleEbook = ({ isOpen }) => {
                 </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60] h-32"
                   required
                 />
@@ -302,7 +332,10 @@ const AddSingleEbook = ({ isOpen }) => {
               {/* upload icon */}
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Upload Icon {isEdit && formData.icon && "(Current: " + formData.icon + ")"}
+                  Upload Icon{" "}
+                  {isEdit &&
+                    formData.icon &&
+                    "(Current: " + formData.icon + ")"}
                 </label>
                 <div
                   className="border-2 border-dashed rounded-lg p-8 text-center bg-[#E9FDEE] border-[#27AE60]"
@@ -325,12 +358,18 @@ const AddSingleEbook = ({ isOpen }) => {
                       />
                     </label>
                   </p>
-                  <p className="text-sm text-gray-500 mb-2">Supported formats: jpg, jpeg, png</p>
-                  <p className="text-sm text-gray-500">Maximum file size: 10MB</p>
+                  <p className="text-sm text-gray-500 mb-2">
+                    Supported formats: jpg, jpeg, png
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Maximum file size: 10MB
+                  </p>
                   {(iconFile || formData.icon) && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{iconFile ? iconFile.name : formData.icon}</p>
+                      <p className="text-gray-600">
+                        {iconFile ? iconFile.name : formData.icon}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -338,7 +377,8 @@ const AddSingleEbook = ({ isOpen }) => {
               {/* upload ebook */}
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Upload Ebook {isEdit && formData.pdf && "(Current: " + formData.pdf + ")"}
+                  Upload Ebook{" "}
+                  {isEdit && formData.pdf && "(Current: " + formData.pdf + ")"}
                 </label>
                 <div
                   className="border-2 border-dashed rounded-lg p-8 text-center bg-[#E9FDEE] border-[#27AE60]"
@@ -355,25 +395,37 @@ const AddSingleEbook = ({ isOpen }) => {
                       <input
                         type="file"
                         className="hidden"
-                        accept=".pdf"
+                        accept=".pdf,.epub"
                         onChange={(e) => handlePdfChange(e)}
                         required={!formData.pdf && !isEdit}
                       />
                     </label>
                   </p>
-                  <p className="text-sm text-gray-500 mb-2">Supported format: PDF</p>
-                  <p className="text-sm text-gray-500">Maximum file size: 10MB</p>
+                  <p className="text-sm text-gray-500 mb-2">
+                    Supported format: PDF
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Maximum file size: 10MB
+                  </p>
                   {(pdfFile || formData.pdf) && (
                     <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg">
                       <p className="font-medium">Selected file:</p>
-                      <p className="text-gray-600">{pdfFile ? pdfFile.name : formData.pdf}</p>
+                      <p className="text-gray-600">
+                        {pdfFile ? pdfFile.name : formData.pdf}
+                      </p>
                     </div>
                   )}
                 </div>
               </div>
               <div className="flex justify-end">
                 <Custombutton
-                  value={isSubmitting ? "Processing..." : (isEdit ? "Update E-Book" : "Add E-Book")}
+                  value={
+                    isSubmitting
+                      ? "Processing..."
+                      : isEdit
+                      ? "Update E-Book"
+                      : "Add E-Book"
+                  }
                   type="submit"
                   disabled={isSubmitting}
                   backgroundcolor="bg-[#27AE60]"
@@ -393,36 +445,46 @@ const AddSingleEbook = ({ isOpen }) => {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Category:</span>
                   <span className="font-medium">
-                    {categories?.find(c => c.id === parseInt(formData.category))?.name || '-'}
+                    {categories?.find(
+                      (c) => c.id === parseInt(formData.category)
+                    )?.name || "-"}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Grade:</span>
                   <span className="font-medium">
-                    {grades?.find(g => g.id === parseInt(formData.grade))?.name || '-'}
+                    {grades?.find((g) => g.id === parseInt(formData.grade))
+                      ?.name || "-"}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Chapter:</span>
                   <span className="font-medium">
-                    {chapters?.find(c => c.id === parseInt(formData.chapter))?.name || '-'}
+                    {chapters?.find((c) => c.id === parseInt(formData.chapter))
+                      ?.name || "-"}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Book Title:</span>
-                  <span className="font-medium">{formData.bookTitle || '-'}</span>
+                  <span className="font-medium">
+                    {formData.bookTitle || "-"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Book Price:</span>
-                  <span className="font-medium">{formData.price || '-'}</span>
+                  <span className="font-medium">{formData.price || "-"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Icon:</span>
-                  <span className="font-medium">{formData.icon || (iconFile ? iconFile.name : '-')}</span>
+                  <span className="font-medium">
+                    {formData.icon || (iconFile ? iconFile.name : "-")}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">PDF:</span>
-                  <span className="font-medium">{formData.pdf || (pdfFile ? pdfFile.name : '-')}</span>
+                  <span className="font-medium">
+                    {formData.pdf || (pdfFile ? pdfFile.name : "-")}
+                  </span>
                 </div>
               </div>
             </div>
@@ -436,12 +498,15 @@ const AddSingleEbook = ({ isOpen }) => {
           onClose={handleClose}
           type="success"
           title="SUCCESS!"
-          message={isEdit ? "E-Book Updated Successfully" : "E-Book Created Successfully"}
+          message={
+            isEdit
+              ? "E-Book Updated Successfully"
+              : "E-Book Created Successfully"
+          }
           buttonText="Close"
           onConfirm={handleClose}
         />
       )}
-
     </div>
   );
 };
