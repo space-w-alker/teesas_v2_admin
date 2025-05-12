@@ -3,12 +3,14 @@ import letter from "../../..//assets/images/bookopen.png";
 import { FaChevronLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { getAdminUserAsync, getAdminRolesAsync } from "../../../apis/slices/adminSlice";
+import {
+  getAdminUserAsync,
+  getAdminRolesAsync,
+} from "../../../apis/slices/adminSlice";
 import { TailSpin } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 
 const AdminUserDetails = ({ isOpen }) => {
-
   const token = localStorage.getItem("authToken");
   const Navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,12 +20,9 @@ const AdminUserDetails = ({ isOpen }) => {
   const [roles, setRoles] = useState([]);
 
   const getRoleName = (roleId) => {
-    const role = roles.find(role => role.id === roleId);
+    const role = roles.find((role) => role.id === roleId);
     return role ? role.name : roleId;
   };
-
-
-
 
   useEffect(() => {
     setLoading(true);
@@ -35,10 +34,16 @@ const AdminUserDetails = ({ isOpen }) => {
         if (res?.data?.status === 200) {
           setRoles(res.data.data || []);
         }
-      }
+      },
     });
+    // Get the full hash including the query string
+    const hash = window.location.hash; // Gets "#/AdminUserDetails?id=6"
 
-    const urlParams = new URLSearchParams(window.location.search);
+    // Extract the query string part after the hash
+    const queryString = hash.split("?")[1]; // Gets "id=6"
+
+    // Create URLSearchParams with the query string
+    const urlParams = new URLSearchParams(queryString);
     const id = urlParams.get("id");
     getAdminUserAsync({
       dispatch: dispatch,
@@ -48,14 +53,15 @@ const AdminUserDetails = ({ isOpen }) => {
       token: token,
       callbackFn: (res) => {
         setAdminData(res?.data?.user || res?.data);
-        setLoading(false)
+        setLoading(false);
       },
     });
   }, []);
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${
+        isOpen ? "lg:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -71,7 +77,10 @@ const AdminUserDetails = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+        <FaChevronLeft
+          onClick={() => Navigate(-1)}
+          className="cursor-pointer"
+        />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Home / Admin Users /{" "}
@@ -86,7 +95,8 @@ const AdminUserDetails = ({ isOpen }) => {
           </div>
           <div className="">
             <p className=" font-bold text-[16px] leading-[24px]  tracking-wider text-[#1D2026]">
-              {adminData?.firstName} {adminData?.middleName} {adminData?.lastName}
+              {adminData?.firstName} {adminData?.middleName}{" "}
+              {adminData?.lastName}
             </p>
             {adminData?.status == 1 ? (
               <button className="w-[64px] h-[20px] rounded-full font-medium text-[13px] leading-[15px] mt-[4px] pt-[2px]  text-white bg-[#08AA58]">
@@ -101,7 +111,7 @@ const AdminUserDetails = ({ isOpen }) => {
         </div>
       </div>
 
-      { /* <p className=" font-medium text-[14px] leading-[20px] text-[#27AE60] text-center cursor-pointer ">
+      {/* <p className=" font-medium text-[14px] leading-[20px] text-[#27AE60] text-center cursor-pointer ">
         Manage
       </p>*/}
       <div>
@@ -128,7 +138,8 @@ const AdminUserDetails = ({ isOpen }) => {
                       Name
                     </p>
                     <p className="text-[13px] lg:text-[16px] leading-[20px] font-normal text-[#222222E5]">
-                      {adminData?.firstName} {adminData?.middleName} {adminData?.lastName}
+                      {adminData?.firstName} {adminData?.middleName}{" "}
+                      {adminData?.lastName}
                     </p>
                   </div>
                   <div className="flex flex-col mb-4">

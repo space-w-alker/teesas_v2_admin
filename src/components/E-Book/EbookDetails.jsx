@@ -18,19 +18,23 @@ const EbookDetails = ({ isOpen }) => {
   const ebooks = useSelector((state) => state.ebook.ebookDetails || {});
 
   useEffect(() => {
-    dispatch(getEbookDetailsAsync({ dispatch, id })).then(() => setLoading(false));
+    dispatch(getEbookDetailsAsync({ dispatch, id })).then(() =>
+      setLoading(false)
+    );
   }, [dispatch, id]);
 
   if (loading) {
     return <p className="text-center">Loading...</p>;
   }
 
-  console.log('ebooks', ebooks);
+  console.log("ebooks", ebooks);
   const bookName = location.state?.name || ebooks?.data?.ebook?.title || "N/A";
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      } transition-all duration-300`}
     >
       <Headers value1="Home" value2="E-Books" value3={bookName} />
 
@@ -69,15 +73,21 @@ const EbookDetails = ({ isOpen }) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-600">Category:</p>
-                <p className="font-medium">{ebooks?.data?.ebook?.course?.name || "N/A"}</p>
+                <p className="font-medium">
+                  {ebooks?.data?.ebook?.course?.name || "N/A"}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600">Grade:</p>
-                <p className="font-medium">{ebooks?.data?.ebook?.class?.name || "N/A"}</p>
+                <p className="font-medium">
+                  {ebooks?.data?.ebook?.class?.name || "N/A"}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600">Chapter:</p>
-                <p className="font-medium">{ebooks?.data?.ebook?.subject?.name || "N/A"}</p>
+                <p className="font-medium">
+                  {ebooks?.data?.ebook?.subject?.name || "N/A"}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600">Status:</p>
@@ -96,8 +106,25 @@ const EbookDetails = ({ isOpen }) => {
         </div>
         <div className="space-y-4">
           <div className="p-4 border border-gray-200 rounded-lg">
-
-            <img src={`${config.MainUrl}${ebooks?.data?.ebook?.source}`} alt="ebook preview" className="w-full h-[400px] object-cover rounded" />
+            <img
+              onClick={() => {
+                window.open(
+                  `${
+                    ebooks?.data?.ebook?.media_source_type == "v1"
+                      ? config.mediaEbookUrl
+                      : config.MainUrl
+                  }${ebooks?.data?.ebook?.source}`,
+                  "_blank"
+                );
+              }}
+              src={`${
+                ebooks?.data?.ebook?.media_source_type == "v1"
+                  ? config.mediaEbookUrl
+                  : config.MainUrl
+              }${ebooks?.data?.ebook?.icon}`}
+              alt="ebook preview"
+              className="w-full h-[400px] object-cover rounded"
+            />
           </div>
         </div>
       </div>
@@ -107,8 +134,15 @@ const EbookDetails = ({ isOpen }) => {
         </div>
         <div className="space-y-4">
           <div className="p-4 border border-gray-200 rounded-lg">
-
-            <img src={`${config.MainUrl}${ebooks?.data?.ebook?.icon}`} alt="ebook preview" className="w-full h-[400px] object-cover rounded" />
+            <img
+              src={`${
+                ebooks?.data?.ebook?.media_source_type == "v1"
+                  ? config.mediaEbookUrl
+                  : config.MainUrl
+              }${ebooks?.data?.ebook?.icon}`}
+              alt="ebook preview"
+              className="w-full h-[400px] object-cover rounded"
+            />
           </div>
         </div>
       </div>

@@ -36,7 +36,6 @@ const WithdrawRequestDetails = ({ isOpen }) => {
       id: paymentData?.id,
       status: "confirmed",
     };
-    debugger;
     updateWithdrawRequestAsync({
       dispatch,
       token,

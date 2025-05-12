@@ -259,81 +259,81 @@ export const categoriesSlice = createSlice({
 
 export const uploadBulkCategoriesAsync =
   ({ file }) =>
-    async (dispatch) => {
-      try {
-        dispatch(
-          setBulkCategoryUpload({
-            isLoading: true,
-            data: null,
-            success: false,
-            error: null,
-          })
-        );
-        const URL = `${BASEURL}${UPLOAD_BULK_CATEGORIES}`;
+  async (dispatch) => {
+    try {
+      dispatch(
+        setBulkCategoryUpload({
+          isLoading: true,
+          data: null,
+          success: false,
+          error: null,
+        })
+      );
+      const URL = `${BASEURL}${UPLOAD_BULK_CATEGORIES}`;
 
-        const formData = new FormData();
-        formData.append("file", file);
+      const formData = new FormData();
+      formData.append("file", file);
 
-        const result = await postFileAPICall(URL, formData);
+      const result = await postFileAPICall(URL, formData);
 
-        if (result?.data) {
-          dispatch(
-            setBulkCategoryUpload({
-              isLoading: false,
-              data: result.data,
-              success: true,
-              error: null,
-            })
-          ); // Refresh categories list
-          dispatch(getCategoriesAsync());
-          return true;
-        } else {
-          throw new Error(result?.data?.message || "Failed to upload categories");
-        }
-      } catch (error) {
+      if (result?.data) {
         dispatch(
           setBulkCategoryUpload({
             isLoading: false,
-            data: null,
-            success: false,
-            error: error.message || "Failed to upload categories",
+            data: result.data,
+            success: true,
+            error: null,
           })
-        );
-        return false;
+        ); // Refresh categories list
+        dispatch(getCategoriesAsync());
+        return true;
+      } else {
+        throw new Error(result?.data?.message || "Failed to upload categories");
       }
-    };
+    } catch (error) {
+      dispatch(
+        setBulkCategoryUpload({
+          isLoading: false,
+          data: null,
+          success: false,
+          error: error.message || "Failed to upload categories",
+        })
+      );
+      return false;
+    }
+  };
 
 export const getCategoriesAsync =
   (page = 1, limit = 10, search = "") =>
-    async (dispatch) => {
-      try {
-        dispatch(setCategoryList({ isLoading: true, data: null, error: null }));
-        let URL = `${BASEURL}${LIST_CATEGORIES}?page=${page}&limit=${limit}`;
+  async (dispatch) => {
+    try {
+      dispatch(setCategoryList({ isLoading: true, data: null, error: null }));
+      let URL = `${BASEURL}${LIST_CATEGORIES}?page=${page}&limit=${limit}`;
 
-        if (search.trim()) {
-          URL += `&search=${encodeURIComponent(search.trim())}`;
-        }
+      if (search.trim()) {
+        URL += `&search=${encodeURIComponent(search.trim())}`;
+      }
 
-        const result = await getAPICall(URL);
+      const result = await getAPICall(URL);
 
-        if (result?.data?.status === 200) {
-          dispatch(
-            setCategoryList({
-              isLoading: false,
-              data: result.data.data.categories,
-              stats: result.data.data.stats,
-              totalPages: result.data.data.totalPages,
-              error: null,
-            })
-          );
-        }
-      } catch (error) {
-        console.log("Search error:", error);
+      if (result?.data?.status === 200) {
         dispatch(
-          setCategoryList({ isLoading: false, data: null, error: error.message })
+          setCategoryList({
+            isLoading: false,
+            data: result.data.data.categories,
+            stats: result.data.data.stats,
+            totalPages: result.data.data.totalPages,
+            error: null,
+          })
         );
       }
-    };
+    } catch (error) {
+      console.log("Search error:", error);
+      dispatch(
+        setCategoryList({ isLoading: false, data: null, error: error.message })
+      );
+    }
+  };
 
 export const createCategoryAsync = (categoryData) => async (dispatch) => {
   try {
@@ -430,38 +430,38 @@ export const updateCategoryAsync =
 
 export const getCategoryDetailsAsync =
   (id, page = 1, limit = 5, search = "") =>
-    async (dispatch) => {
-      try {
-        dispatch(
-          setCategoryDetails({ isLoading: true, data: null, error: null })
-        );
-        let URL = `${BASEURL}${GET_CATEGORY_DETAILS}/${id}/details?page=${page}&limit=${limit}`;
+  async (dispatch) => {
+    try {
+      dispatch(
+        setCategoryDetails({ isLoading: true, data: null, error: null })
+      );
+      let URL = `${BASEURL}${GET_CATEGORY_DETAILS}/${id}/details?page=${page}&limit=${limit}`;
 
-        if (search.trim()) {
-          URL += `&search=${encodeURIComponent(search.trim())}`;
-        }
+      if (search.trim()) {
+        URL += `&search=${encodeURIComponent(search.trim())}`;
+      }
 
-        const result = await getAPICall(URL);
+      const result = await getAPICall(URL);
 
-        if (result?.data?.status === 200) {
-          dispatch(
-            setCategoryDetails({
-              isLoading: false,
-              data: result.data.data,
-              error: null,
-            })
-          );
-        }
-      } catch (error) {
+      if (result?.data?.status === 200) {
         dispatch(
           setCategoryDetails({
             isLoading: false,
-            data: null,
-            error: error.message,
+            data: result.data.data,
+            error: null,
           })
         );
       }
-    };
+    } catch (error) {
+      dispatch(
+        setCategoryDetails({
+          isLoading: false,
+          data: null,
+          error: error.message,
+        })
+      );
+    }
+  };
 
 export const addClassAsync = (categoryId, className) => async (dispatch) => {
   try {
@@ -488,37 +488,37 @@ export const addClassAsync = (categoryId, className) => async (dispatch) => {
 
 export const updateClassAsync =
   ({ classId, categoryId, className }) =>
-    async (dispatch) => {
-      try {
-        dispatch(
-          setUpdateClass({ isLoading: true, success: false, error: null })
-        );
-        const URL = `${BASEURL}${UPDATE_CLASS}/class/${classId}`;
+  async (dispatch) => {
+    try {
+      dispatch(
+        setUpdateClass({ isLoading: true, success: false, error: null })
+      );
+      const URL = `${BASEURL}${UPDATE_CLASS}/class/${classId}`;
 
-        const result = await putAPICall(URL, {
-          id: classId,
-          name: className,
-        });
+      const result = await putAPICall(URL, {
+        id: classId,
+        name: className,
+      });
 
-        if (result?.data?.status === 200) {
-          dispatch(
-            setUpdateClass({ isLoading: false, success: true, error: null })
-          );
-          dispatch(getCategoryDetailsAsync(categoryId));
-          return true;
-        }
-        throw new Error(result?.data?.message || "Failed to update class");
-      } catch (error) {
+      if (result?.data?.status === 200) {
         dispatch(
-          setUpdateClass({
-            isLoading: false,
-            success: false,
-            error: error.message,
-          })
+          setUpdateClass({ isLoading: false, success: true, error: null })
         );
-        return false;
+        dispatch(getCategoryDetailsAsync(categoryId));
+        return true;
       }
-    };
+      throw new Error(result?.data?.message || "Failed to update class");
+    } catch (error) {
+      dispatch(
+        setUpdateClass({
+          isLoading: false,
+          success: false,
+          error: error.message,
+        })
+      );
+      return false;
+    }
+  };
 
 export const deleteClassAsync = (classId) => async (dispatch) => {
   try {
@@ -544,36 +544,36 @@ export const deleteClassAsync = (classId) => async (dispatch) => {
 
 export const getSubjectDetailsAsync =
   (classId, page = 1, limit = 10, searchTerm = "") =>
-    async (dispatch) => {
-      try {
-        dispatch(setSubjectDetails({ isLoading: true, data: null, error: null }));
-        const URL = `${BASEURL}${GET_CLASS_DETAILS}/${classId}/details`;
+  async (dispatch) => {
+    try {
+      dispatch(setSubjectDetails({ isLoading: true, data: null, error: null }));
+      const URL = `${BASEURL}${GET_CLASS_DETAILS}/${classId}/details`;
 
-        const result = await getAPICall(URL, { page, limit, search: searchTerm });
+      const result = await getAPICall(URL, { page, limit, search: searchTerm });
 
-        if (result?.data?.status === 200) {
-          dispatch(
-            setSubjectDetails({
-              isLoading: false,
-              data: result.data.data,
-              error: null,
-            })
-          );
-        } else {
-          throw new Error(
-            result?.data?.message || "Failed to fetch subject details"
-          );
-        }
-      } catch (error) {
+      if (result?.data?.status === 200) {
         dispatch(
           setSubjectDetails({
             isLoading: false,
-            data: null,
-            error: error.message,
+            data: result.data.data,
+            error: null,
           })
         );
+      } else {
+        throw new Error(
+          result?.data?.message || "Failed to fetch subject details"
+        );
       }
-    };
+    } catch (error) {
+      dispatch(
+        setSubjectDetails({
+          isLoading: false,
+          data: null,
+          error: error.message,
+        })
+      );
+    }
+  };
 
 export const createSubjectAsync = (classId, formData) => async (dispatch) => {
   try {
@@ -670,36 +670,36 @@ export const deleteSubjectAsync = (classId, subjectId) => async (dispatch) => {
 
 export const getChapterDetailsAsync =
   (subjectId, page = 1, limit = 10, searchTerm = "") =>
-    async (dispatch) => {
-      try {
-        dispatch(setChapterDetails({ isLoading: true, data: null, error: null }));
-        const URL = `${BASEURL}admin/chapter/${subjectId}/list?page=${page}&limit=${limit}&search=${searchTerm}`;
+  async (dispatch) => {
+    try {
+      dispatch(setChapterDetails({ isLoading: true, data: null, error: null }));
+      const URL = `${BASEURL}admin/chapter/${subjectId}/list?page=${page}&limit=${limit}&search=${searchTerm}`;
 
-        const result = await getAPICall(URL);
+      const result = await getAPICall(URL);
 
-        if (result?.data?.status === 200) {
-          dispatch(
-            setChapterDetails({
-              isLoading: false,
-              data: result.data.data,
-              error: null,
-            })
-          );
-        } else {
-          throw new Error(
-            result?.data?.message || "Failed to fetch chapter details"
-          );
-        }
-      } catch (error) {
+      if (result?.data?.status === 200) {
         dispatch(
           setChapterDetails({
             isLoading: false,
-            data: null,
-            error: error.message,
+            data: result.data.data,
+            error: null,
           })
         );
+      } else {
+        throw new Error(
+          result?.data?.message || "Failed to fetch chapter details"
+        );
       }
-    };
+    } catch (error) {
+      dispatch(
+        setChapterDetails({
+          isLoading: false,
+          data: null,
+          error: error.message,
+        })
+      );
+    }
+  };
 
 export const deleteChapterAsync = (chapterId) => async (dispatch) => {
   try {
@@ -791,38 +791,38 @@ export const createChapterAsync =
 
 export const getTopicsListAsync =
   (chapterId, page = 1, limit = 10, search = "") =>
-    async (dispatch) => {
-      try {
-        dispatch(setTopicsList({ isLoading: true, data: null, error: null }));
-        let URL = `${BASEURL}admin/lesson/list/${chapterId}?page=${page}&limit=${limit}`;
+  async (dispatch) => {
+    try {
+      dispatch(setTopicsList({ isLoading: true, data: null, error: null }));
+      let URL = `${BASEURL}admin/lesson/list/${chapterId}?page=${page}&limit=${limit}`;
 
-        if (search) {
-          URL += `&search=${encodeURIComponent(search)}`;
-        }
-
-        const result = await getAPICall(URL);
-
-        if (result?.data?.status === 200) {
-          dispatch(
-            setTopicsList({
-              isLoading: false,
-              data: {
-                ...result.data.data,
-                currentPage: page,
-                totalPages: Math.ceil(result.data.data.total / limit),
-              },
-              error: null,
-            })
-          );
-        } else {
-          throw new Error(result?.data?.message || "Failed to fetch topics");
-        }
-      } catch (error) {
-        dispatch(
-          setTopicsList({ isLoading: false, data: null, error: error.message })
-        );
+      if (search) {
+        URL += `&search=${encodeURIComponent(search)}`;
       }
-    };
+
+      const result = await getAPICall(URL);
+
+      if (result?.data?.status === 200) {
+        dispatch(
+          setTopicsList({
+            isLoading: false,
+            data: {
+              ...result.data.data,
+              currentPage: page,
+              totalPages: Math.ceil(result.data.data.total / limit),
+            },
+            error: null,
+          })
+        );
+      } else {
+        throw new Error(result?.data?.message || "Failed to fetch topics");
+      }
+    } catch (error) {
+      dispatch(
+        setTopicsList({ isLoading: false, data: null, error: error.message })
+      );
+    }
+  };
 
 export const createTopicAsync = (chapterId, topicData) => async (dispatch) => {
   try {
@@ -924,19 +924,21 @@ export const getTopicDetailAsync = (lessonId) => async (dispatch) => {
 
     const result = await getAPICall(URL);
 
-
     if (result?.data?.status === 200) {
-      dispatch(setTopicDetail({
-        isLoading: false,
-        data: result.data.data,
-        error: null
-      }));
+      dispatch(
+        setTopicDetail({
+          isLoading: false,
+          data: result.data.data,
+          error: null,
+        })
+      );
     }
   } catch (error) {
-    dispatch(setTopicDetail({ isLoading: false, data: null, error: error.message }));
+    dispatch(
+      setTopicDetail({ isLoading: false, data: null, error: error.message })
+    );
   }
 };
-
 
 export const getTopicWithChapterAsync = (lessonId) => async (dispatch) => {
   try {
@@ -968,8 +970,6 @@ export const getTopicWithChapterAsync = (lessonId) => async (dispatch) => {
     return null;
   }
 };
-
-
 
 export const deleteTopicMediaAsync =
   (lessonId, mediaId) => async (dispatch) => {
@@ -1045,7 +1045,9 @@ export const getCountriesAsync = () => async (dispatch) => {
 };
 export const getSingleChapterDetailsAsync = (chapterId) => async (dispatch) => {
   try {
-    dispatch(setSingleChapterDetails({ isLoading: true, data: null, error: null }));
+    dispatch(
+      setSingleChapterDetails({ isLoading: true, data: null, error: null })
+    );
     const URL = `${BASEURL}admin/chapter/${chapterId}/detail`;
 
     const result = await getAPICall(URL);
@@ -1165,6 +1167,7 @@ export const selectDeleteTopicMedia = (state) =>
   state.categories.deleteTopicMedia;
 export const selectUniversities = (state) => state.categories.universities;
 export const selectCountries = (state) => state.categories.countries;
-export const selectBulkVideoUpload = (state) => state.categories.bulkVideoUpload;
+export const selectBulkVideoUpload = (state) =>
+  state.categories.bulkVideoUpload;
 
 export default categoriesSlice.reducer;

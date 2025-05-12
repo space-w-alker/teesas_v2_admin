@@ -159,8 +159,9 @@ const AdminUser = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${
+        isOpen ? "lg:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -296,10 +297,7 @@ const AdminUser = ({ isOpen }) => {
         <div className="">
           <ul>
             {adminData?.users?.map((user) => (
-              <li
-                key={user.id}
-                className="cursor-default"
-              >
+              <li key={user.id} className="cursor-default">
                 <div className="flex justify-between gap-4 items-center">
                   <div
                     className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px] cursor-pointer"
@@ -340,6 +338,12 @@ const AdminUser = ({ isOpen }) => {
                       </button>
                     )}
 
+                    <button
+                      onClick={() => Navigate(`/AddAdminUser`, { state: user })}
+                      className="px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600"
+                    >
+                      Edit
+                    </button>
                     {/* Add Delete Button */}
                     <button
                       onClick={() => handleDeleteClick(user)}
@@ -453,4 +457,3 @@ const AdminUser = ({ isOpen }) => {
 };
 
 export default AdminUser;
-

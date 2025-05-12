@@ -2,37 +2,44 @@ import React, { useState, useEffect } from "react";
 import countrycode from "../../../components/data/Countrycode.json";
 import { FaChevronLeft } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { addAdminUserAsync, getAdminRolesAsync } from "../../../apis/slices/adminSlice";
+import {
+  addAdminUserAsync,
+  getAdminRolesAsync,
+} from "../../../apis/slices/adminSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import Validation from "../../../components/validator/adminUserValidator";
 import SuccessModal from "../../../components/common/SuccessModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AddAdminUser = ({ isOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const user = location.state; // or location.state?.user
+
+  console.log(user);
+
   const token = localStorage.getItem("authToken");
   const [errors, setError] = useState({});
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [adminRoles, setAdminRoles] = useState([]);
   const [formData, setformData] = useState({
-    First_Name: "",
-    Last_Name: "",
-    Middle_Name: "",
-    Admin_Role: "",
-    Gender: "",
-    Date_of_Birth: "",
-    Phone_Contact: "",
-    Email: "",
-    Address: "",
+    First_Name: user?.firstName || "",
+    Last_Name: user?.lastName || "",
+    Middle_Name: user?.middleName || "",
+    Admin_Role: user?.role?.id || "",
+    Gender: user?.gender || "",
+    Date_of_Birth: user?.dateOfBirth || "",
+    Phone_Contact: user?.phoneNumber || "",
+    Email: user?.email || "",
+    Address: user?.address || "",
   });
 
   useEffect(() => {
-
     fetchAdminRoles();
   }, []);
 
@@ -46,7 +53,7 @@ const AddAdminUser = ({ isOpen }) => {
         } else {
           toast.error("Failed to fetch admin roles");
         }
-      }
+      },
     });
   };
 
@@ -73,25 +80,28 @@ const AddAdminUser = ({ isOpen }) => {
         phoneNumber: formData?.Phone_Contact,
         email: formData?.Email,
         address: formData?.Address,
-        roleId: formData?.Admin_Role
+        roleId: formData?.Admin_Role,
       };
 
-      addAdminUserAsync({
-        dispatch: dispatch,
-        body: requestData,
-        token: token,
+      const isEdit = !!user?.id; // assuming an ID indicates existing user
+
+      const apiFn = isEdit ? addAdminUserAsync : addAdminUserAsync;
+      const apiData = isEdit ? { ...requestData, id: user?.id } : requestData;
+
+      apiFn({
+        dispatch,
+        body: apiData,
+        token,
         callbackFn: (res) => {
+          setLoading(false);
           if (res?.data?.status === 200) {
-            setLoading(false);
-            setShowSuccessModal(true); // Show success modal
+            setShowSuccessModal(true);
           } else {
-            toast.error(res?.data?.message);
-            setLoading(false);
+            toast.error(res?.data?.message || "Something went wrong");
           }
         },
       });
-    }
-    else {
+    } else {
       toast.error("Please fill all fields");
     }
   };
@@ -115,8 +125,9 @@ const AddAdminUser = ({ isOpen }) => {
 
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${isOpen ? "lg:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem]   px-[10px] ${
+        isOpen ? "lg:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -132,7 +143,10 @@ const AddAdminUser = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start items-center lg:gap-3">
-        <FaChevronLeft className="cursor-pointer" onClick={() => navigate(-1)} />
+        <FaChevronLeft
+          className="cursor-pointer"
+          onClick={() => navigate(-1)}
+        />
         <div>
           <div className=" font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]">
             Admin Users/{" "}
@@ -329,7 +343,9 @@ const AddAdminUser = ({ isOpen }) => {
                         placeholder="Enter Details"
                       />
                       {errors.Phone_Contact && (
-                        <span className=" text-red-500">{errors.Phone_Contact}</span>
+                        <span className=" text-red-500">
+                          {errors.Phone_Contact}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -412,7 +428,7 @@ const AddAdminUser = ({ isOpen }) => {
                 submitContactForm();
               }}
             >
-              Create
+              {user?.id ? "Update" : "Create"}
             </button>
           </div>
         </div>

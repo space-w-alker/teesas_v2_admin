@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Headers from '../common/Headers';
-import Headcomponent from '../common/Headcomponent';
-import Custombutton from '../common/Custombutton';
-import SuccessModal from '../common/SuccessModal';
-import bookopen from '../../assets/images/bookopen.png';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import { getSubjectsWithQuestionsAsync, deleteQuestionAsync } from '../../apis/slices/questionSlice';
+import Headers from "../common/Headers";
+import Headcomponent from "../common/Headcomponent";
+import Custombutton from "../common/Custombutton";
+import SuccessModal from "../common/SuccessModal";
+import bookopen from "../../assets/images/bookopen.png";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import {
+  getSubjectsWithQuestionsAsync,
+  deleteQuestionAsync,
+} from "../../apis/slices/questionSlice";
 import { getTopicDetailAsync } from "../../apis/slices/categoriesSlice";
-
-
 
 const TestDetails = ({ isOpen }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const topicName = location.state?.name || 'Topic Name';
+  const topicName = location.state?.name || "Topic Name";
   const topic = location.state?.topic || {};
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -25,9 +26,13 @@ const TestDetails = ({ isOpen }) => {
   const [questionToDelete, setQuestionToDelete] = useState(null);
 
   const id = location?.state.id || {};
-  const question = useSelector((state) => state.questions?.subjectsWithQuestions || {});
-  const topicDetail = useSelector((state) => state.categories?.topicDetail?.data || []);
-  console.log(question, topicDetail)
+  const question = useSelector(
+    (state) => state.questions?.subjectsWithQuestions || {}
+  );
+  const topicDetail = useSelector(
+    (state) => state.categories?.topicDetail?.data || []
+  );
+  console.log(question, topicDetail);
   // First fetch topic details
   useEffect(() => {
     setLoading(true);
@@ -38,14 +43,16 @@ const TestDetails = ({ isOpen }) => {
 
   // Then fetch questions once we have the class_id
   useEffect(() => {
-    if (topicDetail[0]?.lesson?.chapters?.subjects?.classes?.id) {
+    if (topicDetail?.classId) {
       const data = {
-        class_id: topicDetail[0]?.lesson.chapters.subjects.classes.id,
+        class_id: topicDetail?.classId,
         type: "all",
-        selectedSubject: [{
-          year: "18",
-          subject_id: topicDetail[0]?.lesson.chapters.subjects.id
-        }]
+        selectedSubject: [
+          {
+            year: "18",
+            subject_id: topicDetail?.subjectId,
+          },
+        ],
       };
 
       dispatch(getSubjectsWithQuestionsAsync({ dispatch, data }))
@@ -54,16 +61,14 @@ const TestDetails = ({ isOpen }) => {
     }
   }, [dispatch, topicDetail]);
 
-
-
   const handleViewQuestion = (questionText, questionType = "mcq", question) => {
-    navigate('/question-view', {
+    navigate("/question-view", {
       state: {
         questionText,
         topicName,
         questionType,
-        question
-      }
+        question,
+      },
     });
   };
 
@@ -71,7 +76,6 @@ const TestDetails = ({ isOpen }) => {
     setQuestionToDelete(questionId);
     setShowDeleteModal(true);
   };
-
 
   const confirmDelete = () => {
     dispatch(
@@ -82,24 +86,31 @@ const TestDetails = ({ isOpen }) => {
         callbackFn: () => {
           setShowDeleteModal(false);
           setShowSuccessModal(true);
-          dispatch(getSubjectsWithQuestionsAsync(
-            {
+          dispatch(
+            getSubjectsWithQuestionsAsync({
               dispatch,
               data: {
                 class_id: topicDetail[0]?.lesson.chapters.subjects.classes.id,
                 type: "all",
-                selectedSubject: [{
-                  year: "all",
-                  subject_id: topicDetail[0]?.lesson.chapters.subjects.id
-                }]
-              }
-            }));
+                selectedSubject: [
+                  {
+                    year: "all",
+                    subject_id: topicDetail[0]?.lesson.chapters.subjects.id,
+                  },
+                ],
+              },
+            })
+          );
         },
       })
     );
   };
   return (
-    <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
+    <div
+      className={`py-[7rem] lg:px-[5rem] px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      } transition-all duration-300`}
+    >
       <Headers value1="Home" value2="Test" value3={topicName} />
 
       <div className="bg-[#E9FDEE] rounded-xl p-6 mb-6 mt-6">
@@ -116,10 +127,8 @@ const TestDetails = ({ isOpen }) => {
         </div>
       </div>
 
-
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
         <div className="border-b border-gray-100 pb-4 mb-4">
-
           <Headcomponent value="Details" showSearch={false} />
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
@@ -127,19 +136,21 @@ const TestDetails = ({ isOpen }) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-600">Category:</p>
-                <p className="font-medium">{topicDetail[0]?.lesson?.chapters?.subjects?.classes?.course?.name || '-'}</p>
+                <p className="font-medium">{topicDetail?.category || "-"}</p>
               </div>
               <div>
                 <p className="text-gray-600">Grade:</p>
-                <p className="font-medium">{topicDetail[0]?.lesson?.chapters?.subjects?.classes?.name || '-'}</p>
+                <p className="font-medium">{topicDetail?.class || "-"}</p>
               </div>
               <div>
                 <p className="text-gray-600">Chapter:</p>
-                <p className="font-medium">{topicDetail[0]?.lesson?.chapters?.name || '-'}</p>
+                <p className="font-medium">{topicDetail?.chapter || "-"}</p>
               </div>
               <div>
                 <p className="text-gray-600">Status:</p>
-                <p className="font-medium text-[#27AE60]">{topicDetail[0]?.lesson?.active ? "Active" : "In-Active"}</p>
+                <p className="font-medium text-[#27AE60]">
+                  {topicDetail?.active ? "Active" : "In-Active"}
+                </p>
               </div>
             </div>
           </div>
@@ -148,23 +159,40 @@ const TestDetails = ({ isOpen }) => {
 
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="border-b border-gray-100 pb-4 mb-4">
-
-          <Headcomponent value="Uploaded Practice And Mock Test List" showSearch={false} />
+          <Headcomponent
+            value="Uploaded Practice And Mock Test List"
+            showSearch={false}
+          />
         </div>
         <div className="space-y-4">
           {question?.data?.options.map((question) => (
-            <div key={question.id} className="flex items-center justify-between border-b p-4 last:border-b-0">
+            <div
+              key={question.id}
+              className="flex items-center justify-between border-b p-4 last:border-b-0"
+            >
               <span className="text-gray-700">{question.question}</span>
               <div className="flex space-x-2">
                 <button
                   className="bg-[#27AE60] text-white px-4 py-2 rounded"
-                  onClick={() => handleViewQuestion(question.question, question.type, question)}
+                  onClick={() =>
+                    handleViewQuestion(
+                      question.question,
+                      question.type,
+                      question
+                    )
+                  }
                 >
                   View
                 </button>
                 <button
                   className="bg-[#27AE60] text-white px-4 py-2 rounded"
-                  onClick={() => handleViewQuestion(question.question, question.type, question)}
+                  onClick={() =>
+                    handleViewQuestion(
+                      question.question,
+                      question.type,
+                      question
+                    )
+                  }
                 >
                   Edit
                 </button>
@@ -178,7 +206,6 @@ const TestDetails = ({ isOpen }) => {
             </div>
           ))}
         </div>
-
 
         <div className="flex justify-between items-center mt-6">
           <Custombutton
@@ -208,7 +235,6 @@ const TestDetails = ({ isOpen }) => {
         </div>
       </div>
 
-
       <SuccessModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
@@ -219,7 +245,6 @@ const TestDetails = ({ isOpen }) => {
         onConfirm={confirmDelete}
         closeButtonText="Close"
       />
-
 
       <SuccessModal
         isOpen={showSuccessModal}

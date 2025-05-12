@@ -3,6 +3,9 @@ export const config = {
   BASEURL: "http://46.202.164.175:3000/v1/",
   MainUrl: "http://46.202.164.175:3000/public/",
   // MainUrl: "http://localhost:3000/public/",
+  mediaEbookUrl: "https://teesas.com/content/ebook/",
+  mediaUrl: "https://teesas.com/content/uploads/",
+  mediaMetricPath: "https://teesas.com/content/matric/", // media url
 
   USERLOGIN: "admin/auth/login",
   SIGNUP: "admin/auth/signup",
