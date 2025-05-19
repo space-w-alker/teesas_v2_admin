@@ -4,7 +4,7 @@ on:
   push:
 # I changed the branch from develop to production
     branches:
-      - develop
+      - production
 env:
   REPO_NAME: ${{ github.repository }}
 
