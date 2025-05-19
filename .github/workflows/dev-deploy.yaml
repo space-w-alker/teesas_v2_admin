@@ -42,7 +42,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd /var/www/html/teesas-new-infra/teesas_admin/teesas_v2_admin
-            echo "hello world ++++" >> testing123
+            #echo "hello world ++++" >> testing123
             sudo git config --global --add safe.directory /***/teesas_admin
             git fetch --all
             git reset --hard origin/production
@@ -51,7 +51,7 @@ jobs:
             rm -rf node_modules
             npm install
             yarn build
-            pm2 restart teesas_admin
+            pm2 restart teesas-admin
             pm2 save
   notify-teams:
     runs-on: ubuntu-latest
