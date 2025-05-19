@@ -39,16 +39,17 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd teesas_admin
-            sudo git config --global --add safe.directory /***/teesas_admin
-            git fetch --all
-            git reset --hard origin/develop
-            rm -rf package-lock.json
-            rm -rf node_modules
-            npm install
-            yarn build
-            pm2 restart teesas_admin
-            pm2 save
+            cd /var/www/html/teesas-new-infra/teesas_admin/teesas_v2_admin
+            echo "hello world ++++" >> testing123
+            # sudo git config --global --add safe.directory /***/teesas_admin
+            # git fetch --all
+            # git reset --hard origin/develop
+            # rm -rf package-lock.json
+            # rm -rf node_modules
+            # npm install
+            # yarn build
+            # pm2 restart teesas_admin
+            # pm2 save
   notify-teams:
     runs-on: ubuntu-latest
     needs: [build, deploy]
