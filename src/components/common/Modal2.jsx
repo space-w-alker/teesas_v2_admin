@@ -13,7 +13,7 @@ const Modal2 = ({ isOpen, onClose, onDelete, data }) => {
             className="mb-2 cursor-pointer hover:text-gray-700"
             onClick={() => {
               window.open(
-                "https://devv2.teesas.com/?room=" + data?.class_link,
+                "https://api.v2.teesas.com/?room=" + data?.class_link,
                 "_blank" // <- This is what makes it open in a new window.
               );
               onClose();

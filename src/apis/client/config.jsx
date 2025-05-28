@@ -1,7 +1,7 @@
 export const config = {
   // BASEURL: "http://localhost:3000/v1/",
-  BASEURL: "https://devv2.teesas.com/v1/",
-  MainUrl: "https://devv2.teesas.com/v1/public/",
+  BASEURL: "https://api.v2.teesas.com/v1/",
+  MainUrl: "https://api.v2.teesas.com/v1/public/",
   // MainUrl: "http://localhost:3000/public/",
   mediaEbookUrl: "https://teesas.com/content/ebook/",
   mediaUrl: "https://teesas.com/content/uploads/",

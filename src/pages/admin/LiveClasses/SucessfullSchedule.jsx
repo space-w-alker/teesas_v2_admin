@@ -28,14 +28,14 @@ const SucessfullSchedule = (data) => {
                 href="#"
                 className=" font-bold text-[14px] lg:text-[14px] leading-[18px] text-[#000000]"
               >
-                {"https://devv2.teesas.com/?room=" + data?.data?.data?.link}
+                {"https://api.v2.teesas.com/?room=" + data?.data?.data?.link}
               </a>
             </div>
             <div className="mt-2">
               <p
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    "https://devv2.teesas.com/?room=" + data?.data?.data?.link
+                    "https://api.v2.teesas.com/?room=" + data?.data?.data?.link
                   );
                   toast.success("Your Live Class Link Copied");
                 }}
@@ -57,7 +57,7 @@ const SucessfullSchedule = (data) => {
             <button
               onClick={() => {
                 navigator.clipboard.writeText(
-                  "https://devv2.teesas.com/?room=" + data?.data?.data?.link
+                  "https://api.v2.teesas.com/?room=" + data?.data?.data?.link
                 );
                 toast.success("Your Live Class Link Copied");
               }}

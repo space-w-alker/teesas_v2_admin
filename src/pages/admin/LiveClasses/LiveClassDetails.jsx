@@ -45,8 +45,9 @@ const LiveClassDetails = ({ isOpen }) => {
   // }, []);
   return (
     <div
-      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${isOpen ? "xl:ml-[260px]" : ""
-        }`}
+      className={`py-[7rem] lg:px-[5rem]  flex flex-col gap-2 px-[10px] ${
+        isOpen ? "xl:ml-[260px]" : ""
+      }`}
     >
       {loading && (
         <div
@@ -62,7 +63,10 @@ const LiveClassDetails = ({ isOpen }) => {
         </div>
       )}
       <div className="flex justify-start  items-center lg:gap-3">
-        <FaChevronLeft onClick={() => Navigate(-1)} className="cursor-pointer" />
+        <FaChevronLeft
+          onClick={() => Navigate(-1)}
+          className="cursor-pointer"
+        />
 
         <div>
           <div
@@ -112,7 +116,7 @@ const LiveClassDetails = ({ isOpen }) => {
           <button
             onClick={() => {
               window.open(
-                "https://devv2.teesas.com/?room=" + adminData?.class_link,
+                "https://api.v2.teesas.com/?room=" + adminData?.class_link,
                 "_blank" // <- This is what makes it open in a new window.
               );
             }}
