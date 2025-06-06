@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 
 const SucessfullSchedule = (data) => {
-  console.log(data);
+  // console.log(data);
   const Navigate = useNavigate();
   return (
     <div>
