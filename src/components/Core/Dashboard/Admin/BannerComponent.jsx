@@ -12,7 +12,7 @@ const BannerComponent = ({ bannerData }) => {
       </div>
     );
   }
-  const imageUrl = `${config.MainUrl}${bannerData.image}`;
+  const imageUrl = `${config.MediaBanner}${bannerData.image}`;
   console.log("Image URL:", imageUrl);
 
   return (
@@ -81,7 +81,7 @@ const BannerComponent = ({ bannerData }) => {
             />
           </div>
         </div>
-      </div> 
+      </div>
     </div>
   );
 };

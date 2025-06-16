@@ -6,7 +6,7 @@ export const config = {
   mediaEbookUrl: "https://teesas.com/content/ebook/",
   mediaUrl: "https://teesas.com/content/uploads/",
   mediaMetricPath: "https://teesas.com/content/matric/", // media url
-
+  MediaBanner: "https://api.v2.teesas.com/public/",
   USERLOGIN: "admin/auth/login",
   SIGNUP: "admin/auth/signup",
   VERFICATION: "admin/auth/forgot-password",
