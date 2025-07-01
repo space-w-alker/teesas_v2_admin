@@ -304,7 +304,7 @@ export const uploadBulkCategoriesAsync =
   };
 
 export const getCategoriesAsync =
-  (page = 1, limit = 10, search = "") =>
+  (page = 1, limit = 100, search = "") =>
   async (dispatch) => {
     try {
       dispatch(setCategoryList({ isLoading: true, data: null, error: null }));
