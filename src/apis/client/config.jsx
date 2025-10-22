@@ -1,12 +1,10 @@
 export const config = {
-  // BASEURL: "http://localhost:3000/v1/",
-  BASEURL: "http://localhost:3000/v1/",
-  MainUrl: "http://localhost:3000/v1/public/",
-  // MainUrl: "http://localhost:3000/public/",
-  mediaEbookUrl: "https://teesas.com/content/ebook/",
-  mediaUrl: "https://teesas.com/content/uploads/",
-  mediaMetricPath: "https://teesas.com/content/matric/", // media url
-  MediaBanner: "https://api.v2.teesas.com/public/",
+  BASEURL: import.meta.env.VITE_BASE_URL || "https://api.v2.teesas.com/v1/",
+  MainUrl: import.meta.env.VITE_MAIN_URL || "https://api.v2.teesas.com/public/",
+  mediaEbookUrl: import.meta.env.VITE_MEDIA_EBOOK_URL || "https://teesas.com/content/ebook/",
+  mediaUrl: import.meta.env.VITE_MEDIA_URL || "https://teesas.com/content/uploads/",
+  mediaMetricPath: import.meta.env.VITE_MEDIA_METRIC_PATH || "https://teesas.com/content/matric/", // media url
+  MediaBanner: import.meta.env.VITE_MEDIA_BANNER || "https://api.v2.teesas.com/public/",
   USERLOGIN: "admin/auth/login",
   SIGNUP: "admin/auth/signup",
   VERFICATION: "admin/auth/forgot-password",
