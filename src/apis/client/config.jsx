@@ -1,7 +1,7 @@
 export const config = {
   // BASEURL: "http://localhost:3000/v1/",
-  BASEURL: "https://api.v2.teesas.com/v1/",
-  MainUrl: "https://api.v2.teesas.com/v1/public/",
+  BASEURL: "http://localhost:3000/v1/",
+  MainUrl: "http://localhost:3000/v1/public/",
   // MainUrl: "http://localhost:3000/public/",
   mediaEbookUrl: "https://teesas.com/content/ebook/",
   mediaUrl: "https://teesas.com/content/uploads/",
@@ -120,6 +120,9 @@ export const config = {
   ADD_PUSH_NOTIFICATION: "notifications/add",
   DELETE_PUSH_NOTIFICATION: "notifications/delete",
   CREATE_BULK_LIVE_CLASS: "live/create-bulk-live-class",
+
+  // Lessons dashboard
+  UPLOAD_LESSON_MEDIA_XLSX: "admin/lessons-dashboard/upload-lesson-media-xlsx",
 
   GET_BANK_TRANSFER_DETAILS: "live/bank-transfer-details",
   ACCEPT_BANK_TRANSFER: "live/enrol-one-to-one-success-class-accept",

@@ -102,6 +102,12 @@ const Lession = ({ isOpen }) => {
           <h1 className="text-xl text-gray-900 cursor-pointer hover:text-[#27AE60] transition-colors"
             onClick={handleReload}
           >Lessons</h1>
+          <button
+            onClick={() => navigate('/upload-lesson-media')}
+            className="px-4 py-2 bg-[#27AE60] text-white rounded-lg font-medium hover:bg-[#219652]"
+          >
+            Upload Lesson Media (XLSX/CSV)
+          </button>
         </div>
       </div>
 

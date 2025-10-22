@@ -897,6 +897,15 @@ function App() {
         />
 
         <Route
+          path="/upload-lesson-media"
+          element={
+            <ProtectedRoute>
+              <BulkUploadMedia isOpen={isSidebarOpen} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/add-unit-media"
           element={
             <ProtectedRoute>

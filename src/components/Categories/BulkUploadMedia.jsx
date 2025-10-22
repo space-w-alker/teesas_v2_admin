@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { FiUpload, FiDownload } from 'react-icons/fi';
 import Headers from '../common/Headers';
 import { TailSpin } from "react-loader-spinner";
-import { getTopicDetailAsync, uploadBulkVideoAsync } from '../../apis/slices/categoriesSlice';
+import { getTopicDetailAsync, uploadLessonMediaXlsxAsync } from '../../apis/slices/categoriesSlice';
 import SuccessModal from '../common/SuccessModal';
 
 const BulkUploadMedia = ({ isOpen }) => {
@@ -17,9 +17,10 @@ const BulkUploadMedia = ({ isOpen }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [uploadStats, setUploadStats] = useState({
-        totalProcessed: 0,
-        successCount: 0,
-        errorCount: 0
+        totalRowsProcessed: 0,
+        successfulImports: 0,
+        errors: 0,
+        errorDetails: []
     });
 
     // useEffect(() => {
@@ -51,7 +52,7 @@ const BulkUploadMedia = ({ isOpen }) => {
 
     const handleSubmit = async () => {
         if (!selectedFile) {
-            setError('Please select an Excel file');
+            setError('Please select an Excel or CSV file');
             return;
         }
 
@@ -63,27 +64,15 @@ const BulkUploadMedia = ({ isOpen }) => {
             formData.append('file', selectedFile);
             formData.append('lesson_id', topicId);
 
+            const apiResult = await dispatch(uploadLessonMediaXlsxAsync(formData));
+            const payload = apiResult?.data || apiResult; // thunk returns result.data
 
-            const response = await dispatch(uploadBulkVideoAsync(formData));
-
-
-
-            if (response && response.data) {
-
-                setUploadStats({
-                    totalProcessed: response.data.totalProcessed || 0,
-                    successCount: response.data.successCount || 0,
-                    errorCount: response.data.errorCount || 0
-                });
-            } else if (response) {
-
-                setUploadStats({
-                    totalProcessed: response.totalProcessed || 0,
-                    successCount: response.successCount || 0,
-                    errorCount: response.errorCount || 0
-                });
-            }
-
+            setUploadStats({
+                totalRowsProcessed: payload?.totalRowsProcessed || 0,
+                successfulImports: payload?.successfulImports || 0,
+                errors: payload?.errors || 0,
+                errorDetails: payload?.errorDetails || []
+            });
 
             setShowSuccessModal(true);
 
@@ -126,7 +115,7 @@ const BulkUploadMedia = ({ isOpen }) => {
             <div className="flex gap-6">
 
                 <div className="flex-[2] bg-white rounded-xl p-6">
-                    <h2 className="text-2xl font-bold mb-6">Bulk Upload Media</h2>
+                    <h2 className="text-2xl font-bold mb-6">Bulk Upload Lesson Media</h2>
 
                     <div className="space-y-6">
                         <div className="mb-6">
@@ -144,13 +133,13 @@ const BulkUploadMedia = ({ isOpen }) => {
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
                             <div className="text-center">
                                 <FiUpload className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                                <p className="text-gray-600 mb-2">Drag and drop your Excel file here</p>
-                                <p className="text-gray-400 text-sm mb-4">Supported formats: .xlsx, .xls</p>
+                                <p className="text-gray-600 mb-2">Drag and drop your XLSX/CSV file here</p>
+                                <p className="text-gray-400 text-sm mb-4">Supported formats: .xlsx, .xls, .csv</p>
                                 <input
                                     type="file"
                                     id="fileUpload"
                                     className="hidden"
-                                    accept=".xlsx,.xls"
+                                    accept=".xlsx,.xls,.csv"
                                     onChange={handleFileChange}
                                 />
                                 <label
@@ -194,8 +183,8 @@ const BulkUploadMedia = ({ isOpen }) => {
                 isOpen={showSuccessModal}
                 onClose={handleCloseSuccessModal}
                 type="success"
-                title="Upload Successful"
-                message={`Successfully uploaded ${uploadStats.successCount} out of ${uploadStats.totalProcessed} media files.`}
+                title="Import Completed"
+                message={`Import completed. ${uploadStats.successfulImports} successful, ${uploadStats.errors} errors.\n${uploadStats.errorDetails?.slice(0, 3).join('\n')}`}
             />
         </div>
     );

@@ -22,6 +22,7 @@ const {
   CREATE_SUBJECT,
   UPDATE_SUBJECT,
   UPLOAD_BULK_CATEGORIES,
+  UPLOAD_LESSON_MEDIA_XLSX,
 } = config;
 
 const initialState = {
@@ -167,6 +168,12 @@ const initialState = {
     success: false,
     error: null,
   },
+  bulkLessonMediaUpload: {
+    isLoading: false,
+    data: null,
+    success: false,
+    error: null,
+  },
 };
 
 export const categoriesSlice = createSlice({
@@ -253,6 +260,9 @@ export const categoriesSlice = createSlice({
     },
     setBulkVideoUpload: (state, action) => {
       state.bulkVideoUpload = action.payload;
+    },
+    setBulkLessonMediaUpload: (state, action) => {
+      state.bulkLessonMediaUpload = action.payload;
     },
   },
 });
@@ -1121,6 +1131,48 @@ export const uploadBulkVideoAsync = (formData) => async (dispatch) => {
   }
 };
 
+// New: Upload lesson media via XLSX to lessons dashboard endpoint
+export const uploadLessonMediaXlsxAsync = (formData) => async (dispatch) => {
+  try {
+    dispatch(
+      setBulkLessonMediaUpload({
+        isLoading: true,
+        data: null,
+        success: false,
+        error: null,
+      })
+    );
+
+    const URL = `${BASEURL}${UPLOAD_LESSON_MEDIA_XLSX}`;
+    const result = await postFileAPICall(URL, formData);
+
+    // Expected response structure:
+    // { message, data: { totalRowsProcessed, successfulImports, errors, errorDetails[] }, status }
+    if (result?.data) {
+      dispatch(
+        setBulkLessonMediaUpload({
+          isLoading: false,
+          data: result.data,
+          success: true,
+          error: null,
+        })
+      );
+      return result.data;
+    }
+    throw new Error("Failed to upload lesson media XLSX");
+  } catch (error) {
+    dispatch(
+      setBulkLessonMediaUpload({
+        isLoading: false,
+        data: null,
+        success: false,
+        error: error.message || "Failed to upload lesson media XLSX",
+      })
+    );
+    throw error;
+  }
+};
+
 export const {
   setCategoryList,
   setCategoryCreate,
@@ -1149,6 +1201,7 @@ export const {
   setBulkCategoryUpload,
   setSingleChapterDetails,
   setBulkVideoUpload,
+  setBulkLessonMediaUpload,
 } = categoriesSlice.actions;
 
 export const selectBulkCategoryUpload = (state) => state.categories.bulkUpload;
@@ -1169,5 +1222,7 @@ export const selectUniversities = (state) => state.categories.universities;
 export const selectCountries = (state) => state.categories.countries;
 export const selectBulkVideoUpload = (state) =>
   state.categories.bulkVideoUpload;
+export const selectBulkLessonMediaUpload = (state) =>
+  state.categories.bulkLessonMediaUpload;
 
 export default categoriesSlice.reducer;
