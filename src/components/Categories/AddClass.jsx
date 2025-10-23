@@ -41,10 +41,9 @@ const AddClass = ({ isOpen }) => {
   };
 
   const handleChange = (e) => {
-    const sanitizedValue = e.target.value.trim().replace(/[^a-zA-Z0-9\s]/g, "");
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: sanitizedValue,
+      [e.target.name]: e.target.value,
     }));
     // Clear error when user starts typing
     if (formErrors.className) {

@@ -82,9 +82,8 @@ const Lession = ({ isOpen }) => {
   };
 
   const handleSearch = (value) => {
-    const sanitizedValue = value.trim().replace(/[^a-zA-Z\s]/g, '');
-    setSearchTerm(sanitizedValue);
-    if (!sanitizedValue) {
+    setSearchTerm(value);
+    if (!value) {
       setCurrentPage(1);
       dispatch(getCategoriesAsync(1, limit, ''));
     }

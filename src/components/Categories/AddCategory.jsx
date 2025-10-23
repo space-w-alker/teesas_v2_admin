@@ -77,9 +77,6 @@ const AddCategory = ({ isOpen }) => {
     return errors;
   };
 
-  const sanitizeInput = (value) => {
-    return value.trim().replace(/[^a-zA-Z0-9\s]/g, "");
-  };
 
   const handleAddClass = () => {
     if (formData.classes.length < FORM_CONSTANTS.MAX_CLASSES) {
@@ -137,14 +134,14 @@ const AddCategory = ({ isOpen }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: sanitizeInput(value),
+      [name]: value,
     }));
   };
 
   const handleClassChange = useCallback((index, value) => {
     setFormData((prev) => {
       const updatedClasses = [...prev.classes];
-      updatedClasses[index].name = sanitizeInput(value);
+      updatedClasses[index].name = value;
       return { ...prev, classes: updatedClasses };
     });
   }, []);

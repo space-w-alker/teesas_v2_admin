@@ -126,9 +126,8 @@ const ResellerForm = ({ isOpen }) => {
   };
 
   const handleSearch = (value) => {
-    const sanitizedValue = value.trim();
-    setSearchTerm(sanitizedValue);
-    if (!sanitizedValue) {
+    setSearchTerm(value);
+    if (!value) {
       setCurrentPage(1);
       dispatch(getResellersAsync(1, ""));
     }
