@@ -184,7 +184,7 @@ export const createLessonMediaAsync = (body) => async (dispatch) => {
 		// Remove empty-string fields before sending
 		const cleanedBody = cleanParams(body);
 		const result = await postAPICall(URL, cleanedBody);
-		if (result?.data?.status === 200) {
+	if ([200, 201].includes(result?.data?.status)) {
 			dispatch(setCreateLessonMedia({ isLoading: false, success: true, error: null }));
 			return true;
 		}
