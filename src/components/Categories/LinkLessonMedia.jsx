@@ -36,6 +36,9 @@ const LinkLessonMedia = ({ isOpen }) => {
 	const [formError, setFormError] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 		const [mediaStack, setMediaStack] = useState([]);
+		// Multi-select of media and inline edit state
+		const [selectedMediaList, setSelectedMediaList] = useState([]);
+		const [editingMediaId, setEditingMediaId] = useState(null);
 
 	// Dropdown options
 	const mediaTypeOptions = [
@@ -116,6 +119,47 @@ const LinkLessonMedia = ({ isOpen }) => {
 		);
 	};
 
+	// Helpers for multi-select and per-item edits
+	const isMediaSelected = (id) => selectedMediaList.some((it) => it.id === id);
+	const toggleSelectMedia = (m) => {
+		if (!m || m.is_folder) return;
+		setSelectedMedia(m);
+		setSelectedMediaList((prev) => {
+			const exists = prev.some((it) => it.id === m.id);
+			if (exists) {
+				return prev.filter((it) => it.id !== m.id);
+			}
+			return [
+				...prev,
+				{ id: m.id, name: m.name, path: m.path, title: m.name, thumbnail: "" },
+			];
+		});
+	};
+	const updateMediaTitle = (id, newTitle) => {
+		setSelectedMediaList((prev) => prev.map((it) => (it.id === id ? { ...it, title: newTitle } : it)));
+	};
+	const removeMediaFromSelection = (id) => {
+		setSelectedMediaList((prev) => prev.filter((it) => it.id !== id));
+		if (selectedMedia?.id === id) setSelectedMedia(null);
+	};
+	const fileToBase64 = (file) =>
+		new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	const handleThumbnailFileChange = async (id, file) => {
+		if (!file) return;
+		try {
+			const b64 = await fileToBase64(file);
+			setSelectedMediaList((prev) => prev.map((it) => (it.id === id ? { ...it, thumbnail: b64 } : it)));
+			toast.success("Thumbnail selected");
+		} catch (e) {
+			toast.error("Failed to read thumbnail file");
+		}
+	};
+	
 	const handleNextLessons = () => {
 		const next = page + 1;
 		setPage(next);
@@ -134,44 +178,48 @@ const LinkLessonMedia = ({ isOpen }) => {
 			setFormError("Please select a lesson.");
 			return;
 		}
-		if (!selectedMedia?.path) {
-			setFormError("Please select a media file.");
+
+		const itemsToCreate = selectedMediaList.length
+			? selectedMediaList
+			: selectedMedia
+				? [{ id: selectedMedia.id, name: selectedMedia.name, path: selectedMedia.path, title: title || selectedMedia.name, thumbnail }]
+				: [];
+
+		if (!itemsToCreate.length) {
+			setFormError("Please select at least one media item.");
 			return;
 		}
-		if (!title?.trim()) {
-			setFormError("Title is required.");
-			return;
-		}
-		const payload = {
-			title: title.trim(),
-			media_path: selectedMedia.path,
-			thumbnail: thumbnail || "",
-			source_type: sourceType || "",
-			content_type: contentType || "",
-			active: Boolean(active),
-			lesson_id: String(selectedLesson.id),
-		};
+
 		setSubmitting(true);
 		try {
-			const ok = await dispatch(createLessonMediaAsync(payload));
-			if (ok) {
-				setTitle("");
-				setThumbnail("");
-				setSourceType("FILE");
-				setContentType("PAID");
-				setMediaType("video");
-				setActive(false);
-				setSelectedLesson(null);
-				setSelectedMedia(null);
-				setLessonSearch("");
-				setMediaSearch("");
-				dispatch(resetCreateLessonMedia());
-				// success feedback
-				toast.success("Lesson media created successfully.");
-			} else {
-				setFormError("Failed to create lesson media.");
-				toast.error("Failed to create lesson media.");
+			let successCount = 0;
+			let failureCount = 0;
+			for (const item of itemsToCreate) {
+				const payload = {
+					title: (item.title || item.name || "").trim(),
+					media_path: item.path,
+					thumbnail: item.thumbnail || "",
+					source_type: sourceType || "",
+					content_type: contentType || "",
+					active: Boolean(active),
+					lesson_id: String(selectedLesson.id),
+				};
+				// eslint-disable-next-line no-await-in-loop
+				const ok = await dispatch(createLessonMediaAsync(payload));
+				if (ok) successCount += 1; else failureCount += 1;
 			}
+			if (successCount) {
+				toast.success(`${successCount} item${successCount === 1 ? "" : "s"} linked successfully`);
+			}
+			if (failureCount) {
+				toast.error(`${failureCount} item${failureCount === 1 ? "" : "s"} failed to link`);
+			}
+			// Reset per-item selections but keep the chosen lesson
+			setSelectedMedia(null);
+			setSelectedMediaList([]);
+			setTitle("");
+			setThumbnail("");
+			dispatch(resetCreateLessonMedia());
 		} catch (e) {
 			setFormError(e?.message || "Failed to create lesson media.");
 			toast.error(e?.message || "Failed to create lesson media.");
@@ -202,87 +250,162 @@ const LinkLessonMedia = ({ isOpen }) => {
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-				<div className="bg-white rounded-xl p-6 lg:col-span-2">
-					<h2 className="text-2xl font-bold mb-6">Link Lesson to Media</h2>
-					<div className="space-y-6">
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-								<input
-									type="text"
-									value={title}
-									onChange={(e) => setTitle(e.target.value)}
-									className="w-full border rounded-lg px-3 py-2"
-									placeholder="Enter title"
-								/>
+				{/* Left column: Select Lesson */}
+				<div className="bg-white rounded-xl p-6">
+					<h3 className="text-xl font-bold mb-4">Select Lesson</h3>
+					<div className="flex gap-2 mb-3">
+						<input
+							type="text"
+							value={lessonSearch}
+							onChange={(e) => setLessonSearch(e.target.value)}
+							className="flex-1 border rounded-lg px-3 py-2"
+							placeholder="Search lessons"
+						/>
+						<button
+							className="px-4 py-2 bg-[#27AE60] text-white rounded-lg"
+							onClick={handleSearchLessons}
+						>
+							Search
+						</button>
+					</div>
+					<div className="border rounded-lg max-h-64 overflow-auto divide-y">
+						{lessonItems.map((lesson) => (
+							<div
+								key={lesson.id}
+								onClick={() => setSelectedLesson(lesson)}
+								className={`px-3 py-2 cursor-pointer hover:bg-gray-50 ${
+									selectedLesson?.id === lesson.id ? "bg-green-50" : ""
+								}`}
+							>
+								<div className="font-medium">{lesson.name}</div>
+								<div className="text-xs text-gray-500">ID: {lesson.id}</div>
 							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">Media Type</label>
-								<select
-									value={mediaType}
-									onChange={(e) => setMediaType(e.target.value)}
-									className="w-full border rounded-lg px-3 py-2 bg-white"
-								>
-									<option value="">Select media type</option>
-									{mediaTypeOptions.map((opt) => (
-										<option key={opt.value} value={opt.value}>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">Thumbnail</label>
-								<input
-									type="text"
-									value={thumbnail}
-									onChange={(e) => setThumbnail(e.target.value)}
-									className="w-full border rounded-lg px-3 py-2"
-									placeholder="Thumbnail URL or path"
-								/>
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">Source Type</label>
-								<select
-									value={sourceType}
-									onChange={(e) => setSourceType(e.target.value)}
-									className="w-full border rounded-lg px-3 py-2 bg-white"
-								>
-									<option value="">Select source type</option>
-									{sourceTypeOptions.map((opt) => (
-										<option key={opt.value} value={opt.value}>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">Content Type</label>
-								<select
-									value={contentType}
-									onChange={(e) => setContentType(e.target.value)}
-									className="w-full border rounded-lg px-3 py-2 bg-white"
-								>
-									<option value="">Select content type</option>
-									{contentTypeOptions.map((opt) => (
-										<option key={opt.value} value={opt.value}>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-							<div className="flex items-center gap-3">
-								<input
-									id="activeCheckbox"
-									type="checkbox"
-									checked={active}
-									onChange={(e) => setActive(e.target.checked)}
-								/>
-								<label htmlFor="activeCheckbox" className="text-sm font-medium text-gray-700">
-									Active
-								</label>
-							</div>
+						))}
+						{!lessonItems.length && (
+							<div className="px-3 py-4 text-sm text-gray-500">No lessons found.</div>
+						)}
+					</div>
+					<div className="flex justify-between mt-3">
+						<button
+							className="px-3 py-1 border rounded"
+							onClick={handlePrevLessons}
+							disabled={page <= 1}
+						>
+							Prev
+						</button>
+						<div className="text-sm text-gray-600">Page {page}</div>
+						<button className="px-3 py-1 border rounded" onClick={handleNextLessons}>
+							Next
+						</button>
+					</div>
+				</div>
+				{/* Middle column: Select Media */}
+				<div className="bg-white rounded-xl p-6">
+					<h3 className="text-xl font-bold mb-4">Select Media</h3>
+					<div className="flex items-center justify-between mb-2">
+						<div className="text-sm text-gray-600 break-all">
+							Path: /{mediaStack.map((f) => f.name).join("/")}
 						</div>
+						<button
+							className="px-3 py-1 border rounded disabled:opacity-50"
+							onClick={goUpOneLevel}
+							disabled={!mediaStack.length}
+						>
+							Up
+						</button>
+					</div>
+					<div className="flex gap-2 mb-3">
+						<input
+							type="text"
+							value={mediaSearch}
+							onChange={(e) => setMediaSearch(e.target.value)}
+							className="flex-1 border rounded-lg px-3 py-2"
+							placeholder="Search media"
+						/>
+						<button className="px-4 py-2 bg-[#27AE60] text-white rounded-lg" onClick={handleSearchMedia}>
+							Search
+						</button>
+					</div>
+					<div className="border rounded-lg max-h-64 overflow-auto divide-y">
+						{mediaItems.map((m) => {
+							const isFolder = Boolean(m?.is_folder);
+							return (
+								<div
+									key={m.id}
+									onClick={() => (isFolder ? enterFolder(m) : toggleSelectMedia(m))}
+									className={`px-3 py-2 cursor-pointer hover:bg-gray-50 ${
+										!isFolder && isMediaSelected(m.id) ? "bg-green-50" : ""
+									}`}
+								>
+									<div className="font-medium">
+										{isFolder ? "[Folder] " : ""}
+										{m.name}
+									</div>
+									<div className="text-xs text-gray-500 break-all">{m.path}</div>
+								</div>
+							);
+						})}
+						{!mediaItems.length && (
+							<div className="px-3 py-4 text-sm text-gray-500">No media found.</div>
+						)}
+					</div>
+				</div>
+				{/* Right column: Link Lesson to Media form */}
+				<div className="bg-white rounded-xl p-6">
+					<h2 className="text-2xl font-bold mb-6">
+						{selectedLesson?.name ? `Link Media to: ${selectedLesson.name}` : "Link Lesson to Media"}
+					</h2>
+					{/* Selected media list */}
+					<div className="space-y-3 mb-6">
+						<div className="text-sm text-gray-600">
+							Selected: {selectedMediaList.length} item{selectedMediaList.length === 1 ? "" : "s"}
+						</div>
+						{selectedMediaList.map((item) => (
+							<div key={item.id} className="border rounded-lg p-3 flex flex-col gap-2">
+								<div className="flex items-center justify-between gap-3">
+									<div className="flex-1">
+										{editingMediaId === item.id ? (
+											<input
+												className="w-full border rounded px-2 py-1"
+												value={item.title}
+												onChange={(e) => updateMediaTitle(item.id, e.target.value)}
+												onBlur={() => setEditingMediaId(null)}
+											/>
+										) : (
+											<button className="text-left font-medium hover:underline" onClick={() => setEditingMediaId(item.id)}>
+												{item.title}
+											</button>
+										)}
+										<div className="text-xs text-gray-500 break-all">{item.path}</div>
+									</div>
+									<button
+										className="text-red-600 text-sm hover:underline"
+										onClick={() => removeMediaFromSelection(item.id)}
+									>
+										Remove
+									</button>
+								</div>
+								<div className="flex items-center gap-3">
+									<input
+										id={`thumb-${item.id}`}
+										type="file"
+										accept="image/*"
+										className="hidden"
+										onChange={(e) => handleThumbnailFileChange(item.id, e.target.files?.[0])}
+									/>
+									<label htmlFor={`thumb-${item.id}`} className="px-3 py-1 border rounded cursor-pointer hover:bg-gray-50">
+										Upload Thumbnail
+									</label>
+									{item.thumbnail ? (
+										<span className="text-xs text-green-700">Thumbnail selected</span>
+									) : (
+										<span className="text-xs text-gray-500">No thumbnail</span>
+									)}
+								</div>
+							</div>
+						))}
+					</div>
+					<div className="space-y-6">
 
 						{formError && <div className="bg-red-50 text-red-600 p-3 rounded-lg">{formError}</div>}
 
@@ -293,108 +416,6 @@ const LinkLessonMedia = ({ isOpen }) => {
 						>
 							{submitting ? "Submitting..." : "Create Lesson Media"}
 						</button>
-					</div>
-				</div>
-
-				<div className="space-y-6">
-					<div className="bg-white rounded-xl p-6">
-						<h3 className="text-xl font-bold mb-4">Select Lesson</h3>
-						<div className="flex gap-2 mb-3">
-							<input
-								type="text"
-								value={lessonSearch}
-								onChange={(e) => setLessonSearch(e.target.value)}
-								className="flex-1 border rounded-lg px-3 py-2"
-								placeholder="Search lessons"
-							/>
-							<button
-								className="px-4 py-2 bg-[#27AE60] text-white rounded-lg"
-								onClick={handleSearchLessons}
-							>
-								Search
-							</button>
-						</div>
-						<div className="border rounded-lg max-h-64 overflow-auto divide-y">
-							{lessonItems.map((lesson) => (
-								<div
-									key={lesson.id}
-									onClick={() => setSelectedLesson(lesson)}
-									className={`px-3 py-2 cursor-pointer hover:bg-gray-50 ${
-										selectedLesson?.id === lesson.id ? "bg-green-50" : ""
-									}`}
-								>
-									<div className="font-medium">{lesson.name}</div>
-									<div className="text-xs text-gray-500">ID: {lesson.id}</div>
-								</div>
-							))}
-							{!lessonItems.length && (
-								<div className="px-3 py-4 text-sm text-gray-500">No lessons found.</div>
-							)}
-						</div>
-						<div className="flex justify-between mt-3">
-							<button
-								className="px-3 py-1 border rounded"
-								onClick={handlePrevLessons}
-								disabled={page <= 1}
-							>
-								Prev
-							</button>
-							<div className="text-sm text-gray-600">Page {page}</div>
-							<button className="px-3 py-1 border rounded" onClick={handleNextLessons}>
-								Next
-							</button>
-						</div>
-					</div>
-
-					<div className="bg-white rounded-xl p-6">
-						<h3 className="text-xl font-bold mb-4">Select Media</h3>
-						<div className="flex items-center justify-between mb-2">
-							<div className="text-sm text-gray-600 break-all">
-								Path: /{mediaStack.map((f) => f.name).join("/")}
-							</div>
-							<button
-								className="px-3 py-1 border rounded disabled:opacity-50"
-								onClick={goUpOneLevel}
-								disabled={!mediaStack.length}
-							>
-								Up
-							</button>
-						</div>
-						<div className="flex gap-2 mb-3">
-							<input
-								type="text"
-								value={mediaSearch}
-								onChange={(e) => setMediaSearch(e.target.value)}
-								className="flex-1 border rounded-lg px-3 py-2"
-								placeholder="Search media"
-							/>
-							<button className="px-4 py-2 bg-[#27AE60] text-white rounded-lg" onClick={handleSearchMedia}>
-								Search
-							</button>
-						</div>
-						<div className="border rounded-lg max-h-64 overflow-auto divide-y">
-							{mediaItems.map((m) => {
-								const isFolder = Boolean(m?.is_folder);
-								return (
-									<div
-										key={m.id}
-										onClick={() => (isFolder ? enterFolder(m) : setSelectedMedia(m))}
-										className={`px-3 py-2 cursor-pointer hover:bg-gray-50 ${
-											!isFolder && selectedMedia?.id === m.id ? "bg-green-50" : ""
-										}`}
-									>
-										<div className="font-medium">
-											{isFolder ? "[Folder] " : ""}
-											{m.name}
-										</div>
-										<div className="text-xs text-gray-500 break-all">{m.path}</div>
-									</div>
-								);
-							})}
-							{!mediaItems.length && (
-								<div className="px-3 py-4 text-sm text-gray-500">No media found.</div>
-							)}
-						</div>
 					</div>
 				</div>
 			</div>
