@@ -11,6 +11,7 @@ import {
 } from "../../apis/slices/contentSlice";
 import Headers from "../common/Headers";
 import { TailSpin } from "react-loader-spinner";
+import { toast } from "react-toastify";
 
 const LinkLessonMedia = ({ isOpen }) => {
 	const dispatch = useDispatch();
@@ -165,13 +166,15 @@ const LinkLessonMedia = ({ isOpen }) => {
 				setLessonSearch("");
 				setMediaSearch("");
 				dispatch(resetCreateLessonMedia());
-				// simple feedback; can be replaced with shared modal
-				alert("Lesson media created successfully.");
+				// success feedback
+				toast.success("Lesson media created successfully.");
 			} else {
 				setFormError("Failed to create lesson media.");
+				toast.error("Failed to create lesson media.");
 			}
 		} catch (e) {
 			setFormError(e?.message || "Failed to create lesson media.");
+			toast.error(e?.message || "Failed to create lesson media.");
 		} finally {
 			setSubmitting(false);
 		}
