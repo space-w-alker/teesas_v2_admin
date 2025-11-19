@@ -184,6 +184,7 @@ import PaymentProof from "./pages/admin/one-on-oneclass/PaymentProof";
 import LearningCenterCourses from "./components/LearningCenter/LearningCenterCourses";
 import AddSubjectLearningCenter from "./components/LearningCenter/AddSubjectLearningCenter";
 import BulkUploadMedia from "./components/Categories/BulkUploadMedia";
+import LinkLessonMedia from "./components/Categories/LinkLessonMedia";
 import ParentReport from "./components/ParentReport/ParentReport";
 import EditSubscriptionPlan from "./components/SubscriptionTypes/EditSubscriptionPlan";
 import WithdrawRequest from "./components/Payments/WithdrawRequest";
@@ -901,6 +902,15 @@ function App() {
           element={
             <ProtectedRoute>
               <BulkUploadMedia isOpen={isSidebarOpen} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/link-lesson-media"
+          element={
+            <ProtectedRoute>
+              <LinkLessonMedia isOpen={isSidebarOpen} />
             </ProtectedRoute>
           }
         />

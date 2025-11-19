@@ -23,6 +23,7 @@ import bannerReducer from "./apis/slices/bannerSlice";
 import rolesReducer from "./apis/slices/rolesSlice";
 import performanceReducer from "./apis/slices/performanceSlice";
 import learningCenterReducer from "./apis/slices/learningCenterSlice";
+import contentReducer from "./apis/slices/contentSlice";
 
 export default configureStore({
   reducer: {
@@ -50,5 +51,6 @@ export default configureStore({
     roles: rolesReducer,
     perfomance: performanceReducer,
     learningCenter: learningCenterReducer,
+    content: contentReducer,
   },
 });

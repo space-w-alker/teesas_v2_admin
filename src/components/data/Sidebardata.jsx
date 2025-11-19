@@ -144,6 +144,11 @@ const Sidebardata = [
         path: "/e-book",
         permissions: ["ebook_list:read"],
       },
+      {
+        name: "Link Lesson Media",
+        icon: hashtag,
+        path: "/link-lesson-media",
+      },
     ],
   },
   {
