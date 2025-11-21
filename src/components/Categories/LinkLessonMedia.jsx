@@ -5,9 +5,13 @@ import {
 	fetchMediaManagerAsync,
 	createLessonMediaAsync,
 	resetCreateLessonMedia,
+	fetchLessonMediaPaginatedAsync,
+	deleteLessonMediaAsync,
 	selectLessonsPaginated,
 	selectMediaManager,
 	selectCreateLessonMedia,
+	selectLessonMediaPaginated,
+	selectDeleteLessonMedia,
 } from "../../apis/slices/contentSlice";
 import Headers from "../common/Headers";
 import { TailSpin } from "react-loader-spinner";
@@ -19,10 +23,14 @@ const LinkLessonMedia = ({ isOpen }) => {
 	const lessonsState = useSelector(selectLessonsPaginated);
 	const mediaState = useSelector(selectMediaManager);
 	const createState = useSelector(selectCreateLessonMedia);
+	const lessonMediaState = useSelector(selectLessonMediaPaginated);
+	const deleteLessonMediaState = useSelector(selectDeleteLessonMedia);
 
 	const [page, setPage] = useState(1);
 	const [lessonSearch, setLessonSearch] = useState("");
 	const [mediaSearch, setMediaSearch] = useState("");
+	const [lessonMediaPage, setLessonMediaPage] = useState(1);
+	const [linkedMediaSearch, setLinkedMediaSearch] = useState("");
 
 	const [selectedLesson, setSelectedLesson] = useState(null);
 	const [selectedMedia, setSelectedMedia] = useState(null);
@@ -39,6 +47,7 @@ const LinkLessonMedia = ({ isOpen }) => {
 		// Multi-select of media and inline edit state
 		const [selectedMediaList, setSelectedMediaList] = useState([]);
 		const [editingMediaId, setEditingMediaId] = useState(null);
+	const [deletingLessonMediaId, setDeletingLessonMediaId] = useState(null);
 
 	// Dropdown options
 	const mediaTypeOptions = [
@@ -71,8 +80,30 @@ const LinkLessonMedia = ({ isOpen }) => {
 		);
 	}, [dispatch]);
 
+	useEffect(() => {
+		const firstPage = 1;
+		setLessonMediaPage(firstPage);
+		setLinkedMediaSearch("");
+		if (selectedLesson?.id) {
+			dispatch(
+				fetchLessonMediaPaginatedAsync({
+					page: firstPage,
+					limit: 10,
+					search: "",
+					lesson_id: selectedLesson.id,
+				})
+			);
+		}
+	}, [dispatch, selectedLesson?.id]);
+
 	const lessonItems = useMemo(() => lessonsState?.data?.items || [], [lessonsState]);
 	const mediaItems = useMemo(() => mediaState?.data?.items || [], [mediaState]);
+	const lessonMediaItems = useMemo(() => lessonMediaState?.data?.items || [], [lessonMediaState]);
+	const lessonMediaTotalPages = useMemo(
+		() => Math.max(lessonMediaState?.data?.totalPages || 1, 1),
+		[lessonMediaState]
+	);
+	const lessonMediaTotal = lessonMediaState?.data?.total || 0;
 
 	const handleSearchLessons = () => {
 		setPage(1);
@@ -172,6 +203,74 @@ const LinkLessonMedia = ({ isOpen }) => {
 		dispatch(fetchLessonsPaginatedAsync({ page: prev, limit: 5, search: lessonSearch || "" }));
 	};
 
+	const reloadLessonMedia = (pageOverride = lessonMediaPage, searchOverride = linkedMediaSearch) => {
+		if (!selectedLesson?.id) return;
+		dispatch(
+			fetchLessonMediaPaginatedAsync({
+				page: pageOverride,
+				limit: 10,
+				search: searchOverride,
+				lesson_id: selectedLesson.id,
+			})
+		);
+	};
+
+	const handleSearchLinkedMedia = () => {
+		if (!selectedLesson?.id) {
+			toast.info("Select a lesson to view linked media.");
+			return;
+		}
+		const sanitizedSearch = linkedMediaSearch?.trim() || "";
+		setLinkedMediaSearch(sanitizedSearch);
+		const firstPage = 1;
+		setLessonMediaPage(firstPage);
+		reloadLessonMedia(firstPage, sanitizedSearch);
+	};
+
+	const handlePrevLinkedMedia = () => {
+		if (lessonMediaPage <= 1) return;
+		const prev = lessonMediaPage - 1;
+		setLessonMediaPage(prev);
+		reloadLessonMedia(prev);
+	};
+
+	const handleNextLinkedMedia = () => {
+		if (lessonMediaPage >= lessonMediaTotalPages) return;
+		const next = lessonMediaPage + 1;
+		setLessonMediaPage(next);
+		reloadLessonMedia(next);
+	};
+
+	const handleResetLinkedMediaSearch = () => {
+		if (!selectedLesson?.id) {
+			setLinkedMediaSearch("");
+			return;
+		}
+		const firstPage = 1;
+		setLinkedMediaSearch("");
+		setLessonMediaPage(firstPage);
+		reloadLessonMedia(firstPage, "");
+	};
+
+	const handleDeleteLinkedMedia = async (id) => {
+		if (!id || !selectedLesson?.id) return;
+		const confirmed = window.confirm("Are you sure you want to delete this lesson media?");
+		if (!confirmed) return;
+		setDeletingLessonMediaId(id);
+		const currentItemsCount = lessonMediaItems.length;
+		const success = await dispatch(deleteLessonMediaAsync(id));
+		if (success) {
+			toast.success("Lesson media deleted.");
+			const shouldGoPrev = lessonMediaPage > 1 && currentItemsCount === 1;
+			const nextPage = shouldGoPrev ? lessonMediaPage - 1 : lessonMediaPage;
+			setLessonMediaPage(nextPage);
+			reloadLessonMedia(nextPage);
+		} else {
+			toast.error("Failed to delete lesson media.");
+		}
+		setDeletingLessonMediaId(null);
+	};
+
 	const handleSubmit = async () => {
 		setFormError("");
 		if (!selectedLesson?.id) {
@@ -210,6 +309,7 @@ const LinkLessonMedia = ({ isOpen }) => {
 			}
 			if (successCount) {
 				toast.success(`${successCount} item${successCount === 1 ? "" : "s"} linked successfully`);
+				reloadLessonMedia(lessonMediaPage, linkedMediaSearch);
 			}
 			if (failureCount) {
 				toast.error(`${failureCount} item${failureCount === 1 ? "" : "s"} failed to link`);
@@ -228,7 +328,12 @@ const LinkLessonMedia = ({ isOpen }) => {
 		}
 	};
 
-	const isLoadingAny = lessonsState.isLoading || mediaState.isLoading || submitting || createState.isLoading;
+	const isLoadingAny =
+		lessonsState.isLoading ||
+		mediaState.isLoading ||
+		submitting ||
+		createState.isLoading ||
+		lessonMediaState.isLoading;
 
 	return (
 		<div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""}`}>
@@ -355,6 +460,99 @@ const LinkLessonMedia = ({ isOpen }) => {
 					<h2 className="text-2xl font-bold mb-6">
 						{selectedLesson?.name ? `Link Media to: ${selectedLesson.name}` : "Link Lesson to Media"}
 					</h2>
+					{/* Previously linked media */}
+					<div className="mb-8">
+						<div className="flex flex-col gap-2 mb-3 lg:flex-row">
+							<input
+								type="text"
+								value={linkedMediaSearch}
+								onChange={(e) => setLinkedMediaSearch(e.target.value)}
+								className="flex-1 border rounded-lg px-3 py-2"
+								placeholder="Search linked media"
+								disabled={!selectedLesson}
+							/>
+							<div className="flex gap-2">
+								<button
+									className="px-4 py-2 bg-[#27AE60] text-white rounded-lg disabled:opacity-50"
+									onClick={handleSearchLinkedMedia}
+									disabled={!selectedLesson}
+								>
+									Search
+								</button>
+								<button
+									className="px-4 py-2 border rounded-lg disabled:opacity-50"
+									onClick={handleResetLinkedMediaSearch}
+									disabled={!selectedLesson && !linkedMediaSearch}
+								>
+									Reset
+								</button>
+							</div>
+						</div>
+						<div className="border rounded-lg max-h-64 overflow-auto divide-y">
+							{!selectedLesson && (
+								<div className="px-3 py-4 text-sm text-gray-500">Select a lesson to view linked media.</div>
+							)}
+							{selectedLesson &&
+								lessonMediaItems.map((media) => (
+									<div key={media.id} className="px-3 py-3 flex flex-col gap-1">
+										<div className="flex items-start justify-between gap-3">
+											<div>
+												<div className="font-medium">{media.title || media.media_path || `Media ${media.id}`}</div>
+												<div className="text-xs text-gray-500 break-all">{media.media_path}</div>
+												<div className="text-xs text-gray-500">
+													{media.content_type || "N/A"} · {media.source_type || "N/A"} ·{" "}
+													{media.active ? "Active" : "Inactive"}
+												</div>
+											</div>
+											<button
+												className="text-red-600 text-sm hover:underline disabled:opacity-50"
+												onClick={() => handleDeleteLinkedMedia(media.id)}
+												disabled={
+													deleteLessonMediaState.isLoading && deletingLessonMediaId === media.id
+												}
+											>
+												{deletingLessonMediaId === media.id && deleteLessonMediaState.isLoading
+													? "Deleting..."
+													: "Delete"}
+											</button>
+										</div>
+										<div className="text-xs text-gray-400">
+											ID: {media.id} · Linked on: {media.created_at || "N/A"}
+										</div>
+									</div>
+								))}
+							{selectedLesson && !lessonMediaItems.length && !lessonMediaState.isLoading && (
+								<div className="px-3 py-4 text-sm text-gray-500">No media linked to this lesson yet.</div>
+							)}
+						</div>
+						{lessonMediaState.error && selectedLesson && (
+							<div className="text-sm text-red-600 mt-2">{lessonMediaState.error}</div>
+						)}
+						{selectedLesson && (
+							<div className="flex flex-col gap-2 mt-3 text-sm text-gray-600 lg:flex-row lg:items-center lg:justify-between">
+								<div>Total linked media: {lessonMediaTotal}</div>
+								<div className="flex items-center gap-2">
+									<button
+										className="px-3 py-1 border rounded disabled:opacity-50"
+										onClick={handlePrevLinkedMedia}
+										disabled={lessonMediaPage <= 1}
+									>
+										Prev
+									</button>
+									<div>
+										Page {lessonMediaPage} / {lessonMediaTotalPages}
+									</div>
+									<button
+										className="px-3 py-1 border rounded disabled:opacity-50"
+										onClick={handleNextLinkedMedia}
+										disabled={lessonMediaPage >= lessonMediaTotalPages || !lessonMediaItems.length}
+									>
+										Next
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
 					{/* Selected media list */}
 					<div className="space-y-3 mb-6">
 						<div className="text-sm text-gray-600">
