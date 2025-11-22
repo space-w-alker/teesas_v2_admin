@@ -9,7 +9,8 @@ const SuccessModal = ({
   title,
   message,
   buttonText = 'Close',
-  onConfirm
+  onConfirm,
+  extraContent = null
 }) => {
   if (!isOpen) return null;
   const handleClick = () => {
@@ -39,7 +40,13 @@ const SuccessModal = ({
 
         <h3 className="text-2xl font-bold mb-4">{title}</h3>
 
-        <p className="text-gray-600 mb-8">{message}</p>
+        <p className="text-gray-600 mb-6 whitespace-pre-line">{message}</p>
+
+        {extraContent && (
+          <div className="mb-6">
+            {extraContent}
+          </div>
+        )}
 
         <button
           onClick={handleClick}

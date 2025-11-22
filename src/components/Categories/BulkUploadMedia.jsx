@@ -20,7 +20,8 @@ const BulkUploadMedia = ({ isOpen }) => {
         totalRowsProcessed: 0,
         successfulImports: 0,
         errors: 0,
-        errorDetails: []
+        errorDetails: [],
+        failedCsv: null
     });
 
     // useEffect(() => {
@@ -71,7 +72,8 @@ const BulkUploadMedia = ({ isOpen }) => {
                 totalRowsProcessed: payload?.totalRowsProcessed || 0,
                 successfulImports: payload?.successfulImports || 0,
                 errors: payload?.errors || 0,
-                errorDetails: payload?.errorDetails || []
+                errorDetails: payload?.errorDetails || [],
+                failedCsv: payload?.failedCsv || null
             });
 
             setShowSuccessModal(true);
@@ -185,6 +187,20 @@ const BulkUploadMedia = ({ isOpen }) => {
                 type="success"
                 title="Import Completed"
                 message={`Import completed. ${uploadStats.successfulImports} successful, ${uploadStats.errors} errors.\n${uploadStats.errorDetails?.slice(0, 3).join('\n')}`}
+                extraContent={
+                    uploadStats?.failedCsv?.downloadUrl ? (
+                        <a
+                            href={uploadStats.failedCsv.downloadUrl}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 px-4 py-2 border border-[#27AE60] text-[#27AE60] rounded-lg font-medium hover:bg-[#27AE60] hover:text-white transition-colors"
+                        >
+                            <FiDownload size={18} />
+                            Download failed rows CSV
+                        </a>
+                    ) : null
+                }
             />
         </div>
     );
