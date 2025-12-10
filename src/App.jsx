@@ -198,6 +198,8 @@ import LearningRegistration from "./pages/admin/LearningRegistration/LearningReg
 import LearningRegistrationDetails from "./pages/admin/LearningRegistration/LearningRegistrationDetails";
 import AssessmentRegistration from "./pages/admin/AssessmentRegistration/AssessmentRegistration";
 import AssessmentRegistrationDetails from "./pages/admin/AssessmentRegistration/AssessmentRegistrationDetails";
+import DemoRequest from "./pages/admin/DemoRequest/DemoRequest";
+import DemoRequestDetails from "./pages/admin/DemoRequest/DemoRequestDetails";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -2384,6 +2386,23 @@ function App() {
           element={
             <ProtectedRoute>
               <AssessmentRegistrationDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/demo-requests"
+          element={
+            <ProtectedRoute>
+              <DemoRequest isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/demo-requests/details/:id"
+          element={
+            <ProtectedRoute>
+              <DemoRequestDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </ProtectedRoute>
           }
         />

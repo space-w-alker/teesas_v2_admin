@@ -288,6 +288,12 @@ const Sidebardata = [
         path: "/country-list",
         permissions: ["country_list:read"],
       },
+      {
+        name: "Demo Request",
+        icon: hashtag,
+        path: "/demo-requests",
+        permissions: ["push_notifications:read"],
+      },
     ],
   },
   {

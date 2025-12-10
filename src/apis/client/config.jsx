@@ -147,4 +147,8 @@ export const config = {
   // Assessment Registration endpoints
   GET_ASSESSMENT_REGISTRATIONS: "assessment_registration",
   GET_ASSESSMENT_REGISTRATION_BY_ID: "assessment_registration",
+
+  // Demo Request endpoints
+  GET_DEMO_REQUESTS: "demo-requests",
+  GET_DEMO_REQUEST_BY_ID: "demo-requests",
 };
