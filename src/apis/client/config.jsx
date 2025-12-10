@@ -137,6 +137,14 @@ export const config = {
   DELETE_BLOG: "blog",
 
   // General Enquiry endpoints
-  GET_GENERAL_ENQUIRIES: "generall-enquiry",
+  GET_GENERAL_ENQUIRIES: "general-enquiry",
   GET_GENERAL_ENQUIRY_BY_ID: "general-enquiry",
+
+  // Learning Registration endpoints
+  GET_LEARNING_REGISTRATIONS: "learning_registration",
+  GET_LEARNING_REGISTRATION_BY_ID: "learning_registration",
+
+  // Assessment Registration endpoints
+  GET_ASSESSMENT_REGISTRATIONS: "assessment_registration",
+  GET_ASSESSMENT_REGISTRATION_BY_ID: "assessment_registration",
 };

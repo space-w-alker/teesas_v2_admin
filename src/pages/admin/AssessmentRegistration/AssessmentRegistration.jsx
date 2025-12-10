@@ -4,34 +4,34 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FaChevronLeft } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 import UserCard from '../../../components/common/UserCard';
-import GeneralEnquiryList from '../../../components/Core/Dashboard/Admin/GeneralEnquiryList';
-import { getEnquiriesAsync, getEnquiries, getEnquiriesResponse } from '../../../apis/slices/enquirySlice';
+import AssessmentRegistrationList from '../../../components/Core/Dashboard/Admin/AssessmentRegistrationList';
+import { getAssessmentRegistrationsAsync, getAssessmentRegistrations, getAssessmentRegistrationsResponse } from '../../../apis/slices/assessmentRegistrationSlice';
 import live from '../../../assets/images/live.png';
 import liveimage from '../../../assets/images/liveimage.png';
 
-const GeneralEnquiry = ({ isOpen }) => {
+const AssessmentRegistration = ({ isOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { response } = useSelector(getEnquiriesResponse);
-  const [enquiryData, setEnquiryData] = useState({});
+  const { response } = useSelector(getAssessmentRegistrationsResponse);
+  const [registrationData, setRegistrationData] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchEnquiryStats();
+    fetchRegistrationStats();
   }, [location.pathname]);
 
-  const fetchEnquiryStats = () => {
+  const fetchRegistrationStats = () => {
     setLoading(true);
-    dispatch(getEnquiries({ isLoading: true }));
+    dispatch(getAssessmentRegistrations({ isLoading: true }));
 
-    getEnquiriesAsync({
+    getAssessmentRegistrationsAsync({
       dispatch,
       callbackFn: (res) => {
         setLoading(false);
         if (res?.data) {
-          setEnquiryData({
-            total_enquiries: res.data.data.paging?.totalItems || 0
+          setRegistrationData({
+            total_registrations: res.data.data.paging?.totalItems || 0
           });
         }
       },
@@ -60,30 +60,30 @@ const GeneralEnquiry = ({ isOpen }) => {
         <FaChevronLeft className="cursor-pointer" onClick={() => navigate(-1)} />
         <div>
           <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
-            Home / <span className='text-black font-medium'>General Enquiries</span>
+            Home / <span className='text-black font-medium'>Assessment Registrations</span>
           </div>
         </div>
       </div>
 
       <h2 className="mt-6 font-bold text-[22px] leading-[28px] text-[#2C2E32]">
-        General Enquiries
+        Assessment Registrations
       </h2>
 
       <div className="mt-3">
         <UserCard
-          label="Total Enquiries"
+          label="Total Registrations"
           height="h-[111px]"
           backgroundcolor="bg-[#FFFFFF]"
-          value={enquiryData?.total_enquiries || 0}
+          value={registrationData?.total_registrations || 0}
           imgbg={live}
           imglogo={liveimage}
         />
       </div>
 
-      <GeneralEnquiryList onRefresh={fetchEnquiryStats} />
+      <AssessmentRegistrationList onRefresh={fetchRegistrationStats} />
     </div>
   );
 };
 
-export default GeneralEnquiry;
+export default AssessmentRegistration;
 

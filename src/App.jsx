@@ -192,6 +192,12 @@ import WithdrawRequestDetails from "./components/Payments/WithdrawRequestDetails
 import Blogs from "./pages/admin/Blogs/Blogs";
 import AddBlog from "./pages/admin/Blogs/AddBlog";
 import BlogDetails from "./pages/admin/Blogs/BlogDetails";
+import GeneralEnquiry from "./pages/admin/GeneralEnquiry/GeneralEnquiry";
+import GeneralEnquiryDetails from "./pages/admin/GeneralEnquiry/GeneralEnquiryDetails";
+import LearningRegistration from "./pages/admin/LearningRegistration/LearningRegistration";
+import LearningRegistrationDetails from "./pages/admin/LearningRegistration/LearningRegistrationDetails";
+import AssessmentRegistration from "./pages/admin/AssessmentRegistration/AssessmentRegistration";
+import AssessmentRegistrationDetails from "./pages/admin/AssessmentRegistration/AssessmentRegistrationDetails";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -2327,6 +2333,57 @@ function App() {
           element={
             <ProtectedRoute>
               <BlogDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/general-enquiries"
+          element={
+            <ProtectedRoute>
+              <GeneralEnquiry isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/general-enquiries/details/:id"
+          element={
+            <ProtectedRoute>
+              <GeneralEnquiryDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/learning-registrations"
+          element={
+            <ProtectedRoute>
+              <LearningRegistration isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/learning-registrations/details/:id"
+          element={
+            <ProtectedRoute>
+              <LearningRegistrationDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/assessment-registrations"
+          element={
+            <ProtectedRoute>
+              <AssessmentRegistration isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessment-registrations/details/:id"
+          element={
+            <ProtectedRoute>
+              <AssessmentRegistrationDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </ProtectedRoute>
           }
         />

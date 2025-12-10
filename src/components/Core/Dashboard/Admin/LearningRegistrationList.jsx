@@ -6,15 +6,15 @@ import SearchButton from "../../../../assets/images/Searchbutton.png";
 import Vector from "../../../../assets/images/Vector.png";
 import container from "../../../../assets/images/container.png";
 import { TailSpin } from "react-loader-spinner";
-import { getEnquiriesAsync, getEnquiries, getEnquiriesResponse } from "../../../../apis/slices/enquirySlice";
+import { getLearningRegistrationsAsync, getLearningRegistrations, getLearningRegistrationsResponse } from "../../../../apis/slices/learningRegistrationSlice";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
-const GeneralEnquiryList = ({ onRefresh }) => {
+const LearningRegistrationList = ({ onRefresh }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { response, isLoading } = useSelector(getEnquiriesResponse);
+  const { response, isLoading } = useSelector(getLearningRegistrationsResponse);
 
-  const [enquiryData, setEnquiryData] = useState([]);
+  const [registrationData, setRegistrationData] = useState([]);
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({
     currentPage: 1,
@@ -24,19 +24,19 @@ const GeneralEnquiryList = ({ onRefresh }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchEnquiries();
+    fetchRegistrations();
   }, [page]);
 
-  const fetchEnquiries = () => {
+  const fetchRegistrations = () => {
     setLoading(true);
-    dispatch(getEnquiries({ isLoading: true }));
+    dispatch(getLearningRegistrations({ isLoading: true }));
 
-    getEnquiriesAsync({
+    getLearningRegistrationsAsync({
       dispatch,
       callbackFn: (res) => {
         setLoading(false);
         if (res?.data) {
-          setEnquiryData(res.data.data.data || []);
+          setRegistrationData(res.data.data.data || []);
           setPageData({
             currentPage: res.data.data.paging?.currentPage || 1,
             totalPage: res.data.data.paging?.totalPage || 1
@@ -53,7 +53,7 @@ const GeneralEnquiryList = ({ onRefresh }) => {
 
   const handleSearch = () => {
     setPage(1);
-    fetchEnquiries();
+    fetchRegistrations();
   };
 
   const handleSearchChange = (e) => {
@@ -63,7 +63,7 @@ const GeneralEnquiryList = ({ onRefresh }) => {
     if (value === "") {
       setPage(1);
       setTimeout(() => {
-        fetchEnquiries();
+        fetchRegistrations();
       }, 50);
     }
   };
@@ -98,7 +98,7 @@ const GeneralEnquiryList = ({ onRefresh }) => {
         <div className={`flex justify-between items-center relative mt-3`}>
           <div>
             <h2 className="font-medium text-[16px] lg:text-[18px] leading-[25px] text-[#2C2E32]">
-              General Enquiry List
+              Learning Registration List
             </h2>
           </div>
           <div className="flex items-center relative">
@@ -108,7 +108,7 @@ const GeneralEnquiryList = ({ onRefresh }) => {
                   type="text"
                   name="search"
                   className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
-                  placeholder="Search Enquiry"
+                  placeholder="Search Registration"
                   value={searchValue}
                   onChange={handleSearchChange}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -133,27 +133,27 @@ const GeneralEnquiryList = ({ onRefresh }) => {
 
       <div className="">
         <ul>
-          {enquiryData.length > 0 ? (
-            enquiryData.map((enquiry) => (
-              <li key={enquiry?.id}>
+          {registrationData.length > 0 ? (
+            registrationData.map((registration) => (
+              <li key={registration?.id}>
                 <div className="flex justify-between gap-4 items-center">
                   <div className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px] flex-1">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 px-[18px]">
                         <div className="flex items-center gap-2">
                           <p className="font-bold text-[14px] leading-[16px] text-[#171717]">
-                            {enquiry?.name} {enquiry?.lastName}
+                            {registration?.name || 'N/A'}
                           </p>
-                          {enquiry?.tag && (
-                            <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-600">
-                              {enquiry.tag}
+                          {registration?.type && (
+                            <span className="px-2 py-1 rounded text-xs bg-purple-100 text-purple-600">
+                              {registration.type}
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="px-[18px] mt-1">
-                        <p className="text-[12px] text-gray-500">{enquiry?.email}</p>
-                        <p className="text-[12px] text-gray-500">{enquiry?.phoneNumber}</p>
+                        <p className="text-[12px] text-gray-500">{registration?.email || 'N/A'}</p>
+                        <p className="text-[12px] text-gray-500">{registration?.phoneNumber || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
@@ -161,7 +161,7 @@ const GeneralEnquiryList = ({ onRefresh }) => {
                   <div className="flex gap-2">
                     <Custombutton
                       value="View"
-                      onClick={() => navigate(`/general-enquiries/details/${enquiry?.id}`)}
+                      onClick={() => navigate(`/learning-registrations/details/${registration?.id}`)}
                       backgroundcolor="bg-blue-100"
                       textcolor="text-blue-600"
                       width="w-[60px]"
@@ -172,7 +172,7 @@ const GeneralEnquiryList = ({ onRefresh }) => {
             ))
           ) : (
             <li className="text-center py-8 text-gray-500">
-              {loading ? "Loading enquiries..." : "No enquiries found"}
+              {loading ? "Loading registrations..." : "No registrations found"}
             </li>
           )}
         </ul>
@@ -206,5 +206,5 @@ const GeneralEnquiryList = ({ onRefresh }) => {
   );
 };
 
-export default GeneralEnquiryList;
+export default LearningRegistrationList;
 

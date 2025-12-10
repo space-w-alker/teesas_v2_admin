@@ -66,6 +66,18 @@ const Sidebardata = [
         path: "/learning-center-courses",
         permissions: ["jamb_ssce_tutorial:read"],
       },
+      {
+        name: "Learning Registration",
+        icon: hashtag,
+        path: "/learning-registrations",
+        permissions: ["jamb_ssce_tutorial:read"],
+      },
+      {
+        name: "Assessment Registration",
+        icon: hashtag,
+        path: "/assessment-registrations",
+        permissions: ["jamb_ssce_tutorial:read"],
+      },
       // {
       //   name: "7 Habits Bootcamp",
       //   icon: hashtag,
@@ -203,6 +215,12 @@ const Sidebardata = [
         path: "/supportmanagement",
         permissions: ["support_ticket:read"],
       },
+      {
+        name: "General Enquiry",
+        icon: hashtag,
+        path: "/general-enquiries",
+        permissions: ["support_ticket:read"],
+      },
     ],
   },
   {
@@ -231,7 +249,7 @@ const Sidebardata = [
         name: "Blogs",
         icon: hashtag,
         path: "/blogs",
-        permissions: ["blogs:read"],
+        permissions: ["blog_news:read"],
       },
       {
         name: "Contact Us",

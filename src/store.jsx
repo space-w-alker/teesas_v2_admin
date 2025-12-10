@@ -25,6 +25,9 @@ import performanceReducer from "./apis/slices/performanceSlice";
 import learningCenterReducer from "./apis/slices/learningCenterSlice";
 import contentReducer from "./apis/slices/contentSlice";
 import blogReducer from "./apis/slices/blogSlice";
+import enquiryReducer from "./apis/slices/enquirySlice";
+import learningRegistrationReducer from "./apis/slices/learningRegistrationSlice";
+import assessmentRegistrationReducer from "./apis/slices/assessmentRegistrationSlice";
 
 export default configureStore({
   reducer: {
@@ -54,5 +57,8 @@ export default configureStore({
     learningCenter: learningCenterReducer,
     content: contentReducer,
     blog: blogReducer,
+    enquiry: enquiryReducer,
+    learningRegistration: learningRegistrationReducer,
+    assessmentRegistration: assessmentRegistrationReducer,
   },
 });

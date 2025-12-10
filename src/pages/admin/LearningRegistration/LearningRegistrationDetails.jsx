@@ -1,46 +1,46 @@
 import React, { useState, useEffect } from 'react'
-import GeneralEnquiryComponent from '../../../components/Core/Dashboard/Admin/GeneralEnquiryComponent'
+import LearningRegistrationComponent from '../../../components/Core/Dashboard/Admin/LearningRegistrationComponent'
 import { useDispatch } from 'react-redux'
 import { FaChevronLeft } from "react-icons/fa"
 import { useParams, useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
-import { getEnquiryByIdAsync, getEnquiryById } from '../../../apis/slices/enquirySlice'
+import { getLearningRegistrationByIdAsync, getLearningRegistrationById } from '../../../apis/slices/learningRegistrationSlice'
 
-const GeneralEnquiryDetails = ({ isOpen }) => {
+const LearningRegistrationDetails = ({ isOpen }) => {
   const { id } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(false)
-  const [enquiryData, setEnquiryData] = useState(null)
+  const [registrationData, setRegistrationData] = useState(null)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     if (id) {
-      fetchEnquiryDetails()
+      fetchRegistrationDetails()
     }
   }, [id])
 
-  const fetchEnquiryDetails = () => {
+  const fetchRegistrationDetails = () => {
     setLoading(true)
-    dispatch(getEnquiryById({ isLoading: true }))
+    dispatch(getLearningRegistrationById({ isLoading: true }))
 
-    getEnquiryByIdAsync({
+    getLearningRegistrationByIdAsync({
       dispatch,
-      enquiryId: id,
+      registrationId: id,
       callbackFn: (res) => {
         setLoading(false)
         if (res) {
-          setEnquiryData(res.data)
+          setRegistrationData(res.data)
         } else {
-          setError(res?.data?.message || "Failed to fetch enquiry details")
+          setError(res?.data?.message || "Failed to fetch registration details")
         }
       }
     })
   }
 
   const handleGoBack = () => {
-    navigate('/general-enquiries')
+    navigate('/learning-registrations')
   }
 
   return (
@@ -61,7 +61,7 @@ const GeneralEnquiryDetails = ({ isOpen }) => {
         <FaChevronLeft />
         <div>
           <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
-            Home / General Enquiries /<span className='text-black font-medium'>Enquiry Details</span>
+            Home / Learning Registrations /<span className='text-black font-medium'>Registration Details</span>
           </div>
         </div>
       </div>
@@ -76,43 +76,43 @@ const GeneralEnquiryDetails = ({ isOpen }) => {
             <div className="flex items-start gap-4">
               <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-green-100 flex items-center justify-center flex-shrink-0">
                 <span className="text-green-600 font-bold text-xl">
-                  {enquiryData?.name?.charAt(0)?.toUpperCase() || "E"}
+                  {registrationData?.name?.charAt(0)?.toUpperCase() || "L"}
                 </span>
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <p className="font-bold text-[18px] leading-[24px] tracking-wider text-[#1D2026]">
-                    {enquiryData?.name ? `${enquiryData.name} ${enquiryData.lastName || ''}` : "Enquiry Details"}
+                    {registrationData?.name || "Registration Details"}
                   </p>
-                  {enquiryData?.tag && (
-                    <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-600 font-medium">
-                      {enquiryData.tag}
+                  {registrationData?.type && (
+                    <span className="px-2 py-1 rounded text-xs bg-purple-100 text-purple-600 font-medium">
+                      {registrationData.type}
                     </span>
                   )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
-                  {enquiryData?.email && (
+                  {registrationData?.email && (
                     <div className="flex items-center gap-2">
                       <span className="font-medium">Email:</span>
-                      <span>{enquiryData.email}</span>
+                      <span>{registrationData.email}</span>
                     </div>
                   )}
-                  {enquiryData?.phoneNumber && (
+                  {registrationData?.phoneNumber && (
                     <div className="flex items-center gap-2">
                       <span className="font-medium">Phone:</span>
-                      <span>{enquiryData.phoneNumber}</span>
+                      <span>{registrationData.phoneNumber}</span>
                     </div>
                   )}
-                  {enquiryData?.createdAt && (
+                  {registrationData?.createdAt && (
                     <div className="flex items-center gap-2">
                       <span className="font-medium">Date:</span>
-                      <span>{new Date(enquiryData.createdAt).toLocaleString()}</span>
+                      <span>{new Date(registrationData.createdAt).toLocaleString()}</span>
                     </div>
                   )}
-                  {enquiryData?.preferredCentre && (
+                  {registrationData?.preferredCentre && (
                     <div className="flex items-center gap-2">
                       <span className="font-medium">Preferred Centre:</span>
-                      <span>{enquiryData.preferredCentre}</span>
+                      <span>{registrationData.preferredCentre}</span>
                     </div>
                   )}
                 </div>
@@ -120,12 +120,12 @@ const GeneralEnquiryDetails = ({ isOpen }) => {
             </div>
           </div>
 
-          <GeneralEnquiryComponent enquiryData={enquiryData} />
+          <LearningRegistrationComponent registrationData={registrationData} />
         </>
       )}
     </div>
   )
 }
 
-export default GeneralEnquiryDetails
+export default LearningRegistrationDetails
 
