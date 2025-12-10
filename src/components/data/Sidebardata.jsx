@@ -228,11 +228,18 @@ const Sidebardata = [
         permissions: ["testimonials:read"],
       },
       {
+        name: "Blogs",
+        icon: hashtag,
+        path: "/blogs",
+        permissions: ["blogs:read"],
+      },
+      {
         name: "Contact Us",
         icon: hashtag,
         path: "/contact-us",
         permissions: ["contact_info:read"],
       },
+      
     ],
   },
   {

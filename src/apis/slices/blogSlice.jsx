@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAPICall, postAPICall, patchAPICall, deleteAPICall, postFileAPICall } from "../client/methodCalls";
+import { getAPICall, postAPICall, patchAPICall, deleteAPICall } from "../client/methodCalls";
 import { config } from "../client/config";
 
 const { BASEURL, GET_BLOGS, GET_BLOG_BY_ID, CREATE_BLOG, UPDATE_BLOG, DELETE_BLOG } = config;
@@ -91,19 +91,11 @@ export const createBlogAsync = async ({ dispatch, callbackFn, formData, token })
         dispatch(createBlog({ isLoading: true }));
         const URL = `${BASEURL}${CREATE_BLOG}`;
         
-        // Check if formData is FormData (for file upload) or regular object
-        let result;
-        if (formData instanceof FormData) {
-            result = await postFileAPICall(URL, formData, token).then((res) => {
-                callbackFn && callbackFn(res);
-                return res;
-            });
-        } else {
-            result = await postAPICall(URL, formData, token).then((res) => {
-                callbackFn && callbackFn(res);
-                return res;
-            });
-        }
+        // Send JSON data
+        const result = await postAPICall(URL, formData, token).then((res) => {
+            callbackFn && callbackFn(res);
+            return res;
+        });
         dispatch(createBlog({ isLoading: false, response: result.data }));
     } catch (err) {
         dispatch(createBlog({ isLoading: false }));
@@ -117,29 +109,11 @@ export const updateBlogAsync = async ({ dispatch, callbackFn, formData, blogId, 
         dispatch(updateBlog({ isLoading: true }));
         const URL = `${BASEURL}${UPDATE_BLOG}/${blogId}`;
         
-        // Check if formData is FormData (for file upload) or regular object
-        let result;
-        if (formData instanceof FormData) {
-            // For FormData, we'll use PATCH with FormData
-            const accessToken = localStorage.getItem("authToken") || token;
-            const API_KEY = "V9dlnpPotY4NzJWB9cwhdLeAba1Zc4UyFlmwq9df2PrH0KquXBu9e7hJuAa5jxPR";
-            const requestOptions = {
-                method: "PATCH",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "api-key": API_KEY,
-                },
-                body: formData,
-            };
-            const response = await fetch(URL, requestOptions);
-            result = { data: await response.json() };
-            callbackFn && callbackFn(result);
-        } else {
-            result = await patchAPICall(URL, formData, false, token).then((res) => {
-                callbackFn && callbackFn(res);
-                return res;
-            });
-        }
+        // Send JSON data using PATCH
+        const result = await patchAPICall(URL, formData, false, token).then((res) => {
+            callbackFn && callbackFn(res);
+            return res;
+        });
         dispatch(updateBlog({ isLoading: false, response: result.data }));
     } catch (err) {
         dispatch(updateBlog({ isLoading: false }));

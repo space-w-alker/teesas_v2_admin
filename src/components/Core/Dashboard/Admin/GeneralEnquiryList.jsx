@@ -6,17 +6,15 @@ import SearchButton from "../../../../assets/images/Searchbutton.png";
 import Vector from "../../../../assets/images/Vector.png";
 import container from "../../../../assets/images/container.png";
 import { TailSpin } from "react-loader-spinner";
-import { getBlogsAsync, getBlogs, getBlogsResponse, deleteBlogAsync, deleteBlogResponse } from "../../../../apis/slices/blogSlice";
+import { getEnquiriesAsync, getEnquiries, getEnquiriesResponse } from "../../../../apis/slices/enquirySlice";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import SuccessModal from "../../../common/SuccessModal";
 
-const BlogList = ({ onRefresh }) => {
+const GeneralEnquiryList = ({ onRefresh }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { response, isLoading } = useSelector(getBlogsResponse);
-  const deleteResponse = useSelector(deleteBlogResponse);
+  const { response, isLoading } = useSelector(getEnquiriesResponse);
 
-  const [blogData, setBlogData] = useState([]);
+  const [enquiryData, setEnquiryData] = useState([]);
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState({
     currentPage: 1,
@@ -24,26 +22,21 @@ const BlogList = ({ onRefresh }) => {
   });
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedBlogId, setSelectedBlogId] = useState(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    fetchBlogs();
+    fetchEnquiries();
   }, [page]);
 
-  const fetchBlogs = () => {
+  const fetchEnquiries = () => {
     setLoading(true);
-    dispatch(getBlogs({ isLoading: true }));
+    dispatch(getEnquiries({ isLoading: true }));
 
-    getBlogsAsync({
+    getEnquiriesAsync({
       dispatch,
       callbackFn: (res) => {
         setLoading(false);
-        if (res?.data) {
-          setBlogData(res.data.data.data || []);
+        if (res?.data?.status === 200) {
+          setEnquiryData(res.data.data.data || []);
           setPageData({
             currentPage: res.data.data.paging?.currentPage || 1,
             totalPage: res.data.data.paging?.totalPage || 1
@@ -53,14 +46,14 @@ const BlogList = ({ onRefresh }) => {
       data: {
         page,
         limit: 10,
-        // search: searchValue
+        search: searchValue
       }
     });
   };
 
   const handleSearch = () => {
     setPage(1);
-    fetchBlogs();
+    fetchEnquiries();
   };
 
   const handleSearchChange = (e) => {
@@ -70,7 +63,7 @@ const BlogList = ({ onRefresh }) => {
     if (value === "") {
       setPage(1);
       setTimeout(() => {
-        fetchBlogs();
+        fetchEnquiries();
       }, 50);
     }
   };
@@ -87,40 +80,9 @@ const BlogList = ({ onRefresh }) => {
     }
   };
 
-  const handleDeleteClick = (blogId) => {
-    setSelectedBlogId(blogId);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (!selectedBlogId) return;
-
-    setDeleteLoading(true);
-
-    deleteBlogAsync({
-      dispatch,
-      blogId: selectedBlogId,
-      callbackFn: (res) => {
-        setDeleteLoading(false);
-        setShowDeleteModal(false);
-
-        if (res?.data?.status === 200) {
-          setSuccessMessage("Blog deleted successfully");
-          setShowSuccessModal(true);
-
-          fetchBlogs();
-
-          if (onRefresh) onRefresh();
-        } else {
-          alert(res?.data?.message || "Failed to delete blog");
-        }
-      }
-    });
-  };
-
   return (
     <div className="bg-[#FFFFFF] p-4 mt-5 rounded-[18px]">
-      {(loading || deleteLoading) && (
+      {loading && (
         <div style={{
           position: "fixed",
           top: "50%",
@@ -136,7 +98,7 @@ const BlogList = ({ onRefresh }) => {
         <div className={`flex justify-between items-center relative mt-3`}>
           <div>
             <h2 className="font-medium text-[16px] lg:text-[18px] leading-[25px] text-[#2C2E32]">
-              Blog List
+              General Enquiry List
             </h2>
           </div>
           <div className="flex items-center relative">
@@ -146,7 +108,7 @@ const BlogList = ({ onRefresh }) => {
                   type="text"
                   name="search"
                   className="mt-1 w-full pr-[40px] pl-[20px] outline-none bg-[#F8F8F8] text-[14px] border p-2 border-[#ECEDEE] shadows h-[32px] rounded-[16px]"
-                  placeholder="Search Blog"
+                  placeholder="Search Enquiry"
                   value={searchValue}
                   onChange={handleSearchChange}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -171,56 +133,37 @@ const BlogList = ({ onRefresh }) => {
 
       <div className="">
         <ul>
-          {blogData.length > 0 ? (
-            blogData.map((blog) => (
-              <li key={blog?.id}>
+          {enquiryData.length > 0 ? (
+            enquiryData.map((enquiry) => (
+              <li key={enquiry?.id}>
                 <div className="flex justify-between gap-4 items-center">
                   <div className="px-[18px] py-[10px] mt-5 flex items-center gap-[10px] pr-[15px] flex-1">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 px-[18px]">
                         <div className="flex items-center gap-2">
                           <p className="font-bold text-[14px] leading-[16px] text-[#171717]">
-                            {blog?.title || 'Untitled'}
+                            {enquiry?.name} {enquiry?.lastName}
                           </p>
-                          {blog?.status && (
-                            <span className={`px-2 py-1 rounded text-xs ${
-                              blog.status === 'published' 
-                                ? 'bg-green-100 text-green-600' 
-                                : 'bg-gray-100 text-gray-600'
-                            }`}>
-                              {blog.status}
+                          {enquiry?.tag && (
+                            <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-600">
+                              {enquiry.tag}
                             </span>
                           )}
                         </div>
                       </div>
-                      {blog?.excerpt && (
-                        <p className="text-[12px] text-gray-500 px-[18px] mt-1">
-                          {blog.excerpt.substring(0, 100)}...
-                        </p>
-                      )}
+                      <div className="px-[18px] mt-1">
+                        <p className="text-[12px] text-gray-500">{enquiry?.email}</p>
+                        <p className="text-[12px] text-gray-500">{enquiry?.phoneNumber}</p>
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex gap-2">
                     <Custombutton
                       value="View"
-                      onClick={() => navigate(`/blogs/details/${blog?.id}`)}
+                      onClick={() => navigate(`/general-enquiries/details/${enquiry?.id}`)}
                       backgroundcolor="bg-blue-100"
                       textcolor="text-blue-600"
-                      width="w-[60px]"
-                    />
-                    <Custombutton
-                      value="Edit"
-                      onClick={() => navigate(`/blogs/edit/${blog?.id}`)}
-                      backgroundcolor="bg-green-100"
-                      textcolor="text-green-600"
-                      width="w-[60px]"
-                    />
-                    <Custombutton
-                      value="Delete"
-                      onClick={() => handleDeleteClick(blog.id)}
-                      backgroundcolor="bg-red-100"
-                      textcolor="text-red-600"
                       width="w-[60px]"
                     />
                   </div>
@@ -229,7 +172,7 @@ const BlogList = ({ onRefresh }) => {
             ))
           ) : (
             <li className="text-center py-8 text-gray-500">
-              {loading ? "Loading blogs..." : "No blogs found"}
+              {loading ? "Loading enquiries..." : "No enquiries found"}
             </li>
           )}
         </ul>
@@ -259,29 +202,9 @@ const BlogList = ({ onRefresh }) => {
           />
         </div>
       </div>
-
-      <SuccessModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        type="caution"
-        title="Delete Blog"
-        message="Are you sure you want to delete this blog?"
-        buttonText="Delete"
-        onConfirm={handleDeleteConfirm}
-      />
-
-      <SuccessModal
-        isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
-        type="success"
-        title="Success"
-        message={successMessage}
-        buttonText="Close"
-        onConfirm={() => setShowSuccessModal(false)}
-      />
     </div>
   );
 };
 
-export default BlogList;
+export default GeneralEnquiryList;
 

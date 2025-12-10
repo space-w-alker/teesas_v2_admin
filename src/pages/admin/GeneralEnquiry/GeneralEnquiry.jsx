@@ -4,34 +4,34 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FaChevronLeft } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 import UserCard from '../../../components/common/UserCard';
-import BlogList from '../../../components/Core/Dashboard/Admin/BlogList';
-import { getBlogsAsync, getBlogs, getBlogsResponse } from '../../../apis/slices/blogSlice';
+import GeneralEnquiryList from '../../../components/Core/Dashboard/Admin/GeneralEnquiryList';
+import { getEnquiriesAsync, getEnquiries, getEnquiriesResponse } from '../../../apis/slices/enquirySlice';
 import live from '../../../assets/images/live.png';
 import liveimage from '../../../assets/images/liveimage.png';
 
-const Blogs = ({ isOpen }) => {
+const GeneralEnquiry = ({ isOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { response } = useSelector(getBlogsResponse);
-  const [blogData, setBlogData] = useState({});
+  const { response } = useSelector(getEnquiriesResponse);
+  const [enquiryData, setEnquiryData] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchBlogStats();
+    fetchEnquiryStats();
   }, [location.pathname]);
 
-  const fetchBlogStats = () => {
+  const fetchEnquiryStats = () => {
     setLoading(true);
-    dispatch(getBlogs({ isLoading: true }));
+    dispatch(getEnquiries({ isLoading: true }));
 
-    getBlogsAsync({
+    getEnquiriesAsync({
       dispatch,
       callbackFn: (res) => {
         setLoading(false);
-        if (res?.data) {
-          setBlogData({
-            total_blogs: res.data.data.paging?.totalItems || 0
+        if (res?.data?.status === 200) {
+          setEnquiryData({
+            total_enquiries: res.data.data.paging?.totalItems || 0
           });
         }
       },
@@ -60,39 +60,30 @@ const Blogs = ({ isOpen }) => {
         <FaChevronLeft className="cursor-pointer" onClick={() => navigate(-1)} />
         <div>
           <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
-            Home / <span className='text-black font-medium'>Blogs</span>
+            Home / <span className='text-black font-medium'>General Enquiries</span>
           </div>
         </div>
       </div>
 
       <h2 className="mt-6 font-bold text-[22px] leading-[28px] text-[#2C2E32]">
-        Blogs
+        General Enquiries
       </h2>
 
       <div className="mt-3">
         <UserCard
-          label="Total Blogs"
+          label="Total Enquiries"
           height="h-[111px]"
           backgroundcolor="bg-[#FFFFFF]"
-          value={blogData?.total_blogs || 0}
+          value={enquiryData?.total_enquiries || 0}
           imgbg={live}
           imglogo={liveimage}
         />
       </div>
 
-      <div className="flex justify-end mt-4">
-        <button
-          className="text-[14px] leading-[20px] text-center font-bold w-[181px] h-[40px] rounded-lg py-[7px] px-[12px] bg-green-600 text-white"
-          onClick={() => navigate('/blogs/add')}
-        >
-          + Add Blog
-        </button>
-      </div>
-
-      <BlogList onRefresh={fetchBlogStats} />
+      <GeneralEnquiryList onRefresh={fetchEnquiryStats} />
     </div>
   );
 };
 
-export default Blogs;
+export default GeneralEnquiry;
 

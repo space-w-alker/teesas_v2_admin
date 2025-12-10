@@ -135,4 +135,8 @@ export const config = {
   CREATE_BLOG: "blog",
   UPDATE_BLOG: "blog",
   DELETE_BLOG: "blog",
+
+  // General Enquiry endpoints
+  GET_GENERAL_ENQUIRIES: "generall-enquiry",
+  GET_GENERAL_ENQUIRY_BY_ID: "general-enquiry",
 };

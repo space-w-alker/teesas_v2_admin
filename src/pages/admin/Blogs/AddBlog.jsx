@@ -6,6 +6,7 @@ import Headcomponent from '../../../components/common/Headcomponent';
 import Custombutton from '../../../components/common/Custombutton';
 import SuccessModal from '../../../components/common/SuccessModal';
 import { TailSpin } from "react-loader-spinner";
+import { useFileUploadHandler } from '../../../hooks/useFileUpload';
 import {
   createBlogAsync,
   createBlog,
@@ -43,6 +44,7 @@ const AddBlog = ({ isOpen }) => {
   });
   const [currentImageUrl, setCurrentImageUrl] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { imageLoader, handleFileUpload } = useFileUploadHandler();
 
   const [errors, setErrors] = useState({
     title: '',
@@ -162,7 +164,12 @@ const AddBlog = ({ isOpen }) => {
       isValid = false;
     }
 
+    // Require featured image for new blogs
+    // For edit mode, require either existing image or new upload
     if (!isEditMode && !formData.featuredImage) {
+      newErrors.featuredImage = 'Please upload a featured image';
+      isValid = false;
+    } else if (isEditMode && !formData.featuredImage && !currentImageUrl) {
       newErrors.featuredImage = 'Please upload a featured image';
       isValid = false;
     }
@@ -171,7 +178,7 @@ const AddBlog = ({ isOpen }) => {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -180,65 +187,97 @@ const AddBlog = ({ isOpen }) => {
 
     setLoading(true);
 
-    // Prepare tags array
-    const tagsArray = formData.tags
-      ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
-      : [];
+    try {
+      // Prepare tags array
+      const tagsArray = formData.tags
+        ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+        : [];
 
-    // Create FormData for file upload
-    const data = new FormData();
-    data.append('title', formData.title);
-    data.append('content', formData.content);
-    data.append('slug', formData.slug);
-    data.append('excerpt', formData.excerpt);
-    data.append('author', formData.author);
-    data.append('status', formData.status);
-    data.append('category', formData.category);
-    data.append('tags', JSON.stringify(tagsArray));
-
-    if (formData.featuredImage) {
-      data.append('featuredImage', formData.featuredImage);
-    }
-
-    if (isEditMode) {
-      dispatch(updateBlog({ isLoading: true }));
-
-      updateBlogAsync({
-        dispatch,
-        formData: data,
-        blogId: id,
-        callbackFn: (res) => {
-          setLoading(false);
-          if (res?.data?.status === 200) {
-            setSuccessMessage("Blog updated successfully");
-            setShowSuccess(true);
-          } else {
+      // Upload image to S3 first if a new image is provided
+      // The S3 URL returned will be a public URL (with public-read ACL)
+      let featuredImageUrl = currentImageUrl; // Use existing image URL in edit mode
+      
+      if (formData.featuredImage) {
+        try {
+          // Upload to S3 and get public URL
+          featuredImageUrl = await handleFileUpload(formData.featuredImage);
+          if (!featuredImageUrl) {
             setErrors(prev => ({
               ...prev,
-              general: res?.data?.message || "Failed to update blog"
+              general: "Failed to upload featured image"
             }));
+            setLoading(false);
+            return;
           }
-        }
-      });
-    } else {
-      dispatch(createBlog({ isLoading: true }));
-
-      createBlogAsync({
-        dispatch,
-        formData: data,
-        callbackFn: (res) => {
+        } catch (uploadError) {
+          setErrors(prev => ({
+            ...prev,
+            general: "Failed to upload featured image. Please try again."
+          }));
           setLoading(false);
-          if (res?.data?.status === 200) {
-            setSuccessMessage("Blog created successfully");
-            setShowSuccess(true);
-          } else {
-            setErrors(prev => ({
-              ...prev,
-              general: res?.data?.message || "Failed to create blog"
-            }));
-          }
+          return;
         }
-      });
+      }
+
+      // Prepare JSON data with public S3 URL
+      const data = {
+        title: formData.title,
+        content: formData.content,
+        slug: formData.slug,
+        excerpt: formData.excerpt,
+        author: formData.author,
+        status: formData.status,
+        category: formData.category || null,
+        tags: tagsArray,
+        featuredImage: featuredImageUrl || null // Public S3 URL
+      };
+
+      if (isEditMode) {
+        dispatch(updateBlog({ isLoading: true }));
+
+        updateBlogAsync({
+          dispatch,
+          formData: data,
+          blogId: id,
+          callbackFn: (res) => {
+            setLoading(false);
+            if (res?.data?.status === 200) {
+              setSuccessMessage("Blog updated successfully");
+              setShowSuccess(true);
+            } else {
+              setErrors(prev => ({
+                ...prev,
+                general: res?.data?.message || "Failed to update blog"
+              }));
+            }
+          }
+        });
+      } else {
+        dispatch(createBlog({ isLoading: true }));
+
+        createBlogAsync({
+          dispatch,
+          formData: data,
+          callbackFn: (res) => {
+            setLoading(false);
+            if (res) {
+              setSuccessMessage("Blog created successfully");
+              setShowSuccess(true);
+            } else {
+              setErrors(prev => ({
+                ...prev,
+                general: res?.data?.message || "Failed to create blog"
+              }));
+            }
+          }
+        });
+      }
+    } catch (error) {
+      setLoading(false);
+      setErrors(prev => ({
+        ...prev,
+        general: error.message || "An error occurred. Please try again."
+      }));
     }
   };
 
@@ -249,7 +288,7 @@ const AddBlog = ({ isOpen }) => {
 
   return (
     <div className={`py-[7rem] lg:px-[5rem] px-[10px] ${isOpen ? "xl:ml-[260px]" : ""} transition-all duration-300`}>
-      {loading && (
+      {(loading || imageLoader) && (
         <div style={{
           position: "fixed",
           top: "50%",
@@ -258,6 +297,9 @@ const AddBlog = ({ isOpen }) => {
           zIndex: 9999,
         }}>
           <TailSpin color="green" radius={5} />
+          {imageLoader && (
+            <p className="text-center mt-2 text-sm text-gray-600">Uploading image...</p>
+          )}
         </div>
       )}
 

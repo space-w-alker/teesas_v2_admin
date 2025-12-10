@@ -1,46 +1,46 @@
 import React, { useState, useEffect } from 'react'
-import BlogComponent from '../../../components/Core/Dashboard/Admin/BlogComponent'
+import GeneralEnquiryComponent from '../../../components/Core/Dashboard/Admin/GeneralEnquiryComponent'
 import { useDispatch } from 'react-redux'
 import { FaChevronLeft } from "react-icons/fa"
 import { useParams, useNavigate } from 'react-router-dom'
 import { TailSpin } from "react-loader-spinner"
-import { getBlogByIdAsync, getBlogById } from '../../../apis/slices/blogSlice'
+import { getEnquiryByIdAsync, getEnquiryById } from '../../../apis/slices/enquirySlice'
 
-const BlogDetails = ({ isOpen }) => {
+const GeneralEnquiryDetails = ({ isOpen }) => {
   const { id } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(false)
-  const [blogData, setBlogData] = useState(null)
+  const [enquiryData, setEnquiryData] = useState(null)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     if (id) {
-      fetchBlogDetails()
+      fetchEnquiryDetails()
     }
   }, [id])
 
-  const fetchBlogDetails = () => {
+  const fetchEnquiryDetails = () => {
     setLoading(true)
-    dispatch(getBlogById({ isLoading: true }))
+    dispatch(getEnquiryById({ isLoading: true }))
 
-    getBlogByIdAsync({
+    getEnquiryByIdAsync({
       dispatch,
-      blogId: id,
+      enquiryId: id,
       callbackFn: (res) => {
         setLoading(false)
-        if (res) {
-          setBlogData(res.data)
+        if (res?.data?.status === 200) {
+          setEnquiryData(res.data.data)
         } else {
-          setError(res?.data?.message || "Failed to fetch blog details")
+          setError(res?.data?.message || "Failed to fetch enquiry details")
         }
       }
     })
   }
 
   const handleGoBack = () => {
-    navigate('/blogs')
+    navigate('/general-enquiries')
   }
 
   return (
@@ -61,7 +61,7 @@ const BlogDetails = ({ isOpen }) => {
         <FaChevronLeft />
         <div>
           <div className='font-normal text-[14px] lg:text-[16px] leading-[20px] text-[#B6B6B6]'>
-            Home / Blogs /<span className='text-black font-medium'>Blog Details</span>
+            Home / General Enquiries /<span className='text-black font-medium'>Enquiry Details</span>
           </div>
         </div>
       </div>
@@ -75,22 +75,24 @@ const BlogDetails = ({ isOpen }) => {
           <div className="bg-[#E9FDEE] border rounded-lg mt-7 mb-[20px] border-[#CAC4D0] h-[68px] p-[8px]">
             <div className="flex items-center gap-4">
               <div className="w-[40px] h-[40px] rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
-                <span className="text-green-600 font-bold text-lg">B</span>
+                <span className="text-green-600 font-bold text-lg">
+                  {enquiryData?.name?.charAt(0)?.toUpperCase() || "E"}
+                </span>
               </div>
               <div className="">
                 <p className="font-bold text-[16px] leading-[24px] tracking-wider text-[#1D2026]">
-                  {blogData?.title || "Blog Details"}
+                  {enquiryData?.name ? `${enquiryData.name} ${enquiryData.lastName || ''}` : "Enquiry Details"}
                 </p>
               </div>
             </div>
           </div>
 
-          <BlogComponent blogData={blogData} />
+          <GeneralEnquiryComponent enquiryData={enquiryData} />
         </>
       )}
     </div>
   )
 }
 
-export default BlogDetails
+export default GeneralEnquiryDetails
 
