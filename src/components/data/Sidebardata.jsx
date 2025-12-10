@@ -67,7 +67,7 @@ const Sidebardata = [
         permissions: ["jamb_ssce_tutorial:read"],
       },
       {
-        name: "Learning Registration",
+        name: "Learning Center Registration",
         icon: hashtag,
         path: "/learning-registrations",
         permissions: ["jamb_ssce_tutorial:read"],
