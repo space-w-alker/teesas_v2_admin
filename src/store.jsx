@@ -24,6 +24,7 @@ import rolesReducer from "./apis/slices/rolesSlice";
 import performanceReducer from "./apis/slices/performanceSlice";
 import learningCenterReducer from "./apis/slices/learningCenterSlice";
 import contentReducer from "./apis/slices/contentSlice";
+import blogReducer from "./apis/slices/blogSlice";
 
 export default configureStore({
   reducer: {
@@ -52,5 +53,6 @@ export default configureStore({
     perfomance: performanceReducer,
     learningCenter: learningCenterReducer,
     content: contentReducer,
+    blog: blogReducer,
   },
 });

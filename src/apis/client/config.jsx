@@ -128,4 +128,11 @@ export const config = {
 
   GET_WITHDRAW_REQUEST: "home/get-withdraw-requests",
   UPDATE_WITHDRAW_REQUEST: "home/withdraw-request/update-status",
+
+  // Blog endpoints
+  GET_BLOGS: "blog",
+  GET_BLOG_BY_ID: "blog",
+  CREATE_BLOG: "blog",
+  UPDATE_BLOG: "blog",
+  DELETE_BLOG: "blog",
 };

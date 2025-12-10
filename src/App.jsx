@@ -189,6 +189,9 @@ import ParentReport from "./components/ParentReport/ParentReport";
 import EditSubscriptionPlan from "./components/SubscriptionTypes/EditSubscriptionPlan";
 import WithdrawRequest from "./components/Payments/WithdrawRequest";
 import WithdrawRequestDetails from "./components/Payments/WithdrawRequestDetails";
+import Blogs from "./pages/admin/Blogs/Blogs";
+import AddBlog from "./pages/admin/Blogs/AddBlog";
+import BlogDetails from "./pages/admin/Blogs/BlogDetails";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -2291,6 +2294,39 @@ function App() {
               >
                 <AdminPermission isOpen={isSidebarOpen} />
               </PermissionGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/blogs"
+          element={
+            <ProtectedRoute>
+              <Blogs isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/blogs/add"
+          element={
+            <ProtectedRoute>
+              <AddBlog isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/blogs/edit/:id"
+          element={
+            <ProtectedRoute>
+              <AddBlog isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/blogs/details/:id"
+          element={
+            <ProtectedRoute>
+              <BlogDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </ProtectedRoute>
           }
         />
