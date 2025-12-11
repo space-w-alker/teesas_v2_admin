@@ -221,6 +221,12 @@ const Sidebardata = [
         path: "/general-enquiries",
         permissions: ["support_ticket:read"],
       },
+      {
+        name: "Demo Request",
+        icon: hashtag,
+        path: "/demo-requests",
+        permissions: ["support_ticket:read"],
+      },
     ],
   },
   {
@@ -288,12 +294,7 @@ const Sidebardata = [
         path: "/country-list",
         permissions: ["country_list:read"],
       },
-      {
-        name: "Demo Request",
-        icon: hashtag,
-        path: "/demo-requests",
-        permissions: ["push_notifications:read"],
-      },
+      
     ],
   },
   {
