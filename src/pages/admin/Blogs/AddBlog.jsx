@@ -7,6 +7,8 @@ import Custombutton from '../../../components/common/Custombutton';
 import SuccessModal from '../../../components/common/SuccessModal';
 import { TailSpin } from "react-loader-spinner";
 import { useFileUploadHandler } from '../../../hooks/useFileUpload';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import {
   createBlogAsync,
   createBlog,
@@ -109,6 +111,20 @@ const AddBlog = ({ isOpen }) => {
       setErrors(prev => ({
         ...prev,
         [name]: ''
+      }));
+    }
+  };
+
+  const handleContentChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      content: value
+    }));
+
+    if (errors.content) {
+      setErrors(prev => ({
+        ...prev,
+        content: ''
       }));
     }
   };
@@ -368,13 +384,37 @@ const AddBlog = ({ isOpen }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Content *</label>
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border ${errors.content ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27AE60]`}
-                  rows="10"
-                ></textarea>
+                <div className={`${errors.content ? 'border-red-500' : 'border-gray-300'} rounded-lg overflow-hidden border`}>
+                  <ReactQuill
+                    theme="snow"
+                    value={formData.content}
+                    onChange={handleContentChange}
+                    modules={{
+                      toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'script': 'sub'}, { 'script': 'super' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                        ['link', 'image', 'video'],
+                        ['blockquote', 'code-block'],
+                        ['clean']
+                      ]
+                    }}
+                    formats={[
+                      'header', 'bold', 'italic', 'underline', 'strike',
+                      'list', 'bullet', 'script', 'indent',
+                      'color', 'background', 'align',
+                      'link', 'image', 'video',
+                      'blockquote', 'code-block'
+                    ]}
+                    style={{
+                      minHeight: '300px'
+                    }}
+                  />
+                </div>
                 {errors.content && (
                   <p className="mt-1 text-sm text-red-600">{errors.content}</p>
                 )}
