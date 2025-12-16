@@ -66,8 +66,8 @@ const AddBlog = ({ isOpen }) => {
         blogId: id,
         callbackFn: (res) => {
           setLoading(false);
-          if (res?.data?.status === 200) {
-            const blog = res.data.data;
+          if (res ) {
+            const blog = res.data;
             if (blog) {
               setFormData({
                 title: blog.title || '',
@@ -241,7 +241,7 @@ const AddBlog = ({ isOpen }) => {
           blogId: id,
           callbackFn: (res) => {
             setLoading(false);
-            if (res?.data?.status === 200) {
+            if (res) {
               setSuccessMessage("Blog updated successfully");
               setShowSuccess(true);
             } else {
