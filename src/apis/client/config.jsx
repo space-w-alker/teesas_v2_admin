@@ -151,4 +151,8 @@ export const config = {
   // Demo Request endpoints
   GET_DEMO_REQUESTS: "demo-requests",
   GET_DEMO_REQUEST_BY_ID: "demo-requests",
+
+  // Sign-up Registration endpoints
+  GET_SIGNUP_REGISTRATIONS: "sign-up-registration",
+  GET_SIGNUP_REGISTRATION_BY_ID: "sign-up-registration",
 };

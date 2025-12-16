@@ -78,6 +78,12 @@ const Sidebardata = [
         path: "/assessment-registrations",
         permissions: ["jamb_ssce_tutorial:read"],
       },
+      {
+        name: "New Registration",
+        icon: hashtag,
+        path: "/new-registrations",
+        permissions: ["jamb_ssce_tutorial:read"],
+      },
       // {
       //   name: "7 Habits Bootcamp",
       //   icon: hashtag,

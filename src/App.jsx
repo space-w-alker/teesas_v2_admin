@@ -198,6 +198,8 @@ import LearningRegistration from "./pages/admin/LearningRegistration/LearningReg
 import LearningRegistrationDetails from "./pages/admin/LearningRegistration/LearningRegistrationDetails";
 import AssessmentRegistration from "./pages/admin/AssessmentRegistration/AssessmentRegistration";
 import AssessmentRegistrationDetails from "./pages/admin/AssessmentRegistration/AssessmentRegistrationDetails";
+import NewRegistration from "./pages/admin/NewRegistration/NewRegistration";
+import NewRegistrationDetails from "./pages/admin/NewRegistration/NewRegistrationDetails";
 import DemoRequest from "./pages/admin/DemoRequest/DemoRequest";
 import DemoRequestDetails from "./pages/admin/DemoRequest/DemoRequestDetails";
 
@@ -2386,6 +2388,27 @@ function App() {
           element={
             <ProtectedRoute>
               <AssessmentRegistrationDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/new-registrations"
+          element={
+            <ProtectedRoute>
+              <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:read"]}>
+                <NewRegistration isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              </PermissionGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/new-registrations/details/:id"
+          element={
+            <ProtectedRoute>
+              <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:read"]}>
+                <NewRegistrationDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              </PermissionGuard>
             </ProtectedRoute>
           }
         />
