@@ -30,6 +30,7 @@ import learningRegistrationReducer from "./apis/slices/learningRegistrationSlice
 import assessmentRegistrationReducer from "./apis/slices/assessmentRegistrationSlice";
 import demoRequestReducer from "./apis/slices/demoRequestSlice";
 import signUpRegistrationReducer from "./apis/slices/signUpRegistrationSlice";
+import webinarRegistrationReducer from "./apis/slices/webinarRegistrationSlice";
 
 export default configureStore({
   reducer: {
@@ -64,5 +65,6 @@ export default configureStore({
     assessmentRegistration: assessmentRegistrationReducer,
     demoRequest: demoRequestReducer,
     signUpRegistration: signUpRegistrationReducer,
+    webinarRegistration: webinarRegistrationReducer,
   },
 });

@@ -155,4 +155,8 @@ export const config = {
   // Sign-up Registration endpoints
   GET_SIGNUP_REGISTRATIONS: "sign-up-registration",
   GET_SIGNUP_REGISTRATION_BY_ID: "sign-up-registration",
+
+  // Webinar Registration endpoints
+  GET_WEBINAR_REGISTRATIONS: "webinar-registrations",
+  GET_WEBINAR_REGISTRATION_BY_ID: "webinar-registrations",
 };

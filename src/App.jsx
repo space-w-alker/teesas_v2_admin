@@ -200,6 +200,8 @@ import AssessmentRegistration from "./pages/admin/AssessmentRegistration/Assessm
 import AssessmentRegistrationDetails from "./pages/admin/AssessmentRegistration/AssessmentRegistrationDetails";
 import NewRegistration from "./pages/admin/NewRegistration/NewRegistration";
 import NewRegistrationDetails from "./pages/admin/NewRegistration/NewRegistrationDetails";
+import WebinarRegistration from "./pages/admin/WebinarRegistration/WebinarRegistration";
+import WebinarRegistrationDetails from "./pages/admin/WebinarRegistration/WebinarRegistrationDetails";
 import DemoRequest from "./pages/admin/DemoRequest/DemoRequest";
 import DemoRequestDetails from "./pages/admin/DemoRequest/DemoRequestDetails";
 
@@ -2408,6 +2410,27 @@ function App() {
             <ProtectedRoute>
               <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:read"]}>
                 <NewRegistrationDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              </PermissionGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/webinar-registrations"
+          element={
+            <ProtectedRoute>
+              <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:read"]}>
+                <WebinarRegistration isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+              </PermissionGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/webinar-registrations/details/:id"
+          element={
+            <ProtectedRoute>
+              <PermissionGuard requiredPermissions={["jamb_ssce_tutorial:read"]}>
+                <WebinarRegistrationDetails isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
               </PermissionGuard>
             </ProtectedRoute>
           }

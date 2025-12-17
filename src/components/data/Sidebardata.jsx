@@ -84,6 +84,12 @@ const Sidebardata = [
         path: "/new-registrations",
         permissions: ["jamb_ssce_tutorial:read"],
       },
+      {
+        name: "Webinar",
+        icon: hashtag,
+        path: "/webinar-registrations",
+        permissions: ["jamb_ssce_tutorial:read"],
+      },
       // {
       //   name: "7 Habits Bootcamp",
       //   icon: hashtag,
